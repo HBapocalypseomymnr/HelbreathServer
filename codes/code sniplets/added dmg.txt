@@ -1,0 +1,24 @@
+	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+		iAP_SM += m_pClientList[sAttackerH]->m_iAddPhysicalDamage;
+		iAP_L  += m_pClientList[sAttackerH]->m_iAddPhysicalDamage;
+	}
+
+
+
+	sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
+			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != NULL)) {
+				if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness  
+					if (cTargetType == DEF_OWNERTYPE_PLAYER) {
+						if (m_pClientList[sTargetH] != NULL) {
+						iRepDamage = (abs(m_pClientList[sTargetH]->m_iRating)/20);
+						if (iRepDamage > 5) iRepDamage = 5;
+						iDamage += iRepDamage;
+
+	case DEF_OWNERTYPE_PLAYER:	
+		if ((m_bAdminSecurity == TRUE) && (m_pClientList[sAttackerH]->m_iAdminUserLevel > 0)) return;
+		if (m_pClientList[sAttackerH]->m_cHeroArmourBonus == 2) iDamage += 4;
+		if ((m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND] == -1) || (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] == -1)) {
+			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != NULL)) {
+				if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 861 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 862) {
+					iDamage *= (int)1.3;

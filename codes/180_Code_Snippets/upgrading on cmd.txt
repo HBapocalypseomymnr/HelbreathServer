@@ -1,0 +1,135 @@
+ This thing put into game.cpp
+Code is Edited // 05.04.2006
+CODE
+
+
+void CGame::PlayerOrder_UpgradeSword(int iClientH) {
+{
+int i;
+char buff [100];
+int iItemID;
+char cItemName[20];
+int ipoints;
+if (m_pClientList[iClientH] == NULL) return;
+ipoints=0;
+for (i = 0; i < DEF_MAXITEMS; i++) {
+if ((m_pClientList[iClientH]->m_pItemList[i] != NULL) && (memcmp(m_pClientList[iClientH]->m_pItemList[i]->m_cName, "ImperialHammer", 9) == 0)) {
+ ZeroMemory(cItemName,sizeof(cItemName));
+ memcpy(cItemName,m_pClientList[iClientH]->m_pItemList[i]->m_cName,strlen(m_pClientList[iClientH]->m_pItemList[i]->m_cName));
+ wsprintf(buff,"(!) %s depletes %s",m_pClientList[iClientH]->m_cCharName,cItemName);
+ ipoints = m_pClientList[iClientH]->m_iGizonItemUpgradeLeft;
+ PutLogList(buff);
+ if (ipoints < 4) return;          
+ if ((memcmp(cItemName,"ImperialHammer",16) == 0) && (ipoints >= 4) && (ipoints - 4 >= 0)) {
+  ItemDepleteHandler(iClientH, i, TRUE);
+  ipoints -= 4;  
+  DropItemID(iClientH,892,m_pClientList[iClientH]->m_sX,m_pClientList[iClientH]->m_sY);
+  m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = ipoints;
+  wsprintf(buff,"Majestic upgrade points decreased by 4 (Majestic %d)", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
+  ShowRepNotice(iClientH,buff);
+  return;
+  }
+ if ((memcmp(cItemName,"ImperialHammer+2",16) == 0) && (ipoints >= 8) && (ipoints - 8 >= 0)) {
+  ItemDepleteHandler(iClientH, i, TRUE);
+  ipoints -= 8;
+  DropItemID(iClientH,893,m_pClientList[iClientH]->m_sX,m_pClientList[iClientH]->m_sY);
+  m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = ipoints;
+  wsprintf(buff,"Majestic upgrade points decreased by 8 (Majestic %d)", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
+  ShowRepNotice(iClientH,buff);
+  return;
+ }
+ if ((memcmp(cItemName,"ImperialHammer+4",16) == 0) && (ipoints >= 12) && (ipoints - 12 >= 0)) {
+  ItemDepleteHandler(iClientH, i, TRUE);
+  ipoints -= 12;
+  DropItemID(iClientH,894,m_pClientList[iClientH]->m_sX,m_pClientList[iClientH]->m_sY);
+  m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = ipoints;
+  wsprintf(buff,"Majestic upgrade points decreased by 12 (Majestic %d)", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
+  ShowRepNotice(iClientH,buff);
+  return;
+  }
+ if ((memcmp(cItemName,"ImperialHammer+6",16) == 0) && (ipoints >= 16) && (ipoints - 16 >= 0)) {
+  ItemDepleteHandler(iClientH, i, TRUE);
+  ipoints -= 16;
+  DropItemID(iClientH,895,m_pClientList[iClientH]->m_sX,m_pClientList[iClientH]->m_sY);
+  m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = ipoints;
+  wsprintf(buff,"Majestic upgrade points decreased by 16 (Majestic %d)", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
+  ShowRepNotice(iClientH,buff);
+  return;
+  }
+ if ((memcmp(cItemName,"ImperialHammer+8",20) == 0) && (ipoints >= 20) && (ipoints - 20 >= 0)) {
+  ItemDepleteHandler(iClientH, i, TRUE);
+  ipoints -= 20;
+  DropItemID(iClientH,896,m_pClientList[iClientH]->m_sX,m_pClientList[iClientH]->m_sY);
+  m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = ipoints;
+  wsprintf(buff,"Majestic upgrade points decreased by 20 (Majestic %d)", m_pClientList[iClientH]->m_iRating);
+  ShowRepNotice(iClientH,buff);
+  return;
+  }
+ if ((memcmp(cItemName,"ImperialHammera+10",18) == 0) && (ipoints >= 24) && (ipoints - 24 >= 0)) {
+  ItemDepleteHandler(iClientH, i, TRUE);
+  ipoints -= 24;
+  DropItemID(iClientH,897,m_pClientList[iClientH]->m_sX,m_pClientList[iClientH]->m_sY);
+  m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = ipoints;
+  wsprintf(buff,"Majestic upgrade points decreased by 24 (Majestic %d)", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
+  ShowRepNotice(iClientH,buff);
+  return;
+  }
+ if ((memcmp(cItemName,"ImperialHammera+12",18) == 0) && (ipoints >= 28) && (ipoints - 28 >= 0)) {
+  ItemDepleteHandler(iClientH, i, TRUE);
+  ipoints -= 28;
+  DropItemID(iClientH,898,m_pClientList[iClientH]->m_sX,m_pClientList[iClientH]->m_sY);
+  m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = ipoints;
+  wsprintf(buff," Majestic upgrade points decreased by 28 (Majestic %d)", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
+  ShowRepNotice(iClientH,buff);
+  return;
+ }
+ if ((memcmp(cItemName,"ImperialHammera+14",18) == 0) && (ipoints >= 30) && (ipoints - 30 >= 0)) {
+  ItemDepleteHandler(iClientH, i, TRUE);
+  ipoints -= 30;
+  DropItemID(iClientH,899,m_pClientList[iClientH]->m_sX,m_pClientList[iClientH]->m_sY);
+  m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = ipoints;
+  wsprintf(buff,"Majestic upgrade points decreased by 30 (Majestic %d)", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
+  ShowRepNotice(iClientH,buff);
+  return;
+  }
+}
+}
+}
+}
+
+
+
+void CGame::DropItemID(int iClientH,int iItemID,int iX, int iY) {
+class CItem * pItem;
+pItem = new class CItem;
+if (_bInitItemAttr(pItem, iItemID) == FALSE) {
+  delete pItem;
+  }
+  else {
+
+    m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(iX, iY, pItem);
+    SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,iX, iY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); // v1.4
+  }
+}
+
+void CGame::ShowRepNotice(int iClientH,char *pMsg)
+{
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, pMsg);
+}
+
+
+and this put again in game.cpp
+CODE
+if (memcmp(cp, "/UpgradeSword ", 13) == 0) {
+  PlayerOrder_UpgradeSword(int iClientH);
+  return;
+ }
+
+
+and this thing put into game.h
+CODE
+
+void PlayerOrder_UpgradeSword(int iClientH);
+
+
+Edited: If the Code Didnt work ... try it now again ...

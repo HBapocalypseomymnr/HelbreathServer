@@ -1,0 +1,120 @@
+Con este code crearemos un arma que le sacara un crit al enemigo y se lo dara al que ataca =) esto es habilidad especial tipo xelima, ice, medusa pero crit drain :P
+
+Buscamos en iCalculateAttackEffect 
+
+
+Código:
+if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != NULL) && (m_pClientList[sAttackerH]->m_bIsSpecialAbilityEnabled == TRUE)) {ahora busca todos los cases y agrega esto antes del ultimo break
+
+
+Código:
+      
+case 6:// Crit Drain by Ogeid
+      if (m_pClientList[sTargetH]->m_iSuperAttackLeft >= 1) { 
+      if (m_pClientList[sAttackerH]->m_iSuperAttackLeft <= m_pClientList[sAttackerH]->m_iLevel /10){
+      	
+      m_pClientList[sAttackerH]->m_iSuperAttackLeft += 1;
+      SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_SUPERATTACKLEFT, NULL, NULL, NULL, NULL);
+      m_pClientList[sTargetH]->m_iSuperAttackLeft -= 1;
+      SendNotifyMsg(NULL, sTargetH, DEF_NOTIFY_SUPERATTACKLEFT, NULL, NULL, NULL, NULL);
+          }
+        }
+      	break;Habilidad agregada, ahora agregamos textos en cliente
+
+[size=7px]en srcs del cliente
+
+abrimos lang_eng.h y buscamos
+
+
+
+Código:
+#define	ON_KEY_UP36	"Ability that makes character untouchable: Can be used after %d sec"y antes de eso agregamos
+
+#define ON_KEY_UP45 "Ability Crit Drain: Can be used after %d sec"
+
+y buscamos
+
+#define NOTIFY_MSG_HANDLER12 "You are untouchable for %d seconds!"
+y antes de eso agregamos
+#define NOTIFY_MSG_HANDLER900 "Drain crits for %d seconds"
+
+
+ahora buscamos
+
+Código:
+#define	NOTIFY_MSG_HANDLER17	"Ability that kills enemy at one time: Can use after %dMin"y antes de eso ponemos
+
+Código:
+#define	NOTIFY_MSG_HANDLER901	"Ability drain crits from the enemy: Puede usarse en %dMin"buskr
+
+Código:
+#define	NOTIFY_MSG_HANDLER26	"Ability that earns same HP as you decrease enemy's HP: Can use after %dSec"agregar abajo de eso
+
+Código:
+#define	NOTIFY_MSG_HANDLER902	"Ability drain crits from the enemy: Can use after %dSec"
+ahora en game.cpp del client
+
+buscamos
+
+
+Código:
+case 5: wsprintf(G_cTxt, ON_KEY_UP33, i);y agregamos un case
+
+
+Código:
+case 6: wsprintf(G_cTxt, ON_KEY_UP45, i);buscamos
+
+case 5: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER9, sV3); break;//"
+
+y agregamos un case
+
+case 6: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER900, sV3); break;//"
+
+Buscamos
+
+case 5: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER18, sV3/60); AddEventList(G_cTxt, 10); break;//
+
+y abajo agregamos
+
+case 6: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER18, sV3/60); AddEventList(G_cTxt, 10); break;//
+
+y despues el item
+
+Código:
+Item = 1504 DrainCritRapier 1 8 24 2 6 1 6 4 0 5000 [u]6[/u] 1 14 -25000 1100 6 3 0 0 [i]60 [/i]0 9 1 96=Numero de habilidad especial (crit drain)
+60=Duracion de efecto especial
+
+
+--------------
+
+Bueno como veran ese code esta incompleto ya que cuando activas la habilidad no se activa el aura que todos ven y para activarla tienen q hacer lo siguiente:
+
+Busquen
+
+
+
+Código:
+void CGame::ActivateSpecialAbilityHandler(int iClientH)y abajo estaran una seria de cases
+
+
+Código:
+	switch (m_pClientList[iClientH]->m_iSpecialAbilityType) {
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:agregamos el case 6: 
+
+
+Código:
+switch (m_pClientList[iClientH]->m_iSpecialAbilityType) {
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+        case 6: //Crit Drain
+
+
+
+

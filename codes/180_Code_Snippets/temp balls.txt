@@ -1,0 +1,84 @@
+in useitemhandler
+
+search : 
+CODE  
+case 1:
+      if (memcmp(m_pClientList[iClientH]->m_cMapName, "bisle", 5) != 0)
+      {
+       //v1.42
+       ItemDepleteHandler(iClientH, sItemIndex, TRUE, TRUE);
+       RequestTeleportHandler(iClientH, "2   ", "bisle", -1, -1);
+      }
+     break; 
+
+
+
+then add under it ...
+
+
+CODE  
+case 2: //Ball Trade
+     BallTrade(iClientH);
+     break; 
+
+
+
+Or IF u want use it by Command !
+
+CODE  
+if (memcmp(cp, "/stopdrop ", 9) == 0) {
+  // BallTrade By Treax
+  BallTrade(iClientH);
+  return;
+ } 
+
+
+
+
+
+and then add this code ... to game.cpp
+
+
+CODE  
+void CGame::BallTradeint iClientH) {
+{
+int i;
+char buff [100];
+char cItemName[20];
+if (m_pClientList[iClientH] == NULL) return;
+for (i = 0; i < DEF_MAXITEMS; i++) {
+if ((m_pClientList[iClientH]->m_pItemList[i] != NULL) && (memcmp(m_pClientList[iClientH]->m_pItemList[i]->m_cName, "Greenball", 9) == 0)) {
+ ZeroMemory(cItemName,sizeof(cItemName));
+ memcpy(cItemName,m_pClientList[iClientH]->m_pItemList[i]->m_cName,strlen(m_pClientList[iClientH]->m_pItemList[i]->m_cName));
+ wsprintf(buff,"(!) %s depletes %s",m_pClientList[iClientH]->m_cCharName,cItemName);
+ PutLogList(buff);
+ 
+ if (memcmp(cItemName,"Greenball", 10) == 0) {
+  ItemDepleteHandler(iClientH, i, FALSE, TRUE); 
+  m_pClientList[iClientH]->m_iRating += *;
+  wsprintf(buff," You got * rep");
+  ShowRepNotice(iClientH,buff); 
+  return;
+}
+if (memcmp(cItemName,"Pearlballl", 10) == 0) {
+  ItemDepleteHandler(iClientH, i, FALSE, TRUE); 
+  m_pClientList[iClientH]->m_iRating += *;
+  wsprintf(buff," You got * rep");
+  ShowRepNotice(iClientH,buff); 
+  return;
+}
+}
+}
+}
+
+ 
+
+and in game.h
+
+
+CODE  
+void BallTrade(int iClientH); 
+
+... so the code is something like that
+
+and now the balls numbers in item3.cfg must be ... * * 11 2 * * * 

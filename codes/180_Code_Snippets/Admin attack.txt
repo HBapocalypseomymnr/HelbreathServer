@@ -1,0 +1,269 @@
+    Coder : Dax
+    Brought To You By Juggalo2
+
+
+
+When activated GM's can take damage and also deal it (Melee/Magic/Range). Could be useful for a "Kill the GM" event or even an "I just beefed up my GM and you're all fucked" event. Have fun.
+
+Enable: /adminattack 1
+Disable: /adminattack 0
+
+Client.h
+
+
+Class: CClient Public
+Add
+
+
+Code: Select all
+    BOOL m_bAdminAttackEnabled; 
+
+
+
+
+
+Client.cpp
+
+
+Function: CClient(HWND hWnd)
+Add
+
+
+Code: Select all
+    m_bAdminAttackEnabled = FALSE; 
+
+
+
+
+
+Game.cpp
+
+
+Function: ChatMsgHandler
+Add
+
+
+Code: Select all
+    if (memcmp(cp, "/adminattack ", 13) == 0)
+    {
+    AdminOrder_EnableAdminAttack(iClientH, cp, dwMsgSize - 21);
+    return;
+    }  
+
+
+
+
+
+Function: New
+Add
+
+
+Code: Select all
+    void CGame::AdminOrder_EnableAdminAttack(int iClientH, char *pData, DWORD dwMsgSize)
+    {
+    char   * token, cBuff[256];
+    char   seps[] = "= \t\n";
+    class  CStrTok * pStrTok;
+
+    if (m_pClientList[iClientH] == NULL) return;
+    if ((dwMsgSize) <= 0) return;
+
+    if (m_pClientList[iClientH]->m_iAdminUserLevel < 3)
+    {
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);
+    return;
+    }
+
+    ZeroMemory(cBuff, sizeof(cBuff));
+    memcpy(cBuff, pData, dwMsgSize);
+    pStrTok = new class CStrTok(cBuff, seps);
+    token = pStrTok->pGet();
+    token = pStrTok->pGet();
+
+    if (token != NULL)
+    {
+    if (token[0] == '1')
+    {
+      m_pClientList[iClientH]->m_bAdminAttackEnabled = TRUE;
+      ShowClientMsg(iClientH, " Admin Attack Enabled!");
+    }
+    else if (token[0] == '0')
+    {
+      m_pClientList[iClientH]->m_bAdminAttackEnabled = FALSE;
+      ShowClientMsg(iClientH, " Admin Attack Disabled!");
+    }
+    else ShowClientMsg(iClientH, " Invalid parameter! Function takes 1 or 0");
+    }
+    } 
+
+
+
+
+
+
+Function: iCaluclateAttackEffect
+Find
+
+
+Code: Select all
+    if (m_pClientList[sTargetH]->m_iAdminUserLevel > 0) return 0; 
+
+
+
+Replace with
+
+Code: Select all
+    if ((m_pClientList[sTargetH]->m_iAdminUserLevel > 0) && (m_pClientList[sTargetH]->m_bAdminAttackEnabled == FALSE)) return 0; 
+
+
+
+
+
+Find
+
+
+Code: Select all
+    if ((m_bAdminSecurity == TRUE) && (m_pClientList[sAttackerH]->m_iAdminUserLevel > 0)) return 0; 
+
+
+
+Replace with
+
+Code: Select all
+    if ((m_bAdminSecurity == TRUE) && (m_pClientList[sAttackerH]->m_iAdminUserLevel > 0) && (m_pClientList[sAttackerH]->m_bAdminAttackEnabled == FALSE)) return 0; 
+
+
+
+
+
+Find (Note in my copy of 2.24b this code has a line break so it may be hard to find, make sure you are replacing the right code.)
+
+Code: Select all
+
+    if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsNeutral == TRUE)
+    && (m_pClientList[sTargetH]->m_iPKCount == 0)) return 0; 
+
+
+
+Replace with
+
+Code: Select all
+    if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsNeutral == TRUE)
+    && (m_pClientList[sTargetH]->m_iPKCount == 0) && (m_pClientList[sAttackerH]->m_bAdminAttackEnabled == FALSE)) return 0; 
+
+
+
+
+
+Function: Effect_Damage_Spot_Type2
+Find
+
+
+Code: Select all
+    if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sTargetH]->m_bIsNeutral == TRUE) && (m_pClientList[sTargetH]->m_iPKCount == 0)) return; 
+
+
+
+Replace with
+
+
+Code: Select all
+    if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sTargetH]->m_bIsNeutral == TRUE) && (m_pClientList[sTargetH]->m_iPKCount == 0) && (m_pClientList[sTargetH]->m_bAdminAttackEnabled == FALSE)) return;
+
+
+
+
+
+
+Function: Effect_Damage_Spot
+Find
+
+
+Code: Select all
+    if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsNeutral == TRUE) && (m_pClientList[sTargetH]->m_iPKCount == 0)) return; 
+
+
+
+Replace with
+
+Code: Select all
+    if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsNeutral == TRUE) && (m_pClientList[sTargetH]->m_iPKCount == 0) && (m_pClientList[sAttackerH]->m_bAdminAttackEnabled == FALSE)) return; 
+
+
+
+
+
+
+Function: Effect_Damage_Spot_DamageMove
+Find
+
+
+Code: Select all
+    if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsNeutral == TRUE) && (m_pClientList[sTargetH]->m_iPKCount == 0)) return; 
+
+
+
+Replace with
+
+
+Code: Select all
+    if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsNeutral == TRUE) && (m_pClientList[sTargetH]->m_iPKCount == 0) && (m_pClientList[sAttackerH]->m_bAdminAttackEnabled == FALSE)) return; 
+
+
+
+
+
+
+Function: bCheckResistingMagicSuccess
+Find
+
+
+Code: Select all
+    if (m_pClientList[sTargetH]->m_iAdminUserLevel > 0) return TRUE; 
+
+
+
+Replace with
+
+
+Code: Select all
+    if ((m_pClientList[sTargetH]->m_iAdminUserLevel > 0) && (m_pClientList[sTargetH]->m_bAdminAttackEnabled == FALSE)) return TRUE; 
+
+
+
+
+
+
+Function: bCheckResistingIceSuccess
+Find
+
+Code: Select all
+    if (m_pClientList[sTargetH]->m_iAdminUserLevel > 0) return TRUE; 
+
+
+
+
+Replace with
+
+Code: Select all
+    if ((m_pClientList[sTargetH]->m_iAdminUserLevel > 0) && (m_pClientList[sTargetH]->m_bAdminAttackEnabled == FALSE)) return TRUE; 
+
+
+
+
+
+Game.h
+
+
+Class: CGame Public (Or private doesn't matter it isnt called outside it's class)
+Add
+
+
+Code: Select all
+    void AdminOrder_EnableAdminAttack(int iClientH, char *pData, DWORD dwMsgSize); 
+
+
+
+Warning This code was designed for 2.24b and may not be compatible with other HG builds.
+
+Now tested thanks to Juggalo. All appears to be working fine.

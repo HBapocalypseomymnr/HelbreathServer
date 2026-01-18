@@ -1,0 +1,862 @@
+Mail system
+Author - €M4NU€L
+
+
+
+Page: 1/2
+
+This is the code for the mail system. To complete the system you need to have MailSystem.pak and download Mail.cpp and Mail.h for both client and server side (links at end(page 2))
+
+Please note that this code is for a MySql Server and it is not compatible with normal files!
+
+Some skills in C++ coding is needed because some faults in code wich maby has comed when i had to put about 300 break-tags in the text.
+
+Heres the CLIENT side code: After this codes:
+// Portal Confirm Dialog
+m_stDialogBoxInfo[42].sX = 193;
+m_stDialogBoxInfo[42].sY = 271;
+m_stDialogBoxInfo[42].sSizeX = 263;
+m_stDialogBoxInfo[42].sSizeY = 100;
+
+Add this three:
+
+// Mail Inbox Dialog
+m_stDialogBoxInfo[43].sX = 350;
+m_stDialogBoxInfo[43].sY = 55;
+m_stDialogBoxInfo[43].sSizeX = 257;
+m_stDialogBoxInfo[43].sSizeY = 339;
+
+// Send Mail Dialog
+m_stDialogBoxInfo[44].sX = 35;
+m_stDialogBoxInfo[44].sY = 55;
+m_stDialogBoxInfo[44].sSizeX = 257;
+m_stDialogBoxInfo[44].sSizeY = 339;
+
+// View Mail Dialog
+m_stDialogBoxInfo[45].sX = 35;
+m_stDialogBoxInfo[45].sY = 55;
+m_stDialogBoxInfo[45].sSizeX = 257;
+m_stDialogBoxInfo[45].sSizeY = 339;
+
+After the hole codes of this case :
+
+case DEF_DYNAMICOBJECT_MINERAL7:
+
+Add this two cases
+
+case DEF_DYNAMICOBJECT_ARESDENMAILBOX: m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutShadowSprite(ix, iy, 7, dwTime);
+m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutSpriteFast(ix, iy, 7, dwTime);
+
+if ((m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.top != -1) &&
+(m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.top < msY) &&
+(m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.bottom > msY) &&
+(m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.left < msX) &&
+(m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.right > msX)) {
+m_sMCX = indexX;
+m_sMCY = indexY;
+iFocusStatus = NULL;
+ZeroMemory(cFocusName, sizeof(cFocusName));
+ZeroMemory(m_cMCName, sizeof(m_cMCName));
+if ((cRB != 0) &&
+(m_bIsDialogEnabled[43] == FALSE)) {
+
+EnableDialogBox(43, NULL, NULL, NULL);
+PlaySound('E', 14, 5);
+bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_MAILLIST, NULL, NULL, NULL, NULL, NULL);
+}
+}
+
+break;
+case DEF_DYNAMICOBJECT_ELVINEMAILBOX:
+m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutShadowSprite(ix, iy, 8, dwTime);
+m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutSpriteFast(ix, iy, 8, dwTime);
+
+if ((m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.top != -1) &&
+(m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.top < msY) &&
+(m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.bottom > msY) &&
+(m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.left < msX) &&
+(m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.right > msX)) {
+
+m_sMCX = indexX;
+m_sMCY = indexY;
+iFocusStatus = NULL;
+ZeroMemory(cFocusName, sizeof(cFocusName));
+ZeroMemory(m_cMCName, sizeof(m_cMCName));
+
+if (cRB != 0) {
+EnableDialogBox(43, NULL, NULL, NULL);
+PlaySound('E', 14, 5);
+}
+}
+
+break;
+
+After this Pakfile:
+
+m_hPakFile = CreateFile("spritesinterface.pak", GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
+
+Add this codes:
+
+m_hPakFile = CreateFile("spritesMailDialog.pak", GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
+
+if (m_hPakFile != INVALID_HANDLE_VALUE) {
+m_pSprite[DEF_SPRID_INTERFACE_MAIL1] = new class CSprite(m_hPakFile, &m_DDraw, "MailDialog", 0, FALSE);
+m_pSprite[DEF_SPRID_INTERFACE_MAIL2] = new class CSprite(m_hPakFile, &m_DDraw, "MailDialog", 1, FALSE);
+m_pSprite[DEF_SPRID_INTERFACE_MAIL3] = new class CSprite(m_hPakFile, &m_DDraw, "MailDialog", 2, FALSE);
+
+CloseHandle(m_hPakFile);
+}
+
+After this case:
+
+case 42:
+DlgBoxClick_PortalConfirm(msX, msY);
+break;
+
+Add this three cases:
+
+case 43:
+DlgBoxClick_MailInbox(msX, msY);
+break;
+case 44:
+DlgBoxClick_SendMail(msX, msY);
+break;
+case 45:
+DlgBoxClick_ViewMail(msX, msY);
+break;
+}
+
+return TRUE;
+}
+}
+}
+
+return FALSE;
+}
+
+After this hole void codes:
+
+void CGame::ClearContents_OnCreateNewAccount() {
+
+Add this:
+
+void CGame::ClearContents_SendMail() {
+ZeroMemory(m_cSendMailTo, sizeof(m_cSendMailTo));
+ZeroMemory(m_cSendMailSubject, sizeof(m_cSendMailSubject));
+ZeroMemory(m_cSendMailBody, sizeof(m_cSendMailBody));
+}
+
+After this:
+
+case 42:
+DrawDialogBox_PortalConfirm(msX, msY);
+break;
+
+Add this three shitys:
+
+case 43:
+DrawDialogBox_MailInbox(msX, msY);
+break;
+case 44:
+DrawDialogBox_SendMail(msX, msY);
+break;
+case 45:
+DrawDialogBox_ViewMail(msX, msY);
+break;
+}
+}
+}
+
+After this code:
+
+case 39:
+if (m_bIsDialogEnabled[iBoxID] == FALSE) {
+m_stDialogBoxInfo[iBoxID].cMode = 0;
+}
+
+break;
+
+Add this:
+
+case 41:
+case 43: // Mail Inbox
+case 44: // Send Mail
+if (m_bIsDialogEnabled[iBoxID] == FALSE) {
+m_stDialogBoxInfo[iBoxID].cMode = 0;
+m_stDialogBoxInfo[iBoxID].sView = 0;
+m_stDialogBoxInfo[iBoxID].sV1 = 0;
+}
+
+break;
+case 45: // View Mail
+if (m_bIsDialogEnabled[iBoxID] == FALSE) {
+m_stDialogBoxInfo[iBoxID].cMode = 0;
+m_stDialogBoxInfo[iBoxID].sView = 0;
+m_stDialogBoxInfo[iBoxID].sV1 = sV1;
+m_stDialogBoxInfo[iBoxID].sV2 = 0;
+}
+
+break;
+
+After this void codes:
+
+void CGame::ShowReceivedString(BOOL bIsHide) {
+
+Add this void:
+
+void CGame::ShowReceivedMailString() {
+ZeroMemory(G_cTxt, sizeof(G_cTxt));
+
+strcpy(G_cTxt, m_pMailInputBuffer);
+
+if (strlen(m_pMailInputBuffer) <= m_cInputMaxLen) { strcpy(G_cTxt, m_pMailInputBuffer);
+}
+
+if ((G_dwGlobalTime % 400) < 210) G_cTxt[strlen(G_cTxt)] = '_';
+
+PutString(m_iMailInputX + 1, m_iMailInputY + 1, G_cTxt, RGB(0, 0, 0));
+PutString(m_iMailInputX, m_iMailInputY + 1, G_cTxt, RGB(0, 0, 0));
+PutString(m_iMailInputX + 1, m_iMailInputY, G_cTxt, RGB(0, 0, 0));
+PutString(m_iMailInputX, m_iMailInputY, G_cTxt, RGB(255, 255, 255));
+}
+
+After this void codes:
+
+void CGame::ClearInputString() {
+
+Add this void:
+
+void CGame::StartMailInputString(int sX, int sY, unsigned char iLen, char *pBuffer, BOOL bIsHide) {
+m_bMailInputStatus = TRUE;
+m_iMailInputX = sX;
+m_iMailInputY = sY;
+m_pMailInputBuffer = pBuffer;
+ZeroMemory(m_pMailInputBuffer, sizeof(m_pMailInputBuffer));
+m_cMailInputMaxLen = iLen;
+}
+
+After this void add :
+
+void CGame::EndInputString() {
+
+This
+
+void CGame::EndMailInputString() {
+m_bMailInputStatus = FALSE;
+}
+
+After this code:
+
+if (m_bIsCombatMode) {
+
+Add this:
+
+if (m_bUnreadMail == TRUE) {
+if ((G_dwGlobalTime % 400) < 270) {
+m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutSpriteFast((640 / 2) - 5, 5, 9, dwTime);
+}
+
+After these codes add:
+
+wp = (WORD *)(pData + DEF_INDEX2_MSGTYPE);
+
+case DEF_NOTIFY_MAILLIST:
+AddEventList("Viewing mail inbox...", 10);
+
+if (m_stDialogBoxInfo[43].sV1 == 0) {
+for (i = 0; i < 7; i++) {
+if (m_pMailList[i] != NULL) {
+try {
+delete m_pMailList[i]; } catch (...) { } m_pMailList[i] = NULL;
+}
+}
+}
+
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+
+ip = (int *)cp;
+m_stDialogBoxInfo[43].sV1 = (short)*ip; // Mail count
+cp += 4;
+
+if (m_stDialogBoxInfo[43].sV1 == 0) {
+AddEventList("You have no mail in your inbox!", 10);
+m_bUnreadMail = FALSE;
+return;
+}
+
+After this:
+
+if (m_stDialogBoxInfo[43].sV1 == 0) {
+
+Add this codes:
+
+// Mail limitation (just for now).
+for (i = 0; ((i < m_stDialogBoxInfo[43].sV1) && (i < 7)); i++) {
+m_pMailList[i] = new CMail();
+
+ip = (int *)cp;
+m_pMailList[i]->m_iMailId = (int)*ip;
+cp += 4;
+
+memcpy(m_pMailList[i]->m_cFrom, cp, 10);
+cp += 10;
+
+memcpy(m_pMailList[i]->m_cSubject, cp, DEF_MAXMAILSUBJECTSIZE);
+cp += DEF_MAXMAILSUBJECTSIZE;
+
+m_pMailList[i]->m_bIsRead = (BOOL)*cp;
+cp++;
+}
+
+break;
+case DEF_NOTIFY_MAILBODY:
+case DEF_NOTIFY_SENDMAIL_SUCCESS:
+break;
+case DEF_NOTIFY_SENDMAIL_FAILED:
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+
+break;
+case DEF_NOTIFY_UNREADMAIL:
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+
+if (*cp != 0) {
+if (m_bUnreadMail == FALSE) {
+AddEventList("You have unread mail!", 10);
+}
+m_bUnreadMail = TRUE;
+} else {
+m_bUnreadMail = FALSE;
+}
+
+cp++;
+
+break;
+
+After this:
+
+if (((m_bIsDialogEnabled[7] == TRUE) &&
+(m_stDialogBoxInfo[7].cMode == 1)) ||
+
+Add this:
+
+if (iUpdateRet != 0) {
+if (m_bMailInputStatus) {
+ShowReceivedMailString();
+}
+}
+
+After this void codes:
+
+void CGame::DlgBoxClick_PortalConfirm(short msX, short msY) {
+
+Add all of this voids:
+
+void CGame::DrawDialogBox_MailInbox(short msX, short msY) {
+register int i, j;
+short sX, sY;
+DWORD dwTime;
+
+sX = m_stDialogBoxInfo[43].sX;
+sY = m_stDialogBoxInfo[43].sY;
+dwTime = timeGetTime();
+
+DrawNewDialogBox(DEF_SPRID_INTERFACE_MAIL1, sX, sY, 0);
+
+if ((msX >= sX + 99) && (msX <= sX + 170) &&
+(msY >= sY + 300) && (msY <= sY + 315)) {
+PutString_SprFont(sX + 99, sY + 300, "Send Mail", 16, 16, 30);
+} else {
+PutString_SprFont(sX + 99, sY + 300, "Send Mail", 6, 6, 20);
+}
+
+j = 0;
+
+if (m_stDialogBoxInfo[43].sV1 != 0) {
+for (i = 0; i < 7; i++) {
+if (m_pMailList[i] != NULL) {
+if ((msX >= (sX + 16)) && (msX <= (sX + 240)) && (msY >= (sY + 33 + (j * 38))) && (msY <= (sY + 70 + (j * 38)))) {
+m_DDraw.DrawShadowBox(sX + 16, sY + 33 + (j * 38), sX + 240, sY + 70 + (j * 38));
+}
+
+if (m_pMailList[i]->m_bIsRead == TRUE) {
+m_pSprite[DEF_SPRID_INTERFACE_MAIL1]->PutSpriteFastNoColorKey(sX + 24, sY + 37 + (j * 38), 2, dwTime);
+} else {
+m_pSprite[DEF_SPRID_INTERFACE_MAIL1]->PutSpriteFastNoColorKey(sX + 24, sY + 37 + (j * 38), 1, dwTime);
+}
+
+PutString(sX + 62, sY + 40 + (j * 38), m_pMailList[i]->m_cSubject, RGB(255, 255, 255), FALSE, 1);
+PutString(sX + 195, sY + 47 + (j * 38), "X days", RGB(150, 150, 150), FALSE, 1);
+ZeroMemory(G_cTxt, sizeof(G_cTxt));
+wsprintf(G_cTxt, "From: %s", m_pMailList[i]->m_cFrom);
+PutString(sX + 62, sY + 52 + (j * 38), G_cTxt, RGB(150, 150, 150), FALSE, 1);
+
+j++;
+}
+}
+}
+}
+
+
+
+
+
+
+void CGame::DrawDialogBox_SendMail(short msX, short msY) {
+short sX, sY;
+
+sX = m_stDialogBoxInfo[44].sX;
+sY = m_stDialogBoxInfo[44].sY;
+
+PutString2(sX + 10, sY + 10, m_cSendMailTo, 255, 255, 255);
+PutString2(sX + 10, sY + 40, m_cSendMailSubject, 255, 255, 255);
+
+DrawNewDialogBox(DEF_SPRID_INTERFACE_MAIL2, sX, sY, 0);
+}
+
+void CGame::DlgBoxClick_SendMail(short msX, short msY) {
+short sX, sY;
+
+sX = m_stDialogBoxInfo[44].sX;
+sY = m_stDialogBoxInfo[44].sY;
+}
+
+void CGame::DrawDialogBox_ViewMail(short msX, short msY) {
+// You need to select a valid mail in the inbox first.
+if (m_stDialogBoxInfo[45].sV1 == 0) return;
+
+register int i;
+short sX, sY;
+
+i = m_stDialogBoxInfo[45].sV1 - 1;
+sX = m_stDialogBoxInfo[45].sX;
+sY = m_stDialogBoxInfo[45].sY;
+
+DrawNewDialogBox(DEF_SPRID_INTERFACE_MAIL3, sX, sY, 0);
+
+// The mail that was selected must exist.
+if (m_pMailList[i] != NULL) {
+PutString(sX + 78, sY + 44, m_pMailList[i]->m_cFrom, RGB(255, 255, 255), FALSE, 1);
+PutString(sX + 78, sY + 60, m_pMailList[i]->m_cSubject, RGB(255, 255, 255), FALSE, 1);
+
+// Only print the body if it has been received.
+if (m_stDialogBoxInfo[45].sV2 > 0) {
+// 30, 87 body
+}
+}
+}
+
+void CGame::DlgBoxClick_ViewMail(short msX, short msY) {
+if (m_stDialogBoxInfo[45].sV1 == 0) return;
+
+short sX, sY;
+
+sX = m_stDialogBoxInfo[45].sX;
+sY = m_stDialogBoxInfo[45].sY;
+}
+
+void CGame::DrawDialogBox_GuildMenu(short msX, short msY)
+{
+short sX, sY, szX;
+int iAdjX, iAdjY;
+
+sX = m_stDialogBoxInfo[7].sX;
+sY = m_stDialogBoxInfo[7].sY;
+szX = m_stDialogBoxInfo[7].sSizeX;
+
+iAdjX = - 13;
+iAdjY = 30;
+DrawNewDialogBox
+(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 19);
+} 
+
+Mail system
+Author - €M4NU€L
+
+
+
+Page: 2/2
+
+Heres the HG-Side source of the MailBox
+
+PS. you need Mail.cpp and Mail.h here too
+
+After this:
+
+if (memcmp(cp, "/who", 4) == 0) {
+if (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelWho) {
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOTALUSERS, NULL, NULL, NULL, NULL);
+}
+
+return;
+}
+
+Add this:
+
+if (memcmp(cp, "/sendmail ", 10) == 0) {
+bCreateMail("Gnius", iClientH, "Test postal system", "This is the body of the mail.", NULL);
+PutLogList("(DebugLog) Invoked sendmail command! Sent test mail to Gnius!");
+return;
+}
+
+Before this code:
+
+// Old code
+case DEF_COMMONTYPE_REQ_CREATESLATE:
+ReqCreateSlateHandler(iClientH, pData);
+
+Add this shit:
+
+// Helbreath 2
+case DEF_COMMONTYPE_REQUEST_MAILLIST:
+RequestMailListHandler(iClientH);
+break;
+case DEF_COMMONTYPE_REQUEST_MAILBODY:
+RequestMailBodyHandler(iClientH, pData);
+break;
+case DEF_COMMONTYPE_REQUEST_SENDMAIL:
+RequestSendMailHandler(iClientH, pData);
+break;
+
+Before this code:
+
+case DEF_NOTIFY_SYNTHESIZINGFAILED:
+
+Add this facking shit ! im getting tired lol:
+
+case DEF_NOTIFY_SENDMAIL_SUCCESS:
+
+Before this:
+
+case DEF_NOTIFY_REQUEST_ACCEPTPORTAL:
+
+Add this shit:
+
+case DEF_NOTIFY_UNREADMAIL:
+case DEF_NOTIFY_SENDMAIL_FAILED:
+
+After this:
+
+if ((dwTime - m_dwGameTime5) > (60000)) {
+m_dwGameTime5 = dwTime;
+
+Add this:
+
+if (bProcessMailStorage() == FALSE) {
+PutLogList("(!) Error processing mail storage!");
+}
+
+After this BOOL codes:
+
+BOOL CGame::bClientAddItem(int iClientH, CItem * pItem, BOOL bDropGround) {
+
+Add this :
+
+void CGame::RequestMailListHandler(int iClientH) { register int i;
+int * ip, iRet, iListSize, iUnreadCount;
+CMail * pMailList;
+DWORD * dwp;
+WORD * wp;
+char * cp;
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
+
+pMailList = pGetMailList(iClientH, &iListSize, &iUnreadCount);
+
+ZeroMemory(G_cData50000, sizeof(G_cData50000));
+
+dwp = (DWORD *)(G_cData50000 + DEF_INDEX4_MSGID);
+*dwp = MSGID_NOTIFY;
+wp = (WORD *)(G_cData50000 + DEF_INDEX2_MSGTYPE);
+*wp = DEF_NOTIFY_MAILLIST;
+
+cp = (char *)(G_cData50000 + DEF_INDEX2_MSGTYPE + 2);
+
+ip = (int *)cp;
+*ip = iListSize;
+cp += 4;
+
+for (i = 0; i < iListSize; i++) {
+ip = (int *)cp;
+*ip = pMailList[i].m_iMailId;
+cp += 4;
+
+memcpy(cp, pMailList[i].m_cFrom, 10);
+cp += 10;
+
+memcpy(cp, pMailList[i].m_cSubject, DEF_MAXMAILSUBJECTSIZE);
+cp += DEF_MAXMAILSUBJECTSIZE;
+
+*cp = pMailList[i].m_bIsRead;
+cp++;
+}
+
+iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(G_cData50000, 10 + (iListSize * (DEF_MAXMAILSUBJECTSIZE + 5)));
+
+switch (iRet) {
+case DEF_XSOCKEVENT_QUENEFULL:
+case DEF_XSOCKEVENT_SOCKETERROR:
+case DEF_XSOCKEVENT_CRITICALERROR:
+case DEF_XSOCKEVENT_SOCKETCLOSED:
+DeleteClient(iClientH, TRUE, TRUE);
+}
+
+try {
+delete [] pMailList;
+} catch (...) { }
+
+void CGame::RequestMailBodyHandler(int iClientH, char * pData) {
+int * ip, iRet, iMailId;
+DWORD * dwp;
+WORD * wp;
+char * cp;
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
+
+ip = (int *)(pData + DEF_INDEX2_MSGTYPE + 2);
+iMailId = *ip;
+
+if (iMailId < 1) return;
+
+//bDatabaseConnect();
+//if (bDatabaseAlive() == FALSE) {
+// DatabaseClose();
+// return;
+//}
+
+ZeroMemory(G_cTxt, sizeof(G_cTxt));
+wsprintf(G_cTxt, "SELECT body FROM mailstorage WHERE to_char='%s' AND mail_id='%d'", m_pClientList[iClientH]->m_cCharName, iMailId);
+
+if (mysql_real_query(&m_MySQL, G_cTxt, strlen(G_cTxt)) != 0) {
+return;
+}
+
+MYSQL_RES * pResult = mysql_store_result(&m_MySQL);
+
+if (pResult == NULL) {
+return;
+}
+
+if (mysql_num_rows(pResult) > 0) {
+char cBody[DEF_MAXMAILBODYSIZE + 1];
+ZeroMemory(cBody, sizeof(cBody));
+
+MYSQL_ROW pRow;
+
+if ((pRow = mysql_fetch_row(pResult)) == NULL) {
+return;
+}
+
+strcpy(cBody, pRow[0]);
+mysql_free_result(pResult);
+
+ZeroMemory(G_cData3000, sizeof(G_cData3000));
+
+dwp = (DWORD *)(G_cData3000 + DEF_INDEX4_MSGID);
+*dwp = MSGID_NOTIFY;
+wp = (WORD *)(G_cData3000 + DEF_INDEX2_MSGTYPE);
+*wp = DEF_NOTIFY_MAILBODY;
+
+cp = (char *)(G_cData3000 + DEF_INDEX2_MSGTYPE + 2);
+
+ip = (int *)cp;
+*ip = strlen(cBody);
+cp += 4;
+
+strcpy(cp, cBody);
+cp += strlen(cBody);
+
+// Attachment implementation here.
+
+iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(G_cData3000, 10 + strlen(cBody));
+
+switch (iRet) {
+case DEF_XSOCKEVENT_QUENEFULL:
+case DEF_XSOCKEVENT_SOCKETERROR:
+case DEF_XSOCKEVENT_CRITICALERROR:
+case DEF_XSOCKEVENT_SOCKETCLOSED:
+DeleteClient(iClientH, TRUE, TRUE);
+}
+}
+}
+
+void CGame::RequestSendMailHandler(int iClientH, char * pData) {
+char * cp, cTo[11], cSubject
+[DEF_MAXMAILSUBJECTSIZE + 1], cItemIndex;
+WORD * wp, wBodySize;
+int * ip, iAmount;
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
+
+ZeroMemory(cTo, sizeof(cTo));
+ZeroMemory(cSubject, sizeof(cSubject));
+ZeroMemory(G_cData3000, sizeof(G_cData3000));
+
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+
+memcpy(cTo, cp, 10);
+cp += 10;
+
+memcpy(cSubject, cp, DEF_MAXMAILSUBJECTSIZE);
+cp += DEF_MAXMAILSUBJECTSIZE;
+
+cItemIndex = *cp;
+cp++;
+
+ip = (int *)cp;
+iAmount = *ip;
+cp += 4;
+
+wp = (WORD *)cp;
+wBodySize = *wp;
+cp += 2;
+
+if (wBodySize > DEF_MAXMAILBODYSIZE) { SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SENDMAIL_FAILED, DEF_SENDMAIL_BODYSIZETOOLARGE, NULL, NULL, NULL);
+return;
+}
+
+memcpy(G_cData3000, cp, wBodySize);
+cp += wBodySize;
+
+// Attachment implementation here.
+CItem * pItem = NULL;
+
+if (bCreateMail(cTo, iClientH, cSubject, G_cData3000, pItem) == FALSE) {
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SENDMAIL_FAILED, DEF_SENDMAIL_CANNOTSAVE, NULL, NULL, NULL);
+return;
+} else {
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SENDMAIL_SUCCESS, NULL, NULL, NULL, NULL);
+return;
+}
+}
+}
+
+After this shit code ... i dont know if it exists in other HGServers:
+
+void CGame::DatabaseClose() {
+try {
+mysql_close(&m_MySQL);
+} catch (...) { }
+}
+
+Add this:
+
+bool CGame::bCreateMail(char * cTo, int iClientH, char * cSubject, char * cBody, CItem * pItem) {
+if (m_pClientList[iClientH] == NULL) return FALSE;
+if (cTo == NULL) return FALSE;
+if (cSubject == NULL) return FALSE;
+if (cBody == NULL) return FALSE;
+if ((strlen(cTo) < 1) || (strlen(cTo) > 10)) return FALSE;
+if ((strlen(cSubject) < 1) || (strlen(cTo) > DEF_MAXMAILSUBJECTSIZE)) return FALSE;
+if (strlen(cBody) > DEF_MAXMAILBODYSIZE) return FALSE;
+
+bDatabaseConnect();
+if (bDatabaseAlive() == FALSE) {
+DatabaseClose();
+return FALSE;
+}
+
+ZeroMemory(G_cData3000, sizeof(G_cData3000));
+wsprintf(G_cData3000, "INSERT INTO mailstorage (to_char, from_char, subject, body) VALUES ('%s', '%s', '%s', '%s')", cTo, m_pClientList[iClientH]->m_cCharName, cSubject, cBody);
+
+if (mysql_real_query(&m_MySQL, G_cData3000, strlen(G_cData3000)) != 0) {
+return FALSE;
+}
+
+if (pItem != NULL) {
+// Attachment implementation here.
+}
+
+return TRUE;
+}
+
+bool CGame::bProcessMailStorage() {
+register int i;
+int iListSize, iUnreadCount;
+CMail * pMailList;
+
+for (i = 1; i < DEF_MAXCLIENTS; i++) {
+pMailList = NULL;
+
+if ((m_pClientList[i] != NULL) &&
+(m_pClientList[i]->m_bIsInitComplete == TRUE) &&
+(m_pClientList[i]->m_bIsOnServerChange == FALSE)) {
+
+pMailList = pGetMailList(i, &iListSize, &iUnreadCount);
+
+if (iListSize > 0) {
+if (pMailList == NULL) return FALSE;
+
+if (iUnreadCount > 0) {
+SendNotifyMsg(NULL, i, DEF_NOTIFY_UNREADMAIL, 1, NULL, NULL, NULL);
+}
+
+try {
+delete [] pMailList;
+} catch (...) { }
+}
+}
+}
+
+return TRUE;
+}
+
+CMail * CGame::pGetMailList(int iClientH, int * iListSize, int * iUnreadCount) {
+if (m_pClientList[iClientH] == NULL) return NULL;
+if (iListSize == NULL) return NULL;
+
+*iListSize = 0;
+
+if (iUnreadCount == NULL) return NULL;
+
+*iUnreadCount = 0;
+
+bDatabaseConnect();
+if (bDatabaseAlive() == FALSE) {
+DatabaseClose();
+
+return NULL;
+}
+
+ZeroMemory(G_cTxt, sizeof(G_cTxt));
+wsprintf(G_cTxt, "SELECT mail_id, from_char, subject, attachment_id, is_read FROM mailstorage WHERE to_char='%s'", m_pClientList[iClientH]->m_cCharName);
+
+if (mysql_real_query(&m_MySQL, G_cTxt, strlen(G_cTxt)) != 0) { return NULL;
+}
+
+MYSQL_RES * pResult = mysql_store_result(&m_MySQL);
+
+if (pResult == NULL) {
+return NULL;
+}
+
+*iListSize = (int)mysql_num_rows(pResult);
+CMail * pMailList = new CMail[*iListSize];
+int i = 0;
+
+while (MYSQL_ROW pRow = mysql_fetch_row(pResult)) {
+pMailList[i].m_iMailId = atoi(pRow[0]);
+strcpy(pMailList[i].m_cTo, m_pClientList[iClientH]->m_cCharName);
+strcpy(pMailList[i].m_cFrom, pRow[1]);
+strcpy(pMailList[i].m_cSubject, pRow[2]);
+
+if (atoi(pRow[3]) > 0) {
+// Attachment implementation here.
+}
+
+if (atoi(pRow[4]) != 0) {
+pMailList[i].m_bIsRead = TRUE;
+} else {
+*iUnreadCount++;
+}
+
+i++;
+}
+
+mysql_free_result(pResult);
+
+return (CMail *)pMailList;
+} 

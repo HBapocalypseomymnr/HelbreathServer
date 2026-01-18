@@ -1,0 +1,95 @@
+There was som specific msg in v 2.24b sources for that, but I wasn't able do have this work (maybe today I could but no time to investigate now), so I wrote my own system:
+
+CODE  
+
+void CGame::SendThunder(int iClient, short sX, short sY, short sV3, short sV4)
+{ char  * cp, cData[100];
+DWORD * dwp;
+WORD * wp;
+short * sp;
+int iRet;
+ZeroMemory(cData, sizeof(cData)); 
+dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+*dwp = MSGID_EVENT_COMMON;
+wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+*wp  = DEF_COMMONTYPE_MAGIC; 
+cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);
+sp  = (short *)cp;
+*sp = sX;
+cp += 2;
+sp  = (short *)cp;
+*sp = sY;
+cp += 2;
+sp  = (short *)cp;
+*sp = sX;
+cp += 2;
+sp  = (short *)cp;
+*sp = sY;
+cp += 2;
+sp  = (short *)cp;
+*sp = sV3;
+cp += 2;
+sp  = (short *)cp;
+*sp = sV4;
+cp += 2;
+iRet = m_pClientList[iClient]->m_pXSock->iSendMsg(cData, 18);
+}
+void CGame::DoAbaddonThunderDamageHandler(char cMapIndex)
+{ int iResult;
+register int i;
+//if (m_bIsApocalypseMode != TRUE) return;
+if (iDice(1, 15) != 13) return;
+DWORD dwTime = timeGetTime();
+for (i = 0; i < DEF_MAXCLIENTS; i++) 
+{ if (m_pClientList[i] != NULL) 
+ { //if (m_pClientList[i]->m_iAdminUserLevel > 0) return;
+  if ((memcmp(m_pClientList[i]->m_cMapName, "abaddon", 7) == 0) 
+   || (m_pClientList[i]->m_cMapIndex == cMapIndex))
+  { switch (iDice(1,4)) {
+   case 1:
+    SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 203, m_pClientList[i]->m_sType);
+    SendThunder(i, m_pClientList[i]->m_sX-iDice(1,7), m_pClientList[i]->m_sY+iDice(1,5), 161, m_pClientList[i]->m_sType);
+    break;
+   case 2:
+    SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 202, m_pClientList[i]->m_sType);
+    SendThunder(i, m_pClientList[i]->m_sX+iDice(1,7), m_pClientList[i]->m_sY-iDice(1,5), 161, m_pClientList[i]->m_sType);
+    break;
+   case 3:
+    SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 201, m_pClientList[i]->m_sType);
+    SendThunder(i, m_pClientList[i]->m_sX+iDice(1,7), m_pClientList[i]->m_sY+5-iDice(1,9), 161, m_pClientList[i]->m_sType);
+    break;
+   case 4:
+    SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 200, m_pClientList[i]->m_sType);
+    SendThunder(i, m_pClientList[i]->m_sX+5-iDice(1,9), m_pClientList[i]->m_sY+7-iDice(1,4), 161, m_pClientList[i]->m_sType);
+    break;
+   }    
+   if (m_pClientList[i]->m_iAdminUserLevel > 0) continue; 
+  
+   iResult = iDice(1,20) + 100;
+    if (  (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
+    || (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5)) 
+   {   iResult /= 2;
+   }
+   // Not for v3.51: SendNotifyMsg(NULL, i, DEF_NOTIFY_0BE5, NULL, NULL, NULL, NULL);
+   m_pClientList[i]->m_iHP -= iResult;
+   if (m_pClientList[i]->m_iHP <= 0) 
+   { ClientKilledHandler(i, NULL, NULL, iResult);
+   }else if (iResult > 0) 
+   { m_pClientList[i]->m_dwLastDamageTime = dwTime;     
+    SendNotifyMsg(NULL, i, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+    SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, NULL, NULL);
+    if (m_pClientList[i]->m_bSkillUsingStatus[19] != TRUE) 
+    { m_pMapList[m_pClientList[i]->m_cMapIndex]->ClearOwner(0, i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
+     m_pMapList[m_pClientList[i]->m_cMapIndex]->SetOwner(i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
+    }
+    if (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) 
+    {   SendNotifyMsg(NULL, i, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, 2, NULL, NULL);
+     bRemoveFromDelayEventList(i, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);      
+     m_pClientList[i]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = NULL;
+} } } } }
+} 
+
+
+Function called on Time (weather timer with of course an Apoc running test !
+
+As always this code needs declarations and may need some little things in other parts of the source, Clip'n Paste-rs, learn C++ first ! 

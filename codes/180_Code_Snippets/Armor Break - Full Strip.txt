@@ -1,0 +1,140 @@
+Author: Jehovah
+
+In Game.cpp (HGsource) find:
+
+Code: Select all
+    case DEF_MAGICTYPE_DAMAGE_AREA_ARMOR_BREAK:
+
+
+
+Replace that function with:
+
+Code: Select all
+    case DEF_MAGICTYPE_DAMAGE_AREA_ARMOR_BREAK:
+        for (iy = dY - m_pMagicConfigList[sType]->m_sValue3; iy <= dY + m_pMagicConfigList[sType]->m_sValue3; iy++)
+         for (ix = dX - m_pMagicConfigList[sType]->m_sValue2; ix <= dX + m_pMagicConfigList[sType]->m_sValue2; ix++) {
+          m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+          if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
+           Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
+           ArmorLifeDecrement(iClientH,sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue10);
+          }
+
+          m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
+          if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
+           (m_pClientList[sOwnerH]->m_iHP > 0) ) {
+            if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
+             Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
+             ArmorLifeDecrement(iClientH,sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue10);
+            }
+           }
+         }
+         break;
+
+
+
+Now also in Game.cpp find function:
+
+Code: Select all
+    void CGame::ArmorLifeDecrement(int iAttackerH, int iTargetH, char cOwnerType, int iValue)
+
+
+
+Replace the old function with:
+
+Code: Select all
+    // Full Armor Break - Jehovah
+    void CGame::ArmorLifeDecrement(int iAttackerH, int iTargetH, char cOwnerType, int iValue)
+    {
+       int iTemp;
+
+       if (m_pClientList[iAttackerH] == NULL) return;
+       switch (cOwnerType) {
+       case DEF_OWNERTYPE_PLAYER:
+        if (m_pClientList[iTargetH] == NULL) return;
+        break;
+
+       case DEF_OWNERTYPE_NPC: return;
+       default: return;
+       }
+
+       if (m_pClientList[iAttackerH]->m_cSide == m_pClientList[iTargetH]->m_cSide) return;
+
+       iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
+       if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) {
+        if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
+         ReleaseItemHandler(iTargetH, iTemp, TRUE);
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+
+        if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+         ReleaseItemHandler(iTargetH, iTemp, TRUE); 
+        }
+       }
+
+       iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
+       if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) {
+
+
+        if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
+         ReleaseItemHandler(iTargetH, iTemp, TRUE);
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+
+        if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+         ReleaseItemHandler(iTargetH, iTemp, TRUE); 
+        }
+       }
+
+       iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS];
+       if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) {
+
+        if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
+         ReleaseItemHandler(iTargetH, iTemp, TRUE);
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+
+        if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+         ReleaseItemHandler(iTargetH, iTemp, TRUE); 
+        }
+       }
+
+       iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
+       if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) {
+
+        if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
+         ReleaseItemHandler(iTargetH, iTemp, TRUE);
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+
+        if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+         ReleaseItemHandler(iTargetH, iTemp, TRUE); 
+        }
+       }
+
+       iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD];
+       if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) {
+
+        if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
+         ReleaseItemHandler(iTargetH, iTemp, TRUE);
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+
+        if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
+         m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
+         SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);
+         ReleaseItemHandler(iTargetH, iTemp, TRUE); 
+        }
+       }
+    }
+
+
+
+(This will be full armor strip + loss of endurance, Hope i could be some help )

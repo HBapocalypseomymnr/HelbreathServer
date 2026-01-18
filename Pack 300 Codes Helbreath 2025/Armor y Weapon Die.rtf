@@ -1,0 +1,57 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 [CODE] ArmorDye y WeaponDye!!!\par
+Buscar en Game.CCP en el HGServer:\par
+\par
+\par
+C\'f3digo:\par
+case DEF_ITEMEFFECTTYPE_ARMORDYE:\par
+Agregar despues del Break\par
+\par
+\par
+\par
+C\'f3digo:\par
+case DEF_ITEMEFFECTTYPE_WEAPONDYE:if ((sDestItemID >= 0) && (sDestItemID < DEF_MAXITEMS)) \{ if (m_pClientList[ iClientH ]->m_pItemList[sDestItemID] != NULL) \{  if (m_pClientList[ iClientH ]->m_pItemList[sDestItemID]->m_cCategory == 1) \{   m_pClientList[ iClientH ]->m_pItemList[sDestItemID]->m_cItemColor = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;   SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMCOLORCHANGE, sDestItemID, m_pClientList[iClientH]->m_pItemList[sDestItemID]->m_cItemColor, NULL, NULL);   return TRUE;  \}  else \{   SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMCOLORCHANGE, sDestItemID, -1, NULL, NULL);   return FALSE;  \} \}\}\par
+Item.H\par
+\par
+Buscar\par
+\par
+\par
+\par
+C\'f3digo:\par
+DEF_ITEMEFFECTTYPE_ARMORDYE\par
+Agregar Abajo\par
+\par
+\par
+C\'f3digo:\par
+\par
+#define DEF_ITEMEFFECTTYPE_WEAPONDYE  35\par
+\par
+\par
+En el game.cpp del cliente:\par
+\par
+Reemplaza esto:\par
+\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  70,  70,  80), &m_wWR[1], &m_wWG[1], &m_wWB[1]); // Light-blue    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  70,  70,  80), &m_wWR[2], &m_wWG[2], &m_wWB[2]); // light-blue    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  70,  70,  80), &m_wWR[3], &m_wWG[3], &m_wWB[3]); // light-blue    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  70, 100,  70), &m_wWR[4], &m_wWG[4], &m_wWB[4]); // Green    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 130,  90,  10), &m_wWR[5], &m_wWG[5], &m_wWB[5]); // Critical    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  42,  53, 111), &m_wWR[6], &m_wWG[6], &m_wWB[6]); // Heavy-blue    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 145, 145, 145), &m_wWR[7], &m_wWG[7], &m_wWB[7]); // White    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 120, 100, 120), &m_wWR[8], &m_wWG[8], &m_wWB[8]); // Violet    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  75,  10,  10), &m_wWR[9], &m_wWG[9], &m_wWB[9]); // Heavy-Red    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 135, 104,  30), &m_wR[10], &m_wG[10], &m_wB[10]);    // Gold, buggy    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 255, 255, 255), &m_wWR[11], &m_wWG[11], &m_wWB[11]); // Blanco    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 200/2,  200/2,  200/2),  &m_wR[0], &m_wG[0], &m_wB[0]);    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0x50/2, 0x50/2, 0xC0/2),  &m_wR[1], &m_wG[1], &m_wB[1]); // Indigo Blue    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    79,     79,     62),  &m_wR[2], &m_wG[2], &m_wB[2]); // Custom-Weapon Color    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(   135,    104,     30),  &m_wR[3], &m_wG[3], &m_wB[3]); // Gold    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 255/2,   36/2,      0),  &m_wR[4], &m_wG[4], &m_wB[4]); // Crimson    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    10,     60,     10),  &m_wR[5], &m_wG[5], &m_wB[5]); // Green    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0x50/2, 0x50/2, 0x50/2),  &m_wR[6], &m_wG[6], &m_wB[6]); // Gray    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0x5F/2, 0x9E/2, 0xA0/2),  &m_wR[7], &m_wG[7], &m_wB[7]); // Aqua    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0xFF/2, 0x69/2, 0xB4/2),  &m_wR[8], &m_wG[8], &m_wB[8]); // Pink    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    90,     60,     90),  &m_wR[9], &m_wG[9], &m_wB[9]); // Violet    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(     0,     35,     60),  &m_wR[10], &m_wG[10], &m_wB[10]); // Blue    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0xD2/2, 0xB4/2, 0x8C/2),  &m_wR[11], &m_wG[11], &m_wB[11]); // Tan    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0xBD/2, 0xB7/2, 0x6B/2),  &m_wR[12], &m_wG[12], &m_wB[12]); // Khaki    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    85,     85,      8),  &m_wR[13], &m_wG[13], &m_wB[13]); // Yellow    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    75,     10,     10),  &m_wR[14], &m_wG[14], &m_wB[14]); // Red    m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  238,   233,   233),  &m_wR[15], &m_wG[15], &m_wB[15]); // Black\par
+\par
+Por esto:\par
+\par
+\par
+\par
+C\'f3digo:\par
+_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  255,  127,  0), &m_wWR[12], &m_wWG[12], &m_wWB[12]); // Orangem_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  205,  205,  0), &m_wWR[13], &m_wWG[13], &m_wWB[13]); // Yellowm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  178,  34,  34), &m_wWR[4], &m_wWG[4], &m_wWB[4]); // Crimson-Redm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  0, 100,  0), &m_wWR[11], &m_wWG[11], &m_wWB[11]); // Greenm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 130,  90,  10), &m_wWR[3], &m_wWG[3], &m_wWB[3]); // Criticalm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  16,  78, 139), &m_wWR[10], &m_wWG[10], &m_wWB[10]); // Heavy-bluem_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 238, 233, 233), &m_wWR[15], &m_wWG[15], &m_wWB[15]); // Whitem_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 123, 104, 238), &m_wWR[9], &m_wWG[9], &m_wWB[9]); // Violetm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  139,  58,  58), &m_wWR[14], &m_wWG[14], &m_wWB[14]); // Heavy-Redm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 135, 104,  30), &m_wR[6], &m_wG[6], &m_wB[6]); // Blackm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 255, 106,  106), &m_wWR[8], &m_wWG[8], &m_wWB[8]); // Peachm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 139, 69,  19), &m_wWR[2], &m_wWG[2], &m_wWB[2]); // Bronzem_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 108, 166,  205), &m_wWR[7], &m_wWG[7], &m_wWB[7]); // Aquam_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 10, 60,  70), &m_wWR[5], &m_wWG[5], &m_wWB[5]); // TealGreenm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 176, 48, 96), &m_wWR[1], &m_wWG[1], &m_wWB[1]); // Pinkm_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 200/2,  200/2,  200/2),  &m_wR[0], &m_wG[0], &m_wB[0]);m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(176, 48, 96),  &m_wR[1], &m_wG[1], &m_wB[1]); // (Pink)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(   139,     69,     19),  &m_wR[2], &m_wG[2], &m_wB[2]); // (Bronze)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(   145,    104,     30),  &m_wR[3], &m_wG[3], &m_wB[3]); // (Gold)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 178,   34,      34),  &m_wR[4], &m_wG[4], &m_wB[4]); // (Crimson-Red)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    10,     60,     70),  &m_wR[5], &m_wG[5], &m_wB[5]); // (TealGreen)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(28, 28, 28),  &m_wR[6], &m_wG[6], &m_wB[6]); // (Black)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    108,    166,     205),  &m_wR[7], &m_wG[7], &m_wB[7]); // (Aqua)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(255, 106, 106),  &m_wR[8], &m_wG[8], &m_wB[8]); // (Peach)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    123,     104,     238),  &m_wR[9], &m_wG[9], &m_wB[9]); // (Violet)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(     16,     78,     139),  &m_wR[10], &m_wG[10], &m_wB[10]); // (Blue)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0, 100, 0),  &m_wR[11], &m_wG[11], &m_wB[11]); // (Green)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(255, 127, 0),  &m_wR[12], &m_wG[12], &m_wB[12]); // (Orange)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    205,     205,      0),  &m_wR[13], &m_wG[13], &m_wB[13]); // (Yellow)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    139,     58,     58),  &m_wR[14], &m_wG[14], &m_wB[14]); // (Red)m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  238,   233,   233),  &m_wR[15], &m_wG[15], &m_wB[15]); // (White)\par
+Ahora en items3.cfg agregar (si tienes armor dyes, reemplazalos):\par
+\par
+\par
+\par
+C\'f3digo:\par
+Item = 930 ArmorDye(Green) 11 0 32 11 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 11Item = 931 ArmorDye(CrimsonRed) 11 0 32 4 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 4Item = 932 ArmorDye(Gold) 11 0 32 3 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 3Item = 933 ArmorDye(Aqua) 11 0 32 7 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 7Item = 934 ArmorDye(Pink) 11 0 32 1 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 1Item = 935 ArmorDye(Violet) 11 0 32 9 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 9Item = 936 ArmorDye(Blue) 11 0 32 10 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 10Item = 937 ArmorDye(Red) 11 0 32 14 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 14Item = 938 ArmorDye(Yellow) 11 0 32 13 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 13Item = 939 ArmorDye(White) 11 0 32 15 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 15Item = 940 ArmorDye(Orange) 11 0 32 12 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 12Item = 941 ArmorDye(Peach) 11 0 32 8 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 8Item = 942 ArmorDye(LightGreen) 11 0 32 5 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 5Item = 943 ArmorDye(Black) 11 0 32 6 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 6Item = 944 ArmorDye(Bronze) 11 0 32 2 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 2Item = 945 ArmorDye(Original) 11 0 32 0 0 0 0 0 0 1 0 6 73 -100 1 -1 0 0 0 0 0 -1 42 0Item = 970 WeaponDye(Orange) 11 0 35 12 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 12Item = 971 WeaponDye(Yellow) 11 0 35 13 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 13Item = 972 WeaponDye(CrimsonRed) 11 0 35 4 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 14Item = 973 WeaponDye(Green) 11 0 35 11 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 4Item = 974 WeaponDye(Gold) 11 0 35 3 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 2Item = 975 WeaponDye(Blue) 11 0 35 10 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 6Item = 976 WeaponDye(White) 11 0 35 15 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 15Item = 977 WeaponDye(Violet) 11 0 35 9 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 9Item = 978 WeaponDye(Red) 11 0 35 4 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 8Item = 979 WeaponDye(Black) 11 0 35 6 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 10Item = 980 WeaponDye(Peach) 11 0 35 8 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 11Item = 981 WeaponDye(Bronze) 11 0 35 2 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 5Item = 982 WeaponDye(Aqua) 11 0 35 7 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 7Item = 983 WeaponDye(LightGreen) 11 0 35 5 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 3Item = 984 WeaponDye(Pink) 11 0 35 1 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 1Item = 985 WeaponDye(Original) 11 0 35 0 0 0 0 0 0 1 0 6 73 -110 1 -1 0 0 0 0 0 -1 42 0\par
+No se de quien es el code XD! \par
+Aporte el code nada mas :)\par
+\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?1789-CODE-ArmorDye-y-WeaponDye!!!#ixzz2ET0kCe3I\par
+}
+ 

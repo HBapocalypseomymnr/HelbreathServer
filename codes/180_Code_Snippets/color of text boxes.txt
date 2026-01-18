@@ -1,0 +1,33 @@
+Change color of textboxes
+author - Orkl
+
+
+
+This code changes the color cheme of all text boxes inside the game
+
+
+->>Game.cpp
+
+FUNCTION:
+
+void CGame::DrawDialogBox_Text(short msX, short msY, short msZ, char cLB)
+
+FIND
+
+switch (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg[0]) {
+case '_': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 255,255,255); break;
+case ';': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 4, 0, 50); break;
+default: PutAlignedString(sX +24, sX +236, sY + 50 +i*13, m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg, 45,25,25); break;
+}
+}
+else PutAlignedString(sX +24, sX +236, sY + 50 +i*13, m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg, 0,0,0);
+
+The 3 numbers at the end of each PutAlignedString statement is the text's colour value (in RGB)..
+
+Example: 255,255,255 = white, 0,0,0 = black, 255,0,0 = red, 0,255,0 = green, 0,0,255 = blue.
+
+Change the values to what you want.
+
+Note - it will affect all "text boxes", not just the noticement messages. So the F1 menu will be the same colour scheme (I think).
+
+I haven't tested it, but its what a quick Control+F got me. 

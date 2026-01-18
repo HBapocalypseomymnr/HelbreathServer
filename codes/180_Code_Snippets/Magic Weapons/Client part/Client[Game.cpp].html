@@ -1,0 +1,218 @@
+<html>
+<!-- Date de création: 25/04/2006 -->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title>Magic Weapons - Client Side Edition [game.cpp]</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="author" content="version enregistrée">
+  <meta name="generator" content="WebExpert 6">
+<style type="text/css">
+<!--
+body {color: #003366; font: 10px verdana}
+
+.title {color: #FF0000; font: bold 18px verdana}
+
+.subtitle {color: #FF0000; font: bold italic 12px verdana}
+
+.code {color: #000000; font: 10px verdana}
+
+.text {color: #003366; font: italic 10px verdana}
+
+textarea {background: #CCCCFF; color: #003366; font: 10px verdana}
+
+a {color: #003366; font: bold italic 10px verdana; text-decoration: none}
+a:hover {color: #6666FF; font: bold italic 10px verdana; text-decoration: none}
+
+
+/*   Fin de la section de style g&#1081;n&#1081;r&#1081; par WebExpert le 25/04/2006 08:35:18  
+ Fin de la section de style g&#1081;n&#1081;r&#1081; par WebExpert le 25/04/2006 08:53:35  */
+/* Fin de la section de style g&#1081;n&#1081;r&#1081; par WebExpert le 25/04/2006 09:08:01 */
+-->
+</style>
+</head>
+<body bgcolor="ccccff" text="000000" link="0000ff" vlink="800080" alink="ff0000">	
+<br><br>
+<table width="70%" border="1" cellpadding="5" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6">
+	<tr>
+		<td><b><font color="#FF0000" class="title"><div align="center">Magic Weapons</div></font></b></td>
+	</tr>
+</table>
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6">
+	<tr>
+		<td><div style="text-align: justify" class="text"><b>
+		<font color="RED">Coder :</font> Diuuude<br>
+		<font color="RED">eMail :</font> N/A<br>
+		<font color="RED">Website :</font> <a href="http://www.technohell.net" target="_blank">Technohell.net</a><br>
+		<font color="RED">Version :</font> 1.1.0<br>
+		<font color="RED">Steps :</font> 4<br>
+		<font color="RED">Difficulty :</font> **<br><br>
+		<font color="RED">NOTE :</font> Take care, you have to edit two funcs with the same name !! Be sure that you edited both !!
+		</b> 
+		</td>
+	</tr>
+</table>		  
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 1 : In function GetItemName</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+if ((pItem->m_dwAttribute & 0x00F0F000) != 0)
+{	m_bIsSpecial = TRUE;
+	dwType1  = (pItem->m_dwAttribute & 0x00F00000) >> 20;
+	dwValue1 = (pItem->m_dwAttribute & 0x000F0000) >> 16;
+	dwType2  = (pItem->m_dwAttribute & 0x0000F000) >> 12;
+	dwValue2 = (pItem->m_dwAttribute & 0x00000F00) >> 8;
+	if (dwType1 != 0)
+	{	ZeroMemory(cTxt, sizeof(cTxt));
+		switch (dwType1) {
+		case 1: strcpy(cTxt, GET_ITEM_NAME3);   break;
+		case 2: strcpy(cTxt, GET_ITEM_NAME4);   break;
+		case 3: strcpy(cTxt, GET_ITEM_NAME5);   break;
+		case 4: break;
+		case 5: strcpy(cTxt, GET_ITEM_NAME6);   break;
+		case 6: strcpy(cTxt, GET_ITEM_NAME7);   break;
+		case 7: strcpy(cTxt, GET_ITEM_NAME8);   break;
+		case 8: strcpy(cTxt, GET_ITEM_NAME9);   break;
+		case 9: strcpy(cTxt, GET_ITEM_NAME10);  break;
+		case 10: strcpy(cTxt, GET_ITEM_NAME11); break;
+		case 11: strcpy(cTxt, GET_ITEM_NAME12); break;
+		case 12: strcpy(cTxt, GET_ITEM_NAME13); break;
+		}        
+        </textarea>
+		<br><br><b>Replace it with :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+if ((pItem->m_dwAttribute & 0x00F0F000) != 0)
+{	m_bIsSpecial = TRUE;
+	dwType1  = (pItem->m_dwAttribute & 0x00F00000) >> 20;
+	dwValue1 = (pItem->m_dwAttribute & 0x000F0000) >> 16;
+	dwType2  = (pItem->m_dwAttribute & 0x0000F000) >> 12;
+	dwValue2 = (pItem->m_dwAttribute & 0x00000F00) >> 8;
+	if (dwType1 != 0)
+	{	ZeroMemory(cTxt, sizeof(cTxt));
+		switch (dwType1) {
+		case 1: strcpy(cTxt, GET_ITEM_NAME3);   break;
+		case 2: strcpy(cTxt, GET_ITEM_NAME4);   break;
+		case 3: strcpy(cTxt, GET_ITEM_NAME5);   break;
+		case 4: break;
+		case 5: strcpy(cTxt, GET_ITEM_NAME6);   break;
+		case 6: strcpy(cTxt, GET_ITEM_NAME7);   break;
+		case 7: strcpy(cTxt, GET_ITEM_NAME8);   break;
+		case 8: strcpy(cTxt, GET_ITEM_NAME9);   break;
+		case 9: strcpy(cTxt, GET_ITEM_NAME10);  break;
+		case 10: strcpy(cTxt, GET_ITEM_NAME11); break;
+		case 11: strcpy(cTxt, GET_ITEM_NAME12); break;
+		case 12: strcpy(cTxt, GET_ITEM_NAME13); break;
+		case 15: strcpy(cTxt, GET_ITEM_NAME50); break;
+		}        
+        </textarea>
+		</td>
+	</tr>
+</table>  
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 2 : In function GetItemName</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+ZeroMemory(cTxt, sizeof(cTxt));
+switch (dwType1) {
+case 1: wsprintf(cTxt, GET_ITEM_NAME14, dwValue1); break;
+case 2: wsprintf(cTxt, GET_ITEM_NAME15, dwValue1*5); break;
+case 3: break;
+case 4: break;
+case 5: strcpy(cTxt, GET_ITEM_NAME16); break;
+case 6: wsprintf(cTxt, GET_ITEM_NAME17, dwValue1*4); break;
+case 7: strcpy(cTxt, GET_ITEM_NAME18); break;
+case 8: wsprintf(cTxt, GET_ITEM_NAME19, dwValue1*7); break;
+case 9: strcpy(cTxt, GET_ITEM_NAME20); break;
+case 10: wsprintf(cTxt, GET_ITEM_NAME21, dwValue1*3); break;
+case 11: wsprintf(cTxt, GET_ITEM_NAME22, dwValue1); break;
+case 12: wsprintf(cTxt, GET_ITEM_NAME23, dwValue1); break;
+}    
+        </textarea>
+		<br><br><b>Right Before, Add :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+ZeroMemory(cTxt, sizeof(cTxt));
+switch (dwType1) {
+case 1: wsprintf(cTxt, GET_ITEM_NAME14, dwValue1); break;
+case 2: wsprintf(cTxt, GET_ITEM_NAME15, dwValue1*5); break;
+case 3: break;
+case 4: break;
+case 5: strcpy(cTxt, GET_ITEM_NAME16); break;
+case 6: wsprintf(cTxt, GET_ITEM_NAME17, dwValue1*4); break;
+case 7: strcpy(cTxt, GET_ITEM_NAME18); break;
+case 8: wsprintf(cTxt, GET_ITEM_NAME19, dwValue1*7); break;
+case 9: strcpy(cTxt, GET_ITEM_NAME20); break;
+case 10: wsprintf(cTxt, GET_ITEM_NAME21, dwValue1*3); break;
+case 11: wsprintf(cTxt, GET_ITEM_NAME22, dwValue1); break;
+case 12: wsprintf(cTxt, GET_ITEM_NAME23, dwValue1); break;
+case 15:
+	switch(dwValue1){
+		case 1:
+			wsprintf(cTxt, GET_ITEM_NAME51, dwValue2*7); break;
+			break;
+		case 2:
+			wsprintf(cTxt, GET_ITEM_NAME52, dwValue2*7); break;
+			break;
+		case 3:
+			wsprintf(cTxt, GET_ITEM_NAME53, dwValue2*7); break;
+			break;
+		case 4:
+			wsprintf(cTxt, GET_ITEM_NAME54, dwValue2*7); break;
+			break;
+		case 5:
+			wsprintf(cTxt, GET_ITEM_NAME55, dwValue2*7); break;
+			break;
+		case 6:
+			wsprintf(cTxt, GET_ITEM_NAME56, dwValue2*7); break;
+			break;
+		case 7:
+			wsprintf(cTxt, GET_ITEM_NAME57, dwValue2*7); break;
+			break;
+		case 8:
+			wsprintf(cTxt, GET_ITEM_NAME58, dwValue2*7); break;
+			break;
+		case 9:
+			wsprintf(cTxt, GET_ITEM_NAME59, dwValue2*7); break;
+			break;
+		case 10:
+			wsprintf(cTxt, GET_ITEM_NAME60, dwValue2*7); break;
+			break;
+		case 11:
+			wsprintf(cTxt, GET_ITEM_NAME61, dwValue2*7); break;
+			break;
+		case 12:
+			wsprintf(cTxt, GET_ITEM_NAME62, dwValue2*7); break;
+			break;
+		case 13:
+			wsprintf(cTxt, GET_ITEM_NAME63, dwValue2*7); break;
+			break;
+		case 14:
+			wsprintf(cTxt, GET_ITEM_NAME64, dwValue2*7); break;
+			break;
+		case 15:
+			wsprintf(cTxt, GET_ITEM_NAME65, dwValue2*7); break;
+			break;
+		case 16:
+			wsprintf(cTxt, GET_ITEM_NAME66, dwValue2*7); break;
+			break;
+	}
+	break;
+}     
+        </textarea>
+		</td>
+	</tr>
+</table>
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 3 & 4</div></font></b>
+		<br><br>Do the same as Step 1 & 2 with the second GetItemName function.
+		</td>
+	</tr>
+</table>	
+</body>
+</html>

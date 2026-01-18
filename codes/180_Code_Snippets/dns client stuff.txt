@@ -1,0 +1,104 @@
+ Of folks, for your viewing pleasure, heres the code for connecting via a DNS instead of an ip address (ip address still works btw)
+i didnt actually code this myself i found a post on how to do it in an old client that u had to hex edit, heres how to do it on a newer client that uses the LOGIN.CFG
+
+Ok in Game.h just under
+CODE
+short m_sMonsterID;
+short m_sEventX, m_sEventY;
+
+add this right after:
+CODE
+void GetIPByDNS();
+
+char m_cLogServerAddrBuffer[100];
+
+next go to Game.cpp and find this,
+CODE
+BOOL CGame::bReadLoginConfigFile(char * cFn)
+
+
+scroll down a bit till u get to this
+CODE
+DEFAULT_IP:
+ZeroMemory(m_cLogServerAddr, sizeof(m_cLogServerAddr));
+strcpy(m_cLogServerAddr, DEF_SERVER_IP);
+m_iLogServerPort = DEF_SERVER_PORT;
+return TRUE;
+}
+
+right after it, add this :
+CODE
+void CGame::GetIPByDNS()
+{
+ZeroMemory(m_cLogServerAddr, sizeof(m_cLogServerAddr));
+if (m_cLogServerAddrBuffer[0] >= 65 && m_cLogServerAddrBuffer[0] <= 122) {
+char cDnsResult[40];
+struct hostent *host_entry;
+
+host_entry = gethostbyname(m_cLogServerAddrBuffer);
+if (host_entry == NULL){
+ MessageBox(m_hWnd, "Failed to get DNS entry for the logserver!", "ERROR1", MB_ICONEXCLAMATION | MB_OK);
+ _exit(0);
+}
+ZeroMemory(cDnsResult, sizeof(cDnsResult));
+wsprintf(cDnsResult, "%d.%d.%d.%d",
+( host_entry->h_addr_list[0][0] & 0x00ff ),
+( host_entry->h_addr_list[0][1] & 0x00ff ),
+( host_entry->h_addr_list[0][2] & 0x00ff ),
+( host_entry->h_addr_list[0][3] & 0x00ff ));
+
+strcpy(m_cLogServerAddr, cDnsResult);
+}
+else strcpy(m_cLogServerAddr, m_cLogServerAddrBuffer);
+}
+
+
+next you need to do a search for this:
+CODE
+m_pLSock = new class XSocket(m_hWnd, DEF_SOCKETBLOCKLIMIT);
+
+
+there will be a lot of these, right after each one add this:
+CODE
+GetIPByDNS();
+
+remember theres quite a few so search till u reach the end.
+
+ok thats all the new code, just a few small edits of existing code to go,
+go back up to the DEFAULT_IP: part i mentioned earlyer, and scroll up till you come to
+CODE
+   
+ZeroMemory(m_cLogServerAddr, sizeof (m_cLogServerAddr));
+   strcpy(m_cLogServerAddr, token);
+   cReadMode = 0;
+
+
+WARNING this is not the one directly under DEFAULT_IP it is above ,it will be in the log-server-address bit
+now u need to edit all three of those m_cLogServerAddr
+so they say m_cLogServerAddrBuffer
+
+your code will look like this:
+CODE
+   ZeroMemory(m_cLogServerAddrBuffer, sizeof(m_cLogServerAddrBuffer));
+   strcpy(m_cLogServerAddrBuffer, token);
+   cReadMode = 0;
+
+
+ok next look about 5 or 6 lines above the code above and you will see if (strlen(token) > with a value, prolly 15 if (strlen(token) > 15
+you will need to make this value larger i suddgest about 30
+if (strlen(token) > 30
+
+and last but not least do a search for
+CODE
+char m_cLogServerAddr
+
+
+you should find one near the bottom of the file, this also has a value like char m_cLogServerAddr[15]; u need to edit whatever this value to about 30 as well
+
+both these values are so that the client will actually remember a long http:// address, so bear in mind if yours is really long you will need to increase them a little more
+
+and thats it all done, you should now be able to just wack either an ip or a http:// address into LOGIN.cfg and away you go
+
+hope this all made sence to the less experienced of u smile.gif
+
+PS any address that works in internet explorer will alos work in LOGIN.CFG it doesnt have to be http:// it can be whatever as long as it works in internet explorer

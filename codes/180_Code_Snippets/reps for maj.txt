@@ -1,0 +1,37 @@
+/getreps for majestic points
+author - Kiruku
+
+
+
+This code allows players transform 1 majestic point to 10 reps up to 10000 (you can change the cost if you arent a "copypaster"
+
+Find (in Game.cpp)
+if (memcmp(cp, "/summonall ", 11) == 0) {
+AdminOrder_SummonAll(iClientH, cp, dwMsgSize - 21);
+return;
+}
+
+After add
+
+if (memcmp(cp, "/getreps",8) == 0) {
+PlayerOrder_GetRep(iClientH);
+return;
+
+
+}
+
+At the end of game.cpp add:
+void CGame::PlayerOrder_GetRep(int iClientH) {
+{
+if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft > 0) {
+m_pClientList[iClientH]->m_iRating += 10;
+m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= 1;
+}
+}
+}
+
+Somewhere in Game.h add:
+//Get Reps By Kiruku
+void PlayerOrder_GetRep(int iClientH);
+
+

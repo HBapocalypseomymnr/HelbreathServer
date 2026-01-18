@@ -1,0 +1,41 @@
+ Aprender manuales en cualquier lugar
+Como dice el titulo, con este code podras aprender manuales de magias en cualquier lugar.
+
+En los src del Hg, en Item.h, buscar:
+C�digo:
+#define DEF_ITEMEFFECTTYPE_DYE				17
+y justo abajo agregar:
+C�digo:
+#define DEF_ITEMEFFECTTYPE_STUDYMAGIC		18
+luego en el Game.cpp dentro de la funcion "UseItemHandler", buscar:
+
+C�digo:
+case DEF_ITEMEFFECTTYPE_STUDYSKILL:
+			// ±â¼úÀ» ¹è¿î´Ù.	
+			iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
+			iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
+			iSEV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1;
+			// iV1Àº ¹è¿ï Skill ¹øÈ£. iV2´Â ±â¼ú ¼öÁØ, iSEV1Àº »ç¿ëÀÚ Á¤ÀÇ ±â¼ú ¼öÁØ(¿ì¼±¼øÀ§) 
+			if (iSEV1 == 0) {
+				// »ç¿ëÀÚ Á¤ÀÇ ±â¼ú¼öÁØÀÌ 0ÀÌ¶ó¸é Ç¥ÁØ ±â¼ú¼öÁØ¿¡ µû¶ó ±â¼úÀ» ¹è¿ì°Ô µÈ´Ù. 
+				TrainSkillResponse(TRUE, iClientH, iV1, iV2);
+			}
+			else {
+		   		TrainSkillResponse(TRUE, iClientH, iV1, iSEV1);
+			}
+			break;
+y justo abajo agregar este case:
+C�digo:
+case DEF_ITEMEFFECTTYPE_STUDYMAGIC:
+			// iV1Àº ¹è¿ï ¸¶¹ý ¹øÈ£.
+			iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
+			if (m_pMagicConfigList[iV1] != NULL) 
+				RequestStudyMagicHandler(iClientH, m_pMagicConfigList[iV1]->m_cName, FALSE);
+			break;
+en el item.cfg remplazar los manuales por estos:
+C�digo:
+Item = 853 E.S.W.Manual 3 0 18 96 0 0 0 0 0 0 0 6 91 -100 1 -1 0 0 0 0 0 -1 42 1
+Item = 857 I.M.CManual 3 0 18 83 0 0 0 0 0 0 0 6 91 -100 1 -1 0 0 0 0 0 -1 42 1
+By ?
+
+Con este code se despide mi cajon de los codes 50cent , hasta la proxima vez.

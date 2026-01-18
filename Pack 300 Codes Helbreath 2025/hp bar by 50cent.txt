@@ -1,0 +1,271 @@
+[CODE]HP BAR PARA MOBS (reposteado)
+
+
+ClientSRC:
+Game.cpp:
+Buscar:
+C?digo:
+
+Código:
+m_bShout   = TRUE;
+justo abajo agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+	Mandando = FALSE;
+Buscar y remplazar, varias veces:
+C?digo:
+
+Código:
+}else if( strlen(_tmp_cName) > 0 )
+	{	if( (_tmp_sOwnerType>=1) && (_tmp_sOwnerType<=6) ) DrawObjectName(sX, sY, _tmp_cName, _tmp_iStatus);
+		else DrawNpcName(sX, sY, _tmp_sOwnerType, _tmp_iStatus);
+	}
+por esto:
+C?digo:
+Código:
+}else if( strlen(_tmp_cName) > 0 )
+	{	if( (_tmp_sOwnerType>=1) && (_tmp_sOwnerType<=6) ) DrawObjectName(sX, sY, _tmp_cName, _tmp_iStatus);
+		//50Cent - HP Bar
+		else
+		{
+			DrawNpcName(sX, sY, _tmp_sOwnerType, _tmp_iStatus);
+            if(Mandando == FALSE)
+            {
+				bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETNPCHP, NULL, _tmp_wObjectID, NULL, NULL, NULL);
+                Mandando = TRUE;
+            }
+        }
+	}
+Buscar:
+C?digo:
+
+Código:
+case DEF_NOTIFY_RESPONSE_CREATENEWPARTY:
+		cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+		sp = (short *)cp;
+
+		if ((BOOL)*sp == TRUE)
+		{	m_stDialogBoxInfo[32].cMode = 2;
+		}else
+		{	m_stDialogBoxInfo[32].cMode = 3;
+		}
+		break;
+justo abajo agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+	case DEF_SEND_NPCHP:
+		cp = (char *)(pData     + DEF_INDEX2_MSGTYPE + 2);
+        ip = (int *)cp;
+        iNpcHP = *ip;
+		cp += 4;
+		ip = (int *)cp;
+		iNpcMaxHP = *ip;
+		cp += 4;
+        Mandando = FALSE;
+        break;
+Buscar:
+C?digo:
+
+Código:
+if( m_Misc.bCheckIMEString(cTxt2) ) PutString_SprFont3(sX, sY + 28, cTxt2, m_wR[13]*4, m_wG[13]*4, m_wB[13]*4, FALSE, 2);
+	else PutString2(sX, sY + 28, cTxt2, 240,240,70);
+y justo abajo agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+	if(iNpcMaxHP != 0)
+	{
+		wsprintf(cTxt2,"Health Status: %d / %d",iNpcHP, iNpcMaxHP);
+		PutString2(sX, sY+53, cTxt2, 255,255,30);
+		int iPorc = (iNpcHP * 100) / iNpcMaxHP;
+		for(int i = 0; i < iPorc; i++)
+		{
+			PutString_SprFont2(sX + i, sY + 60, ".", 255, 0, 0);
+			PutString_SprFont2(sX + i, sY + 61, ".", 255, 0, 0);
+			PutString_SprFont2(sX + i, sY + 62, ".", 255, 0, 0);
+		}
+	}
+Game.H:
+Agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+	BOOL Mandando;
+    int iNpcHP, iNpcMaxHP;
+Netmessage.H:
+Agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+#define DEF_COMMONTYPE_REQ_GETNPCHP					0x1F12
+#define DEF_SEND_NPCHP								0x1F13
+HGSRC:
+Game.cpp:
+Buscar:
+C?digo:
+
+Código:
+// New 15/05/2004
+	case DEF_COMMONTYPE_REQ_CREATESLATE:
+		ReqCreateSlateHandler(iClientH, pData);
+		break;
+justo abajo agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+	case DEF_COMMONTYPE_REQ_GETNPCHP:
+		if (((iV1 - 10000) == 0) || ((iV1 - 10000) >= DEF_MAXNPCS)) return;
+        if (m_pNpcList[iV1 - 10000] == NULL) return;
+		if(m_pNpcList[iV1 - 10000]->m_iHP > m_pNpcList[iV1 - 10000]->m_iMaxHP) m_pNpcList[iV1 - 10000]->m_iMaxHP = m_pNpcList[iV1 - 10000]->m_iHP;
+		SendNotifyMsg(NULL, iClientH, DEF_SEND_NPCHP, m_pNpcList[iV1 - 10000]->m_iHP, m_pNpcList[iV1 - 10000]->m_iMaxHP, NULL, NULL);
+		wsprintf(G_cTxt,"NpcHP: %d / %d",m_pNpcList[iV1 - 10000]->m_iHP, m_pNpcList[iV1 - 10000]->m_iMaxHP);
+		PutLogList(G_cTxt);
+		break;
+Buscar:
+C?digo:
+
+Código:
+case DEF_NOTIFY_NOMOREAGRICULTURE:
+	case DEF_NOTIFY_AGRICULTURESKILLLIMIT:
+	case DEF_NOTIFY_AGRICULTURENOAREA:
+		iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6);
+		break;
+justo abajo agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+	case DEF_SEND_NPCHP:
+		ip  = (int *)cp;
+        *ip = (int)sV1;
+        cp += 4;
+		ip  = (int *)cp;
+		*ip = (int)sV2;
+        cp += 4;
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 14);
+        break;
+Buscar:
+C?digo:
+
+Código:
+// v1.4 È®ÀÎÄÚµå
+			if (pNpc->m_iHP == 0) pNpc->m_iHP = 1;
+justo abajo agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+			pNpc->m_iMaxHP = pNpc->m_iHP;
+Netmessage.h:
+Agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+#define DEF_COMMONTYPE_REQ_GETNPCHP					0x1F12
+#define DEF_SEND_NPCHP								0x1F13
+Npc.h:
+Agregar:
+C?digo:
+
+Código:
+//50Cent - HP Bar
+	int m_iMaxHP;
+Respuesta rápida a este mensaje Responder    Citar Citar    Multi-Citar este mensaje      
+26/04/2011, 12:14 #2
+carlos
+Guest
+este no es el que esta full bug.!? que al agregarlo te llena el server de lag?
+Respuesta rápida a este mensaje Responder    Citar Citar    Multi-Citar este mensaje      
+26/04/2011, 15:21 #3
+SabbaT[GM]
+Guest
+Cita Iniciado por carlos  Ver mensaje
+este no es el que esta full bug.!? que al agregarlo te llena el server de lag?
+si.....................
+Respuesta rápida a este mensaje Responder    Citar Citar    Multi-Citar este mensaje      
+26/04/2011, 19:11 #4
+Sensation
+Guest
+...
+si 50cent lo borro es por algo... 
+deberian elimanarlo por derechos de autor.
+Respuesta rápida a este mensaje Responder    Citar Citar    Multi-Citar este mensaje      
+27/04/2011, 16:03 #5
+Kazzin
+Guest
+Cita Iniciado por Sensation  Ver mensaje
+si 50cent lo borro es por algo... 
+deberian elimanarlo por derechos de autor.
+opino lo mismo
+Respuesta rápida a este mensaje Responder    Citar Citar    Multi-Citar este mensaje      
+15/03/2015, 03:17 #6
+Centuu.-  Centuu.- está desconectado
+Administrador
+Mensajes
+23
+Post Thanks / Like 
+El código en sí esta bastante bien implementado, solo que pide constantemente información al HG sobre el resto de HP del Mob seleccionado...
+
+seems legit
+Imágenes adjuntadas Imágenes adjuntadas
+ 
+Respuesta rápida a este mensaje Responder    Citar Citar    Multi-Citar este mensaje      
+22/03/2015, 20:34 #7
+Centuu.-  Centuu.- está desconectado
+Administrador
+Mensajes
+23
+Post Thanks / Like 
+Código:
+            if(Mandando == FALSE)
+            {
+				bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETNPCHP, NULL, _tmp_wObjectID, NULL, NULL, NULL);
+                Mandando = TRUE;
+            }
+A esa parte reemplazenla por esta sola
+
+Código:
+bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETNPCHP, NULL, _tmp_wObjectID, NULL, NULL, NULL);
+
+Y a esto
+
+Código:
+//50Cent - HP Bar
+	if(iNpcMaxHP != 0)
+	{
+		wsprintf(cTxt2,"Health Status: %d / %d",iNpcHP, iNpcMaxHP);
+		PutString2(sX, sY+53, cTxt2, 255,255,30);
+		int iPorc = (iNpcHP * 100) / iNpcMaxHP;
+		for(int i = 0; i < iPorc; i++)
+		{
+			PutString_SprFont2(sX + i, sY + 60, ".", 255, 0, 0);
+			PutString_SprFont2(sX + i, sY + 61, ".", 255, 0, 0);
+			PutString_SprFont2(sX + i, sY + 62, ".", 255, 0, 0);
+		}
+	}
+Reemplazenlo asi
+
+Código:
+//50Cent - HP Bar
+	if(iNpcHP != 0 && iNpcMaxHP != 0)
+	{
+		wsprintf(cTxt2,"Health Status: %d / %d",iNpcHP, iNpcMaxHP);
+		PutString2(sX, sY+53, cTxt2, 255,255,30);
+		int iPorc = (iNpcHP * 100) / iNpcMaxHP;
+		for(int i = 0; i < iPorc; i++)
+		{
+			PutString_SprFont2(sX + i, sY + 60, ".", 255, 0, 0);
+			PutString_SprFont2(sX + i, sY + 61, ".", 255, 0, 0);
+			PutString_SprFont2(sX + i, sY + 62, ".", 255, 0, 0);
+		}
+	}
+Un pequeño arreglo que, después de matar a X cantidad de npc's, dejaba de mostrar la barra de hp.

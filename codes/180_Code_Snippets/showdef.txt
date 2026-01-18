@@ -1,0 +1,30 @@
+/showdef
+Author-Acidx
+
+
+
+here is my /showdef code that shows the player his total Defense including DR and his base Defense discluding DR...
+
+
+
+ok in chatmsghandler();
+add this
+
+if (memcmp(cp, "/showdef", 8) == 0) { PlayerOrder_ShowDefense(iClientH);
+return;
+Now in GAME.CPP add this new function
+
+void CGame::PlayerOrder_ShowDefense(int iClientH) {
+int iDef;
+char cDefenseMod[256];
+iDef = m_pClientList[iClientH]->m_iCustomItemValue_Defense + m_pClientList[iClientH]->m_iCustomItemValue_Defense;
+
+wsprintf(cDefenseMod ,"Common Defense: %d ", m_pClientList[iClientH]->m_iDefenseRatio);
+ShowClientMsg( iClientH , cDefenseMod);
+wsprintf(cDefenseMod ,"Total Defense: %d ", iDef);
+ShowClientMsg( iClientH , cDefenseMod );
+}
+
+Now in Game.H add this
+
+void PlayerOrder_ShowDefense(int iClientH);

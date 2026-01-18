@@ -1,0 +1,546 @@
+<html>
+<!-- Date de création: 25/04/2006 -->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title>Magic Weapons - Server Side Edition [game.cpp]</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="author" content="version enregistrée">
+  <meta name="generator" content="WebExpert 6">
+<style type="text/css">
+<!--
+body {color: #003366; font: 10px verdana}
+
+.title {color: #FF0000; font: bold 18px verdana}
+
+.subtitle {color: #FF0000; font: bold italic 12px verdana}
+
+.code {color: #000000; font: 10px verdana}
+
+.text {color: #003366; font: italic 10px verdana}
+
+textarea {background: #CCCCFF; color: #003366; font: 10px verdana}
+
+a {color: #003366; font: bold italic 10px verdana; text-decoration: none}
+a:hover {color: #6666FF; font: bold italic 10px verdana; text-decoration: none}
+
+
+/*   Fin de la section de style g&#1081;n&#1081;r&#1081; par WebExpert le 25/04/2006 08:35:18  
+ Fin de la section de style g&#1081;n&#1081;r&#1081; par WebExpert le 25/04/2006 08:53:35  */
+/* Fin de la section de style g&#1081;n&#1081;r&#1081; par WebExpert le 25/04/2006 09:08:01 */
+-->
+</style>
+</head>
+<body bgcolor="ccccff" text="000000" link="0000ff" vlink="800080" alink="ff0000">	
+<br><br>
+<table width="70%" border="1" cellpadding="5" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6">
+	<tr>
+		<td><b><font color="#FF0000" class="title"><div align="center">Magic Weapons</div></font></b></td>
+	</tr>
+</table>
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6">
+	<tr>
+		<td><div style="text-align: justify" class="text"><b>
+		<font color="RED">Coder :</font> Diuuude<br>
+		<font color="RED">eMail :</font> N/A<br>
+		<font color="RED">Website :</font> <a href="http://www.technohell.net" target="_blank">Technohell.net</a><br>
+		<font color="RED">Version :</font> 1.1.0<br>
+		<font color="RED">Steps :</font> 7<br>
+		<font color="RED">Difficulty :</font> ***
+		</b> 
+		</td>
+	</tr>
+</table>		  
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 1 : In function iCalculateAttackEffect</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+m_pClientList[sTargetH]->m_iHP -= iAP_SM;
+if (m_pClientList[sTargetH]->m_iHP <= 0) {
+	if (cAttackerType == DEF_OWNERTYPE_PLAYER)
+	bAnalyzeCriminalAction(sAttackerH, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
+	ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iAP_SM);	
+	bKilled     = TRUE;
+	iKilledDice = m_pClientList[sTargetH]->m_iLevel;
+}          
+        </textarea>
+		<br><br><b>Right Before, Add :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+	// Magic Weapons - Add Magical Damages
+	if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != NULL)) {
+		double iInitial_AP_SM, iWeaponDamage, iTotalMagicDamage;
+		int iMagDamage;
+		short sManaCost;
+		DWORD dwType1, dwType2, dwValue1, dwValue2;
+
+		if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1){
+			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+		}
+		else if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1){
+			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+		}
+		else sItemIndex = -1;
+
+		if(sItemIndex != -1){
+			if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) != NULL) {
+				dwType1  = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) >> 20;  
+				dwValue1 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x000F0000) >> 16;
+				dwType2  = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) >> 12;  
+				dwValue2 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000F00) >> 8;
+			}
+			if(dwType1 == 15){
+				sManaCost = dwValue2*2;
+				if(m_pClientList[sAttackerH]->m_iMP >= sManaCost){
+					iWeaponDamage = (double)dwValue2*7;
+					iInitial_AP_SM = (double)iAP_SM;
+					iMagDamage = (double)m_pClientList[sAttackerH]->m_iMag/20;
+					if (iMagDamage <= 1) iMagDamage = 0;
+					if (iMagDamage > 10) iMagDamage = 10;
+					iTotalMagicDamage = ((iInitial_AP_SM/100.0f)*(iWeaponDamage+100))+iMagDamage;
+					iAP_SM = (int)iTotalMagicDamage;
+					m_pClientList[sAttackerH]->m_iMP -= sManaCost;
+					SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);
+				}
+			}
+		}
+	}
+	// End of Magic Weapons         
+        </textarea>
+		</td>
+	</tr>
+</table>  
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 2 : In function iCalculateAttackEffect</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+switch (m_pNpcList[sTargetH]->m_cActionLimit) {
+case 0:
+case 3:
+case 5:
+	m_pNpcList[sTargetH]->m_iHP -= iDamage;
+	break;
+}
+
+if (m_pNpcList[sTargetH]->m_iHP <= 0) {
+	NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);
+	bKilled = TRUE;
+	iKilledDice = m_pNpcList[sTargetH]->m_iHitDice;
+}         
+        </textarea>
+		<br><br><b>Right Before, Add :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+// Magic Weapons - Add Magical Damages
+if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != NULL)) {
+	double iInitial_AP_SM, iWeaponDamage, iTotalMagicDamage;
+	int iMagDamage;
+	short sManaCost;
+	DWORD dwType1, dwType2, dwValue1, dwValue2;
+
+	if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1){
+		sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+	}
+	else if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1){
+		sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+	}
+	else sItemIndex = -1;
+
+	if(sItemIndex != -1){
+		if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) != NULL) {
+			dwType1  = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) >> 20;  
+			dwValue1 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x000F0000) >> 16;
+			dwType2  = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) >> 12;  
+			dwValue2 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000F00) >> 8;
+		}
+		if(dwType1 == 15){
+			sManaCost = dwValue2*2;
+			if(m_pClientList[sAttackerH]->m_iMP >= sManaCost){
+				iWeaponDamage = (double)dwValue2*7;
+				iInitial_AP_SM = (double)iDamage;
+				iMagDamage = (double)m_pClientList[sAttackerH]->m_iMag/20;
+				if (iMagDamage <= 1) iMagDamage = 0;
+				if (iMagDamage > 10) iMagDamage = 10;
+				iTotalMagicDamage = ((iInitial_AP_SM/100.0f)*(iWeaponDamage+100))+iMagDamage;
+				iDamage = (int)iTotalMagicDamage;
+				m_pClientList[sAttackerH]->m_iMP -= sManaCost;
+				SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);
+			}
+		}
+	}
+}
+// End of Magic Weapons      
+        </textarea>
+		</td>
+	</tr>
+</table>
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 3 : In function iClientMotion_Attack_Handler</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+if (sItemIndex != -1 && m_pClientList[iClientH]->m_pItemList[sItemIndex] != NULL) {
+	if(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 874){ // Directional bow
+		for(i = 2; i < 10; i++){
+			iErr = 0;
+			m_Misc.GetPoint2(sX, sY, dX, dY, &tX, &tY, &iErr, i);
+			m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, tX, tY);
+			iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, tX, tY, wType, bNearAttack, bIsDash, TRUE); // 1
+			if ((abs(tdX - dX) <= 1) && (abs(tdY - dY) <= 1)) {
+				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, dX, dY);
+				iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, dX, dY, wType, bNearAttack, bIsDash, FALSE); // 0
+			}
+		}
+	}       
+        </textarea>
+		<br><br><b>Right Before, Add :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+// Magic Weapons - Add Special Effect for Weapon
+short sType, sManaCost;
+DWORD dwType1, dwType2, dwValue1, dwValue2;
+
+if(m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1){
+	sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+}
+else if(m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1){
+	sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+}
+else sItemIndex = -1;
+
+if(sItemIndex != -1){
+	if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) != NULL) {
+		dwType1  = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) >> 20;  
+		dwValue1 = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x000F0000) >> 16;
+		dwType2  = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) >> 12;  
+		dwValue2 = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000F00) >> 8;
+	}
+	if(dwType1 == 15){
+		sManaCost = dwValue2*2;
+		if (m_pClientList[iClientH]->m_iMP >= sManaCost){
+			switch(dwValue1){
+				// Fire-Strike
+				case 1:
+					sType = 30; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Lightning
+				case 2:
+					sType = 43; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Chill-Wind
+				case 3:
+					sType = 45; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Ice-Strike
+				case 4:
+					sType = 57; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Energy-Strike
+				case 5:
+					sType = 60; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Mass-Fire-Strike
+				case 6:
+					sType = 61; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Mass-Chill-Wind
+				case 7:
+					sType = 63; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Earthworm-Strike
+				case 8:
+					sType = 64; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Bloody-Shock-Wave
+				case 9:
+					sType = 70; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Mass-Ice-Strike
+				case 10:
+					sType = 72; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Lightning-Strike
+				case 11:
+					sType = 74; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Ice-Whirlwind
+				case 12:
+					sType = 75; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Meteor-Strike
+				case 13:
+					sType = 81; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Mass-Magic-Missile
+				case 14:
+					sType = 82; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Blizzard
+				case 15:
+					sType = 91; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+				// Earth-Shock-Wave
+				case 16:
+					sType = 96; 
+					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+					break;
+			}
+			// Critical Attack - Mass-Magic-Missile Aura
+			if(wType >= 20) 
+			{
+				sType = 84;
+				SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, sX, sY, (sType+100), m_pClientList[iClientH]->m_sType);
+			}
+		}
+	}
+}
+// End of Magic Weapons     
+        </textarea>
+		</td>
+	</tr>
+</table>							
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 4 : In function NpcDeadItemGenerator</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+else if ((iResult >= 9700) && (iResult <= 10000)) {
+	dwType = 9;
+	cColor = 8;
+}
+pItem->m_cItemColor = cColor;        
+        </textarea>
+		<br><br><b>Replace it with :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+else if ((iResult >= 9700) && (iResult <= 10000)) {
+	dwType = 9;
+	cColor = 8;
+}
+// Magic Weapons - Drops Improvement
+else if ((iResult >= 10001) && (iResult <= 10500)) {
+	dwType = 15; // Magic
+	cColor = 10; // Black Color
+}
+// End of Magic Weapons      
+pItem->m_cItemColor = cColor;
+        </textarea>
+		</td>
+	</tr>
+</table>
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 5 : In function NpcDeadItemGenerator</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+iResult = iDice(1, 30000);
+if ((iResult >= 1) && (iResult < 10000))           dwValue = 1;  // 10000/29348 = 34%
+else if ((iResult >= 10000) && (iResult < 17400))  dwValue = 2;  // 6600/29348 = 22.4%
+else if ((iResult >= 17400) && (iResult < 22400))  dwValue = 3;  // 4356/29348 = 14.8%
+else if ((iResult >= 22400) && (iResult < 25400))  dwValue = 4;  // 2874/29348 = 9.7%
+else if ((iResult >= 25400) && (iResult < 27400))  dwValue = 5;  // 1897/29348 = 6.4%
+else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 6;  // 1252/29348 = 4.2%
+else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 7;  // 826/29348 = 2.8%
+else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // 545/29348 = 1.85%
+else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 9;  // 360/29348 = 1.2%
+else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // 237/29348 = 0.8%
+else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // 156/29348 = 0.5%
+else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%
+else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%        
+        </textarea>
+		<br><br><b>Replace it with :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+// Magic Weapons - Set the Spell Effect on Dropped Item
+if (dwType == 15){
+	iResult = iDice(1, 30060);
+	if ((iResult >= 1) && (iResult < 10000))           dwValue = 1;  // Fire-Strike
+	else if ((iResult >= 10000) && (iResult < 17400))  dwValue = 2;  // Lightning
+	else if ((iResult >= 17400) && (iResult < 22400))  dwValue = 3;  // Chill-Wind
+	else if ((iResult >= 22400) && (iResult < 25400))  dwValue = 4;  // Ice-Strike
+	else if ((iResult >= 25400) && (iResult < 27400))  dwValue = 5;  // Energy-Strike
+	else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 6;  // Mass-Fire-Strike
+	else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 7;  // Mass-Chill-Wind
+	else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // Earthworm-Strike
+	else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 9;  // Bloody-Shock-Wave
+	else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // Mass-Ice-Strike
+	else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // Lightning-Strike
+	else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // Ice-Whirlwind
+	else if ((iResult >= 29970) && (iResult < 30000))  dwValue = 13; // Meteor-Strike
+	else if ((iResult >= 30000) && (iResult < 30025))  dwValue = 14; // Mass-Magic-Missile
+	else if ((iResult >= 30025) && (iResult < 30045))  dwValue = 15; // Blizzard
+	else if ((iResult >= 30045) && (iResult <= 30060))  dwValue = 16; // Earth-Shock-Wave
+	sMagicLevel = 1;
+}
+else{
+	iResult = iDice(1, 30000);
+	if ((iResult >= 1) && (iResult < 10000))           dwValue = 1;  // 10000/29348 = 34%
+	else if ((iResult >= 10000) && (iResult < 17400))  dwValue = 2;  // 6600/29348 = 22.4%
+	else if ((iResult >= 17400) && (iResult < 22400))  dwValue = 3;  // 4356/29348 = 14.8%
+	else if ((iResult >= 22400) && (iResult < 25400))  dwValue = 4;  // 2874/29348 = 9.7%
+	else if ((iResult >= 25400) && (iResult < 27400))  dwValue = 5;  // 1897/29348 = 6.4%
+	else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 6;  // 1252/29348 = 4.2%
+	else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 7;  // 826/29348 = 2.8%
+	else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // 545/29348 = 1.85%
+	else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 9;  // 360/29348 = 1.2%
+	else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // 237/29348 = 0.8%
+	else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // 156/29348 = 0.5%
+	else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%
+	else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%
+	else dwValue = 1; // v2.03 906
+	sMagicLevel = 0;
+}
+// End of Magic Weapons      
+        </textarea>
+		</td>
+	</tr>
+</table>	 				
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 6 : In function NpcDeadItemGenerator</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+switch (dwType) {
+case 1: // +5
+	if (dwValue <= 5) dwValue = 5;
+	break; 
+case 2: // +20
+	if (dwValue <= 4) dwValue = 4;
+	break; 
+case 6: // +16%
+	if (dwValue <= 4) dwValue = 4;
+	break; 
+case 8: // +14%
+	if (dwValue <= 2) dwValue = 2;
+	break;
+if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
+        </textarea>
+		<br><br><b>Replace it with :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+switch (dwType) {
+case 1: // +5
+	if (dwValue <= 5) dwValue = 5;
+	break; 
+case 2: // +20
+	if (dwValue <= 4) dwValue = 4;
+	break; 
+case 6: // +16%
+	if (dwValue <= 4) dwValue = 4;
+	break; 
+case 8: // +14%
+	if (dwValue <= 2) dwValue = 2;
+	break;
+// Magic Weapons - Better Stats for Strong NPC killed
+case 15:
+	switch(iGenLevel){
+		case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
+			if(dwValue > 4) dwValue = 4;
+			if(dwValue < 1) dwValue = 1;
+		case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie
+			if(dwValue > 6) dwValue = 6;
+			if(dwValue < 3) dwValue = 3;
+		case 3: // Stone-Golem, Clay-Golem
+			if(dwValue > 7) dwValue = 7;
+			if(dwValue < 4) dwValue = 4;
+		case 4: // Hellbound, Rudolph
+			if(dwValue > 8) dwValue = 8;
+			if(dwValue < 5) dwValue = 5;
+		case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
+			if(dwValue > 10) dwValue = 10;
+			if(dwValue < 7) dwValue = 7;
+		case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem
+			if(dwValue > 12) dwValue = 12;
+			if(dwValue < 9) dwValue = 9;
+		case 7: // Liche, Frost
+			if(dwValue > 13) dwValue = 13;
+			if(dwValue < 10) dwValue = 10;
+		case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
+			if(dwValue > 16) dwValue = 16;
+			if(dwValue < 13) dwValue = 13;
+	}
+// End of Magic Weapons
+}
+if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
+        </textarea>
+		</td>
+	</tr>
+</table>				
+<br>
+<table width="70%" border="1" cellpadding="10" cellspacing="0" align="center" bordercolordark="white" bordercolorlight="black" bgcolor="#C5C5F6" class="text">
+	<tr>
+		<td><b><font color="#FF0000" class="subtitle"><div align="center">Step 7 : In function NpcDeadItemGenerator</div></font></b>
+		<br><br><b>Find :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+switch (dwType) {
+case 2: // +21%
+	if (dwValue <= 3) dwValue = 3;
+	break; 
+case 10: // 7
+	if (dwValue > 7) dwValue = 7; 
+	break; 
+case 11: // Exp +20%
+	dwValue = 2;
+	break; 
+case 12: // Gold +50%
+	dwValue = 5;
+	break; 
+}
+        </textarea>
+		<br><br><b>Right After, Add :</b>
+		<br><br><textarea name="code" cols="110" rows="10">
+// Magic Weapons - Better Stats for Strong NPC Killed
+if (sMagicLevel >0){
+	switch(iGenLevel){
+		case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
+			if(dwValue > 2) dwValue = 2;
+			if(dwValue < 1) dwValue = 1;
+		case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie
+			if(dwValue > 3) dwValue = 3;
+			if(dwValue < 1) dwValue = 1;
+		case 3: // Stone-Golem, Clay-Golem
+			if(dwValue > 4) dwValue = 4;
+			if(dwValue < 2) dwValue = 2;
+		case 4: // Hellbound, Rudolph
+			if(dwValue > 5) dwValue = 5;
+			if(dwValue < 2) dwValue = 2;
+		case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
+			if(dwValue > 7) dwValue = 7;
+			if(dwValue < 3) dwValue = 3;
+		case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem
+			if(dwValue > 9) dwValue = 9;
+			if(dwValue < 5) dwValue = 5;
+		case 7: // Liche, Frost
+			if(dwValue > 10) dwValue = 10;
+			if(dwValue < 6) dwValue = 6;
+		case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
+			if(dwValue > 15) dwValue = 15;
+			if(dwValue < 9) dwValue = 9;
+	}
+}
+// End of Magic Weapons
+        </textarea>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

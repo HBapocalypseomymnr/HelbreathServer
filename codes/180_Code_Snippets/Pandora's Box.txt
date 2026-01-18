@@ -1,0 +1,615 @@
+Here is my new item : Pandora's Box.
+
+[EDIT]
+- Edited the code (thx to Dax for the hint )
+- Now Rep effects the chances of having an item
+- New effects added
+- New items added
+
+
+What it does : Just dble click on it when you get one and you'll have a random effect... 
+
+What are the effects : It can give you an item (60+ different items), give you some MJ points, decrease your reps / MP / HP / SP, send you to jail for 1 / 2 / 3 / 4 / 5 mins...
+
+I think i'll add some new effects soon, like poisonning, learn spell or have some skills % increased, tp to random other maps (icebound, bleeding island, toh...). Request new effects if you need
+
+I added only few items (necks and rings, no armors, only few weapons...), you should have better time to add your items directly in the sources, but don't add only good items. I used the Item# that are in the Helbreathss item.cfg, so if you use items.cfg with differents item ID, edit the sources too !!
+
+I finally decided to do not use the Special-ability-time for using Pandora's Box because you can't have lot of them it is only dropped by strong monsters with drop rate like unique items.
+
+The Sprite in bag works fine but there is a little bug with the ground sprite. Don't worry, it won't crash your client but when you want to pick it up, the item on the ground is not right under the character's feet... Don't know why !!
+
+
+It will be dropped by these monsters : Hellclaw, Tigerworm, Cyclops, Hellbound, Orge, Unicorn, Stalker, Demon, Werewolf, Liche, Gagoyle, Beholder, Dark Elf, Frost, Nizie, Barlog, Centaurus.
+
+
+Items you can have with Pandora's Box (not complete): Magic Necklace (MS10), Magic Necklace (RM10), Ogre Summon Potion, Magic Necklace (DF+10), Memorial Ring, Ice Storm Manual, Mass Fire Strike Manual, Blood Sword, Dark-Elf Bow, MerienShield, Ring Of Grand Mage, Necklace Of Medusa, Necklace Of Liche, Third Memorial Ring, Kloness Blade, Berserk Wand (MS.10), Kloness Wand (MS.10), Resur Wand (MS.10), Dagger+1, Claymore, Short Bow, Red Potion, Blue Potion, Green Potion, Fish, Cape, Flower Pot, Carrot, ArmorDye(Gold)
+
+
+STEP 1 : Go To Your Contents Folder In Client Directory
+
+Open the file called ItemName.cfg and add this line
+
+CODE  
+Item=Pandora===============Pandora's Box= 
+
+
+
+
+STEP 2 : Go To Your Helbreath Server Directory
+
+Open the file called Item.cfg and add this line
+
+CODE  
+Item = 280 Pandora 3 0 34 0 0 0 0 0 0 0 0 6 156 1 1 -1 0 0 0 0 0 -1 42 0 
+
+
+
+
+STEP 3 : OPEN ITEM.H
+
+Add this line right after the other #define DEF_ITEMEFFECTTYPE (right after the crit candy if you use it)
+
+CODE  
+#define DEF_ITEMEFFECTTYPE_PANDORA   34 
+
+
+
+
+STEP 4 : OPEN GAME.CPP - Go To Function UseItemHandler()
+
+Find this code in the function
+
+CODE  
+case DEF_ITEMEFFECTTYPE_HPSTOCK: 
+
+
+
+Add This code just Before
+
+CODE  
+ // Pandora's Box By Diuuude
+ case DEF_ITEMEFFECTTYPE_PANDORA:
+    int iProb, iResult1, iResult2, iPandoraItem, iEraseReq, iDamage, iDecRep, iLockTime;
+    class CItem * pItem;
+    /* First off all, we have to select a random event for opening box
+    Effects can be :
+    - OK : Restart level's Exp
+    - OK : Get an Item
+    - OK : Loose Rep (5 -> 50)
+    - OK : Go to jail (1 to 5 mins)
+    - OK : Loose HP
+    - OK : Loose MP
+    - OK : Loose SP
+    - OK : Get some MJ Points
+
+    */
+    iResult1 = iDice(1,8);
+    switch (iResult1){
+   case 1: // All the exp you gained this level is reseted
+       char * PandoraExpText;
+       m_pClientList[iClientH]->m_iExp = iGetLevelExp(m_pClientList[iClientH]->m_iLevel);
+       wsprintf(PandoraExpText, "Doh, Pandora's Box decreased your Exp... Exp set to %d", m_pClientList[iClientH]->m_iExp);
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, PandoraExpText);
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_EXP, NULL, NULL, NULL, NULL);
+       break;
+   case 2: // You get a random item depending on your rep
+       // Check user's Rep to set a prob depending on his reps
+       if (m_pClientList[iClientH]->m_iRating < -50) iProb = 500;
+       if ((m_pClientList[iClientH]->m_iRating >= -50) && (m_pClientList[iClientH]->m_iRating < 0)) iProb = 400;
+       if (m_pClientList[iClientH]->m_iRating == 0) iProb = 350;
+       if ((m_pClientList[iClientH]->m_iRating > 0) && (m_pClientList[iClientH]->m_iRating <= 50)) iProb = 300;
+       if ((m_pClientList[iClientH]->m_iRating > 50) && (m_pClientList[iClientH]->m_iRating <= 100)) iProb = 250;
+       if ((m_pClientList[iClientH]->m_iRating > 100) && (m_pClientList[iClientH]->m_iRating <= 200)) iProb = 200;
+       if (m_pClientList[iClientH]->m_iRating > 200){
+     iProb = 150 - (m_pClientList[iClientH]->m_iRating / 10);
+    }
+       iResult2 = iDice(1,iProb);
+       switch (iResult2){
+      // Good Items
+      case 1:
+          iPandoraItem = 308; // Magic Necklace (MS10)
+          break;
+      case 2:
+          iPandoraItem = 300; // Magic Necklace (RM10)
+          break;
+      case 3:
+          iPandoraItem = 275; // Ogre Summon Potion
+          break;
+      case 4:
+          iPandoraItem = 311; // Magic Necklace (DF+10)
+          break;
+      case 5:
+          iPandoraItem = 338; // Memorial Ring
+          break;
+      case 6:
+          iPandoraItem = 380; // Ice Storm Manual
+          break;
+      case 7:
+          iPandoraItem = 381; // Mass Fire Strike Manual
+          break;
+      case 8:
+          iPandoraItem = 490; // Blood Sword
+          break;
+      case 9:
+          iPandoraItem = 618; // Dark-Elf Bow
+          break;
+      case 10:
+          iPandoraItem = 620; // Merien Shield
+          break;
+      case 11:
+          iPandoraItem = 636; // Ring Of Grand Mage
+          break;
+      case 12:
+          iPandoraItem = 641; // Necklace Of Medusa
+          break;
+      case 13:
+          iPandoraItem = 648; // Necklace Of Liche
+          break;
+      case 14:
+          iPandoraItem = 765; // Third Memorial Ring
+          break;
+      case 15:
+          iPandoraItem = 849; // Kloness Blade
+          break;
+      case 16:
+          iPandoraItem = 862; // Berserk Wand (MS.10)
+          break;
+      case 17:
+          iPandoraItem = 864; // Kloness Wand (MS.10)
+          break;
+      case 18:
+          iPandoraItem = 866; // Resur Wand (MS.10)
+          break;
+      case 19:
+          iPandoraItem = 291; // MagicWand (MS30-LLF)
+          break;
+      case 20:
+          iPandoraItem = 290; // Flameberge +3 (LLF)
+          break;
+      case 21:
+          iPandoraItem = 292; // Golden Axe (LLF)
+          break;
+      case 22:
+          iPandoraItem = 491; // Blood Axe
+          break;
+      case 23:
+          iPandoraItem = 492; // Blood Rapier
+          break;
+      case 24:
+          iPandoraItem = 610; // Xelima Blade
+          break;
+      case 25:
+          iPandoraItem = 611; // Xelima Axe
+          break;
+      case 26:
+          iPandoraItem = 612; // Xelima Rapier
+          break;
+      case 27:
+          iPandoraItem = 613; // Sword of Medusa
+          break;
+      case 28:
+          iPandoraItem = 614; // Sword of Ice Elemental
+          break;
+      case 29:
+          iPandoraItem = 616; // Demon Slayer
+          break;
+      case 30:
+          iPandoraItem = 630; // Ring of the Xelima
+          break;
+      case 31:
+          iPandoraItem = 633; // Ring of Demon Power
+          break;
+      case 32:
+          iPandoraItem = 635; // Ring of Mage
+          break;
+      case 33:
+          iPandoraItem = 636; // Ring of Arc Mage
+          break;
+      case 34:
+          iPandoraItem = 734; // Ring of Dragon power
+          break;
+      case 35:
+          iPandoraItem = 735; // Ring of Demon Power
+          break;
+      case 36:
+          iPandoraItem = 844; // Black Shadow Sword
+          break;
+      case 37:
+          iPandoraItem = 847; // Dark Executor
+          break;
+      case 38:
+          iPandoraItem = 852; // Cancel Manual
+          break;
+      case 39:
+          iPandoraItem = 853; // Earth Shock Wave Manual
+          break;
+      case 40:
+          iPandoraItem = 854; // Inhibition Magic Casting Manual
+          break;
+      case 41:
+          iPandoraItem = 858; // Necklace Of Merien
+          break;
+      case 42:
+          iPandoraItem = 859; // Necklace Of Kloness
+          break;
+      case 43:
+          iPandoraItem = 860; // Necklace Of Xelima
+          break;
+      /* Weak Items: if you add items, be sure that the weak items cases # are greater
+       than the good item cases #. It will allow players with high rating
+       to get better items.*/
+      case 59:
+          iPandoraItem = 4; // Dagger+1
+          break;
+      case 60:
+          iPandoraItem = 46; // Claymore
+          break;
+      case 61:
+          iPandoraItem = 75; // Short Bow
+          break;
+      case 62:
+          iPandoraItem = 91; // Red Potion
+          break;
+      case 63:
+          iPandoraItem = 93; // Blue Potion
+          break;
+      case 64:
+          iPandoraItem = 95; // Green Potion
+          break;
+      case 65:
+          iPandoraItem = 100; // Fish
+          break;
+      case 66:
+          iPandoraItem = 402; // Cape
+          break;
+      case 67:
+          iPandoraItem = 522; // Flower Pot
+          break;
+      case 68:
+          iPandoraItem = 824; // Carrot
+          break;
+      case 69:
+          iPandoraItem = 883; // ArmorDye(Gold)
+          break;
+      default:
+          iPandoraItem = 0; // Nothing
+          break;
+       }
+       if (iPandoraItem != 0){
+     pItem = new class CItem;
+     _bInitItemAttr(pItem, iPandoraItem);
+     _bAddClientItemList(iClientH, pItem, &iEraseReq);
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Yeah, Pandora's box had an item inside !!");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+       }
+       else{
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Doh, Pandora's box was empty !!");
+       }
+
+       break;
+   case 3: // Pandora's Box Explodes. You loose HP depending on reps
+       iResult2 = iDice(2,3);
+       iDamage = (iResult2 * 100) - m_pClientList[iClientH]->m_iRating;
+       m_pClientList[iClientH]->m_iLastDamage = iDamage;
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Doh, Pandora's box exploded !!");
+       SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, NULL, NULL);
+       break;
+   case 4: // Pandora's Box decreases your Reps
+       iResult2 = iDice(1,10);
+       iDecRep = (iResult2 * 5);
+       m_pClientList[iClientH]->m_iRating -= iDecRep;
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Doh, Pandora's box decreased your reps !!");
+       break;
+   case 5: // Pandora's Box decreases your MP
+       m_pClientList[iClientH]->m_iMP = 0;
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Doh, Pandora's box decreased your Mana Points to 0 !!");
+       break;
+   case 6: // Pandora's Box decreases your SP
+       m_pClientList[iClientH]->m_iSP = 0;
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Doh, Pandora's box decreased your Stamina Points to 0 !!");
+       break;
+   case 7: // Pandora's Box Gives you some MJ Points
+       iResult2 = iDice(1,5);
+       m_pClientList[iClientH]->m_iGizonItemUpgradeLeft += iResult2;
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Yeah, Your Majestic Points have been increased by Pandora's Box !!");
+       break;
+   case 8: // Pandora's Box send you in jail
+       iResult2 = iDice(1,5);
+       iLockTime = (iResult2 * 60);
+    switch(m_pClientList[iClientH]->m_cSide){
+     case 1:
+      ZeroMemory(m_pClientList[iClientH]->m_cLockedMapName, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+      strcpy(m_pClientList[iClientH]->m_cLockedMapName, "arejail");
+      RequestTeleportHandler(iClientH, "2   ", "arejail", -1, -1);
+      break;
+     case 2: 
+      ZeroMemory(m_pClientList[iClientH]->m_cLockedMapName, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+      strcpy(m_pClientList[iClientH]->m_cLockedMapName, "elvjail");;
+      RequestTeleportHandler(iClientH, "2   ", "elvjail", -1, -1);
+      break;
+    }
+    m_pClientList[iClientH]->m_iLockedMapTime = iLockTime;
+    m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = iLockTime;
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You were busted for using illegal Pandora's Box");
+       break;
+     }
+    break; 
+
+
+
+
+STEP 5 : STILL IN GAME.CPP - Go To Function bGetItemNameWhenDeleteNpc()
+
+If you didn't edit the monsters drop, replace the whole function with this one, else you'll have to add manually the Pandora's Box Drop for the monsters you want (using this function as a model if you want).
+
+CODE  
+BOOL CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType)
+{ 
+int iResult; 
+// NPC를 삭� �� 때 특수 아이템을 발생시킬 것인지의 여부를 계산한다. 
+
+switch (sNpcType) { 
+ case 49: // Hellclaw 
+  iResult = iDice(1,20100);
+  if ((iResult >= 1) && (iResult <=  5000)) iItemID = 308;      // MagicNecklace(MS10)
+  else if ((iResult > 5000) && (iResult <=  10000)) iItemID = 259; // MagicWand(M.Shield)
+  else if ((iResult > 10000) && (iResult <= 13000))  iItemID = 337;  // RubyRing
+  else if ((iResult > 13000) && (iResult <= 15000))  iItemID = 335;  // EmeraldRing
+  else if ((iResult > 15000) && (iResult <= 17500))  iItemID = 300;  // MagicNecklace(RM10)
+  else if ((iResult > 17500) && (iResult <= 18750))  iItemID = 311;  // MagicNecklace(DF+10)
+  else if ((iResult > 18750) && (iResult <= 19000))  iItemID = 305;  // MagicNecklace(DM+1)
+  else if ((iResult > 19000) && (iResult <= 19700))  iItemID = 634;  // RingofWizard
+  else if ((iResult > 19700) && (iResult <= 19844))  iItemID = 635;  // RingofMage
+  else if ((iResult > 19844) && (iResult <= 19922))  iItemID = 643;  // KnecklaceOfIceEle 
+  else if ((iResult > 19922) && (iResult <= 19961))  iItemID = 640;  // KnecklaceOfSufferent
+  else if ((iResult > 19961) && (iResult <= 19981))  iItemID = 637;  // KnecklaceOfLightPro
+  else if ((iResult > 19981) && (iResult <= 19991))  iItemID = 620;  // MerienShield 
+  else if ((iResult > 19991) && (iResult <= 19996))  iItemID = 644;  // KnecklaceOfAirEle 
+  else if ((iResult > 19996) && (iResult <= 19999))  iItemID = 614;  // SwordofIceElemental 
+  else if ((iResult > 19999) && (iResult <= 20000))  iItemID = 636; // RingofGrandMage
+  else if ((iResult > 20001) && (iResult <= 20100))  iItemID = 280; // Pandora's Box
+  return TRUE;
+ 
+ case 50: // Tigerworm
+  iResult = iDice(1,10050);
+  if ((iResult >= 1) && (iResult <= 4999)) {
+   if (iDice(1,2) == 1) 
+     iItemID = 311;  // MagicNecklace(DF+10)
+   else iItemID = 305;  // MagicNecklace(DM+1)
+  }
+  else if ((iResult > 5000) && (iResult <= 7499))  iItemID = 614;  // SwordofIceElemental 
+  else if ((iResult > 7500) && (iResult <= 8749))  iItemID = 290;  // Flameberge+3(LLF)
+  else if ((iResult > 8750) && (iResult <= 9374))  iItemID = 633;  // RingofDemonpower
+  else if ((iResult > 9375) && (iResult <= 9687))  iItemID = 492;  // BloodRapier  
+  else if ((iResult > 9688) && (iResult <= 9843))  iItemID = 490;  // BloodSword  
+  else if ((iResult > 9844) && (iResult <= 9921))  iItemID = 491;  // BloodAxe  
+  else if ((iResult > 9922) && (iResult <= 9960))  iItemID = 291;  // MagicWand(MS30-LLF) 
+  else if ((iResult > 9961) && (iResult <= 9980))  iItemID = 630;  // RingoftheXelima 
+  else if ((iResult > 9981) && (iResult <= 9990))  iItemID = 612;  // XelimaRapier 
+  else if ((iResult > 9991) && (iResult <= 9996))  iItemID = 610;  // XelimaBlade 
+  else if ((iResult > 9996) && (iResult <= 9998))  iItemID = 611;  // XelimaAxe 
+  else if ((iResult > 9999) && (iResult <= 10000)) iItemID = 631;  // RingoftheAbaddon
+  else if ((iResult > 10001) && (iResult <= 10050)) iItemID = 631;  // Pandora's Box
+  return TRUE;
+
+  default:
+    break; 
+ }
+
+if (iDice(1,45) == 13) {
+ switch (sNpcType) {
+ case 11: if (iDice(1,550) != 11) return FALSE; break;   // Skeleton   2 * 100 
+ case 12: if (iDice(1,400) != 11) return FALSE; break;   // Stone-Golem 2 * 100 
+ case 13: if (iDice(1,100) != 11) return FALSE; break;   // Cyclops  6 * 100 
+ case 14: if (iDice(1,700) != 11) return FALSE; break;   // Orc 4 * 100 
+ case 17: if (iDice(1,600) != 11) return FALSE; break;   // Scorpoin 5 * 100 
+ case 18: if (iDice(1,850) != 11) return FALSE; break;   // Zombie 1 * 100 
+ case 22: if (iDice(1,600) != 11) return FALSE; break;   // Amphis 5 * 100 
+ case 23: if (iDice(1,400) != 11) return FALSE; break;   // Clay-Golem 2 * 100 
+ case 27: if (iDice(1,100) != 11) return FALSE; break;   // Hellhound 7 * 100 
+ case 28: if (iDice(1,100) != 11) return FALSE; break;   // Troll 5 * 100 
+ case 29: if (iDice(1,150) != 11) return FALSE; break;   // Orge  7 * 100 
+ case 30: if (iDice(1,120) != 11) return FALSE; break;   // Liche 1 * 100   
+ case 31: break;                                        // Demon 5 * 100 
+ case 32: if (iDice(1,200) != 11) return FALSE; break;   // Unicorn 5 * 100 
+ case 33: if (iDice(1,300) != 11) return FALSE; break;   // WereWolf 7 * 100
+ case 48: if (iDice(1,100) != 11) return FALSE; break;   // Stalker 
+ case 52: if (iDice(1,300) != 11) return FALSE; break;     // Gagoyle
+ case 53: if (iDice(1,500) != 11) return FALSE; break;   // Beholder
+ case 54: if (iDice(1,200) != 11) return FALSE; break;   // Dark-Elf
+ case 57: if (iDice(1,400) != 11) return FALSE; break;   // Giant-Frog
+ case 63: if (iDice(1,300) != 11) return FALSE; break;   // Frost
+ case 79: if (iDice(1,200) != 11) return FALSE; break;   // Nizie
+ case 70: if (iDice(1,200) != 11) return FALSE; break;   // Barlog
+ case 71: if (iDice(1,200) != 11) return FALSE; break;   // Centaurus
+ default: return FALSE;
+ }
+}
+else return FALSE;
+
+//http://www.helbreath.com/down/d_patch_v2.htm
+
+switch (sNpcType) {
+case 11: // Skeleton
+case 17: // Scorpoin
+case 14: // Orc
+case 28: // Troll
+case 57: // Giant-Frog
+ switch (iDice(1,7)) {
+ case 1: iItemID = 334; break; // LuckyGoldRing
+ case 2: iItemID = 336; break; // SapphireRing
+ case 3: if (iDice(1,15) == 3) iItemID = 335; break; // EmeraldRing
+ case 4: iItemID = 337; break; // RubyRing
+ case 5: iItemID = 333; break; // PlatinumRing
+ case 6: if (iDice(1,15) == 3) iItemID = 634; break; // RingofWizard
+ case 7: if (iDice(1,25) == 3) iItemID = 635; break; // RingofMage
+ }
+ break;
+
+case 13: // Cyclops
+case 27: // Hellhound
+case 29: // Orge
+ switch (iDice(1,8)) {
+ case 1: iItemID = 311; break; // MagicNecklace(DF+10)
+ case 2: if (iDice(1,20) == 13) iItemID = 308; break; // MagicNecklace(MS10)
+ case 3: if (iDice(1,10) == 13) iItemID = 305; break; // MagicNecklace(DM+1)
+ case 4: iItemID = 300; break; // MagicNecklace(RM10)
+ case 5: if (iDice(1,30) == 13) iItemID = 632; break; // RingofOgrepower
+ case 6: if (iDice(1,30) == 13) iItemID = 637; break; // KnecklaceOfLightPro
+ case 7: if (iDice(1,30) == 13) iItemID = 638; break; // KnecklaceOfFirePro
+ case 8: iItemID = 280; break; // Pandora's Box
+  }
+ break;
+
+case 18: // Zombie
+case 22: // Amphis
+ switch (iDice(1,4)) {
+ case 1: if (iDice(1,75) == 13) iItemID = 613; break; // SwordofMedusa
+ case 2: if (iDice(1,20) == 13) iItemID = 639; break; // KnecklaceOfPoisonPro
+ case 3: if (iDice(1,40) == 13) iItemID = 641; break; // KnecklaceOfMedusa
+ case 4: if (iDice(1,30) == 13) iItemID = 640; break; // KnecklaceOfSufferent
+ }
+ break;
+
+case 12: // Stone-Golem
+ switch (iDice(1,5)) {
+ case 1: if (iDice(1,40) == 13) iItemID = 620; break; // MerienShield
+ case 2: if (iDice(1,40) == 13) iItemID = 621; break; // MerienPlateMail(M)
+ case 3: if (iDice(1,40) == 13) iItemID = 622; break; // MerienPlateMail(W)
+ case 4: if (iDice(1,20) == 11) iItemID = 644; break; // KnecklaceOfAirEle
+ case 5: if (iDice(1,20) == 11) iItemID = 647; break; // KnecklaceOfStoneGolem
+ }
+ break;
+
+case 23: // Clay-Golem
+ switch (iDice(1,4)) {
+ case 1: if (iDice(1,40) == 13) iItemID = 620; break; // MerienShield 
+ case 2: if (iDice(1,40) == 13) iItemID = 621; break; // MerienPlateMail(M)
+ case 3: if (iDice(1,40) == 13) iItemID = 622; break; // MerienPlateMail(W)
+ case 4: if (iDice(1,20) == 11) iItemID = 644; break; // KnecklaceOfAirEle
+ }
+ break;
+
+case 32: // Unicorn
+ switch (iDice(1,6)) {
+ case 1: if (iDice(1,40) == 13) iItemID = 620; break; // MerienShield 
+ case 2: if (iDice(1,40) == 13) iItemID = 621; break; // MerienPlateMail(M)
+ case 3: if (iDice(1,40) == 13) iItemID = 622; break; // MerienPlateMail(W)
+ case 4: if (iDice(1,20) == 11) iItemID = 644; break; // KnecklaceOfAirEle
+ case 5: if (iDice(1,20) == 11) iItemID = 848; break; // Lighting Blade
+ case 6: iItemID = 280; break; // Pandora's Box
+ }
+ break;
+ 
+case 33: // WereWolf
+case 48: // Stalker
+ switch (iDice(1,3)) {
+ case 1: if (iDice(1,30) == 3) iItemID = 290; break; // Flameberge+3(LLF)
+ case 2: iItemID = 292; break; // GoldenAxe(LLF)
+ case 3: iItemID = 280; break; // Pandora's Box
+ }
+ break;
+
+case 30: // Liche
+ switch (iDice(1,9)) {
+ case 1: if (iDice(1,10) == 3) iItemID = 380; break; // IceStormManual
+ case 2: iItemID = 259; break; // MagicWand(M.Shield)
+ case 3: if (iDice(1,30) == 3) iItemID = 291; break; // MagicWand(MS30-LLF)
+ case 4: if (iDice(1,10) == 3) iItemID = 614; break; // SwordofIceElemental 
+ case 5: if (iDice(1,10) == 3) iItemID = 642; break; // KnecklaceOfIcePro
+ case 6: if (iDice(1,15) == 3) iItemID = 643; break; // KnecklaceOfIceEle 
+ case 7: if (iDice(1,30) == 3) iItemID = 636; break; // RingofGrandMage
+ case 8: if (iDice(1,30) == 3) iItemID = 734; break; // RingOfArcmage
+ case 9: iItemID = 280; break; // Pandora's Box
+ }
+ break;
+
+case 31: // Demon 
+ switch (iDice(1,9)) {
+ case 1: if (iDice(1,30) == 3) iItemID = 382; break; // BloodyShockW.Manual
+ case 2: iItemID = 491; break; // BloodAxe
+ case 3: if (iDice(1,10) == 3) iItemID = 490; break; // BloodSword
+ case 4: iItemID = 492; break; // BloodRapier
+ case 5: if (iDice(1,10) == 3) iItemID = 381; break; // MassFireStrikeManual
+ case 6: if (iDice(1,30) == 3) iItemID = 633; break; // RingofDemonpower
+ case 7: if (iDice(1,10) == 3) iItemID = 645; break; // KnecklaceOfEfreet
+ case 8: if (iDice(1,20) == 3) iItemID = 616; break; // DemonSlayer
+ case 9: iItemID = 280; break; // Pandora's Box
+ }
+ break;
+
+case 52: // Gagoyle
+ switch (iDice(1,13)) {
+ case 1: if (iDice(1,30) == 3) iItemID = 382; break; // BloodyShockW.Manual 
+ case 2: if (iDice(1,20) == 3) iItemID = 610; break; // XelimaBlade 
+ case 3: if (iDice(1,20) == 3) iItemID = 611; break; // XelimaAxe 
+ case 4: if (iDice(1,20) == 3) iItemID = 612; break; // XelimaRapier
+ case 5: if (iDice(1,10) == 3) iItemID = 381; break; // MassFireStrikeManual
+ case 6: if (iDice(1,30) == 3) iItemID = 633; break; // RingofDemonpower
+ case 7: if (iDice(1,10) == 3) iItemID = 645; break; // KnecklaceOfEfreet
+ case 8: if (iDice(1,40) == 3) iItemID = 630; break; // RingoftheXelima 
+ case 9: if (iDice(1,50) == 3) iItemID = 631; break; // RingoftheAbaddon
+ case 10: if (iDice(1,20) == 3) iItemID = 735; break; // RingOfDragonpower
+ case 11: if (iDice(1,40) == 3) iItemID = 20; break; // Excalibur
+ case 12: if (iDice(1,60) == 3) iItemID = 846; break; // The_Devastator
+ case 13: iItemID = 280; break; // Pandora's Box
+ }
+ break;
+
+case 53: // Beholder
+ if (iDice(1,20) == 11) iItemID = 646; // KnecklaceOfBeholder 
+ else iItemID = 280; break; // Pandora's Box
+ break;
+
+case 54: // Dark-Elf
+ if (iDice(1,20) == 11) iItemID = 618; // DarkElfBow
+ else iItemID = 280; break; // Pandora's Box
+ break;
+
+case 63: // Frost
+ if (iDice(1,40) == 11) iItemID = 845; // StormBringer
+ else iItemID = 280; break; // Pandora's Box 
+ break;
+
+case 79: // Nizie
+ if (iDice(1,20) == 11) iItemID = 845; // StormBringer
+ else iItemID = 280; break; // Pandora's Box 
+ break;
+
+case 70: // Barlog
+ if (iDice(1,40) == 11) iItemID = 846; // The_Devastator
+ else iItemID = 280; break; // Pandora's Box
+ break;
+
+case 71: // Centaurus
+ if (iDice(1,20) == 11) iItemID = 848; // Lighting Blade
+ else iItemID = 280; break; // Pandora's Box
+ break;
+
+} 
+
+if (iItemID == 0) 
+ return FALSE; 
+else return TRUE; 
+} 
+
+
+
+STEP 6 : Go To Your Helbreath Client Directory
+
+Replace the existing paks with these ones.
+
+Download the Sprites
+
+
+
+Now you can compile and play with this item. If you need help on editing it, ask here for help, please don't kill my pm box  
+
+This post has been edited by diuuude on Feb 19 2006, 04:01 PM 
+
+Attached File ( Number of downloads: 69 ) 
+  sprites.zip

@@ -1,0 +1,102 @@
+Author: juggalo2
+
+Find
+
+Code: Select all
+    case MSGID_REQUEST_REGISTERGAMESERVER:
+
+
+
+Replce With
+
+Code: Select all
+       case MSGID_REQUEST_REGISTERGAMESERVER: // to MAINLOG, m_pMainLogSock
+          if (m_pMainLogSock == NULL) return FALSE;            
+          wsprintf(cTxt, "(...W) Try to register game server(%s) to WorldServer.", m_cServerName);      
+          PutLogList(cTxt);      
+          dwp  = (DWORD *)(G_cData50000 + DEF_INDEX4_MSGID);
+          //*dwp = MSGID_REQUEST_REGISTERGAMESERVER;
+          *dwp = m_dwMSGID_REQUEST_REGISTERGAMESERVER;
+          wp   = (WORD *)(G_cData50000 + DEF_INDEX2_MSGTYPE);
+          *wp  = DEF_MSGTYPE_CONFIRM;      
+          cp = (char *)(G_cData50000 + DEF_INDEX2_MSGTYPE + 2);
+          memcpy(cAccountName, m_cServerName, 10);
+          if (m_iGameServerMode == 1) // ROUTER/LAN mode, behind router
+          {   memcpy(cAddress, m_cGameServerAddrExternal, strlen(m_cGameServerAddrExternal));
+          }else //if (m_iGameServerMode == 2)
+          {   memcpy(cAddress, m_cGameServerAddr, strlen(m_cGameServerAddr));
+          }
+          memcpy(cp, cAccountName, 10);
+          cp += 10;
+          memcpy(cp, cAddress, 16);
+          cp += 16;
+          wp  = (WORD *)cp;
+          *wp = m_iGameServerPort;
+          cp += 2;
+          *cp = m_iTotalMaps;
+          cp++;
+          for (i = 0; i < m_iTotalMaps; i++)
+          {   memcpy(cp, m_pMapList[i]->m_cName, 11);
+             cp += 11;
+          }
+          iRet = m_pMainLogSock->iSendMsg(G_cData50000, 35 + m_iTotalMaps*11);
+          return TRUE;
+
+
+
+
+Find
+
+Code: Select all
+       if (pFile != NULL) fclose(pFile);
+       if (m_iGameServerMode == 0)
+       {   wsprintf(cTxt, "(!!!) Game server mode cannot be empty. It must be either ROUTER/router/LAN/lan or INTERNET/internet", token);
+          PutLogList(cTxt);
+          return FALSE;   
+       }   
+
+
+
+Add After
+
+Code: Select all
+       if (m_iGameServerMode == 1) // Default address is always internal in ROUTER mode
+       {   ZeroMemory(m_cGameServerAddr, sizeof(m_cGameServerAddr));
+          strcpy(m_cGameServerAddr, m_cGameServerAddrInternal);
+       }else if (m_iGameServerMode == 2) // Internal are always normal in INTERNET mode
+       {   ZeroMemory(m_cGameServerAddrInternal, sizeof(m_cGameServerAddrInternal));
+          ZeroMemory(m_cGameServerAddrExternal, sizeof(m_cGameServerAddrExternal));
+          strcpy(m_cGameServerAddrInternal, m_cGameServerAddr);
+          strcpy(m_cGameServerAddrExternal, m_cGameServerAddr);
+       }   
+
+
+
+Find
+
+Code: Select all
+    case DEF_NOTIFY_SERVERCHANGE:
+
+
+
+Replace With
+
+Code: Select all
+       case DEF_NOTIFY_SERVERCHANGE:
+          memcpy(cp, m_pClientList[iToH]->m_cMapName, 10);
+          cp += 10;   
+          // World Server connection across hgservers, behind router problem
+          // ArchAngel fix
+          if (m_iGameServerMode == 1) // Mode = 1 is LAN or ROUTER (behind router)
+                if (memcmp(m_cLogServerAddr, m_cGameServerAddr, 15) == 0)
+                memcpy(cp, m_cGameServerAddrExternal, 15);
+             else
+                memcpy(cp, m_cLogServerAddr, 15);
+          else // mode = 2 INTERNET
+             memcpy(cp, m_cLogServerAddr, 15);
+          cp += 15;
+          ip = (int *)cp;
+          *ip = m_iLogServerPort;
+          cp += 4;
+          iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 16 +19);
+          break;

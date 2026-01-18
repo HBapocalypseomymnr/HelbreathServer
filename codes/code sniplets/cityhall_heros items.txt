@@ -1,0 +1,289 @@
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+- First, in game.cpp find this func :
+CGame::DlgBoxClick_CityhallMenu
+**********************************************************
+- Few lines below (~100), find :
+
+	case 7:
+		// 영웅의 망토 습득 확인화면
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// Yes버튼 Click되었다. 
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, NULL, NULL, NULL, NULL); 
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// No버튼 Click되었다
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+		}
+		break;
+**********************************************************
+- Replace it with :
+
+	case 7:
+		// 3.51 Cityhall Menu - Diuuude
+		int iReqHeroItemID;
+		// Hero's Cape 
+		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 95) && (msY <= sY + 110)) {
+			if(m_bAresden == TRUE) iReqHeroItemID = 400;
+			else iReqHeroItemID = 401;
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, iReqHeroItemID, NULL, NULL, NULL); 
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		// Hero's Helm
+		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 125) && (msY <= sY + 140)){
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 403;
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 404;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 405;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 406;
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, iReqHeroItemID, NULL, NULL, NULL); 
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		// Hero's Cap
+		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 155) && (msY <= sY + 170)){
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 407;
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 408;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 409;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 410;
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, iReqHeroItemID, NULL, NULL, NULL); 
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		// Hero's Armor
+		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 185) && (msY <= sY + 200)){
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 411;
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 412;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 413;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 414;
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, iReqHeroItemID, NULL, NULL, NULL); 
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		// Hero's Robe
+		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 215) && (msY <= sY + 230)){
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 415;
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 416;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 417;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 418;
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, iReqHeroItemID, NULL, NULL, NULL); 
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		// Hero's Hauberk
+		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 245) && (msY <= sY + 260)){
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 419;
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 420;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 421;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 422;
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, iReqHeroItemID, NULL, NULL, NULL); 
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		// Hero's Leggings
+		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 275) && (msY <= sY + 290)){
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 423;
+			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 424;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 425;
+			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 426;
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, iReqHeroItemID, NULL, NULL, NULL); 
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		break;
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+- Still in Game.cpp, find function :
+CGame::DrawDialogBox_CityHallMenu
+**********************************************************
+- Find This code just few lines below :
+
+		if (m_iEnemyKillCount >= 300) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))  
+				 PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 255,255,255);//"영웅의 망토를 받습니다."
+			else PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 4,0,50);//"영웅의 망토를 받습니다."
+		}
+		else PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 65,65,65);//"영웅의 망토를 받습니다."
+**********************************************************
+- Replace it with :
+
+		// 3.51 Cityhall Menu - Diuuude
+		if ((m_iEnemyKillCount >= 100) && (m_iContribution >= 10)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))  
+				 PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 255,255,255);//"영웅의 망토를 받습니다."
+			else PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 4,0,50);//"영웅의 망토를 받습니다."
+		}
+		else PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 65,65,65);//"영웅의 망토를 받습니다."
+**********************************************************
+- Find few lines below :
+
+	case 7:
+		PutAlignedString(sX, sX + szX, sY + 80,  DRAW_DIALOGBOX_CITYHALL_MENU46, 55,25,25);//"도시의 안전을 위해 이교도들의" 
+		PutAlignedString(sX, sX + szX, sY + 95,  DRAW_DIALOGBOX_CITYHALL_MENU47, 55,25,25);//"침략을 막아내는데 앞장선 용사들에게" 
+		PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_CITYHALL_MENU48, 55,25,25);//"영웅의 망토를 수여합니다."
+		PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU49, 55,25,25);//"영웅의 망토를 받기 위해서는 당신의"
+		PutAlignedString(sX, sX + szX, sY + 140, DRAW_DIALOGBOX_CITYHALL_MENU50, 55,25,25);//"Enemy Kill 횟수가 300 이상이" 
+		PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU51, 55,25,25);//"되어야 하며 받고나면 Enemy Kill"
+		PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU52, 55,25,25);//"횟수가 300 감소합니다."
+		
+		PutAlignedString(sX, sX + szX, sY + 205, DRAW_DIALOGBOX_CITYHALL_MENU53, 55,25,25);//"받으시겠습니까?"
+		
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) 
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);
+
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) 
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);
+		break;
+**********************************************************
+- Replace it with :
+
+	// 3.51 Cityhall Menu - Diuuude
+	case 7:
+	
+		PutAlignedString(sX, sX + szX, sY + 60,  DRAW_DIALOGBOX_CITYHALL_MENU46, 255,255,255);// Here are the Hero's Item aivable : 
+		
+		// Hero's Cape (EK 300)
+		if (m_iEnemyKillCount >= 300) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 110))  
+				 PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU47, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU47, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU47, 65,65,65);// Disabled Mode
+		// Hero's Helm (EK 150 - Contrib 20)
+		if ((m_iEnemyKillCount >= 150) && (m_iContribution >= 20)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 140))  
+				 PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU48, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU48, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU48, 65,65,65);// Disabled Mode
+		// Hero's Cap (EK 100 - Contrib 20)
+		if ((m_iEnemyKillCount >= 100) && (m_iContribution >= 20)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 155) && (msY < sY + 170))  
+				 PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU49, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU49, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU49, 65,65,65);// Disabled Mode
+		// Hero's Armor (EK 300 - Contrib 30)
+		if ((m_iEnemyKillCount >= 300) && (m_iContribution >= 30)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 185) && (msY < sY + 200))  
+				 PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU50, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU50, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU50, 65,65,65);// Disabled Mode
+		// Hero's Robe (EK 200 - Contrib 20)
+		if ((m_iEnemyKillCount >= 200) && (m_iContribution >= 20)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 215) && (msY < sY + 230))  
+				 PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU51, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU51, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU51, 65,65,65);// Disabled Mode
+		// Hero's Hauberk (EK 100 - Contrib 10)
+		if ((m_iEnemyKillCount >= 100) && (m_iContribution >= 10)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 260))  
+				 PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU52, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU52, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU52, 65,65,65);// Disabled Mode
+		// Hero's Leggings (EK 150 - Contrib 15)
+		if ((m_iEnemyKillCount >= 150) && (m_iContribution >= 15)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 275) && (msY < sY + 290))  
+				 PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU53, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU53, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU53, 65,65,65);// Disabled Mode
+		break;
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+- Now to have the correct text displayed, open lang_eng
+**********************************************************
+- Find this :
+
+#define	DRAW_DIALOGBOX_CITYHALL_MENU8	"Take the HERO's cape."
+**********************************************************
+Replace it with :
+
+#define	DRAW_DIALOGBOX_CITYHALL_MENU8	"Take the HERO's items."
+**********************************************************
+- Find This :
+
+#define	DRAW_DIALOGBOX_CITYHALL_MENU46	"We give a hero's cape to the brave"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU47	"warriors who fight against people of"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU48	"other city for the safety of our city"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU49	"Enemy kill count should be at"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU50	"least 300 to get a hero's cape."
+
+#define	DRAW_DIALOGBOX_CITYHALL_MENU51	"If you get a hero's cape, the"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU52	"enemy kill count decreases by 300"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU53	"Do you want to get a HERO's cape?"
+**********************************************************
+- Replace it with :
+
+// 3.51 Cityhall Menu - Diuuude
+#define	DRAW_DIALOGBOX_CITYHALL_MENU46	"Here are the aivable HERO's items :"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU47	"Hero's Cape (EK 300)"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU48	"Hero's Helm (EK 150 - Contrib 20)"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU49	"Hero's Cap (EK 100 - Contrib 20)"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU50	"Hero's Armor (EK 300 - Contrib 30)"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU51	"Hero's Robe (EK 200 - Contrib 20)"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU52	"Hero's Hauberk (EK 100 - Contrib 10)"
+#define	DRAW_DIALOGBOX_CITYHALL_MENU53	"Hero's Leggings (EK 150 - Contrib 15)"
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+Now you have the new dialogs for the hero items :)
+It works with any 2.24c or higher HG Server.
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************

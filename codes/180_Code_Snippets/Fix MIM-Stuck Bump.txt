@@ -1,0 +1,58 @@
+Author: Kenji
+
+This bug is a classical one caused by Snoopy81, the worst coder ever.
+
+Search for:
+
+Code: Select all
+    // Snoopy: Illusion Movement
+                if ((m_bIllusionMVT == TRUE)&&(m_cCommand != DEF_OBJECTDAMAGEMOVE))
+                {   cDir +=4;
+                   if (cDir >8) cDir -=8;
+                }
+
+
+and
+
+Code: Select all
+    if (m_bIllusionMVT == TRUE)
+             {   cDir +=4;
+                if (cDir >8) cDir -=8;
+             }
+
+
+and
+
+Code: Select all
+    if (m_bIllusionMVT == TRUE)
+                {   cDir +=4;
+                   if (cDir >8) cDir -=8;
+                }
+
+
+Get rid of those 3 bugs and write instead into function:
+
+Code: Select all
+    char CGame::cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck)
+
+
+right after the line (make a new one)
+
+Code: Select all
+       cDir = m_Misc.cGetNextMoveDir(dX, dY, dstX, dstY);
+
+
+that:
+
+Code: Select all
+    if (m_bIllusionMVT == TRUE){
+          cDir +=4;
+          if (cDir >8) cDir -=8;
+       }
+
+
+
+Hope it works for you. Of course i answer your questions.
+
+Greets
+Kenji

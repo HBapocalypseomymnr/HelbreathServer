@@ -1,0 +1,26 @@
+case 7: // Pandora's Box Gives you some MJ Points
+       iResult2 = iDice(1,5);
+       m_pClientList[iClientH]->m_iGizonItemUpgradeLeft += iResult2;
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Yeah, Your Majestic Points have been increased by Pandora's Box !!");
+       break;
+   case 8: // Pandora's Box send you in jail
+       iResult2 = iDice(1,5);
+       iLockTime = (iResult2 * 60);
+    switch(m_pClientList[iClientH]->m_cSide){
+     case 1:
+      ZeroMemory(m_pClientList[iClientH]->m_cLockedMapName, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+      strcpy(m_pClientList[iClientH]->m_cLockedMapName, "arejail");
+      RequestTeleportHandler(iClientH, "2   ", "arejail", -1, -1);
+      break;
+     case 2: 
+      ZeroMemory(m_pClientList[iClientH]->m_cLockedMapName, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+      strcpy(m_pClientList[iClientH]->m_cLockedMapName, "elvjail");;
+      RequestTeleportHandler(iClientH, "2   ", "elvjail", -1, -1);
+      break;
+    }
+    m_pClientList[iClientH]->m_iLockedMapTime = iLockTime;
+    m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = iLockTime;
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You were busted for using illegal Pandora's Box");
+       break;
+     }
+    break;

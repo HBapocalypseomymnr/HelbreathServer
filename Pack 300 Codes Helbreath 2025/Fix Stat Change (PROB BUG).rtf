@@ -1,0 +1,650 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 (PROB BUG)\par
+ Stats Change Fix\par
+bueno aca les dejo todo arreglado.. busquen los cases y las funciones y simplemnte reemplasenlas ... by me obiamente... no se que abra qerido hacer diduuue no entendi el code directamente de base que dejo en los src del HG/Client..\par
+\par
+en la funcion DrawDialogBox_LevelUpSetting\par
+abajo de todo agregue una sentencia que recein al level max muestra el cuadro apra cambiar los stats. si no les gusta saqenlo pongan otro level o nose.. xD\par
+me parese que eso era todo.. si les pasa algo posteen y veo xD...\par
+\par
+C\'f3digo:\par
+En la funcion : InitGameSettings\par
+m_cLU_Str = m_cLU_Vit = m_cLU_Dex = m_cLU_Int = m_cLU_Mag = m_cLU_Char = 0;\par
+m_cLU_StrB = m_cLU_VitB = m_cLU_DexB = m_cLU_IntB = m_cLU_MagB = m_cLU_CharB = 0;\par
+\par
+cambien la funcion que ya tiene por esta :\par
+void CGame::DrawDialogBox_LevelUpSetting(short msX, short msY)\par
+\{\par
+ short sX, sY, szX;\par
+ DWORD dwTime = m_dwCurTime;\par
+ char cTxt[120];\par
+ int iStats;\par
+\tab sX = m_stDialogBoxInfo[12].sX;\par
+\tab sY = m_stDialogBoxInfo[12].sY;\par
+\tab szX = m_stDialogBoxInfo[12].sSizeX;\par
+\par
+\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 0);\par
+\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 2);\par
+\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME4, sX+16, sY+100, 4);\par
+\par
+\tab PutAlignedString(sX, sX + szX, sY + 50, DRAW_DIALOGBOX_LEVELUP_SETTING1);\par
+\tab PutAlignedString(sX, sX + szX, sY + 65, DRAW_DIALOGBOX_LEVELUP_SETTING2);\par
+\par
+\tab PutAlignedString(sX - 165, sX + szX, sY + 101, DRAW_DIALOGBOX_LEVELUP_SETTING3);\par
+\tab // Points Left - Display in green if > 0\par
+\tab wsprintf(cTxt, "%d", m_iLU_Point);\par
+\tab if (m_iLU_Point > 0)\par
+\tab\{\tab PutString(sX + 73,  sY + 102, cTxt, RGB(0,255,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 73,  sY + 102, cTxt, RGB(0,0,0));\par
+\tab\}\par
+\tab // Strength\par
+\tab PutString(sX + 24, sY + 125, DRAW_DIALOGBOX_LEVELUP_SETTING4, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iStr);\par
+\tab PutString(sX + 109, sY + 125, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iStr + m_cLU_Str;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats != m_iStr)\par
+\tab\{\tab PutString(sX + 162, sY + 125, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 125, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 127) && (msY <= sY + 133) && (m_iStr > 300))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 195, sY + 127, 5, dwTime);\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 127) && (msY <= sY + 133) && (m_cLU_Str > 0))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 127, 6, dwTime);\par
+\par
+\tab // Vitality\par
+\tab PutString(sX + 24, sY + 144, DRAW_DIALOGBOX_LEVELUP_SETTING5, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iVit);\par
+\tab PutString(sX + 109, sY + 144, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iVit + m_cLU_Vit;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats != m_iVit)\par
+\tab\{\tab PutString(sX + 162, sY + 144, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 144, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 146) && (msY <= sY + 152) && (m_iVit < 300))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 195, sY + 146, 5, dwTime);\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 146) && (msY <= sY + 152) && (m_cLU_Vit > 0))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 146, 6, dwTime);\par
+\par
+\tab // Dexterity\par
+\tab PutString(sX + 24, sY + 163, DRAW_DIALOGBOX_LEVELUP_SETTING6, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iDex);\par
+\tab PutString(sX + 109, sY + 163, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iDex + m_cLU_Dex;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats != m_iDex)\par
+\tab\{\tab PutString(sX + 162, sY + 163, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 163, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 165) && (msY <= sY + 171) && (m_iDex < 300))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 195, sY + 165, 5, dwTime);\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 165) && (msY <= sY + 171) && (m_cLU_Dex > 0))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 165, 6, dwTime);\par
+\par
+\tab // Intelligence\par
+\tab PutString(sX + 24, sY + 182, DRAW_DIALOGBOX_LEVELUP_SETTING7, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iInt);\par
+\tab PutString(sX + 109, sY + 182, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iInt + m_cLU_Int;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats != m_iInt)\par
+\tab\{\tab PutString(sX + 162, sY + 182, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 182, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 184) && (msY <= sY + 190) && (m_iInt < 300))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 195, sY + 184, 5, dwTime);\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 184) && (msY <= sY + 190) && (m_cLU_Int > 0))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 184, 6, dwTime);\par
+\par
+\tab // Magic\par
+\tab PutString(sX + 24, sY + 201, DRAW_DIALOGBOX_LEVELUP_SETTING8, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iMag);\par
+\tab PutString(sX + 109, sY + 201, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iMag + m_cLU_Mag;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats != m_iMag)\par
+\tab\{\tab PutString(sX + 162, sY + 201, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 201, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 203) && (msY <= sY + 209) && (m_iMag < 300))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 195, sY + 203, 5, dwTime);\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 203) && (msY <= sY + 209) && (m_cLU_Mag > 0))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 203, 6, dwTime);\par
+\par
+\tab // Charisma\par
+\tab PutString(sX + 24, sY + 220, DRAW_DIALOGBOX_LEVELUP_SETTING9, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iCharisma);\par
+\tab PutString(sX + 109, sY + 220, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iCharisma + m_cLU_Char;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats != m_iCharisma)\par
+\tab\{\tab PutString(sX + 162, sY + 220, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 220, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 222) && (msY <= sY + 228) && (m_iCharisma < 300))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 195, sY + 222, 5, dwTime);\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 222) && (msY <= sY + 228) && (m_cLU_Char > 0))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 222, 6, dwTime);\par
+\par
+\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\{\tab  DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 1);\par
+\tab\}else\{ DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 0);\par
+\tab\}\par
+/**** cambien aca !!!! el 500 es mi max level recein a ese lvl lo muestra... pongan su max level*/\par
+\tab if (m_iLevel == 500)\par
+\tab\{\tab if ((m_cLU_StrB == 0)&&(m_cLU_VitB == 0)&&(m_cLU_DexB == 0)&&(m_cLU_IntB == 0)&&(m_cLU_MagB == 0)&&(m_cLU_CharB == 0))\par
+\tab\{\tab if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab\{\tab if (m_iLU_Point <= 0) DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 21);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if (m_iLU_Point <= 0) DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 20);\par
+\tab\}\tab\}\tab\}\par
+\}\par
+\par
+lo mismo con esta :\par
+void CGame::DrawDialogBox_ChangeStatsMajestic(short msX, short msY)\par
+\{\par
+ short sX, sY, szX;\par
+ DWORD dwTime = m_dwCurTime;\par
+ char cTxt[120];\par
+ int iStats;\par
+\tab sX = m_stDialogBoxInfo[42].sX;\par
+\tab sY = m_stDialogBoxInfo[42].sY;\par
+\tab szX = m_stDialogBoxInfo[42].sSizeX;\par
+\par
+\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 0);\par
+\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 2);\par
+\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME4, sX+16, sY+100, 4);\par
+\par
+\tab PutAlignedString(sX, sX + szX, sY + 50, DRAW_DIALOGBOX_LEVELUP_SETTING14);\par
+\tab PutAlignedString(sX, sX + szX, sY + 65, DRAW_DIALOGBOX_LEVELUP_SETTING15);\par
+\tab PutAlignedString(sX - 165, sX + szX, sY + 101, DRAW_DIALOGBOX_LEVELUP_SETTING18);\par
+\tab // Points Left - Display in green if > 0\par
+\tab wsprintf(cTxt, "%d", m_iLU_Point);\par
+\tab if (m_iLU_Point > 0)\par
+\tab\{\tab PutString(sX + 75,  sY + 102, cTxt, RGB(0,200,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 75,  sY + 102, cTxt, RGB(0,0,0));\par
+\tab\}\par
+\tab // Display only MouseOver Button for - (+ is disabled)\par
+\tab // Strength\par
+\tab PutString(sX + 24, sY + 125, DRAW_DIALOGBOX_LEVELUP_SETTING4, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iStr);\par
+\tab PutString(sX + 109, sY + 125, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iStr + m_cLU_StrB;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats < m_iStr)\par
+\tab\{\tab PutString(sX + 162, sY + 125, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 125, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 127) && (msY <= sY + 133))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 127, 6, dwTime);\par
+\par
+\tab // Vitality\par
+\tab PutString(sX + 24, sY + 144, DRAW_DIALOGBOX_LEVELUP_SETTING5, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iVit);\par
+\tab PutString(sX + 109, sY + 144, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iVit + m_cLU_VitB;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats < m_iVit)\par
+\tab\{\tab PutString(sX + 162, sY + 144, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 144, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 146) && (msY <= sY + 152))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 146, 6, dwTime);\par
+\par
+\tab // Dexterity\par
+\tab PutString(sX + 24, sY + 163, DRAW_DIALOGBOX_LEVELUP_SETTING6, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iDex);\par
+\tab PutString(sX + 109, sY + 163, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iDex + m_cLU_DexB;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats < m_iDex)\par
+\tab\{\tab PutString(sX + 162, sY + 163, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 163, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 165) && (msY <= sY + 171))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 165, 6, dwTime);\par
+\par
+\tab // Intelligence\par
+\tab PutString(sX + 24, sY + 182, DRAW_DIALOGBOX_LEVELUP_SETTING7, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iInt);\par
+\tab PutString(sX + 109, sY + 182, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iInt + m_cLU_IntB;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats < m_iInt)\par
+\tab\{\tab PutString(sX + 162, sY + 182, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 182, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 184) && (msY <= sY + 190))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 184, 6, dwTime);\par
+\par
+\tab // Magic\par
+\tab PutString(sX + 24, sY + 201, DRAW_DIALOGBOX_LEVELUP_SETTING8, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iMag);\par
+\tab PutString(sX + 109, sY + 201, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iMag + m_cLU_MagB;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats < m_iMag)\par
+\tab\{\tab PutString(sX + 162, sY + 201, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 201, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 203) && (msY <= sY + 209))\par
+\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 203, 6, dwTime);\par
+\par
+\tab // Charisma\par
+\tab PutString(sX + 24, sY + 220, DRAW_DIALOGBOX_LEVELUP_SETTING9, RGB(5,5,5));\par
+\tab wsprintf(cTxt, "%d", m_iCharisma);\par
+\tab PutString(sX + 109, sY + 220, cTxt, RGB(25,35,25));\par
+\tab iStats = m_iCharisma + m_cLU_CharB;\par
+\tab wsprintf(cTxt, "%d", iStats);\par
+\tab if (iStats < m_iCharisma)\par
+\tab\{\tab PutString(sX + 162, sY + 220, cTxt, RGB(255,0,0));\par
+\tab\}else\par
+\tab\{\tab PutString(sX + 162, sY + 220, cTxt, RGB(25,35,25));\par
+\tab\}\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 222) && (msY <= sY + 228))\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 222, 6, dwTime);\par
+\par
+\tab if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab  DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 17);\par
+\tab else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 16);\par
+\par
+\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab  DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 1);\par
+\tab else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 0);\par
+\}\par
+\par
+Tambien con esta :\par
+\par
+void CGame::DlgBoxClick_ChangeStatsMajestic(short msX, short msY)\par
+\{\par
+ short sX, sY;\par
+\par
+\tab sX = m_stDialogBoxInfo[42].sX;\par
+\tab sY = m_stDialogBoxInfo[42].sY;\par
+\par
+\tab\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 127) && (msY <= sY + 133) && (m_iStr < 300))\par
+\tab\tab\{\tab\tab m_cLU_StrB += 1;\par
+\tab\tab\tab\tab m_iLU_Point -= 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\par
+\tab\tab // Vitality UP - Diuuude\par
+\tab\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 146) && (msY <= sY + 152) && (m_iVit < 300))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_VitB += 1;\par
+\tab\tab\tab\tab m_iLU_Point -= 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\par
+\tab\tab // Dexterity UP - Diuuude\par
+\tab\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 165) && (msY <= sY + 171) && (m_iDex < 300))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_DexB += 1;\par
+\tab\tab\tab\tab m_iLU_Point -= 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\par
+\tab\tab // Intelligence UP - Diuuude\par
+\tab\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 184) && (msY <= sY + 190) && (m_iInt < 300))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_IntB += 1;\par
+\tab\tab\tab\tab m_iLU_Point -= 1;\tab\tab\tab\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\par
+\tab\tab // Magic UP - Diuuude\par
+\tab\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 203) && (msY <= sY + 209) && (m_iMag < 300))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_MagB += 1;\par
+\tab\tab\tab\tab m_iLU_Point -= 1;\tab\tab\tab\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\par
+\tab\tab // Charisma UP - Diuuude\par
+\tab\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 222) && (msY <= sY + 228) && (m_cLU_CharB < 300) && (m_iLU_Point > 0))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_CharB += 1;\par
+\tab\tab\tab\tab m_iLU_Point -= 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\tab\par
+\tab\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 127) && (msY <= sY + 133) && (m_iStr > 10))\par
+\tab\tab\{\tab\tab m_cLU_StrB -= 1;\par
+\tab\tab\tab\tab m_iLU_Point += 1;\par
+\tab\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\tab\tab // Vitality DOWN - Diuuude\par
+\tab\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 146) && (msY <= sY + 152) && (m_iVit > 10))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_VitB -= 1;\par
+\tab\tab\tab\tab m_iLU_Point += 1;\tab\tab\tab\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\tab\tab // Dexterity DOWN - Diuuude\par
+\tab\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 165) && (msY <= sY + 171) && (m_iDex > 10))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_DexB -= 1;\par
+\tab\tab\tab\tab m_iLU_Point += 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\tab\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 184) && (msY <= sY + 190) && (m_iInt > 10))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_IntB -= 1;\par
+\tab\tab\tab\tab m_iLU_Point += 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\par
+\tab\tab // Magic DOWN - Diuuude\par
+\tab\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 203) && (msY <= sY + 209) && (m_iMag > 10))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_MagB -= 1;\par
+\tab\tab\tab\tab m_iLU_Point += 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\tab\tab // Charisma DOWN - Diuuude\par
+\tab\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 222) && (msY <= sY + 228) && (m_iCharisma > 10))\par
+\tab\tab\{\par
+\tab\tab\tab\tab m_cLU_CharB -= 1;\par
+\tab\tab\tab\tab m_iLU_Point += 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\par
+\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab\{\tab // Send command to HG\par
+\tab\tab\tab bSendCommand(MSGID_STATECHANGEPOINT, NULL, NULL, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab DisableDialogBox(42);\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\tab if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab\{\par
+\tab\tab DisableDialogBox(42);\par
+\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\par
+\}\par
+\par
+busquen estos cases y reemplsenlos por esto :\par
+\par
+\tab case MSGID_STATECHANGEPOINT:\par
+\tab\tab dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+\tab\tab *dwp = dwMsgID;\par
+\tab\tab wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+\tab\tab *wp = NULL;\par
+\tab\tab cp = (char *)(cMsg + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_StrB;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_VitB;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_DexB;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_IntB;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_MagB;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_CharB;\par
+\tab\tab cp += 4;\par
+\tab\tab iRet = m_pGSock->iSendMsg(cMsg, 35);\par
+\tab\tab break;\par
+\par
+\tab case MSGID_LEVELUPSETTINGS:\par
+\tab\tab dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+\tab\tab *dwp = dwMsgID;\par
+\tab\tab wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+\tab\tab *wp = NULL;\par
+\tab\tab cp = (char *)(cMsg + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_Str;\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_Vit;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_Dex;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_Int;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_Mag;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = m_cLU_Char;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab iRet = m_pGSock->iSendMsg(cMsg, 35);\par
+\tab\tab break;\par
+\par
+\par
+esto va en netmeseges.h del hg y el client :\par
+\par
+ #define DEF_NOTIFY_STATECHANGE_SUCCESSB 0x0BC8\par
+ #define DEF_NOTIFY_STATECHANGE_SUCCESSA 0x0BC9\par
+\par
+en : NotifyMsgHandler agreguen essto\par
+\par
+case DEF_NOTIFY_STATECHANGE_SUCCESSA:\par
+\tab\tab STATECHANGESUCCESSA(pData);\par
+\tab\tab break;\par
+\par
+\tab case DEF_NOTIFY_STATECHANGE_SUCCESSB:\par
+\tab\tab cp = (char *)(pData\tab + DEF_INDEX2_MSGTYPE + 2);\par
+\tab\tab for (i = 0; i < DEF_MAXMAGICTYPE; i++)\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab m_cMagicMastery[i] = *ip;\par
+\tab\tab cp += 4;\par
+\tab\tab for (i = 0; i < DEF_MAXSKILLTYPE; i++)\par
+\tab\tab m_cSkillMastery[i] = *ip;\par
+\tab\tab if (m_pSkillCfgList[i] != NULL)\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab m_pSkillCfgList[i]->m_iLevel = *ip;\par
+\tab\tab cp += 4;\par
+\tab\tab break;\par
+\par
+\tab case DEF_NOTIFY_STATECHANGE_FAILED:\par
+\tab\tab m_cLU_StrB = m_cLU_VitB = m_cLU_DexB = m_cLU_IntB = m_cLU_MagB = m_cLU_CharB = 0;\par
+\tab\tab m_iLU_Point = m_iLevel*3 - ((m_iStr + m_iVit + m_iDex + m_iInt + m_iMag + m_iCharisma) - 70) - 3;\par
+\tab\tab AddEventList( "Your stat has not been changed.", 10 );\par
+\tab\tab break;\par
+\par
+en el HG busquen esta funcion y reemplsenla.\par
+\par
+void CGame::StateChangeHandler(int iClientH, char * pData, DWORD dwMsgSize)\par
+\{\par
+\tab char * cp;\par
+\tab char cStateTxt[255];\par
+\tab int iTotalSetting = 0;\par
+\tab int * ip, cStrB, cVitB, cDexB, cIntB, cMagB, cCharB;\par
+\tab int cStrc, cVitc, cDexc, cIntc, cMagc, cCharc;\par
+\tab int iOldStr, iOldVit, iOldDex, iOldInt, iOldMag, iOldChar;\par
+\par
+\tab if (m_pClientList[iClientH] == NULL) return;\par
+\tab if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;\par
+\tab if (m_pClientList[iClientH]->m_iLU_Pool <= 0) return;\par
+\tab cStrB = cVitB = cDexB = cIntB = cMagB = cCharB = 0;\par
+\tab cStrc = cVitc = cDexc = cIntc = cMagc = cCharc = 0;\par
+\par
+\tab cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+\tab ip = (int *)cp;\par
+\tab cStrB = *ip;\par
+\tab cp += 4;\par
+\tab\par
+\tab ip = (int *)cp;\par
+\tab cVitB = *ip;\par
+\tab cp += 4;\par
+\tab\par
+\tab ip = (int *)cp;\par
+\tab cDexB = *ip;\par
+\tab cp += 4;\par
+\tab\par
+\tab ip = (int *)cp;\par
+\tab cIntB = *ip;\par
+\tab cp += 4;\par
+\tab\par
+\tab ip = (int *)cp;\par
+\tab cMagB = *ip;\par
+\tab cp += 4;\par
+\tab\par
+\tab ip = (int *)cp;\par
+\tab cCharB = *ip;\par
+\tab cp += 4;\par
+\par
+\tab ZeroMemory(cStateTxt,sizeof(cStateTxt));\par
+\tab wsprintf(cStateTxt, "llego!! : Str %d ! Vit %d ! Dex %d ! Int %d ! Mag %d ! Char %d !",cStrB, cVitB, cDexB, cIntB, cMagB, cCharB);\par
+\tab PutLogList(cStateTxt);\par
+\par
+\tab iOldStr\tab = m_pClientList[iClientH]->m_iStr;\par
+\tab iOldVit\tab = m_pClientList[iClientH]->m_iVit;\par
+\tab iOldDex = m_pClientList[iClientH]->m_iDex;\par
+\tab iOldInt = m_pClientList[iClientH]->m_iInt;\par
+\tab iOldMag = m_pClientList[iClientH]->m_iMag;\par
+\tab iOldChar = m_pClientList[iClientH]->m_iCharisma;\par
+\par
+\tab if(m_pClientList[iClientH]->m_iGuildRank == 0 )\par
+\tab\{\tab if(m_pClientList[iClientH]->m_iCharisma - cCharB < 20)\par
+\tab\tab\{\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Char - VChar < 20.");\par
+\tab\tab\tab return;\par
+\tab\}\tab\}\tab\par
+\tab cStrc = cStrB;\par
+\tab cVitc = cVitB;\par
+\tab cDexc = cDexB;\par
+\tab cIntc = cIntB;\par
+\tab cMagc = cMagB;\par
+\tab cCharc = cCharB;\par
+\par
+\tab m_pClientList[iClientH]->m_iLU_Pool = m_pClientList[iClientH]->m_iLU_Pool - (cStrB + cVitB + cDexB + cIntB + cMagB + cCharB);\par
+\tab m_pClientList[iClientH]->m_iStr += cStrc;\par
+\tab m_pClientList[iClientH]->m_iVit += cVitc;\par
+\tab m_pClientList[iClientH]->m_iDex += cDexc;\par
+\tab m_pClientList[iClientH]->m_iInt += cIntc;\par
+\tab m_pClientList[iClientH]->m_iMag += cMagc;\par
+\tab m_pClientList[iClientH]->m_iCharisma += cCharc;\par
+\tab if (m_pClientList[iClientH]->m_iHP > iGetMaxHP(iClientH)) m_pClientList[iClientH]->m_iHP = iGetMaxHP(iClientH);\par
+\tab if (m_pClientList[iClientH]->m_iMP > iGetMaxMP(iClientH)) m_pClientList[iClientH]->m_iMP = iGetMaxMP(iClientH);\par
+\tab if (m_pClientList[iClientH]->m_iSP > iGetMaxSP(iClientH)) m_pClientList[iClientH]->m_iSP = iGetMaxSP(iClientH);\par
+\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_STATECHANGE_SUCCESSA, NULL, NULL, NULL, NULL);\par
+\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_STATECHANGE_SUCCESSB, NULL, NULL, NULL, NULL);\par
+\par
+\tab ZeroMemory(cStateTxt,sizeof(cStateTxt));\par
+\tab wsprintf(cStateTxt, "STR(%d->%d)VIT(%d->%d)DEX(%d->%d)INT(%d->%d)MAG(%d->%d)CHARISMA(%d->%d)",\par
+\tab\tab iOldStr, m_pClientList[iClientH]->m_iStr,\par
+\tab\tab iOldVit, m_pClientList[iClientH]->m_iVit,\par
+\tab\tab iOldDex, m_pClientList[iClientH]->m_iDex,\par
+\tab\tab iOldInt, m_pClientList[iClientH]->m_iInt,\par
+\tab\tab iOldMag, m_pClientList[iClientH]->m_iMag,\par
+\tab\tab iOldChar,m_pClientList[iClientH]->m_iCharisma);\par
+\tab PutLogList(cStateTxt);\par
+\}\par
+\par
+en SendNotifyMsg del hg agreguen esto.\par
+\par
+case DEF_NOTIFY_STATECHANGE_SUCCESSB:\par
+\tab\tab\tab for (i = 0; i < DEF_MAXMAGICTYPE; i++)\par
+\tab\tab\tab ip = (int *)cp;\par
+\tab\tab\tab *ip = m_pClientList[iToH]->m_cMagicMastery[i];\par
+\tab\tab\tab cp += 4;\par
+\tab\tab\tab for (i = 0; i < DEF_MAXSKILLTYPE; i++)\par
+\tab\tab\tab ip = (int *)cp;\par
+\tab\tab\tab *ip = m_pClientList[iToH]->m_cSkillMastery[i];\par
+\tab\tab\tab cp += 4;\tab\tab\tab\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 15);\par
+\tab\tab break;\par
+\par
+\tab case DEF_NOTIFY_STATECHANGE_SUCCESSA:\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iLevel;\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iStr;\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iVit;\tab\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iDex;\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iInt;\tab\tab\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iMag;\tab\tab\tab\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iCharisma;\par
+\tab\tab cp  += 4;\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 35);\par
+\tab\tab break;\par
+\par
+en SendNotifyMsg del hgt busquen y reemplasen por este ...\par
+\tab case DEF_NOTIFY_SETTING_SUCCESS:\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iLevel;\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iStr;\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iVit;\tab\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iDex;\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iInt;\tab\tab\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iMag;\tab\tab\tab\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iCharisma;\par
+\tab\tab cp  += 4;\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 35);\par
+\tab\tab break;\par
+\par
+\tab case DEF_NOTIFY_LEVELUP:\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iLevel;\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iStr;\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iVit;\tab\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+\tab\tab ip   = (int *)cp;\par
+\tab\tab *ip  = m_pClientList[iToH]->m_iDex;\tab\tab\tab\par
+\tab\tab cp  += 4;\par
+}
+ 

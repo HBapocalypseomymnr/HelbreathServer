@@ -1,0 +1,165 @@
+First, you need to download libxml from here:
+
+http://www.zlatkovic.com/pub/libxml/libxml...6.23+.win32.zip
+
+Unpack and copy files from "include" directory to (example):
+
+C:/HBSources/2.24b Sources/libxml
+
+then open project in msvcpp goto Tools>Options>Directories add :
+
+C:/HBSources/2.24b Sources
+
+Copy libxml.dll and zlib1.dll to your hgserver.exe directory.
+
+Now libxml is done, now you need to update server.
+
+Create new file named NpcItem.xml with content like:
+
+
+CODE  
+
+<NpcItem>
+<NPC Name="Hellclaw" ID="49" DiceMin="1" DiceMax="20002">
+<DROP ID="1" RollMin="1" RollMax="5000" ItemID="308">MagicNecklaceMS10</DROP>
+<DROP ID="2" RollMin="5001" RollMax="10000" ItemID="259">MagicWandM.Shield</DROP>
+<DROP ID="3" RollMin="10001" RollMax="13000" ItemID="337">RubyRing</DROP>
+<DROP ID="4" RollMin="13001" RollMax="15000" ItemID="335">EmeraldRing</DROP>
+<DROP ID="5" RollMin="15001" RollMax="17500" ItemID="300">MagicNecklaceRM10</DROP>
+<DROP ID="6" RollMin="17501" RollMax="18750" ItemID="311">MagicNecklaceDF+10</DROP>
+<DROP ID="7" RollMin="18751" RollMax="19000" ItemID="305">MagicNecklaceDM+1</DROP>
+<DROP ID="8" RollMin="19001" RollMax="19700" ItemID="634">RingofWizard</DROP>
+<DROP ID="9" RollMin="19701" RollMax="19844" ItemID="635">RingofMage</DROP>
+<DROP ID="10" RollMin="19845" RollMax="19922" ItemID="643">KnecklaceOfIceEle</DROP>
+<DROP ID="11" RollMin="19923" RollMax="19961" ItemID="640">KnecklaceOfSufferent</DROP>
+<DROP ID="12" RollMin="19962" RollMax="19981" ItemID="637">KnecklaceOfLightPro</DROP>
+<DROP ID="13" RollMin="19982" RollMax="19991" ItemID="620">MerienShield</DROP>
+<DROP ID="14" RollMin="19992" RollMax="19996" ItemID="644">KnecklaceOfAirEle</DROP>
+<DROP ID="15" RollMin="19997" RollMax="19999" ItemID="614">SwordofIceElemental</DROP>
+<DROP ID="16" RollMin="20000" RollMax="20002" ItemID="636">RingofGrandMage</DROP>
+</NPC>
+<NPC Name="Tigerworm" ID="50" DiceMin="1" DiceMax="10002">
+<DROP ID="1" RollMin="1" RollMax="2500" ItemID="311">MagicNecklace(DF10)</DROP>
+<DROP ID="2" RollMin="2501" RollMax="5000" ItemID="305">MagicNecklace(DM1)</DROP>
+<DROP ID="3" RollMin="5001" RollMax="7499" ItemID="614">SwordofIceElemental</DROP>
+<DROP ID="4" RollMin="7500" RollMax="8749" ItemID="290">Flameberge+3LLF</DROP>
+<DROP ID="5" RollMin="8750" RollMax="9374" ItemID="633">RingofDemonpower</DROP>
+<DROP ID="6" RollMin="9375" RollMax="9687" ItemID="492">BloodRapier</DROP>
+<DROP ID="7" RollMin="9688" RollMax="9843" ItemID="490">BloodSword</DROP>
+<DROP ID="8" RollMin="9844" RollMax="9921" ItemID="491">BloodAxe</DROP>
+<DROP ID="9" RollMin="9922" RollMax="9960" ItemID="291">MagicWandMS30-LLF</DROP>
+<DROP ID="10" RollMin="9961" RollMax="9980" ItemID="630">RingoftheXelima</DROP>
+<DROP ID="11" RollMin="9981" RollMax="9990" ItemID="612">XelimaRapier</DROP>
+<DROP ID="12" RollMin="9991" RollMax="9996" ItemID="610">XelimaBlade</DROP>
+<DROP ID="13" RollMin="9997" RollMax="9999" ItemID="611">XelimaAxe</DROP>
+<DROP ID="14" RollMin="10000" RollMax="10002" ItemID="631">RingoftheAbaddon</DROP>
+</NPC>
+</NpcItem>
+ 
+
+
+
+(it isnt all drops, you need to add own)
+
+Open Game.cpp 
+
+Find:
+
+
+CODE  
+
+#include "Game.h"
+#include "resource.h"
+ 
+
+
+
+Add after:
+
+
+CODE  
+
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+ 
+
+
+
+Find 
+
+
+CODE  
+CGame::bGetItemNameWhenDeleteNpc (int &iItemID, short sNpcType) 
+
+
+
+And comment it out (i mean add /* b4 function and */ after) and add:
+
+
+CODE  
+
+CGame::bGetItemNameWhenDeleteNpc (int &iItemID, short sNpcType)
+{
+xmlDoc *doc = NULL;
+xmlNode *root_element = NULL;
+doc = xmlParseFile("NpcItem.xml");
+if (doc == NULL)
+{
+ PutLogList("error: could not parse file file.xml\n");
+}
+root_element = xmlDocGetRootElement(doc);
+root_element=root_element->children;
+xmlNode *cur_node = NULL;
+xmlNode *sub_node = NULL;
+xmlNode *drop_node = NULL;
+xmlChar *DiceMin = NULL;
+xmlChar *DiceMax = NULL;
+xmlChar *NpcID= NULL;
+xmlChar *RollMin=NULL;
+xmlChar *RollMax=NULL;
+xmlChar *ItemID=NULL;
+char stype[10];
+bool bNpc;
+int Roll;
+char ctxt[100],ctmp[100];
+bNpc=FALSE;
+iItemID=-1;
+wsprintf(stype,"%d",sNpcType);
+for (cur_node = root_element; cur_node; cur_node = cur_node->next)
+{
+ if (xmlStrcmp(cur_node->name, (const xmlChar *)"NPC") == 0)
+ {
+  DiceMin = xmlGetProp(cur_node, (const xmlChar *)"DiceMin");
+  DiceMax = xmlGetProp(cur_node, (const xmlChar *)"DiceMax");
+  NpcID = xmlGetProp(cur_node, (const xmlChar *)"ID");
+  if ((xmlStrcmp(NpcID, (const xmlChar *)stype) == 0)&&(!bNpc))
+  {
+   bNpc=TRUE;
+   Roll=iDice(atoi((const char *)DiceMin),atoi((const char *)DiceMax));
+   for (sub_node = cur_node->children; sub_node; sub_node = sub_node->next)
+   {
+    if (xmlStrcmp(sub_node->name,(const xmlChar *)"DROP")==0)
+    {
+     RollMin=xmlGetProp(sub_node,(const xmlChar *)"RollMin");
+     RollMax=xmlGetProp(sub_node,(const xmlChar *)"RollMax");
+     ItemID=xmlGetProp(sub_node,(const xmlChar *)"ItemID");
+     if ( (atoi((const char *)RollMin)<Roll) && (atoi((const char *)RollMax)>Roll) && (iItemID == -1))
+     {
+      iItemID=atoi((const char *)ItemID);
+     }
+    }
+   }
+  }
+ }
+}
+xmlFreeDoc(doc);
+xmlCleanupParser();
+return iItemID != -1;
+}
+ 
+
+
+
+NpcItem is loaded every time when you kill something that mean you can edit drops while server is running.
+
+And that mean, you can easily parse your NpcItem on your website. I will post script soon

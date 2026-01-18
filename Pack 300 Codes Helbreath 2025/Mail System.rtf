@@ -1,0 +1,535 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 OK Here you have the Client side Mail System codes... I will post later the HGServer codes i hope you understand this codes and how to add them. If you have the MailSystem.pak Sprite and contents:\par
+\par
+After this codes:\par
+\par
+CODE\par
+// Portal Confirm Dialog\par
+m_stDialogBoxInfo[42].sX = 193;\par
+m_stDialogBoxInfo[42].sY = 271;\par
+m_stDialogBoxInfo[42].sSizeX = 263;\par
+m_stDialogBoxInfo[42].sSizeY = 100;\par
+\par
+\par
+Add this three:\par
+\par
+CODE\par
+// Mail Inbox Dialog\par
+m_stDialogBoxInfo[43].sX = 350;\par
+m_stDialogBoxInfo[43].sY = 55;\par
+m_stDialogBoxInfo[43].sSizeX = 257;\par
+m_stDialogBoxInfo[43].sSizeY = 339;\par
+\par
+// Send Mail Dialog\par
+m_stDialogBoxInfo[44].sX = 35;\par
+m_stDialogBoxInfo[44].sY = 55;\par
+m_stDialogBoxInfo[44].sSizeX = 257;\par
+m_stDialogBoxInfo[44].sSizeY = 339;\par
+\par
+// View Mail Dialog\par
+m_stDialogBoxInfo[45].sX = 35;\par
+m_stDialogBoxInfo[45].sY = 55;\par
+m_stDialogBoxInfo[45].sSizeX = 257;\par
+m_stDialogBoxInfo[45].sSizeY = 339;\par
+\par
+\par
+\par
+After the hole codes of this case :\par
+CODE\par
+case DEF_DYNAMICOBJECT_MINERAL7:\par
+\par
+\par
+Add this two cases\par
+\par
+CODE\par
+   case DEF_DYNAMICOBJECT_ARESDENMAILBOX:\par
+   \tab m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutShadowSprite(ix, iy, 7, dwTime);\par
+   \tab m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutSpriteFast(ix, iy, 7, dwTime);\par
+\par
+   \tab if ((m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.top != -1) &&\par
+     (m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.top < msY) &&\par
+     (m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.bottom > msY) &&\par
+     (m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.left < msX) &&\par
+     (m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.right > msX)) \{\par
+\par
+     m_sMCX = indexX;\par
+     m_sMCY = indexY;\par
+     iFocusStatus = NULL;\par
+     ZeroMemory(cFocusName, sizeof(cFocusName));\par
+     ZeroMemory(m_cMCName, sizeof(m_cMCName));\par
+\par
+     if ((cRB != 0) &&\par
+     \tab (m_bIsDialogEnabled[43] == FALSE)) \{\par
+\par
+     \tab EnableDialogBox(43, NULL, NULL, NULL);\par
+     \tab PlaySound('E', 14, 5);\par
+     \tab bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_MAILLIST, NULL, NULL, NULL, NULL, NULL);\par
+     \}\par
+   \tab\}\par
+\par
+   \tab break;\par
+   case DEF_DYNAMICOBJECT_ELVINEMAILBOX:\par
+   \tab m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutShadowSprite(ix, iy, 8, dwTime);\par
+   \tab m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutSpriteFast(ix, iy, 8, dwTime);\par
+\par
+   \tab if ((m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.top != -1) &&\par
+     (m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.top < msY) &&\par
+     (m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.bottom > msY) &&\par
+     (m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.left < msX) &&\par
+     (m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->m_rcBound.right > msX)) \{\par
+\par
+     m_sMCX = indexX;\par
+     m_sMCY = indexY;\par
+     iFocusStatus = NULL;\par
+     ZeroMemory(cFocusName, sizeof(cFocusName));\par
+     ZeroMemory(m_cMCName, sizeof(m_cMCName));\par
+\par
+     if (cRB != 0) \{\par
+     \tab EnableDialogBox(43, NULL, NULL, NULL);\par
+     \tab PlaySound('E', 14, 5);\par
+     \}\par
+   \tab\}\par
+\par
+   \tab break;\par
+\par
+\par
+After this Pakfile:\par
+\par
+[CODE]m_hPakFile = CreateFile("sprites\\\\interface.pak", GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);\par
+\par
+\par
+Add this codes:\par
+\par
+CODE\par
+ m_hPakFile = CreateFile("sprites\\\\MailDialog.pak", GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);\par
+\par
+ if (m_hPakFile != INVALID_HANDLE_VALUE) \{\par
+ \tab m_pSprite[DEF_SPRID_INTERFACE_MAIL1] = new class CSprite(m_hPakFile, &m_DDraw, "MailDialog", 0, FALSE);\par
+ \tab m_pSprite[DEF_SPRID_INTERFACE_MAIL2] = new class CSprite(m_hPakFile, &m_DDraw, "MailDialog", 1, FALSE);\par
+ \tab m_pSprite[DEF_SPRID_INTERFACE_MAIL3] = new class CSprite(m_hPakFile, &m_DDraw, "MailDialog", 2, FALSE);\par
+\par
+ \tab CloseHandle(m_hPakFile);\par
+ \}\par
+\par
+\par
+After this case:\par
+\par
+CODE\par
+case 42:\par
+DlgBoxClick_PortalConfirm(msX, msY);\par
+break;\par
+\par
+\par
+Add this three cases:\par
+\par
+CODE\par
+   case 43:\par
+   \tab DlgBoxClick_MailInbox(msX, msY);\par
+   \tab break;\par
+   case 44:\par
+   \tab DlgBoxClick_SendMail(msX, msY);\par
+   \tab break;\par
+   case 45:\par
+   \tab DlgBoxClick_ViewMail(msX, msY);\par
+   \tab break;\par
+   \}\par
+\par
+   return TRUE;\par
+ \tab\}\par
+ \}\par
+\}\par
+\par
+return FALSE;\par
+\}\par
+\par
+\par
+After this hole void codes:\par
+void CGame::ClearContents_OnCreateNewAccount() \{\par
+\par
+Add this:\par
+\par
+CODE\par
+void CGame::ClearContents_SendMail() \{\par
+ZeroMemory(m_cSendMailTo, sizeof(m_cSendMailTo));\par
+ZeroMemory(m_cSendMailSubject, sizeof(m_cSendMailSubject));\par
+ZeroMemory(m_cSendMailBody, sizeof(m_cSendMailBody));\par
+\}\par
+\par
+\par
+\par
+After this:\par
+\par
+CODE\par
+ \tab case 42:\par
+   DrawDialogBox_PortalConfirm(msX, msY);\par
+   break;\par
+\par
+\par
+Add this three shitys:\par
+CODE\par
+ \tab case 43:\par
+   DrawDialogBox_MailInbox(msX, msY);\par
+   break;\par
+ \tab case 44:\par
+   DrawDialogBox_SendMail(msX, msY);\par
+   break;\par
+ \tab case 45:\par
+   DrawDialogBox_ViewMail(msX, msY);\par
+   break;\par
+ \tab\}\par
+ \}\par
+\}\par
+\par
+\par
+\par
+\par
+After this code:\par
+\par
+CODE\par
+case 39:\par
+ if (m_bIsDialogEnabled[iBoxID] == FALSE) \{\par
+ \tab m_stDialogBoxInfo[iBoxID].cMode\tab = 0;\par
+ \}\par
+\par
+ break;\par
+\par
+\par
+Add this:\par
+\par
+CODE\par
+case 41:\par
+case 43: // Mail Inbox\par
+case 44: // Send Mail\par
+ if (m_bIsDialogEnabled[iBoxID] == FALSE) \{\par
+ \tab m_stDialogBoxInfo[iBoxID].cMode\tab = 0;\par
+ \tab m_stDialogBoxInfo[iBoxID].sView = 0;\par
+ \tab m_stDialogBoxInfo[iBoxID].sV1 = 0;\par
+ \}\par
+\par
+ break;\par
+case 45: // View Mail\par
+ if (m_bIsDialogEnabled[iBoxID] == FALSE) \{\par
+ \tab m_stDialogBoxInfo[iBoxID].cMode\tab = 0;\par
+ \tab m_stDialogBoxInfo[iBoxID].sView = 0;\par
+ \tab m_stDialogBoxInfo[iBoxID].sV1 = sV1;\par
+ \tab m_stDialogBoxInfo[iBoxID].sV2 = 0;\par
+ \}\par
+\par
+ break;\par
+\par
+\par
+After this void codes:\par
+\par
+CODE\par
+void CGame::ShowReceivedString(BOOL bIsHide) \{\par
+\par
+\par
+Add this void:\par
+\par
+CODE\par
+void CGame::ShowReceivedMailString() \{\par
+ZeroMemory(G_cTxt, sizeof(G_cTxt));\par
+\par
+strcpy(G_cTxt, m_pMailInputBuffer);\par
+\par
+if (strlen(m_pMailInputBuffer) <= m_cInputMaxLen) \{\par
+ strcpy(G_cTxt, m_pMailInputBuffer);\par
+\}\par
+\par
+if ((G_dwGlobalTime % 400) < 210) G_cTxt[strlen(G_cTxt)] = '_';\par
+\par
+PutString(m_iMailInputX + 1, m_iMailInputY + 1, G_cTxt, RGB(0, 0, 0));\par
+PutString(m_iMailInputX, m_iMailInputY + 1, G_cTxt, RGB(0, 0, 0));\par
+PutString(m_iMailInputX + 1, m_iMailInputY, G_cTxt, RGB(0, 0, 0));\par
+PutString(m_iMailInputX, m_iMailInputY, G_cTxt, RGB(255, 255, 255));\par
+\}\par
+\par
+\par
+\par
+After this void codes:\par
+\par
+CODE\par
+void CGame::ClearInputString() \{\par
+\par
+\par
+Add this void:\par
+\par
+CODE\par
+void CGame::StartMailInputString(int sX, int sY, unsigned char iLen, char *pBuffer, BOOL bIsHide) \{\par
+m_bMailInputStatus = TRUE;\par
+m_iMailInputX = sX;\par
+m_iMailInputY = sY;\par
+m_pMailInputBuffer = pBuffer;\par
+ZeroMemory(m_pMailInputBuffer, sizeof(m_pMailInputBuffer));\par
+m_cMailInputMaxLen = iLen;\par
+\}\par
+\par
+\par
+\par
+After this void add :\par
+\par
+CODE\par
+void CGame::EndInputString() \{\par
+\par
+\par
+This\par
+\par
+CODE\par
+void CGame::EndMailInputString() \{\par
+m_bMailInputStatus = FALSE;\par
+\}\par
+\par
+\par
+\par
+After this code:\par
+\par
+CODE\par
+if (m_bIsCombatMode) \{\par
+\par
+\par
+\par
+Add this:\par
+\par
+CODE\par
+if (m_bUnreadMail == TRUE) \{\par
+ if ((G_dwGlobalTime % 400) < 270) \{\par
+ \tab m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 1]->PutSpriteFast((640 / 2) - 5, 5, 9, dwTime);\par
+ \}\par
+\par
+\par
+After this codes add:\par
+\par
+CODE\par
+wp = (WORD *)(pData + DEF_INDEX2_MSGTYPE);\par
+\par
+\par
+\par
+CODE\par
+case DEF_NOTIFY_MAILLIST:\par
+ AddEventList("Viewing mail inbox...", 10);\par
+\par
+ if (m_stDialogBoxInfo[43].sV1 == 0) \{\par
+ \tab for (i = 0; i < 7; i++) \{\par
+   if (m_pMailList[i] != NULL) \{\par
+   \tab try \{\par
+     delete m_pMailList[i];\par
+   \tab\} catch (...) \{ \}\par
+\par
+   \tab m_pMailList[i] = NULL;\par
+   \}\par
+ \tab\}\par
+ \}\par
+\par
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+ ip = (int *)cp;\par
+ m_stDialogBoxInfo[43].sV1 = (short)*ip; // Mail count\par
+ cp += 4;\par
+\par
+ if (m_stDialogBoxInfo[43].sV1 == 0) \{\par
+ \tab AddEventList("You have no mail in your inbox!", 10);\par
+ \tab m_bUnreadMail = FALSE;\par
+ \tab return;\par
+ \}\par
+\par
+\par
+\par
+\par
+\par
+After this:\par
+\par
+CODE\par
+if (m_stDialogBoxInfo[43].sV1 == 0) \{\par
+\par
+\par
+Add this codes:\par
+\par
+CODE\par
+ // Mail limitation (just for now).\par
+ for (i = 0; ((i < m_stDialogBoxInfo[43].sV1) && (i < 7)); i++) \{\par
+ \tab m_pMailList[i] = new CMail();\par
+\par
+ \tab ip = (int *)cp;\par
+ \tab m_pMailList[i]->m_iMailId = (int)*ip;\par
+ \tab cp += 4;\par
+\par
+ \tab memcpy(m_pMailList[i]->m_cFrom, cp, 10);\par
+ \tab cp += 10;\par
+\par
+ \tab memcpy(m_pMailList[i]->m_cSubject, cp, DEF_MAXMAILSUBJECTSIZE);\par
+ \tab cp += DEF_MAXMAILSUBJECTSIZE;\par
+\par
+ \tab m_pMailList[i]->m_bIsRead = (BOOL)*cp;\par
+ \tab cp++;\par
+ \}\par
+\par
+ break;\par
+case DEF_NOTIFY_MAILBODY:\par
+case DEF_NOTIFY_SENDMAIL_SUCCESS:\par
+ break;\par
+case DEF_NOTIFY_SENDMAIL_FAILED:\par
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+ break;\par
+case DEF_NOTIFY_UNREADMAIL:\par
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+ if (*cp != 0) \{\par
+ \tab if (m_bUnreadMail == FALSE) \{\par
+   AddEventList("You have unread mail!", 10);\par
+ \tab\}\par
+ \tab m_bUnreadMail = TRUE;\par
+ \} else \{\par
+ \tab m_bUnreadMail = FALSE;\par
+ \}\par
+\par
+ cp++;\par
+\par
+ break;\par
+\par
+\par
+\par
+\par
+After this:\par
+CODE\par
+if (((m_bIsDialogEnabled[7] == TRUE) && (m_stDialogBoxInfo[7].cMode == 1)) ||\par
+\par
+\par
+Add this:\par
+\par
+CODE\par
+if (iUpdateRet != 0) \{\par
+ if (m_bMailInputStatus) \{\par
+ \tab ShowReceivedMailString();\par
+ \}\par
+\}\par
+\par
+\par
+After this void codes:\par
+void CGame::DlgBoxClick_PortalConfirm(short msX, short msY) \{\par
+\par
+Add all of this voids:\par
+\par
+CODE\par
+void CGame::DrawDialogBox_MailInbox(short msX, short msY) \{\par
+register int i, j;\par
+short sX, sY;\par
+DWORD dwTime;\par
+\par
+sX = m_stDialogBoxInfo[43].sX;\par
+sY = m_stDialogBoxInfo[43].sY;\par
+dwTime = timeGetTime();\par
+\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_MAIL1, sX, sY, 0);\par
+\par
+if ((msX >= sX + 99) && (msX <= sX + 170) && (msY >= sY + 300) && (msY <= sY + 315)) \{\par
+ PutString_SprFont(sX + 99, sY + 300, "Send Mail", 16, 16, 30);\par
+\} else \{\par
+ PutString_SprFont(sX + 99, sY + 300, "Send Mail", 6, 6, 20);\par
+\}\par
+\par
+j = 0;\par
+\par
+if (m_stDialogBoxInfo[43].sV1 != 0) \{\par
+ for (i = 0; i < 7; i++) \{\par
+ \tab if (m_pMailList[i] != NULL) \{\par
+   if ((msX >= (sX + 16)) && (msX <= (sX + 240)) && (msY >= (sY + 33 + (j * 38))) && (msY <= (sY + 70 + (j * 38)))) \{\par
+   \tab m_DDraw.DrawShadowBox(sX + 16, sY + 33 + (j * 38), sX + 240, sY + 70 + (j * 38));\par
+   \}\par
+\par
+   if (m_pMailList[i]->m_bIsRead == TRUE) \{\par
+   \tab m_pSprite[DEF_SPRID_INTERFACE_MAIL1]->PutSpriteFastNoColorKey(sX + 24, sY + 37 + (j * 38), 2, dwTime);\par
+   \} else \{\par
+   \tab m_pSprite[DEF_SPRID_INTERFACE_MAIL1]->PutSpriteFastNoColorKey(sX + 24, sY + 37 + (j * 38), 1, dwTime);\par
+   \}\par
+\par
+   PutString(sX + 62, sY + 40 + (j * 38), m_pMailList[i]->m_cSubject, RGB(255, 255, 255), FALSE, 1);\par
+   PutString(sX + 195, sY + 47 + (j * 38), "X days", RGB(150, 150, 150), FALSE, 1);\par
+\par
+   ZeroMemory(G_cTxt, sizeof(G_cTxt));\par
+   wsprintf(G_cTxt, "From: %s", m_pMailList[i]->m_cFrom);\par
+   PutString(sX + 62, sY + 52 + (j * 38), G_cTxt, RGB(150, 150, 150), FALSE, 1);\par
+\par
+   j++;\par
+ \tab\}\par
+ \}\par
+\}\par
+\}\par
+\par
+\par
+\par
+\par
+\par
+\par
+void CGame::DrawDialogBox_SendMail(short msX, short msY) \{\par
+short sX, sY;\par
+\par
+sX = m_stDialogBoxInfo[44].sX;\par
+sY = m_stDialogBoxInfo[44].sY;\par
+\par
+PutString2(sX + 10, sY + 10, m_cSendMailTo, 255, 255, 255);\par
+PutString2(sX + 10, sY + 40, m_cSendMailSubject, 255, 255, 255);\par
+\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_MAIL2, sX, sY, 0);\par
+\}\par
+\par
+void CGame::DlgBoxClick_SendMail(short msX, short msY) \{\par
+short sX, sY;\par
+\par
+sX = m_stDialogBoxInfo[44].sX;\par
+sY = m_stDialogBoxInfo[44].sY;\par
+\}\par
+\par
+void CGame::DrawDialogBox_ViewMail(short msX, short msY) \{\par
+// You need to select a valid mail in the inbox first.\par
+if (m_stDialogBoxInfo[45].sV1 == 0) return;\par
+\par
+register int i;\par
+short sX, sY;\par
+\par
+i = m_stDialogBoxInfo[45].sV1 - 1;\par
+sX = m_stDialogBoxInfo[45].sX;\par
+sY = m_stDialogBoxInfo[45].sY;\par
+\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_MAIL3, sX, sY, 0);\par
+\par
+// The mail that was selected must exist.\par
+if (m_pMailList[i] != NULL) \{\par
+ PutString(sX + 78, sY + 44, m_pMailList[i]->m_cFrom, RGB(255, 255, 255), FALSE, 1);\par
+ PutString(sX + 78, sY + 60, m_pMailList[i]->m_cSubject, RGB(255, 255, 255), FALSE, 1);\par
+\par
+ // Only print the body if it has been received.\par
+ if (m_stDialogBoxInfo[45].sV2 > 0) \{\par
+ \tab // 30, 87 body\par
+ \}\par
+\}\par
+\}\par
+\par
+void CGame::DlgBoxClick_ViewMail(short msX, short msY) \{\par
+if (m_stDialogBoxInfo[45].sV1 == 0) return;\par
+\par
+short sX, sY;\par
+\par
+sX = m_stDialogBoxInfo[45].sX;\par
+sY = m_stDialogBoxInfo[45].sY;\par
+\}\par
+\par
+void CGame::DrawDialogBox_GuildMenu(short msX, short msY)\par
+\{\par
+short sX, sY, szX;\par
+int iAdjX, iAdjY;\par
+\par
+sX = m_stDialogBoxInfo[7].sX;\par
+sY = m_stDialogBoxInfo[7].sY;\par
+szX = m_stDialogBoxInfo[7].sSizeX;\par
+\par
+iAdjX = - 13;\par
+iAdjY =  30;\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 19);\par
+\}\par
+\par
+\par
+This post has been edited by \'80M4NU\'80L on Jul 27 2006, 08:59 PM\par
+}
+ 

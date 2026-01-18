@@ -1,0 +1,27 @@
+// Dax - Execute Game Servers
+void CLoginServer::ExecuteGServer(char cServer[DEF_MAXGAMESERVERS][10], int iLoadCount)
+{
+	STARTUPINFO					si;
+	PROCESS_INFORMATION			pi;
+	int							i;
+	char						cTxt[250];
+
+	PutLogList("(!!!) Executing game servers...", DEF_INFO_MSG);
+
+	for(int i = 0; i < iLoadCount; i++)
+	{
+		ZeroMemory(&si, sizeof(STARTUPINFO));
+		ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+		si.cb = sizeof(STARTUPINFO);
+
+		wsprintf(cTxt, "(*) Launching %s game server", cServer[i]);
+		PutLogList(cTxt);
+
+		wsprintf(cTxt, "GServers\\%s", cServer[i]);
+		CreateProcess("GServers\\GServer.exe",NULL,NULL,NULL,FALSE,0,NULL,cTxt,&si,&pi);
+	}
+}
+
+
+
+

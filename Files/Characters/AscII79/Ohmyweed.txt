@@ -1,0 +1,106 @@
+[FILE-DATE]
+
+file-saved-date: 2026 1 18 3 18
+
+[NAME-ACCOUNT]
+
+character-name     = Ohmyweed
+account-name       = omymnr
+
+[STATUS]
+
+character-profile 	=__________
+character-location   = NONE
+character-guild-name = NONE
+character-guild-GUID = -1
+character-guild-rank = -1
+character-loc-map = bsmith_1f
+character-loc-x   = 45
+character-loc-y   = 33
+
+character-HP       = 71
+character-MP       = 53
+character-SP       = 56
+character-LEVEL    = 14
+character-RATING   = 0
+character-STR      = 14
+character-INT      = 10
+character-VIT      = 12
+character-DEX      = 14
+character-MAG      = 10
+character-CHARISMA = 10
+character-LUCK     = 10
+character-EXP      = 5491
+character-LU_Pool  = 42
+character-EK-Count = 0
+character-PK-Count = 0
+character-reward-gold = 0
+character-downskillindex = -1
+character-IDnum1 = 6448
+character-IDnum2 = 835
+character-IDnum3 = 1
+sex-status       = 1
+skin-status      = 2
+hairstyle-status = 4
+haircolor-status = 5
+underwear-status = 1
+hunger-status    = 100
+timeleft-shutup  = 0
+timeleft-rating  = 0
+timeleft-force-recall  = 1200
+timeleft-firm-staminar = 0
+admin-user-level = 0
+penalty-block-date = 0 0 0
+character-quest-number = 0
+character-quest-ID     = 0
+current-quest-count    = 0
+quest-reward-type      = 0
+quest-reward-amount    = 0
+character-contribution = 0
+character-war-contribution = 0
+character-quest-completed = 0
+special-event-id = 0
+super-attack-left = 1
+reserved-fightzone-id = 0 0 0
+special-ability-time = 393
+locked-map-name = NONE
+locked-map-time = 0
+crusade-job = 0
+crusade-GUID = 0
+construct-point = 0
+dead-penalty-time = 0
+party-id = 0
+gizon-item-upgade-left = 0
+
+
+appr1 = 1105
+appr2 = 16
+appr3 = 0
+appr4 = 0
+appr-color = 1610612736
+
+[ITEMLIST]
+
+character-item = Gold                 138 2 10438 4229 118 0 0 0 0 0 0
+character-item = Dagger               1 2 30282 4538 118 6 0 0 0 300 7471104
+character-item = TargeShield          1 2 9563 20445 118 0 0 0 0 500 8847360
+
+
+
+
+[MAGIC-SKILL-MASTERY]
+
+//------------------012345678901234567890123456789012345678901234567890
+magic-mastery     = 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+skill-mastery     = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+skill-SSN     = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+[ITEM-EQUIP-STATUS]
+
+item-equip-status = 01000000000000000000000000000000000000000000000000
+item-position-x = 40 0 74 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 
+item-position-y = 30 52 27 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 
+
+[EOF]
+
+
+

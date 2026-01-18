@@ -1,0 +1,12 @@
+Account-generated: Time(2026:1/18/2/27) IP(127.0.0.1)
+[Account Info]
+account-name = omymnr
+account-password = toito123
+account-Email = omygijon20@gmail.com
+account-Quiz =  
+account-Answer = -
+account-change-password = 2026 1 18
+
+[CHARACTERS]
+
+account-character = Ohmyweed

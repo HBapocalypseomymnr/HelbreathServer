@@ -1,0 +1,40 @@
+En los Src del Client, en el Game.cpp buscar y remplazar la funcion:
+
+
+Código:
+void CGame::UpdateScreen_OnLoading_Progress()
+
+
+por:
+
+
+/*********************************************************************************************************************
+** 	void CGame::UpdateScreen_OnLoading_Progress()																	**
+**  description			:: loading becomes progressbar																**
+**********************************************************************************************************************
+**	By 50Cent: Remplazado la barra de "Loading Data...", DEF_SPRID_INTERFACE_ND_LOADING								**
+**	por "Loading Data... X%																							**
+**		PutString_SprFont2(CORDENADA X, CORDENADA Y, G_cTxt, 255, 255, 0);											**
+**	Quedaria algo asi:																								**
+**	Loading Data... 64%																								**
+*********************************************************************************************************************/
+void CGame::UpdateScreen_OnLoading_Progress()
+{
+	m_DDraw.ClearBackB4();
+	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_LOADING, 0,0,0, TRUE);
+	DrawVersion(TRUE);
+	int iBarWidth;
+	iBarWidth= (int)m_cLoading;
+	wsprintf(G_cTxt, "Loading Data... %d%%", m_cLoading);
+	//PutString2(472, 455, G_cTxt, 255, 255, 0);
+	PutString_SprFont2(300, 455, G_cTxt, 255, 255, 0);
+/*	m_pSprite[DEF_SPRID_INTERFACE_ND_LOADING]->PutSpriteFastWidth(472,442, 1, iBarWidth, G_dwGlobalTime);
+*/	m_DDraw.iFlip();
+}
+
+
+
+Las cordenadas no estan exactamente al medio, para cambiarlas editen la parte en rojo, si quieren cambiar el color la parte azul:
+
+PutString_SprFont2(300, 455, G_cTxt, 255, 255, 0);
+En realidad el code ya estaba hecho solo era cambiar unos valores =)

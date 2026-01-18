@@ -1,0 +1,414 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Xelima Shield by SabbaT[GM]\par
+BUENO ACA LES DEJO UN XELIMA SHIELD QUE STRIPEA ROPA. \par
+\par
+en bEquipItemHandler\par
+\par
+arriba de\par
+\par
+cHeroArmorType = _cCheckHeroItemEquipped(iClientH);\par
+pongan\par
+\par
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_SHIELDATTACK_SPECABLITY) \{\par
+m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 & 0xFFFC;\par
+switch(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffect)\par
+\{\par
+case 180:\par
+m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 | 0x0002;\par
+break;\par
+default:\par
+if(m_pClientList[iClientH]->m_iAdminUserLevel > 0)\par
+m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 | 0x0001;\par
+break;\par
+\}\par
+\}\par
+en ActivateSpecialAbilityHandler\par
+\par
+abajo del case 50 pongan\par
+\par
+\par
+case 180:\par
+en iCalculateAttackEffect\par
+abajo de\par
+\par
+if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != NULL) && (m_pClientList[sAttackerH]->m_bIsSpecialAbilityEnabled == TRUE)) \{\par
+switch (m_pClientList[sAttackerH]->m_iSpecialAbilityType) \{\par
+case 0: break;\par
+case 1:\par
+iTemp = (m_pClientList[sTargetH]->m_iHP / 2);\par
+if (iTemp > iAP_SM) iAP_SM = iTemp;\par
+if (iAP_SM <= 0) iAP_SM = 1;\par
+break;\par
+case 2:\par
+if (m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) \{\par
+m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;\par
+SetIceFlag(sTargetH, DEF_OWNERTYPE_PLAYER, TRUE);\par
+bRegisterDelayEvent(DEF_DELAYEVENTTYPE_MAGICRELEAS E, DEF_MAGICTYPE_ICE, dwTime + 30000, \par
+sTargetH, DEF_OWNERTYPE_PLAYER, NULL, NULL, NULL, 1, NULL, NULL);\par
+SendNotifyMsg(NULL, sTargetH, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_ICE, 1, NULL, NULL);\par
+\}\par
+break;\par
+case 3:\par
+if (m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] == 0) \{\par
+m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = 2;\par
+bRegisterDelayEvent(DEF_DELAYEVENTTYPE_MAGICRELEAS E, DEF_MAGICTYPE_HOLDOBJECT, dwTime + 10000, \par
+sTargetH, DEF_OWNERTYPE_PLAYER, NULL, NULL, NULL, 10, NULL, NULL);\par
+SendNotifyMsg(NULL, sTargetH, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_HOLDOBJECT, 10, NULL, NULL);\par
+\}\par
+break;\par
+case 4:\par
+iAP_SM = (m_pClientList[sTargetH]->m_iHP);\par
+break;\par
+case 5:\par
+m_pClientList[sAttackerH]->m_iHP += iAP_SM;\par
+if (iGetMaxHP(sAttackerH) < m_pClientList[sAttackerH]->m_iHP) m_pClientList[sAttackerH]->m_iHP = iGetMaxHP(sAttackerH);\par
+SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);\par
+break;\par
+\}\par
+\}\par
+esta esto "case 50:" , arriba del case 50 pongan este case.\par
+\par
+\par
+C\'f3digo:\par
+case 180:\par
+switch (iDice(1,6))//Xelima Shiel te saca la ropa xD...\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab case 1:\par
+\tab\tab\tab\tab\tab\tab\tab\tab if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_HEAD ] != -1)\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ReleaseItemHandler(sAttackerH, m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_HEAD ], FALSE);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab\tab case 2:\par
+\tab\tab\tab\tab\tab\tab\tab\tab if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_BODY ] != -1)\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ReleaseItemHandler(sAttackerH, m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_BODY ], FALSE);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab\tab case 3:\par
+\tab\tab\tab\tab\tab\tab\tab\tab if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_ARMS ] != -1)\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ReleaseItemHandler(sAttackerH, m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_ARMS ], FALSE);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab\tab case 4:\par
+\tab\tab\tab\tab\tab\tab\tab\tab if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_LEGGINGS ] != -1)\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ReleaseItemHandler(sAttackerH, m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_LEGGINGS ], FALSE);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab\tab case 5:\par
+\tab\tab\tab\tab\tab\tab\tab\tab if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_PANTS ] != -1)\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ReleaseItemHandler(sAttackerH, m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_PANTS ], FALSE);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab\tab case 6:if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_BACK ] != -1)\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ReleaseItemHandler(sAttackerH, m_pClientList[sAttackerH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_BACK ], FALSE);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab\tab default:\par
+\tab\tab\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab break;\par
+en bEquipItemHandler\par
+busquen esto :\par
+\par
+\par
+if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) || \par
+(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY)) \{\par
+if ((m_pClientList[iClientH]->m_iSpecialAbilityType != 0)) \{\par
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cEquipPos != m_pClientList[iClientH]->m_iSpecialAbilityEquipPos) \{\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iClientH]->m_iSpecialAbilityEquipPos, m_pClientList[iClientH]->m_sItemEquipmentStatus[ m_pClientList[iClientH]->m_iSpecialAbilityEquipPos ], NULL, NULL);\par
+ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ m_pClientList[iClientH]->m_iSpecialAbilityEquipPos ], TRUE);\par
+\}\par
+\}\par
+\}\par
+reemplasen eso .. por esto :\par
+\par
+\par
+if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) || \par
+(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_SHIELDATTACK_SPECABLITY) || \par
+(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY)) \{\par
+if ((m_pClientList[iClientH]->m_iSpecialAbilityType != 0)) \{\par
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cEquipPos != m_pClientList[iClientH]->m_iSpecialAbilityEquipPos) \{\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iClientH]->m_iSpecialAbilityEquipPos, m_pClientList[iClientH]->m_sItemEquipmentStatus[ m_pClientList[iClientH]->m_iSpecialAbilityEquipPos ], NULL, NULL);\par
+ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_sItemEquipmentStatus[ m_pClientList[iClientH]->m_iSpecialAbilityEquipPos ], TRUE);\par
+\}\par
+\}\par
+\}\par
+en bEquipItemHandler\par
+busquen esto\par
+\par
+\par
+C\'f3digo:\par
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY) \{\par
+\tab\tab\tab m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 & 0xFFFC;\par
+\tab\tab\tab switch(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffect)\{\par
+\tab\tab\tab\tab case 0:\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 50:\par
+\tab\tab\tab\tab case 51:\par
+\tab\tab\tab\tab case 52:\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 | 0x0002;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab default:\par
+\tab\tab\tab\tab\tab if(m_pClientList[iClientH]->m_iAdminUserLevel > 0)\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 | 0x0001;\par
+\tab\tab\tab\tab\tab break;\tab\tab\tab\tab\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+abajo de eso pongan esto :\par
+\par
+\par
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_SHIELDATTACK_SPECABLITY) \{\par
+m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 & 0xFFFC;\par
+switch(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffect)\par
+\{\par
+case 180:\par
+m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 | 0x0002;\par
+break;\par
+default:\par
+if(m_pClientList[iClientH]->m_iAdminUserLevel > 0)\par
+m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 | 0x0001;\par
+break;\par
+\}\par
+\}\par
+en ReleaseItemHandler\par
+busquen :\par
+\par
+\par
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY) \{\par
+m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 & 0xFFFC;\par
+\}\par
+abajo pongan:\par
+\par
+\par
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_SHIELDATTACK_SPECABLITY) \{\par
+m_pClientList[iClientH]->m_sAppr4 = m_pClientList[iClientH]->m_sAppr4 & 0xFFFC;\par
+\}\par
+en _PenaltyItemDrop\par
+busquen :\par
+\par
+\par
+C\'f3digo:\par
+if (((m_pClientList[iClientH]->m_pItemList[j]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) || (m_pClientList[iClientH]->m_pItemList[j]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY)) \par
+\tab\tab\tab\tab\tab && (bIsSAattacked == FALSE)) \tab\par
+\tab\tab\tab\tab\{\tab continue;\par
+\tab\tab\tab\tab\}\par
+reemplasen por :\par
+\par
+C\'f3digo:\par
+if (((m_pClientList[iClientH]->m_pItemList[j]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY)|| \par
+\tab\tab\tab\tab\tab  (m_pClientList[iClientH]->m_pItemList[j]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_SHIELDATTACK_SPECABLITY) ||\par
+\tab\tab\tab\tab\tab  (m_pClientList[iClientH]->m_pItemList[j]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY)) \par
+\tab\tab\tab\tab\tab && (bIsSAattacked == FALSE)) \tab\par
+\tab\tab\tab\tab\{\tab continue;\par
+\tab\tab\tab\tab\}\par
+en CalcTotalItemEffect\par
+busquen\par
+\par
+\par
+case DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY:\par
+case DEF_ITEMEFFECTTYPE_DEFENSE:\par
+agreguen\par
+\par
+case DEF_ITEMEFFECTTYPE_SHIELDATTACK_SPECABLITY:\par
+\par
+busquen mas abajo :\par
+\par
+\par
+C\'f3digo:\par
+switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType)\par
+\tab\tab\tab\tab\{\tab case DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY:\par
+\tab\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_iSpecialAbilityType = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffect;\par
+\tab\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_iSpecialAbilityLastSec = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffectValue1; \par
+\tab\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_iSpecialAbilityEquipPos = (int)cEquipPos;\par
+\tab\tab\tab\tab\tab\tab if ((bNotify == TRUE) && (iEquipItemID == (int)sItemIndex))\par
+\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SPECIALABILITYSTATUS, 2, m_pClientList[iClientH]->m_iSpecialAbilityType, m_pClientList[iClientH]->m_iSpecialAbilityTime, NULL);\par
+\tab\tab\tab\tab\tab\tab break;\par
+abajo del break; pongan\par
+\par
+\par
+C\'f3digo:\par
+\tab case DEF_ITEMEFFECTTYPE_SHIELDATTACK_SPECABLITY:\par
+\tab\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_iSpecialAbilityType = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffect;\par
+\tab\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_iSpecialAbilityLastSec = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffectValue1; \par
+\tab\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_iSpecialAbilityEquipPos = (int)cEquipPos;\par
+\tab\tab\tab\tab\tab\tab if ((bNotify == TRUE) && (iEquipItemID == (int)sItemIndex))\par
+\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SPECIALABILITYSTATUS, 2, m_pClientList[iClientH]->m_iSpecialAbilityType, m_pClientList[iClientH]->m_iSpecialAbilityTime, NULL);\par
+\tab\tab\tab\tab\tab\tab break;\par
+en item.h\par
+\par
+\par
+#define DEF_ITEMEFFECTTYPE_SHIELDATTACK_SPECABLITY 69\par
+\par
+bueno... ahora el item en el combate...\par
+\par
+\par
+\par
+C\'f3digo:\par
+Item = 1601 XelimaShield     1 7 69 180 100  1 1 1 1 1600 52 3  9 45000 40000 9 0 0 0 60 0 11 5 14\par
+Item = 1602 XelimaPlateMail(M) 1 2 69 180 100 0 0 0 0 5000 50 9  3 45000 10000 4 0 0 1 60 0 0  6 14\par
+Item = 1603 XelimaPlateMail(W) 1 2 69 180 100 0 0 0 0 5000 50 13 5 45000 10000 6 0 0 2 60 0 0  6 14\par
+espero les guste... el ultimo numero de cada item es el color.. fijensen en su servdor q color es el rojo por q en el mio estan cambiados. \par
+\par
+\par
+\par
+\par
+================================================== ================================================== ========================================\par
+corrijan los items..\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+Item = 1601 XelimaShield     1 7 69 180 100  1 1 1 1 1600 180 3  9 45000 40000 9 0 0 0 60 0 11 5 14\par
+Item = 1602 XelimaPlateMail(M) 1 2 69 180 100 0 0 0 0 5000 180 9  3 45000 10000 4 0 0 1 60 0 0  6 14\par
+Item = 1603 XelimaPlateMail(W) 1 2 69 180 100 0 0 0 0 5000 180 13 5 45000 10000 6 0 0 2 60 0 0  6 14\par
+en el cliente :\par
+\par
+buscar y reemplasar esto case DEF_NOTIFY_SPECIALABILITYSTATUS:\par
+\par
+\par
+C\'f3digo:\par
+case DEF_NOTIFY_SPECIALABILITYSTATUS:\par
+                cp = (char *)(pData     + DEF_INDEX2_MSGTYPE + 2);\par
+                sp = (short *)cp;\par
+                sV1 = *sp;\par
+                cp += 2;\par
+                sp = (short *)cp;\par
+                sV2 = *sp;\par
+                cp += 2;\par
+                sp = (short *)cp;\par
+                sV3 = *sp;\par
+                cp += 2;\par
+                if (sV1 == 1) // Use SA\par
+                \{       PlaySound('E', 35, 0);\par
+                        AddEventList(NOTIFY_MSG_HANDLER4, 10); // "Use special ability!"\par
+                        switch (sV2) \{\par
+                        case 1: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER5,sV3); break;//"You are untouchable for %d seconds!"\par
+                        case 2: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER6, sV3); break;//"\par
+                        case 3: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER7, sV3); break;//"\par
+                        case 4: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER8, sV3); break;//"\par
+                        case 5: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER9, sV3); break;//"\par
+                        case 50: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER10, sV3); break;//"\par
+                    case 180: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER102, sV3); break;//"\par
+                        case 51: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER11, sV3); break;//"\par
+                        case 52: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER12, sV3); break;//"\par
+                        case 55: // Spell effect\par
+                                if (sV3 >90)\par
+                                        wsprintf(G_cTxt, "You cast a powerfull incantation, you can't use it again before %d minutes.", sV3/60);\par
+                                else\par
+                                        wsprintf(G_cTxt, "You cast a powerfull incantation, you can't use it again before %d seconds.", sV3);\par
+                                break;\par
+                        \}\par
+                        AddEventList(G_cTxt, 10);\par
+                \}else if (sV1 == 2) // Finished using\par
+                \{       if (m_iSpecialAbilityType != (int)sV2)\par
+                        \{       PlaySound('E', 34, 0);\par
+                                //AddEventList(NOTIFY_MSG_HANDLER13, 10);//"Special ability has been set!"\par
+                                if (sV3 >= 60)\par
+                                \{       switch (sV2) \{\par
+                                        case 1: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER14, sV3/60); AddEventList(G_cTxt, 10); break;//"Ability that decreases enemy's HP by 50%: Can use after %dMin"\par
+                                        case 2: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER15, sV3/60); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 3: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER16, sV3/60); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 4: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER17, sV3/60); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 5: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER18, sV3/60); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 50:wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER19, sV3/60); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 180:wsprintf(G_cTxt, NOTIFY_MSG_HANDLER103, sV3/60); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 51:wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER20, sV3/60); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 52:wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER21, sV3/60); AddEventList(G_cTxt, 10); break;//"\par
+                                        \}\par
+                                \}else\par
+                                \{       switch (sV2) \{\par
+                                        case 1: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER22, sV3); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 2: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER23, sV3); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 3: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER24, sV3); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 4: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER25, sV3); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 5: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER26, sV3); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 50: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER27, sV3); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 200: wsprintf(G_cTxt, NOTIFY_MSG_HANDLER104, sV3); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 51: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER28, sV3); AddEventList(G_cTxt, 10); break;//"\par
+                                        case 52: wsprintf(G_cTxt,  NOTIFY_MSG_HANDLER29, sV3); AddEventList(G_cTxt, 10); break;//""Ability that makes character untouchable: Can use after %dSec"\par
+                        \}       \}       \}\par
+                        m_iSpecialAbilityType = (int)sV2;\par
+                        m_dwSpecialAbilitySettingTime = dwTime;\par
+                        m_iSpecialAbilityTimeLeftSec  = (int)sV3;\par
+                \}else if (sV1 == 3)  // End of using time\par
+                \{       m_bIsSpecialAbilityEnabled = FALSE;\par
+                        m_dwSpecialAbilitySettingTime = dwTime;\par
+                        if (sV3 == 0)\par
+                        \{       m_iSpecialAbilityTimeLeftSec  = 1200;\par
+                                AddEventList(NOTIFY_MSG_HANDLER30, 10);//"Special ability has run out! Will be available in 20 minutes."\par
+                        \}else\par
+                        \{       m_iSpecialAbilityTimeLeftSec  = (int)sV3;\par
+                                if (sV3 >90)\par
+                                         wsprintf(G_cTxt, "Special ability has run out! Will be available in %d minutes." , sV3/60);\par
+                                else wsprintf(G_cTxt, "Special ability has run out! Will be available in %d seconds." , sV3);\par
+                                AddEventList(G_cTxt, 10);\par
+                        \}\par
+                \}else if (sV1 == 4) // Unequiped the SA item\par
+                \{       AddEventList(NOTIFY_MSG_HANDLER31, 10);//"Special ability has been released."\par
+                        m_iSpecialAbilityType = 0;\par
+                \}else if (sV1 == 5) // Angel\par
+                \{       PlaySound('E', 52, 0); // Angel\par
+                \}\par
+                break;\par
+lan.h\par
+\par
+\par
+#define ON_KEY_UP100 "Habilidad que Stripea Ropa : Puede ser usado tras %d segundos"\par
+#define NOTIFY_MSG_HANDLER102 "Stripas Ropa por %d segs!"\par
+#define NOTIFY_MSG_HANDLER103 "Habilidad que Stripea Ropa: Podes usarla en %d segundos"\par
+#define NOTIFY_MSG_HANDLER104 "Habilidad que Stripea ropa: Podes usarla en %d segundos"\par
+en onkeyup\par
+el case 33 reemplasenlo por este :\par
+\par
+case 33:\par
+if (m_cGameMode != DEF_GAMEMODE_ONMAINGAME) return;\par
+if (m_bInputStatus) return;\par
+if (m_bIsSpecialAbilityEnabled == TRUE)\par
+\{ if (m_iSpecialAbilityType != 0) \{\par
+bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_ACTIVATESPECABLTY, NULL, NULL, NULL, NULL, NULL);\par
+m_bIsSpecialAbilityEnabled = FALSE;\par
+\}\par
+else AddEventList(ON_KEY_UP26, 10);\par
+\}\par
+else \{\par
+if (m_iSpecialAbilityType == 0) AddEventList(ON_KEY_UP26, 10);\par
+else \{\par
+if ((m_sPlayerAppr4 & 0x00F0) != 0) \{\par
+AddEventList(ON_KEY_UP28, 10);\par
+return;\par
+\}\par
+i = (dwTime - m_dwSpecialAbilitySettingTime)/1000;\par
+i = m_iSpecialAbilityTimeLeftSec - i;\par
+if (i < 0) i = 0;\par
+ZeroMemory(G_cTxt, sizeof(G_cTxt));\par
+if (i < 60) \{\par
+switch (m_iSpecialAbilityType) \{\par
+case 1: wsprintf(G_cTxt, ON_KEY_UP29, i); break;//"\par
+case 2: wsprintf(G_cTxt, ON_KEY_UP30, i); break;//"\par
+case 3: wsprintf(G_cTxt, ON_KEY_UP31, i); break;//"\par
+case 4: wsprintf(G_cTxt, ON_KEY_UP32, i); break;//"\par
+case 5: wsprintf(G_cTxt, ON_KEY_UP33, i); break;//"\par
+case 50:wsprintf(G_cTxt, ON_KEY_UP34, i); break;//"\par
+case 180:wsprintf(G_cTxt, ON_KEY_UP100, i); break;//"\par
+case 51:wsprintf(G_cTxt, ON_KEY_UP35, i); break;//"\par
+case 52:wsprintf(G_cTxt, ON_KEY_UP36, i); break;//"\par
+\}\par
+\}\par
+else \{\par
+switch (m_iSpecialAbilityType) \{\par
+case 1: wsprintf(G_cTxt, ON_KEY_UP37, i/60); break;//"\par
+case 2: wsprintf(G_cTxt, ON_KEY_UP38, i/60); break;//"\par
+case 3: wsprintf(G_cTxt, ON_KEY_UP39, i/60); break;//"\par
+case 4: wsprintf(G_cTxt, ON_KEY_UP40, i/60); break;//"\par
+case 5: wsprintf(G_cTxt, ON_KEY_UP41, i/60); break;//"\par
+case 50:wsprintf(G_cTxt, ON_KEY_UP42, i/60); break;//\par
+case 180:wsprintf(G_cTxt, ON_KEY_UP101, i/60); break;//"\par
+case 51:wsprintf(G_cTxt, ON_KEY_UP43, i/60); break;//"\par
+case 52:wsprintf(G_cTxt, ON_KEY_UP44, i/60); break;//"\par
+\}\par
+\}\par
+AddEventList(G_cTxt, 10);\par
+\}\par
+\}\par
+break;\par
+Cyas \par
+}
+ 

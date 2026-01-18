@@ -1,0 +1,18 @@
+Author: juggalo2 
+
+1. Ok First get a hex editor, I recommend Hex Workshop As its very nice and tidy, And easy to use.
+
+2. Open the client up in the hex editor
+
+3. Click on Edit And then "Find" Now once in the search Criteria, Type = Text String
+Value = elvine.wav And in options Select ASCII String.
+
+4. once you have located elvine.wav Look at all the other waves Below it. This is where you Edit. Some people dont need to Hex there client at all. but for others who want music in every map This is the place you add new lines.
+
+5. if you Have a normal Mp3 and you renamed it to Aresden.wav it wouldnt work within the client, Why?.. Because the client can only accept a certain Range in Frequency. and im Talking about sound Frequency. So this is what you do.
+
+6. Downlaod Goldwave and install. for all you people who have no idea what this programme is, Goldwave is Basicly a Sound editor. that can be used for practicly anything to do with Music/sounds.
+
+7. Once installed Load up Goldwave And then Click on "Open" Now Select the music you want for example "YMCA" and click open. Now once its opened it will start to Decompress the music. wait till its finnished. Once done Click on "File" then "Save as" Save the filename as elvine.wav And as for the format Save that as "PCM unsigned 8 Bit Stereo" < This is what helbreath's Client use's>
+
+8. ok Now once done put the music you have just saved into your Helbreath/MUSIC folder. Load up the game and hey Presto your music is in game. Do the rest for all the others and your in buisness For people that need Goldwave link is below.

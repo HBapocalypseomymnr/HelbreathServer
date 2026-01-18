@@ -1,0 +1,535 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20\par
+Code by ZeroEoyPnk.\par
+\par
+Primero en el Source del HG, en game.cpp agregar:\par
+\par
+C\'f3digo:\par
+\par
+void CGame::GetDKHandler(int iClientH,int iItemID,char * pString) \par
+\{ //by ZeroEoyPnk\par
+int i, iNum, iRet, iEraseReq, dwGoldCount; \par
+char * cp, cData[256], cItemName[21]; \par
+class CItem * pItem; \par
+DWORD * dwp; \par
+short * sp; \par
+WORD * wp; \par
+if (m_pClientList[iClientH] == NULL) return; \par
+if (m_pClientList[iClientH]->m_iLevel < 180) return;\par
+if (m_pClientList[iClientH]->m_cSide == 0) return; \par
+if (_iGetItemSpaceLeft(iClientH) == 0) \{\par
+SendItemNotifyMsg(iClientH, DEF_NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL);\par
+return;\par
+\}\par
+dwGoldCount = dwGetItemCount(iClientH, "Gold");\par
+if (m_pItemConfigList[iItemID] == NULL) return;\par
+\par
+switch(iItemID) \{ \par
+case 706: \par
+case 724: \par
+if(m_pClientList[iClientH]->m_iContribution < 25) return; \par
+m_pClientList[iClientH]->m_iContribution -= 25; \par
+if(dwGoldCount >= 1000)\par
+\{\par
+SetItemCount(iClientH, "Gold", dwGoldCount - 1000); \par
+\}\par
+break; \par
+case 707: \par
+case 725:\par
+if(m_pClientList[iClientH]->m_iContribution < 50) return; \par
+m_pClientList[iClientH]->m_iContribution -= 50; \par
+if(dwGoldCount >= 1000)\par
+\{\par
+SetItemCount(iClientH, "Gold", dwGoldCount - 1000); \par
+\}\par
+break; \par
+case 708:\par
+case 726: \par
+if(m_pClientList[iClientH]->m_iContribution < 25) return; \par
+m_pClientList[iClientH]->m_iContribution -= 25;\par
+if(dwGoldCount >= 1000)\par
+\{\par
+SetItemCount(iClientH, "Gold", dwGoldCount - 1000); \par
+\}\par
+break; \par
+case 715:\par
+case 733: \par
+if(m_pClientList[iClientH]->m_iContribution < 50) return; \par
+m_pClientList[iClientH]->m_iContribution -= 50; \par
+if(dwGoldCount >= 1000)\par
+\{\par
+SetItemCount(iClientH, "Gold", dwGoldCount - 1000); \par
+\}\par
+break; \par
+case 719:\par
+case 732: \par
+if(m_pClientList[iClientH]->m_iContribution < 25) return; \par
+m_pClientList[iClientH]->m_iContribution -= 25; \par
+if(dwGoldCount >= 1000)\par
+\{\par
+SetItemCount(iClientH, "Gold", dwGoldCount - 1000); \par
+\}\par
+break; \par
+case 710: \par
+case 728: \par
+if(m_pClientList[iClientH]->m_iContribution < 50) return; \par
+m_pClientList[iClientH]->m_iContribution -= 50; \par
+if(dwGoldCount >= 1000)\par
+\{\par
+SetItemCount(iClientH, "Gold", dwGoldCount - 1000); \par
+\}\par
+break; \par
+case 709: \par
+case 714:\par
+case 717: \par
+case 718:\par
+if(m_pClientList[iClientH]->m_iContribution < 100) return; \par
+m_pClientList[iClientH]->m_iContribution -= 100; \par
+if(dwGoldCount >= 1000)\par
+\{\par
+SetItemCount(iClientH, "Gold", dwGoldCount - 1000); \par
+\}\par
+break; \par
+default: \par
+return; \par
+break; \par
+\} \par
+ZeroMemory(cItemName, sizeof(cItemName)); \par
+memcpy(cItemName,m_pItemConfigList[iItemID]->m_cName,20); \par
+iNum = 1; \par
+for (i = 1; i <= iNum; i++) \par
+\{ \par
+pItem = new class CItem; \par
+if (_bInitItemAttr(pItem, cItemName) == FALSE) \par
+\{ \par
+delete pItem; \par
+\} \par
+else \{ \par
+\par
+if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) \{ \par
+if (m_pClientList[iClientH]->m_iCurWeightLoad < 0) m_pClientList[iClientH]->m_iCurWeightLoad = 0; \par
+\par
+wsprintf(G_cTxt, "(*) Get DKItem : Char(%s) Player-Contr(%d) DK Obtained(%s)", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_iContribution,cItemName); \par
+PutLogFileList(G_cTxt); \par
+pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+dwp = (DWORD *)(cData + DEF_INDEX4_MSGID); \par
+*dwp = MSGID_NOTIFY; \par
+wp = (WORD *)(cData + DEF_INDEX2_MSGTYPE); \par
+*wp = DEF_NOTIFY_ITEMOBTAINED; \par
+cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); \par
+*cp = 1; \par
+cp++; \par
+\par
+memcpy(cp, pItem->m_cName, 20); \par
+cp += 20; \par
+\par
+dwp = (DWORD *)cp; \par
+*dwp = pItem->m_dwCount; \par
+cp += 4; \par
+\par
+*cp = pItem->m_cItemType; \par
+cp++; \par
+\par
+*cp = pItem->m_cEquipPos; \par
+cp++; \par
+\par
+*cp = (char)0;\par
+cp++; \par
+\par
+sp = (short *)cp; \par
+*sp = pItem->m_sLevelLimit; \par
+cp += 2; \par
+\par
+*cp = pItem->m_cGenderLimit; \par
+cp++; \par
+\par
+wp = (WORD *)cp; \par
+*wp = pItem->m_wCurLifeSpan; \par
+cp += 2; \par
+\par
+wp = (WORD *)cp; \par
+*wp = pItem->m_wWeight; \par
+cp += 2; \par
+\par
+sp = (short *)cp; \par
+*sp = pItem->m_sSprite; \par
+cp += 2; \par
+\par
+sp = (short *)cp; \par
+*sp = pItem->m_sSpriteFrame; \par
+cp += 2; \par
+*cp = pItem->m_cItemColor; \par
+cp++; \par
+*cp = (char)pItem->m_sItemSpecEffectValue2; // v1.41 \par
+cp++; \par
+\par
+dwp = (DWORD *)cp; \par
+*dwp = pItem->m_dwAttribute; \par
+cp += 4; \par
+\par
+if (iEraseReq == 1) delete pItem; \par
+\par
+iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53); \par
+\par
+iCalcTotalWeight(iClientH); \par
+\par
+switch (iRet) \{ \par
+case DEF_XSOCKEVENT_QUENEFULL: \par
+case DEF_XSOCKEVENT_SOCKETERROR: \par
+case DEF_XSOCKEVENT_CRITICALERROR: \par
+case DEF_XSOCKEVENT_SOCKETCLOSED: \par
+DeleteClient(iClientH, TRUE, TRUE); \par
+return; \par
+\} \par
+\} \par
+else \par
+\{ \par
+delete pItem; \par
+iCalcTotalWeight(iClientH); \par
+dwp = (DWORD *)(cData + DEF_INDEX4_MSGID); \par
+*dwp = MSGID_NOTIFY; \par
+wp = (WORD *)(cData + DEF_INDEX2_MSGTYPE); \par
+*wp = DEF_NOTIFY_CANNOTCARRYMOREITEM; \par
+\par
+iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6); \par
+switch (iRet) \{ \par
+case DEF_XSOCKEVENT_QUENEFULL: \par
+case DEF_XSOCKEVENT_SOCKETERROR: \par
+case DEF_XSOCKEVENT_CRITICALERROR: \par
+case DEF_XSOCKEVENT_SOCKETCLOSED: \par
+DeleteClient(iClientH, TRUE, TRUE); \par
+return; \par
+\} \par
+\} \par
+\} \par
+\} \par
+\}\par
+\par
+en Game.h buscar:\par
+\par
+C\'f3digo:\par
+\par
+void AdminOrder_GetFightzoneTicket(int iClientH);\par
+\par
+y debajo agregar:\par
+\par
+C\'f3digo:\par
+\par
+void GetDKHandler(int iClientH,int iItemID,char * pString);//By ZeroEoyPnk\par
+\par
+en Game.cpp buscar:\par
+\par
+C\'f3digo:\par
+\par
+void CGame::ClientCommonHandler(int iClientH, char * pData)\par
+\par
+y luego buscar:\par
+\par
+C\'f3digo:\par
+\par
+case DEF_COMMONTYPE_REQ_CHANGEPLAYMODE:\par
+\par
+despues del "break;" agregar:\par
+\par
+C\'f3digo:\par
+\par
+case DEF_COMMONTYPE_REQ_GETDKITEM:\par
+GetDKHandler(iClientH, iV1, pString);//By ZeroEoyPnk\par
+break;\par
+\par
+por ultimo en NetMessages.h agregar:\par
+\par
+C\'f3digo:\par
+\par
+#define DEF_COMMONTYPE_REQ_GETDKITEM 0x0A35\par
+\par
+eso es todo lo que es HG ahora vamos al client:\par
+en game.cpp del source del client buscar:\par
+\par
+C\'f3digo:\par
+\par
+void CGame:lgBoxClick_CityhallMenu(short msX, short msY)\par
+\par
+despues buscar:\par
+\par
+C\'f3digo:\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 220) && (msY < sY + 245)) \{\par
+\par
+despues de la primer llave que cierra agregar:\par
+\par
+C\'f3digo:\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 270))\par
+\{\par
+if ((m_iLevel < 180) && (m_iContribution < 25)) return;//dk items\par
+m_stDialogBoxInfo[13].cMode = 12;\par
+PlaySound('E', 14, 5);\par
+\}\par
+\par
+//asegurense que les quede el "break;" abajo de esta ultima llave\par
+una ves hecho esto buscar:\par
+\par
+C\'f3digo:\par
+\par
+case 11: // Fix Drawjer\par
+\par
+y debajo de esa funcion agregar:\par
+\par
+C\'f3digo:\par
+\par
+case 12://dk set by ZeroEoyPnk\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 90) && (msY <= sY + 110))\par
+\{\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 1) iReqHeroItemID = 706;\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 2) iReqHeroItemID = 724;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU92,strlen(DRAW_DIALOGBOX_CITYHALL_MENU92));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 110) && (msY <= sY + 130))\par
+\{\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 1) iReqHeroItemID = 707;\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 2) iReqHeroItemID = 725;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU93,strlen(DRAW_DIALOGBOX_CITYHALL_MENU93));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 130) && (msY <= sY + 150))\par
+\{\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 1) iReqHeroItemID = 708;\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 2) iReqHeroItemID = 726;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU94,strlen(DRAW_DIALOGBOX_CITYHALL_MENU94));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 150) && (msY <= sY + 170))\par
+\{\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 1) iReqHeroItemID = 715;\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 2) iReqHeroItemID = 733;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU95,strlen(DRAW_DIALOGBOX_CITYHALL_MENU95));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 170) && (msY <= sY + 190))\par
+\{\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 1) iReqHeroItemID = 712;\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 2) iReqHeroItemID = 730;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU97,strlen(DRAW_DIALOGBOX_CITYHALL_MENU97));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 190) && (msY <= sY + 210))\par
+\{\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 1) iReqHeroItemID = 710;\par
+if (m_pCharList[m_cCurFocus-1]->m_sSex == 2) iReqHeroItemID = 728;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU98,strlen(DRAW_DIALOGBOX_CITYHALL_MENU98));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 210) && (msY <= sY + 230))\par
+\{\par
+iReqHeroItemID = 709;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU99,strlen(DRAW_DIALOGBOX_CITYHALL_MENU99));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 230) && (msY <= sY + 250))\par
+\{\par
+iReqHeroItemID = 714;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU101,strlen(DRAW_DIALOGBOX_CITYHALL_MENU101));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 250) && (msY <= sY + 270))\par
+\{\par
+iReqHeroItemID = 717;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU102,strlen(DRAW_DIALOGBOX_CITYHALL_MENU102));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 270) && (msY <= sY + 290))\par
+\{\par
+iReqHeroItemID = 718;\par
+ZeroMemory(m_cTakeDKItemName,sizeof(m_cTakeDKItemN ame));\par
+memcpy(m_cTakeDKItemName,DRAW_DIALOGBOX_CITYHALL_M ENU103,strlen(DRAW_DIALOGBOX_CITYHALL_MENU103));\par
+m_stDialogBoxInfo[13].cMode = 13;\par
+m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+PlaySound('E', 14, 5);\par
+\}\par
+break;\par
+\par
+case 13: // ZeroEoyPnk - code original by Drawjer - Modificado para items DK\par
+if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\{ bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETDKITEM, NULL, m_stDialogBoxInfo[13].sV1, NULL, NULL, NULL);\par
+m_stDialogBoxInfo[13].cMode = 0;\par
+PlaySound('E', 14, 5);\par
+\}\par
+if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\{ m_stDialogBoxInfo[13].cMode = 12;\par
+PlaySound('E', 14, 5);\par
+\}\par
+break;\par
+\par
+//en este caso la funcion se agrega despues del "break;" y antes de la llave que cierre\par
+una ves hecho esto, buscar:\par
+\par
+C\'f3digo:\par
+\par
+void CGame:rawDialogBox_CityHallMenu(short msX, short msY)\par
+\par
+y luego buscar:\par
+\par
+C\'f3digo:\par
+\par
+//Change crusade role\par
+\par
+despues de esta linea:\par
+\par
+C\'f3digo:\par
+\par
+\}else PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 65,65,65);//"\par
+\par
+\par
+\par
+agregar:\par
+\par
+C\'f3digo:\par
+\par
+//dkset by ZeroEoyPnk\par
+if ((m_iLevel >= 180) && (m_iContribution >= 25))\par
+\{ if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 270))\par
+PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU100, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU100, 4,0,50);\par
+\}else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU100, 65,65,65);\par
+PutAlignedString(sX, sX + szX, sY + 270, DRAW_DIALOGBOX_CITYHALL_MENU17);//"Select an Item you want."\par
+break;\par
+\par
+Luego buscar:\par
+\par
+C\'f3digo:\par
+\par
+case 11: //drajwer - ask for tooking hero mantle\par
+\par
+y despues del "break;" agregar:\par
+\par
+C\'f3digo:\par
+\par
+case 12://dkset by ZeroEoyPnk\par
+PutAlignedString(sX, sX + szX, sY + 60, DRAW_DIALOGBOX_CITYHALL_MENU80, 255,255,255);\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 90) && (msY < sY + 110))\par
+PutAlignedString(sX, sX + szX, sY + 90, DRAW_DIALOGBOX_CITYHALL_MENU81, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 90, DRAW_DIALOGBOX_CITYHALL_MENU81, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 110) && (msY < sY + 130))\par
+PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_CITYHALL_MENU82, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_CITYHALL_MENU82, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 130) && (msY < sY + 150))\par
+PutAlignedString(sX, sX + szX, sY + 130, DRAW_DIALOGBOX_CITYHALL_MENU83, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 130, DRAW_DIALOGBOX_CITYHALL_MENU83, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 150) && (msY < sY + 170))\par
+PutAlignedString(sX, sX + szX, sY + 150, DRAW_DIALOGBOX_CITYHALL_MENU84, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 150, DRAW_DIALOGBOX_CITYHALL_MENU84, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 170) && (msY < sY + 190))\par
+PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU86, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU86, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 190) && (msY < sY + 200))\par
+PutAlignedString(sX, sX + szX, sY + 190, DRAW_DIALOGBOX_CITYHALL_MENU87, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 190, DRAW_DIALOGBOX_CITYHALL_MENU87, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 210) && (msY < sY + 230))\par
+PutAlignedString(sX, sX + szX, sY + 210, DRAW_DIALOGBOX_CITYHALL_MENU88, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 210, DRAW_DIALOGBOX_CITYHALL_MENU88, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 230) && (msY < sY + 250))\par
+PutAlignedString(sX, sX + szX, sY + 230, DRAW_DIALOGBOX_CITYHALL_MENU89, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 230, DRAW_DIALOGBOX_CITYHALL_MENU89, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 250) && (msY < sY + 270))\par
+PutAlignedString(sX, sX + szX, sY + 250, DRAW_DIALOGBOX_CITYHALL_MENU90, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 250, DRAW_DIALOGBOX_CITYHALL_MENU90, 4,0,50);\par
+\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 270) && (msY < sY + 290))\par
+PutAlignedString(sX, sX + szX, sY + 270, DRAW_DIALOGBOX_CITYHALL_MENU91, 255,255,255);\par
+else PutAlignedString(sX, sX + szX, sY + 270, DRAW_DIALOGBOX_CITYHALL_MENU91, 4,0,50);\par
+\par
+break;\par
+case 13: //ZeroEoyPnk - code original drajwer - modificado para los DK items \par
+PutAlignedString(sX,sX+szX-1,sY+125,m_cTakeDKItemName, 55,25,25);\par
+PutAlignedString(sX+1,sX+szX,sY+125,m_cTakeDKItemN ame, 55,25,25);\par
+PutAlignedString(sX,sX+szX,sY+260,DRAW_DIALOGBOX_C ITYHALL_MENU46A, 55,25,25); // would you like..\par
+if ( (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX)\par
+&& (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);\par
+else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);\par
+if ( (msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX)\par
+&& (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);\par
+else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);\par
+break;\par
+\par
+//recuerden que no tienen que ponerlo despues de la llave, va entre el ultimo "break;" y la llave\par
+luego de esto van a lang_eng y agregan:\par
+\par
+C\'f3digo:\par
+\par
+//lista de items - ZeroEoyPnk\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU100 "Tomar Items Dk"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU80 "Objetos DK habilitados :"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU81 "DarkHauberk"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU82 "DarkFullHelm"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU83 "DarkLeggings"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU84 "DarkRobe"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU86 "DarkChainMail"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU87 "DarkPlateMail"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU88 "DarkFlameberge"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU89 "DarkStaff"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU90 "DarkRapier"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU91 "DarkGreatSword"\par
+//items a sacar... - ZeroEoyPnk\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU92 "DarkHauberk (Contrib 25 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU93 "DarkFullHelm (Contrib 50 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU94 "DarkLeggings (Contrib 25 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU95 "DarkRobe (Contrib 50 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU97 "DarkChainMail (Contrib 50 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU98 "DarkPlateMail (Contrib 50 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU99 "DarkFlameberge (Contrib 100 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU101 "DarkStaff (Contrib 100 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU102 "DarkRapier (Contrib 100 - 1000 Gold)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU103 "DarkGreatSword (Contrib 100 - 1000 Gold)"\par
+\par
+y por ultimo van a "NetMessages.h" y agregan:\par
+\par
+C\'f3digo:\par
+\par
+#define DEF_COMMONTYPE_REQ_GETDKITEM 0x0A35\par
+\par
+\par
+\par
+}
+ 

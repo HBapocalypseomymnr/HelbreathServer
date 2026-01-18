@@ -1,0 +1,87 @@
+Bag Mess [FIXED] [By KaoZureS - darmart123]
+Bueno la verdad es que estaba viendo los fix de bag mess del foro y son muy largos y en mi caso daban errores.
+
+Entonces me dije voy a pensar y entender esto de las posiciones..
+algo entendi pero no mucho xD..
+la cosa es que adapte un code que hace que este fix sea muy facil
+Solo sacando unas lineas y modificando un detalle pero hecho ORIGINALMENTE POR KAOZURES!
+
+Recien probado andando al 100%!
+
+Partamos...:
+
+Nos vamos a los sources del HGServer
+Nos vamos al Game.cpp
+Buscamos:
+
+Cita:
+void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey, BOOL bIsResurrected)
+Ahora en la misma funcion buscamos:
+
+Cita:
+case DEF_XSOCKEVENT_SOCKETCLOSED:
+En esta parte tienen que ser muy cuidadosos para que no le de errores.
+Una lineas mas abajo encontraremos...
+
+Cita:
+bFlag = FALSE;
+Desde ahi hasta el ultimo
+
+Cita:
+}
+Remplazamos todo por:
+
+Cita:
+bFlag = FALSE; // Kaozures - Adaptado darmart123.
+while (bFlag == FALSE) {
+bFlag = TRUE;
+for (i = 0; i < DEF_MAXITEMS-1; i++)
+if ((m_pClientList[iClientH]->m_pItemList[i] == NULL) && (m_pClientList[iClientH]->m_pItemList[i+1] != NULL)) {
+m_pClientList[iClientH]->m_pItemList[i] = m_pClientList[iClientH]->m_pItemList[i+1];
+m_pClientList[iClientH]->m_pItemList[i+1] = NULL;
+m_pClientList[iClientH]->m_ItemPosList[i].x = m_pClientList[iClientH]->m_ItemPosList[i+1].x;
+m_pClientList[iClientH]->m_ItemPosList[i].y = m_pClientList[iClientH]->m_ItemPosList[i+1].y;
+bFlag = FALSE;
+}
+}
+Ahi terminamos la parte mas compleja...
+
+Ahora nos vamos a la funcion:
+
+Cita:
+BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwSize)
+Dentro de esta funcion buscamos:
+
+Cita:
+Case 50
+Remplazamos todo ese case por:
+
+Cita:
+
+case 50:
+if (_bGetIsStringIsNumber(token) == FALSE) {
+wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); 
+PutLogList(cTxt);
+delete pContents;
+delete pStrTok;
+return FALSE;
+}
+
+m_pClientList[iClientH]->m_ItemPosList[cReadModeB-1].x = atoi(token);
+if (m_pClientList[iClientH]->m_ItemPosList[cReadModeB-1].x < -10) m_pClientList[iClientH]->m_ItemPosList[cReadModeB-1].x = -10; //KaoZureS adaptado darmart123
+cReadModeB++;
+if (cReadModeB > 50) {
+cReadModeA = 0;
+cReadModeB = 0;
+}
+break;
+Eso seria tienen su Bag-Mess fixieado!
+
+ATENCION:
+
+Este code se podria decir que esta solo hecho para servidores fast ya que solo te soluciona este problema cuando pasas de un mapa a otro dentro de un mismo HG de lo contrario seguira igual
+
+Espero que halla ayudado...
+
+Base de code por KaoZureS
+Rescatado y adaptado sacando unas minimas lineas xD darmart123

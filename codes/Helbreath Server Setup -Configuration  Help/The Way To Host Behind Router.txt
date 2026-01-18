@@ -1,0 +1,74 @@
+~Router CFG'S~
+//GateServer
+[CONFIG]
+
+gate-server-address = internal
+gate-server-port = 6502
+
+game-server-list = internal
+game-server-list = external
+game-server-address = internal
+game-server-address = external
+game-server-port = 2101 
+build-date = 1126 
+
+game-server-list = internal
+game-server-list = external
+
+permitted-address = internal
+permitted-address = external
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//HMLServer
+[CONFIG]
+
+log-server-address = internal
+log-server-port = 2848
+internal-log-server-port = 3840
+gate-server-address = internal
+gate-server-port = 6502
+backup-drive-letter = C
+
+permitted-address = internal
+permitted-address = external
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//WLserver
+[CONFIG]
+
+world-server-port = 2500
+backup-drive-letter = C
+internal-world-server-port = 3840
+world-server-name = WS1
+main-log-server-address = internal
+main-log-server-port = 2848
+
+gate-server-address = internal
+gate-server-port = 6502
+
+// Up to 10 IP addresses specifying which HGServer IPs can connect
+game-server-list = internal
+game-server-list = external
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//GServer
+[CONFIG]
+
+gate-server-dns = false
+log-server-dns = false
+game-server-name = towns
+game-server-address = internal
+game-server-internal-address = internal
+game-server-external-address = external
+game-server-port = 9903
+log-server-address = internal
+internal-log-server-port = 2500
+gate-server-address = internal
+gate-server-port = 6502
+game-server-mode = LAN
+
+[MAPS]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

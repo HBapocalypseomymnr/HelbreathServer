@@ -1,0 +1,36 @@
+Game.cpp
+
+Under useitemhandler:
+
+case DEF_ITEMEFFECTTYPE_CLASSMANUAL:
+
+if(m_pClientList[iClientH]->m_iClass > 0)
+iClassValue = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;			
+m_pClientList[iClientH]->m_iClass += iClassValue;
+SendNotifyMsg(NULL, iClientH, CLASSCHANGE, NULL, NULL, NULL, NULL);
+break;
+
+Under SendNotifyMsg:
+
+case CLASSCHANGE:
+
+ip   = (int *)cp;
+*ip  = m_pClientList[iToH]->m_iClass;
+cp  += 4;
+
+iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 10);
+break;
+
+Netmessages.h
+
+#define CLASSCHANGE							0x0BF9
+
+Item.h
+
+#define DEF_ITEMEFFECTTYPE_CLASSMANUAL	33 
+
+//I hope u get where class value comes from. :) i havent tested this version, but it shud work.
+
+
+
+

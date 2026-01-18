@@ -1,0 +1,35 @@
+if (memcmp(cp, "/roll", 5) == 0) {
+  wsprintf(G_cTxt, "Random dice roll: %d", iDice(1,100));
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, G_cTxt);
+  return;
+ }
+
+
+Or to make sure they don't "cheat"
+CODE
+
+ if (memcmp(cp, "/roll", 5) == 0) {
+
+
+  CStrTok * pStrTok = new class CStrTok(cp, " ");
+  char * token;
+  token = pStrTok->pGet();
+  token = pStrTok->pGet();
+
+  if (token == NULL) {
+   delete pStrTok;
+   return;
+  }
+
+  for (int x = 0; x < DEF_MAXCLIENTS; x++)
+   if ((m_pClientList[x] != NULL) && (memcmp(m_pClientList[x]->m_cCharName, token, 10) == 0)) {
+    int iRoll = iDice(1,100);
+    wsprintf(G_cTxt, "Random dice roll: %d", iRoll);
+    SendNotifyMsg(NULL, x, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, G_cTxt);
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, G_cTxt);
+    delete pStrTok;
+    return;
+   }
+  delete pStrTok;
+  return;
+ }

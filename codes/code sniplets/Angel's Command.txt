@@ -1,0 +1,42 @@
+void CGame::GetAngels(int iClientH) //Made by Tafka
+{
+class CItem * pItem;
+int iItemID, i, iEraseReq;
+if(m_pClientList[iClientH] == NULL) return;
+if(m_pClientList[iClientH]->m_iLevel < 180) return;
+for (i = 0; i <= 4; i++)
+{
+ pItem = new class CItem;
+ iItemID=-1;
+  if (m_pClientList[iClientH]->m_iStr > 100) 
+  {
+   iItemID = 555;
+  }
+
+  if (m_pClientList[iClientH]->m_iDex > 100)
+  {
+   iItemID = 666;
+  }
+  if (m_pClientList[iClientH]->m_iMag > 100)
+  {
+   iItemID = 777;
+  }
+  if (m_pClientList[iClientH]->m_iVit > 100)
+  {
+   iItemID = 888;
+  }
+ if (i == 4)
+ {
+ if (iItemID != 0)
+ {
+  _bInitItemAttr(pItem, iItemID);
+  pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+  pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
+  pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
+  pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
+  _bAddClientItemList(iClientH, pItem, &iEraseReq);
+  SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+ }
+}
+   }
+  }

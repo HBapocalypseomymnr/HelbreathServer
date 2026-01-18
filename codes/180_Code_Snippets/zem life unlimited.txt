@@ -1,0 +1,11 @@
+Unlimited life for Zem
+Author - Jensen
+
+
+
+Find:
+wsprintf(G_cTxt, UPDATE_SCREEN_ONGAME10, m_pItemList[m_stMCursor.sSelectedObjectID]->m_wCurLifeSpan);
+
+And change the If-statement to
+
+if (m_pItemList[m_stMCursor.sSelectedObjectID]->m_cEquipPos != DEF_EQUIPPOS_NONE || !strcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName,"ZemstoneofSacrifice"))

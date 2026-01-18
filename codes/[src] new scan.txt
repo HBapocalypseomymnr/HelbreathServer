@@ -1,0 +1,34 @@
+Just a small snippet to change ur scan to not say: "HGServer:", also itll tell the players Health/Mana/Sp/Criticals. Like i said nothing huge, but neater than the old. 
+
+In the HGserver Game.cpp find:
+
+Code: Select all
+case DEF_MAGICTYPE_SCAN:
+
+
+and replace the function with:
+
+Code: Select all
+case DEF_MAGICTYPE_SCAN:
+               ZeroMemory(cScanMessage, sizeof(cScanMessage));
+               m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+               if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
+                  switch (cOwnerType) {
+                     case DEF_OWNERTYPE_PLAYER:
+                        if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
+                        wsprintf(cScanMessage, " Player: %s || Health: %d || Mana: %d || Stamina: %d || Criticals: %d", m_pClientList[sOwnerH]->m_cCharName, m_pClientList[sOwnerH]->m_iHP, m_pClientList[sOwnerH]->m_iMP, m_pClientList[sOwnerH]->m_iSP, m_pClientList[sOwnerH]->m_iSuperAttackLeft);
+                        //ShowClientMsg(iClientH, cScanMessage);
+                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cScanMessage);
+                        break;
+
+                     case DEF_OWNERTYPE_NPC:
+                        if (m_pNpcList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
+                        wsprintf(cScanMessage, " Monster: %s || Health: %d || Mana: %d", m_pNpcList[sOwnerH]->m_cNpcName, m_pNpcList[sOwnerH]->m_iHP, m_pNpcList[sOwnerH]->m_iMana);
+                     //   ShowClientMsg(iClientH, cScanMessage);
+                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cScanMessage);
+                        break;
+                  }
+               SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex,
+                     m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, dX, dY, 10, 10);
+               }
+               break;

@@ -1,0 +1,27 @@
+angels
+Apocalypse
+Apocalypse Thunder
+Autobind For Bs Items
+Auto Clearmap
+change City
+checkpoints For Majestic
+Cityhall Teleport
+Contribution Code
+crafting 1
+Critical Candy - Potion
+criticals
+dkset
+Ek Announcer
+Enable Admin Attack
+get reps
+getskilled Command
+Lottery Ticket
+Magic Weapon
+npc item
+Npc Kill Logger With Cfg
+Pandora's Box
+players on hg
+show dmg
+Statschange
+Summon Guild (only On Same Maps)
+Xml Based Droplist

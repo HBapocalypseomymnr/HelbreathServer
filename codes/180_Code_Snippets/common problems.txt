@@ -1,0 +1,226 @@
+:how can my friend host everything... but i keep all the files..???
+
+A: You cant host without files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+?:If your Gserver is on LAN People outside can connect.
+And if its on Internet Only yourself may connect.
+Right i understand this, But here's something i dont.
+Please for the love of god someone exaplin this.
+I Can host and people can connect and play,
+However i cant connect and play since its hosted on my Dam computer.
+Right Well would someone Please tell me why? Router compatibility Snoopy Said.
+But thing is here what is making it not compatible in the first place.
+Dont say router its not the Router because ive hosted ragnarok on it and
+played at the same time as everyone that connects.
+
+Right here's another example: Game-server-mode = INTERNET
+Now with this i can play. But what is giving me the all clear
+to tell me i can play in the first place? And here is another example:
+
+Game-server-mode = LAN
+Right now i cant connect by using this.
+i will get Past the login screen onto character Selection and once double
+clicked the char i want. it will stay on connecting. What is going on here.
+Why isnt it giving the all clear like it should be? Whats causing this
+bastard to not send me a signal back telling me i can now connect.
+just the same way as when i try to connect using INTERNET Setup.
+
+A: players use ur external ip in cleint.
+You use ur internal ip for client.
+Some router will let u use ur external ip. but most dont
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+?:hii..i need a binary converter plz to make stat limit on the client
+
+A:http://www.geocities.com/binary_converter/
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+?:Hey.... how do u change max stats in a 3.72 client??? Any1 knows?
+
+A:You Cant its packed
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+?:Enyone know how to calculate weapon damage when u have damage
+"4D8+3 with 300str" or "2D11+9 with 400str" etc
+
+?:how is spells calculated?
+
+A:Spells same way but using Mag....
+
+A:Lets say...the weapon damage is 4D8+3 and needs 300str
+Lowest Damage
+4D1+1 = 5 points.
+Now 300str/10 = 30% extra damage.
+A 30% of 5 points will be... 1.5 so the lowest damage should be
+5 points + 1.5 points = 6.5 points <--- very rarely
+
+Highest Damage
+4D8+3 = 35 points
+Now 300str/10 = 30% extra damage.
+A 30% of 35 points will be... 10.5 so the highest damage should be
+35 points + 10.5 points = 45.5 points
+
+This is no dash, no zerk or critical. Just normal hit.
+By my calculations, the normal damage should be around 30s
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+?:Admin use lvl = 0 problem .....the problem is i set to "4" and save it!
+Then after i log in and log out and check again my char "Admin use lvl = 0" again!
+
+A:GameServer - > GameConfigs - > AdminList. Add your character name in there
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+?:how can i change magic stuff like:
+magic = 88 Earth-Shock-Wave 30 0 0 180 2 2 5 1 20 7 8 16 0 0 0 200 -1 1 1
+
+A: magic = 88 Earth-Shock-Wave 30 0 0 180 2 2 5 1 "20 7 8 16" 0 0 0 200 -1 1 1
+raise them all up the same
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+?:How I Can Make Account Creater In My Website?
+
+A:get easy php and change 127.0.0.1 to you ip in apache cfg or httpd.conf
+apache cfg is when you have it runing but if you go to the path of the files for easy php it will be called httpd.conf.
+change the ip and port and your golden
+you sould see like ip 127.0.0.1:80
+your ip:any port you want
+so then yo ascess on web after you have it runing it sould be
+http://yourip:port/
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~Router CFG'S~
+//GateServer
+[CONFIG]
+
+gate-server-address = internal
+gate-server-port = 6502
+
+game-server-list = internal
+game-server-list = external
+game-server-address = internal
+game-server-address = external
+game-server-port = 2101
+build-date = 1126
+
+game-server-list = internal
+game-server-list = external
+
+permitted-address = internal
+permitted-address = external
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//HMLServer
+[CONFIG]
+
+log-server-address = internal
+log-server-port = 2848
+internal-log-server-port = 3840
+gate-server-address = internal
+gate-server-port = 6502
+backup-drive-letter = C
+
+permitted-address = internal
+permitted-address = external
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//WLserver
+[CONFIG]
+
+world-server-port = 2500
+backup-drive-letter = C
+internal-world-server-port = 3840
+world-server-name = WS1
+main-log-server-address = internal
+main-log-server-port = 2848
+
+gate-server-address = internal
+gate-server-port = 6502
+
+// Up to 10 IP addresses specifying which HGServer IPs can connect
+game-server-list = internal
+game-server-list = external
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//GServer
+[CONFIG]
+
+gate-server-dns = false
+log-server-dns = false
+game-server-name = towns
+game-server-address = internal
+game-server-internal-address = internal
+game-server-external-address = external
+game-server-port = 9903
+log-server-address = internal
+internal-log-server-port = 2500
+gate-server-address = internal
+gate-server-port = 6502
+game-server-mode = LAN
+
+[MAPS]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~Reg CFG'S~
+
+//GateServer
+[CONFIG]
+
+gate-server-address = internal
+gate-server-port = 6502
+
+game-server-list = internal
+game-server-address = internal
+game-server-port = 2101
+build-date = 1126
+
+game-server-list = internal
+
+permitted-address = internal
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//HMLServer
+[CONFIG]
+
+log-server-address = internal
+log-server-port = 2848
+internal-log-server-port = 3840
+gate-server-address = internal
+gate-server-port = 6502
+backup-drive-letter = C
+
+permitted-address = internal
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//WLserver
+[CONFIG]
+
+world-server-port = 2500
+backup-drive-letter = C
+internal-world-server-port = 3840
+world-server-name = WS1
+main-log-server-address = internal
+main-log-server-port = 2848
+
+gate-server-address = internal
+gate-server-port = 6502
+
+// Up to 10 IP addresses specifying which HGServer IPs can connect
+game-server-list = internal
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//GServer
+[CONFIG]
+
+gate-server-dns = false
+log-server-dns = false
+game-server-name = towns
+game-server-address = internal
+game-server-internal-address = internal
+game-server-external-address = internal
+game-server-port = 9903
+log-server-address = internal
+internal-log-server-port = 2500
+gate-server-address = internal
+gate-server-port = 6502
+game-server-mode = INTERNET
+
+[MAPS]

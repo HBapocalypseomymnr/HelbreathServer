@@ -1,0 +1,10 @@
+Ageing
+
+Players can "Age" their armors and weapons, when they are certain level(depending on servers max lvl and owners wish).
+To "age" their armors and weapons, they need to gather 5 metals(irons, mithrils, gods tears). All metals have different sucsess rate. Iron has 50% sucsess 
+rate, mithril has 70%, gods tear has 100% sucsess rate. Players can upgrade their weapons as many times as they want, more higher weapon goes(+1,+2,+3 so on)
+more money ageing to next lvl needs, if player fails, weapon is decreased by -1 to -3 depending on players reputation and weapons age level. First 5 lvls of aging
+will give random attributes to weapon(now on weapon can have many different abilitys like critical +5 and ancient same time). If age lvl is up to 10 player
+can insert different gems to weapons, gems have constant values like( diamond will give +15 damage to weapon, ruby gives attack propability +3%, these 
+abilitys of gems depend on gem size(small ruby, medium ruby, big ruby)). This weapon/armor can be lost its not sticked to person liek majestic, this weapon
+/armor is stronger sharper, but also more expensive and harder to make.       

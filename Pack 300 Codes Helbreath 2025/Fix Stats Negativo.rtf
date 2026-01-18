@@ -1,0 +1,77 @@
+Stats en negativo. (SabbaT[GM])
+buenas aca les dejo un peqeño arrglo..
+
+el de justthing nunca me andubo no se porquie :S .... y el otro dia me paso algo paresido y bueno la solucion era la misma...
+
+ACLARO : adaptacion para hg 2.24c y client 3.82 pasado a 3.51
+Cleinte :
+
+Código:
+game.cpp buscar y reemplazar por esto :
+
+case MSGID_LEVELUPSETTINGS:
+		dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);
+		*dwp = dwMsgID;
+		wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);
+		*wp = NULL;
+		cp = (char *)(cMsg + DEF_INDEX2_MSGTYPE + 2);
+		ip = (int *)cp;
+		*ip = m_cLU_Str;
+		ip = (int *)cp;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Vit;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Dex;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Int;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Mag;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Char;
+		cp += 4;
+		iRet = m_pGSock->iSendMsg(cMsg, 25);
+	break;
+
+game.h
+buscar y reemplazar por esto :
+int m_cLU_Str, m_cLU_Vit, m_cLU_Dex, m_cLU_Int, m_cLU_Mag, m_cLU_Char;
+HG
+Código:
+en la funcion "LevelUpSettingsHandler"
+
+busquen y reemplazen dnd transferie del Client>HG
+
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+	ip = (int *)cp;
+	cStr = *ip;
+	cp += 4;
+	ip = (int *)cp;
+	cVit = *ip;
+	cp += 4;
+	ip = (int *)cp;
+	cDex = *ip;
+	cp += 4;
+	ip = (int *)cp;
+	cInt = *ip;
+	cp += 4;
+	ip = (int *)cp;
+	cMag = *ip;
+	cp += 4;
+	ip = (int *)cp;
+	cChar = *ip;
+	cp += 4;
+Reeditar la cabesera de LevelUpSettingsHandler
+
+Código:
+Copiar y Reemplazar
+
+void CGame::LevelUpSettingsHandler(int iClientH, char * pData, DWORD dwMsgSize)
+{
+	char * cp;
+	int iTotalSetting = 0;
+	int * ip, cStr, cVit, cDex, cInt, cMag, cChar;

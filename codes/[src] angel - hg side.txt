@@ -1,0 +1,292 @@
+PTA can be upgraded up to +10 and will give you a +x bonus in the tutelary angel's related stat. You have 70% chances of success rate when trying to upgrade a PTA, and if you fail, you'll loose one Majesty point.
+
+You MUST add some checks in several places in the sources to prevent over-MP, over-HP and over-SP hack detection when you release a PTA. When you equip a STR+10 PTA, your char will be able to have some more HP, and when you'll release this PTA, your maximum allowed HP will be decreased, so your current HP will be > your max HP and you'll get dc by the server for hacking attempt.
+
+This part of the code is the only one that won't be given, even if requested. It will be my way of preventing noobs from having angels on their server. Don't worry, this part is really the easiest one to code and angels works even if you don't code it (atleast it works until you release the PTA...).
+
+Remember that you MUST use the coded client and add the angels code (client-side code that i'll post right after this one) in order to have the angels working, it won't work with 3.7 clients !
+
+You can't request the angels from Gail, you'll have to code it by yourself or find another way to acquire the PTAs. Shop ? /command ? Drops ? ... ?
+
+It's already added in KLKS 3.02 HG Sources but they've not been yet released.
+
+
+Enjoy and remember that credits and thanks goes to Aryes, who did the biggest part of the work, i only fixed some bugs and added the MJ upgrade.
+
+Game.cpp
+in function bEquipItemHandler
+
+Find :
+
+
+Code: Select all
+if (iGetItemWeight(m_pClientList[iClientH]->m_pItemList[sItemIndex], 1) > m_pClientList[iClientH]->m_iStr*100) return FALSE;
+
+cEquipPos = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cEquipPos; 
+
+
+
+Right After, Add :
+
+
+
+Code: Select all
+// ******* Angel Code - Begin ******* //
+if (cEquipPos == DEF_EQUIPPOS_LFINGER) {
+int iValue;
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum != NULL) {
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 908) {//AngelicPendant(STR)
+  iValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
+  if (iValue >= 1) {
+  m_pClientList[iClientH]->m_iStr += iValue;
+  }
+  SetAngelFlag1(iClientH, DEF_OWNERTYPE_PLAYER, TRUE);
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+
+else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 909) {//AngelicPendant(DEX)
+  iValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
+  if (iValue >= 1) {
+  m_pClientList[iClientH]->m_iDex += iValue;
+  }
+  SetAngelFlag2(iClientH, DEF_OWNERTYPE_PLAYER, TRUE);
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+
+else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 910) {//AngelicPendant(INT)
+  iValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
+  if (iValue >= 1) {
+  m_pClientList[iClientH]->m_iInt += iValue;
+  }
+  SetAngelFlag3(iClientH, DEF_OWNERTYPE_PLAYER, TRUE);
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 911) {//AngelicPendant(MAG)
+  iValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
+  if (iValue >= 1) {
+  m_pClientList[iClientH]->m_iMag += iValue;
+  }
+  SetAngelFlag4(iClientH, DEF_OWNERTYPE_PLAYER, TRUE);
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+}
+}
+// ******* Angel Code - End ******* // 
+
+
+
+In Function RealeaseItemHandler
+
+Find :
+
+
+
+Code: Select all
+switch (cEquipPos) { 
+
+
+
+Right After, Add :
+
+CODE  
+// ******* Angel Code - Begin ******* //
+case DEF_EQUIPPOS_LFINGER:
+int iValue;
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum != NULL) {
+if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 908) {//AngelicPendant(STR)
+  iValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
+  if (iValue >= 1) {
+  m_pClientList[iClientH]->m_iStr -= iValue;
+  }
+  SetAngelFlag1(iClientH, DEF_OWNERTYPE_PLAYER, FALSE);
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+
+else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 909) {//AngelicPendant(DEX)
+  iValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
+  if (iValue >= 1) {
+  m_pClientList[iClientH]->m_iDex -= iValue;
+  }
+  SetAngelFlag2(iClientH, DEF_OWNERTYPE_PLAYER, FALSE);
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+
+else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 910) {//AngelicPendant(INT)
+  iValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
+  if (iValue >= 1) {
+  m_pClientList[iClientH]->m_iInt -= iValue;
+  }
+  SetAngelFlag3(iClientH, DEF_OWNERTYPE_PLAYER, FALSE);
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 911) {//AngelicPendant(MAG)
+  iValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
+  if (iValue >= 1) {
+  m_pClientList[iClientH]->m_iMag -= iValue;
+  }
+  SetAngelFlag4(iClientH, DEF_OWNERTYPE_PLAYER, FALSE);
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SETTING_SUCCESS, NULL, NULL, NULL, NULL);
+}
+}
+break;
+// ******* Angel Code - End ******* // 
+
+
+
+In function RequestItemUpgradeHandler
+
+Add :
+
+Code: Select all
+// ******* Angel Code - Begin ******* //
+case 46:
+switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum) {
+  case 908: // AngelicPandent(STR)
+  case 909: // AngelicPandent(DEX)
+  case 910: // AngelicPandent(INT)
+  case 911: // AngelicPandent(MAG)
+   if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0) {
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);
+    return;
+   }
+   if(iValue >= 10){
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);
+    return;
+   }
+   switch (iValue){
+    case 0:
+     sItemUpgrade = 10;
+     break;
+    case 1:
+     sItemUpgrade = 11;
+     break;
+    case 2:
+     sItemUpgrade = 13;
+     break;
+    case 3:
+     sItemUpgrade = 16;
+     break;
+    case 4:
+     sItemUpgrade = 20;
+     break;
+    case 5:
+     sItemUpgrade = 25;
+     break;
+    case 6:
+     sItemUpgrade = 31;
+     break;
+    case 7:
+     sItemUpgrade = 38;
+     break;
+    case 8:
+     sItemUpgrade = 46;
+     break;
+    case 9:
+     sItemUpgrade = 55;
+     break;
+    default:
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);
+     return;
+     break;
+   }
+   if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 != m_pClientList[iClientH]->m_sCharIDnum1) ||
+    (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 != m_pClientList[iClientH]->m_sCharIDnum2) ||
+    (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 != m_pClientList[iClientH]->m_sCharIDnum3)) {
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, NULL, NULL, NULL);
+    return; 
+   }
+   if (( m_pClientList[iClientH]->m_iGizonItemUpgradeLeft - sItemUpgrade ) < 0) { 
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);
+    return; 
+   }
+   int iDicePTA;
+   iDicePTA = iDice(1,100);
+   if(iDicePTA <= 70){
+    m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= sItemUpgrade; 
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL);
+    iValue++;
+    if (iValue > 10) iValue = 10;
+    dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
+    dwTemp = dwTemp & 0x0FFFFFFF;
+    m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);
+    _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
+   }
+   else{
+    m_pClientList[iClientH]->m_iGizonItemUpgradeLeft--;
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL);
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);
+   }
+   break;
+
+}
+break;
+// ******* Angel Code - End ******* // 
+
+
+
+Now add the following functions in Game.cpp :
+
+
+Code: Select all
+// ******* Angel Code - Begin ******* //
+void CGame::SetAngelFlag1(short sOwnerH, char cOwnerType, BOOL bStatus) 
+{ 
+switch (cOwnerType) {
+case DEF_OWNERTYPE_PLAYER:
+  if (m_pClientList[sOwnerH] == NULL) return;
+   if (bStatus == TRUE) m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus | 0x00001000;
+   else     m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus & 0xFFFFEFFF;
+   SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
+break;
+}    
+}
+
+void CGame::SetAngelFlag2(short sOwnerH, char cOwnerType, BOOL bStatus) 
+{ 
+switch (cOwnerType) {
+case DEF_OWNERTYPE_PLAYER:
+  if (m_pClientList[sOwnerH] == NULL) return;
+   if (bStatus == TRUE) m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus | 0x00002000;
+   else     m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus & 0xFFFFDFFF;
+   SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
+break;
+}    
+}
+
+void CGame::SetAngelFlag3(short sOwnerH, char cOwnerType, BOOL bStatus) 
+{ 
+switch (cOwnerType) {
+case DEF_OWNERTYPE_PLAYER:
+  if (m_pClientList[sOwnerH] == NULL) return;
+   if (bStatus == TRUE) m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus | 0x00004000;
+   else     m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus & 0xFFFFBFFF;
+   SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
+break;
+}    
+}
+
+void CGame::SetAngelFlag4(short sOwnerH, char cOwnerType, BOOL bStatus) 
+{ 
+switch (cOwnerType) {
+case DEF_OWNERTYPE_PLAYER:
+  if (m_pClientList[sOwnerH] == NULL) return;
+   if (bStatus == TRUE) m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus | 0x00008000;
+   else     m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus & 0xFFFF7FFF;
+   SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
+break;
+}    
+}
+// ******* Angel Code - End ******* // 
+
+
+Game.h
+
+Add :
+
+
+Code: Select all
+void SetAngelFlag1(short sOwnerH, char cOwnerType, BOOL bStatus);
+void SetAngelFlag2(short sOwnerH, char cOwnerType, BOOL bStatus);
+void SetAngelFlag3(short sOwnerH, char cOwnerType, BOOL bStatus);
+void SetAngelFlag4(short sOwnerH, char cOwnerType, BOOL bStatus);

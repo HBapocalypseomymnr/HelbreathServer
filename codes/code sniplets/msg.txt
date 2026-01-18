@@ -1,0 +1,136 @@
+Reversing goes on, here a list of new MSGIDs....
+
+CODE  
+// reversed 3.60+ MSGIDs by Snoopy
+ #define DEF_NOTIFY_SLATE_BERSERK     0x0BED // Berserk magic casted!
+ #define DEF_NOTIFY_LOTERY_LOST     0x0BEE // You draw a blank. Please try again next time..
+ #define DEF_NOTIFY_0BEF       0x0BEF // Strange behaviour, exits client?
+ #define DEF_NOTIFY_CRAFTING_SUCCESS    0x0BF0 // Crafting ok
+ #define DEF_NOTIFY_CRAFTING_FAIL     0x0BF1 // Crafting failed
+
+
+ #define DEF_NOTIFY_ANGELIC_STATS     0x0BF2 // Sends m_iAngelicStr, Int, Dex, Mag to client
+ #define DEF_NOTIFY_ITEM_CANT_RELEASE    0x0BF3 // "Item cannot be released"
+ #define DEF_NOTIFY_ANGEL_FAILED     0x0BF4 // Failed receiving an Angel pandent
+ #define DEF_NOTIFY_ANGEL_RECEIVED     0x0BF5 // "You have received the Tutelary Angel"
+
+ #define DEF_NOTIFY_SPELL_SKILL     0x0BF6 // Loads Speell list skill list silentlly
+
+#define DEF_COMMONTYPE_CRAFTITEM    0x0A28 // Craft item
+ 
+
+
+
+And here is reversed client side functions:
+
+CODE  
+case DEF_NOTIFY_SLATE_BERSERK:  // reversed by Snoopy: 0x0BED
+ AddEventList( DEF_MSG_NOTIFY_SLATE_BERSERK, 10 );//"Berserk magic casted!"
+ m_bUsingSlate = TRUE;
+ break;
+
+case DEF_NOTIFY_LOTERY_LOST:  // reversed by Snoopy: 0x0BEE: 
+ AddEventList( DEF_MSG_NOTIFY_LOTERY_LOST, 10 );//"You draw a blank. Please try again next time.."
+ break;
+
+case DEF_NOTIFY_0BEF:    // 0x0BEF: // Snoopy: Crash or closes the client? (Calls SE entry !)
+ // I'm noot sure at all of this function's result, so let's quit game...
+ ChangeGameMode(DEF_GAMEMODE_ONQUIT); 
+ break;
+
+case DEF_NOTIFY_CRAFTING_SUCCESS: //reversed by Snoopy: 0x0BF0:
+ DisableDialogBox(25);
+ AddEventList(NOTIFY_MSG_HANDLER42, 10);  // "Item manufacture success!"
+ PlaySound('E', 23, 5);
+ switch (m_sPlayerType) {
+ case 1:
+ case 2:
+ case 3:
+  PlaySound('C', 21, 0);
+  break;
+ case 4:
+ case 5:
+ case 6:
+  PlaySound('C', 22, 0);
+  break;
+ }
+ break;
+
+case DEF_NOTIFY_CRAFTING_FAIL:  //reversed by Snoopy: 0x0BF1:
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+ ip = (int *)cp;
+ iV1 = *ip; // Error reason
+ switch (iV1) {
+ case 1: 
+  AddEventList(DEF_MSG_NOTIFY_CRAFTING_NO_PART, 10);  // "There is not enough material"  
+  PlaySound('E', 24, 5);
+  break;
+ case 2: 
+  AddEventList(DEF_MSG_NOTIFY_CRAFTING_NO_CONTRIB, 10); // "There is not enough Contribution Point" 
+  PlaySound('E', 24, 5);
+  break;
+ default:
+ case 3: 
+  AddEventList(DEF_MSG_NOTIFY_CRAFTING_FAILED, 10);  // "Crafting failed" 
+  PlaySound('E', 24, 5);
+  break;
+ }
+ break;
+case DEF_NOTIFY_ANGELIC_STATS:  // reversed by Snoopy: 0x0BF2
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+ ip = (int *)cp;
+ m_iAngelicStr = *ip;  // m_iAngelicStr
+ cp +=4;
+ ip = (int *)cp;
+ m_iAngelicInt = *ip;  // m_iAngelicInt
+ cp +=4;
+ ip = (int *)cp;
+ m_iAngelicDex = *ip;  // m_iAngelicDex
+ cp +=4;
+ ip = (int *)cp;
+ m_iAngelicMag = *ip;  // m_iAngelicMag
+ break;   
+
+case DEF_NOTIFY_ITEM_CANT_RELEASE: // reversed by Snoopy: 0x0BF3 
+ AddEventList(DEF_MSG_NOTIFY_NOT_RELEASED , 10 );//"Item cannot be released"   
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+ ItemEquipHandler(*cp);
+ break;
+
+case DEF_NOTIFY_ANGEL_FAILED:  // reversed by Snoopy: 0x0BF4
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+ ip = (int *)cp;
+ iV1 = *ip; // Error reason
+ switch (iV1) {
+ case 1: // "BFB9BBF3C4A120BECAC0BA20B9F6B1D7C0D4B4CFB4D92E20A4D02E2EA4D0" (Stolen bytes ?)
+  AddEventList(DEF_MSG_NOTIFY_ANGEL_FAILED , 10 ); //"Impossible to get a Tutelary Angel." // Invented by Snoopy.
+  break;
+ case 2: //
+  AddEventList(DEF_MSG_NOTIFY_ANGEL_MAJESTIC , 10 );//"You need additional Majesty Points."
+  break;
+ case 3: //
+  AddEventList(DEF_MSG_NOTIFY_ANGEL_LOW_LVL , 10 ); //"Only Majesty characters can receive Tutelary Angel"
+  break;
+ }
+ break;
+
+case DEF_NOTIFY_ANGEL_RECEIVED:  // reversed by Snoopy: 0x0BF5: 
+ AddEventList(DEF_MSG_NOTIFY_ANGEL_RECEIVED, 10 );// "You have received the Tutelary Angel."
+ break;
+
+case DEF_NOTIFY_SPELL_SKILL:  // reversed by Snoopy: 0x0BF6
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+ for (i = 0; i < DEF_MAXMAGICTYPE; i++)
+ { m_cMagicMastery[i] = *cp;
+  cp++;
+ }
+ for (i = 0; i < DEF_MAXSKILLTYPE; i++)
+ { m_cSkillMastery[i] = (unsigned char)*cp;
+  if (m_pSkillCfgList[i] != NULL)
+   m_pSkillCfgList[i]->m_iLevel = (int)*cp;
+  cp++;
+ }
+ break;  
+
+
+NB: I did not test all this stuff as I'd need to code it server side too. Any ways, all Angel code released her (even mine) don't use the msg above. 

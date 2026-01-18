@@ -1,0 +1,1092 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 ODE\par
+//0.3-> hotkeys by Cleroth\par
+void CGame::ReadSettings()\par
+\{\par
+m_sMagicShortCut = -1;\par
+m_sRecentShortCut = -1;\par
+for( int i=0; i<13; i++ ) m_sShortCut[i] = -1;\par
+\par
+HKEY key;\par
+DWORD dwDisp;\par
+UINT Result;\par
+DWORD Size = sizeof(LONG);\par
+\par
+if( RegCreateKeyEx( HKEY_CURRENT_USER, "Software\\\\Siementech\\\\Helbreath\\\\Settings", 0, NULL, REG_OPTION_NON_VOLATILE, \par
+\par
+KEY_ALL_ACCESS, NULL, &key, &dwDisp ) != ERROR_SUCCESS ) return;\par
+\par
+if( RegQueryValueEx(key, "Magic", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 101 ) m_sMagicShortCut = Result - 1;\par
+else m_sMagicShortCut = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut0", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[0] = Result - 1;\par
+else m_sShortCut[0] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut1", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[1] = Result - 1;\par
+else m_sShortCut[1] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut2", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[2] = Result - 1;\par
+else m_sShortCut[2] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut3", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[3] = Result - 1;\par
+else m_sShortCut[3] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut4", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[4] = Result - 1;\par
+else m_sShortCut[4] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut5", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[5] = Result - 1;\par
+else m_sShortCut[5] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut6", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[6] = Result - 1;\par
+else m_sShortCut[6] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut7", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[7] = Result - 1;\par
+else m_sShortCut[7] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut8", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[8] = Result - 1;\par
+else m_sShortCut[8] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut9", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[9] = Result - 1;\par
+else m_sShortCut[9] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut10", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[10] = Result - 1;\par
+else m_sShortCut[10] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut11", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if( Result > 0 && Result < 201 ) m_sShortCut[11] = Result - 1;\par
+else m_sShortCut[11] = -1;\par
+\par
+if( RegQueryValueEx(key, "ShortCut12", 0, NULL, (LPBYTE)&Result, &Size) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+if(\tab Result > 0 && Result < 201 ) m_sShortCut[12] = Result - 1;\par
+else m_sShortCut[12] = -1;\par
+\par
+RegCloseKey(key);\par
+\}\par
+\par
+CODE\par
+void CGame::WriteSettings()\par
+\{\par
+HKEY key;\par
+DWORD dwDisp;\par
+UINT nData;\par
+if( RegCreateKeyEx( HKEY_CURRENT_USER, "Software\\\\Siementech\\\\Helbreath\\\\Settings", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, &dwDisp ) != ERROR_SUCCESS ) return;\par
+\par
+if( m_sMagicShortCut >= 0 && m_sMagicShortCut < 100 ) nData = m_sMagicShortCut + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "Magic", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[0] >= 0 && m_sShortCut[0] < 200 ) nData = m_sShortCut[0] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut0", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[1] >= 0 && m_sShortCut[1] < 200 ) nData = m_sShortCut[1] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut1", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[2] >= 0 && m_sShortCut[2] < 200 ) nData = m_sShortCut[2] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut2", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[3] >= 0 && m_sShortCut[3] < 200 ) nData = m_sShortCut[3] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut3", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[4] >= 0 && m_sShortCut[4] < 200 ) nData = m_sShortCut[4] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut4", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[5] >= 0 && m_sShortCut[5] < 200 ) nData = m_sShortCut[5] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut5", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[6] >= 0 && m_sShortCut[6] < 200 ) nData = m_sShortCut[6] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut6", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[7] >= 0 && m_sShortCut[7] < 200 ) nData = m_sShortCut[7] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut7", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[8] >= 0 && m_sShortCut[8] < 200 ) nData = m_sShortCut[8] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut8", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[9] >= 0 && m_sShortCut[9] < 200 ) nData = m_sShortCut[9] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut9", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[10] >= 0 && m_sShortCut[10] < 200 ) nData = m_sShortCut[10] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut10", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[11] >= 0 && m_sShortCut[11] < 200 ) nData = m_sShortCut[11] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut11", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+\par
+if( m_sShortCut[12] >= 0 && m_sShortCut[12] < 200 ) nData = m_sShortCut[12] + 1;\par
+else nData = 0;\par
+if( RegSetValueEx(key, "ShortCut12", 0, REG_DWORD, (LPBYTE)&nData, sizeof(UINT) ) != ERROR_SUCCESS )\par
+\{\par
+ RegCloseKey(key);\par
+ return;\par
+\}\par
+RegCloseKey(key);\par
+\}\par
+\par
+CODE\par
+//0.3-> hotkeys by Cleroth\par
+void CGame::LoadHotkeys(char * cFile)\{\par
+\par
+char cTmp[120];\par
+int * iKey;\par
+char iKey2[20];\par
+iKey = new int;\par
+\par
+ZeroMemory(iKey2, sizeof(iKey2));\par
+\par
+for(*iKey='A';*iKey <= 90;*iKey+=1)\{\par
+GetPrivateProfileString("HOTKEYS",(char*)iKey,NULL,cTmp,120,cFile);\par
+memcpy( cConfigHotkeys[(*iKey)], cTmp, strlen(cTmp));\par
+\}\par
+\par
+for(*iKey=VK_F1;*iKey <= VK_F12;*iKey+=1)\{\par
+switch(*iKey)\{\par
+case VK_F1:\par
+memcpy(iKey2,"F1",2);\par
+break;\par
+case VK_F2:\par
+memcpy(iKey2,"F2",2);\par
+break;\par
+case VK_F3:\par
+memcpy(iKey2,"F3",2);\par
+break;\par
+case VK_F4:\par
+memcpy(iKey2,"F4",2);\par
+break;\par
+case VK_F5:\par
+memcpy(iKey2,"F5",2);\par
+break;\par
+case VK_F6:\par
+memcpy(iKey2,"F6",2);\par
+break;\par
+case VK_F7:\par
+memcpy(iKey2,"F7",2);\par
+break;\par
+case VK_F8:\par
+memcpy(iKey2,"F8",2);\par
+break;\par
+case VK_F9:\par
+memcpy(iKey2,"F9",2);\par
+break;\par
+case VK_F10:\par
+memcpy(iKey2,"F10",3);\par
+break;\par
+case VK_F11:\par
+memcpy(iKey2,"F11",3);\par
+break;\par
+case VK_F12:\par
+memcpy(iKey2,"F12",3);\par
+break;\par
+\}\par
+GetPrivateProfileString("HOTKEYS",iKey2,NULL,cTmp,120,cFile);\par
+memcpy( cConfigHotkeys[(*iKey)], cTmp, strlen(cTmp));\par
+\}\par
+\par
+GetPrivateProfileString("HOTKEYS","Insert",NULL,cTmp,120,cFile);\par
+memcpy( cConfigHotkeys[VK_INSERT], cTmp, strlen(cTmp));\par
+\par
+GetPrivateProfileString("HOTKEYS","Delete",NULL,cTmp,120,cFile);\par
+memcpy( cConfigHotkeys[VK_DELETE], cTmp, strlen(cTmp));\par
+\par
+GetPrivateProfileString("HOTKEYS","Home",NULL,cTmp,120,cFile);\par
+memcpy( cConfigHotkeys[VK_HOME], cTmp, strlen(cTmp));\par
+\par
+GetPrivateProfileString("HOTKEYS","End",NULL,cTmp,120,cFile);\par
+memcpy( cConfigHotkeys[VK_END], cTmp, strlen(cTmp));\par
+\par
+GetPrivateProfileString("HOTKEYS","PageUp",NULL,cTmp,120,cFile);\par
+memcpy( cConfigHotkeys[VK_PRIOR], cTmp, strlen(cTmp));\par
+\par
+GetPrivateProfileString("HOTKEYS","PageDown",NULL,cTmp,120,cFile);\par
+memcpy( cConfigHotkeys[VK_NEXT], cTmp, strlen(cTmp));\par
+\par
+\}\par
+\par
+CODE\par
+//0.3-> hotkeys by Cleroth\par
+void CGame::HandleScript(WORD wKey)\{\par
+int i=0;\par
+DWORD dwTime = timeGetTime();\par
+\par
+if(wKey >= 65 && wKey <= 90)\par
+ if( m_bCtrlPressed == FALSE )\par
+  return;\par
+\par
+if( cConfigHotkeys[wKey][0] == '/')\{\par
+if( m_cGameMode == DEF_GAMEMODE_ONMAINGAME ) \{\par
+ ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg) );\par
+ strcpy(m_cChatMsg, cConfigHotkeys[wKey]);\par
+ strcat(m_cChatMsg," ");\par
+ StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg); \par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "autoattack",10) == 0)\{\par
+if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME && (!m_bInputStatus) )\par
+\{\par
+ if( m_bForceAttack )\par
+ \{\par
+  m_bForceAttack = FALSE;\par
+  AddEventList( DEF_MSG_FORCEATTACK_OFF, 10 );\par
+ \}\par
+ else\par
+ \{\par
+  m_bForceAttack = TRUE;\par
+  AddEventList( DEF_MSG_FORCEATTACK_ON, 10 );\par
+ \}\par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "detail",6) == 0)\{\par
+if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME && (!m_bInputStatus) ) \{\par
+ m_cDetailLevel++;\par
+ if( m_cDetailLevel > 2 ) m_cDetailLevel = 0;\par
+ switch( m_cDetailLevel )\par
+ \{\par
+ case 0:\par
+  AddEventList( NOTIFY_MSG_DETAIL_LEVEL_LOW, 10 );\par
+  break;\par
+ case 1:\par
+  AddEventList( NOTIFY_MSG_DETAIL_LEVEL_MEDIUM, 10 );\par
+  break;\par
+ case 2:\par
+  AddEventList( NOTIFY_MSG_DETAIL_LEVEL_HIGH, 10 );\par
+  break;\par
+ \}\par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "map",3) == 0)\{\par
+if( m_cGameMode == DEF_GAMEMODE_ONMAINGAME )\par
+\{\par
+ if( m_bCtrlPressed )\par
+ \{\par
+  if( m_bIsDialogEnabled[9] == TRUE ) DisableDialogBox(9);\par
+  else EnableDialogBox(9, 0, 0, 0, NULL);\par
+ \}\par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "walkrun",7) == 0)\{\par
+if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME && (!m_bInputStatus) )\par
+\{\par
+ if( m_bRunningMode ) \{\par
+  m_bRunningMode = FALSE;\par
+  AddEventList( NOTIFY_MSG_CONVERT_WALKING_MODE, 10 );\par
+ \}\par
+ else \{\par
+  m_bRunningMode = TRUE;\par
+  AddEventList( NOTIFY_MSG_CONVERT_RUNNING_MODE, 10 );\par
+ \}\par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "music",5) == 0)\{\par
+if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME && (!m_bInputStatus) )\par
+\{\par
+ if (m_bMusicStat == TRUE) \{\par
+  // Music Off\par
+  m_bMusicStat = FALSE;\par
+  if (m_bSoundFlag) \{\par
+   if (m_pBGM != NULL) \{\par
+    m_pBGM->bStop();\par
+    delete m_pBGM;\par
+    m_pBGM = NULL;\par
+   \}\par
+  \}\par
+  AddEventList( NOTIFY_MSG_MUSIC_OFF, 10 );\par
+  return;\par
+ \}\par
+ else if( m_bSoundStat == TRUE ) \{\par
+  m_pESound[38]->bStop();\par
+  m_bSoundStat = FALSE;\par
+  AddEventList( NOTIFY_MSG_SOUND_OFF, 10 );\par
+  return;\par
+ \}\par
+ else \{\par
+  // Music On\par
+  if( m_bSoundFlag ) \{\par
+   m_bMusicStat = TRUE;\par
+   AddEventList( NOTIFY_MSG_MUSIC_ON, 10 );\par
+  \}\par
+  if( m_bSoundFlag ) \{\par
+   m_bSoundStat = TRUE;\par
+   AddEventList( NOTIFY_MSG_SOUND_ON, 10 );\par
+  \}\par
+  StartBGM();\par
+ \}\par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "to",2) == 0)\{\par
+if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME && (!m_bInputStatus) )\par
+\{\par
+ char tempid[100], cLB, cRB;\par
+ short sX, sY, msX, msY, msZ;\par
+ sX = m_stDialogBoxInfo[10].sX;\par
+ sY = m_stDialogBoxInfo[10].sY;\par
+ ZeroMemory( tempid, sizeof( tempid ) );\par
+ m_DInput.UpdateMouseState(&msX, &msY, &msZ, &cLB, &cRB);\par
+ if( m_bIsDialogEnabled[10] == TRUE && (msX >= sX + 20) && (msX <= sX + 360) && (msY >= sY + 35) && (msY <= sY + 139) )\par
+ \{\par
+  CStrTok *pStrTok;\par
+  char   * token, cBuff[64];\par
+  char   seps[] = ":";\par
+  int i = (139-msY+sY)/13;\par
+  if( m_pChatScrollList[i + m_stDialogBoxInfo[10].sView] == NULL ) return;\par
+  if( m_pChatScrollList[i + m_stDialogBoxInfo[10].sView]->m_pMsg[0] == ' ' ) i++;\par
+  strcpy(cBuff, m_pChatScrollList[i + m_stDialogBoxInfo[10].sView]->m_pMsg);\par
+  pStrTok = new class CStrTok(cBuff, seps);\par
+  token = pStrTok->pGet();\par
+  wsprintf( tempid, "/to %s", token );\par
+  bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, tempid);\par
+  delete pStrTok;\par
+ \}\par
+ else if( _tmp_sOwnerType < 7 && (strlen(_tmp_cName)>0) && (m_iIlusionOwnerH==NULL) && ((m_bIsCrusadeMode == FALSE) || _iGetFOE\par
+\par
+(_tmp_iStatus) >= 0))\par
+ \{\par
+  wsprintf( tempid, "/to %s", _tmp_cName );\par
+  bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, tempid);\par
+ \}\par
+ else\par
+ \{\par
+  EndInputString();\par
+  wsprintf( m_cChatMsg, "/to " );\par
+  StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg); \par
+ \}\par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "spell",5) == 0)\{\par
+char * cTemp;\par
+cTemp = cConfigHotkeys[wKey];\par
+cTemp += 5;\par
+UseShortCut( atoi(cTemp) );\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "lastspell",9) == 0)\{\par
+if(m_cGameMode != DEF_GAMEMODE_ONMAINGAME) return;\par
+UseMagic(m_sMagicShortCut);\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "help",4) == 0)\{\par
+if (m_bInputStatus) return;\par
+if (m_bIsDialogEnabled[35] == FALSE)\par
+ EnableDialogBox(35, NULL, NULL, NULL);\par
+else \par
+\{\par
+ DisableDialogBox(35);\par
+ DisableDialogBox(18);\par
+\}\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "charinfo",8) == 0)\{\par
+if (m_bIsDialogEnabled[1] == FALSE)\par
+ EnableDialogBox(1, NULL, NULL, NULL);\par
+else DisableDialogBox(1);\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "inventory",9) == 0)\{\par
+if (m_bIsDialogEnabled[2] == FALSE)\par
+ EnableDialogBox(2, NULL, NULL, NULL);\par
+else DisableDialogBox(2);\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "magiccircle",11) == 0)\{\par
+if (m_bIsDialogEnabled[3] == FALSE)\par
+ EnableDialogBox(3, NULL, NULL, NULL);\par
+else DisableDialogBox(3);\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "skillinfo",9) == 0)\{\par
+if (m_bIsDialogEnabled[15] == FALSE)\par
+ EnableDialogBox(15, NULL, NULL, NULL);\par
+else DisableDialogBox(15);\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "history",7) == 0)\{\par
+if (m_bIsDialogEnabled[10] == FALSE)\par
+ EnableDialogBox(10, NULL, NULL, NULL);\par
+else DisableDialogBox(10);\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "dialogtrans",11) == 0)\{\par
+m_bDialogTrans = !m_bDialogTrans;\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "hppotion",8) == 0)\{\par
+if (m_iHP <= 0) return;\par
+if (m_bItemUsingStatus == TRUE) \{\par
+ AddEventList(USE_RED_POTION1, 10);\par
+ return; \par
+\}\par
+if (m_bIsDialogEnabled[27] == TRUE) \{\par
+ AddEventList(USE_RED_POTION2, 10);\par
+ return; \par
+\}\par
+for (i = 0; i < DEF_MAXITEMS; i++)\par
+if ( (m_pItemList[i] != NULL) && (m_bIsItemDisabled[i] != TRUE) && \par
+  (m_pItemList[i]->m_sSprite == 6) && (m_pItemList[i]->m_sSpriteFrame == 1)) \{\par
+ \par
+ bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_USEITEM, NULL, i, NULL, NULL, NULL); \par
+    \par
+ m_bIsItemDisabled[i] = TRUE;\par
+ m_bItemUsingStatus = TRUE;\par
+\par
+ return;\par
+\}\par
+\par
+for (i = 0; i < DEF_MAXITEMS; i++)\par
+if ( (m_pItemList[i] != NULL) && (m_bIsItemDisabled[i] != TRUE) && \par
+  (m_pItemList[i]->m_sSprite == 6) && (m_pItemList[i]->m_sSpriteFrame == 2)) \{\par
+ \par
+ bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_USEITEM, NULL, i, NULL, NULL, NULL); \par
+    \par
+ m_bIsItemDisabled[i] = TRUE;\par
+ m_bItemUsingStatus = TRUE;\par
+\par
+ return;\par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "mppotion",8) == 0)\{\par
+if (m_iHP <= 0) return;\par
+if (m_bItemUsingStatus == TRUE) \{\par
+ AddEventList(USE_BLUE_POTION1, 10);\par
+ return; \par
+\}\par
+if (m_bIsDialogEnabled[27] == TRUE) \{\par
+ AddEventList(USE_BLUE_POTION2, 10);\par
+ return; \par
+\}\par
+\par
+for (i = 0; i < DEF_MAXITEMS; i++)\par
+if ( (m_pItemList[i] != NULL) && (m_bIsItemDisabled[i] != TRUE) && \par
+  (m_pItemList[i]->m_sSprite == 6) && (m_pItemList[i]->m_sSpriteFrame == 3)) \{\par
+ \par
+ bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_USEITEM, NULL, i, NULL, NULL, NULL); \par
+    \par
+ m_bIsItemDisabled[i] = TRUE;\par
+ m_bItemUsingStatus = TRUE;\par
+\par
+ return;\par
+\}\par
+\par
+for (i = 0; i < DEF_MAXITEMS; i++)\par
+if ( (m_pItemList[i] != NULL) && (m_bIsItemDisabled[i] != TRUE) && \par
+  (m_pItemList[i]->m_sSprite == 6) && (m_pItemList[i]->m_sSpriteFrame == 4)) \{\par
+ \par
+ bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_USEITEM, NULL, i, NULL, NULL, NULL); \par
+    \par
+ m_bIsItemDisabled[i] = TRUE;\par
+ m_bItemUsingStatus = TRUE;\par
+\par
+ return;\par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "lastmsg",7) == 0)\{\par
+if ( ((m_bIsDialogEnabled[7] == TRUE) && (m_stDialogBoxInfo[7].cMode == 1) && (iGetTopDialogBoxIndex() == 7)) ||\par
+ ((m_bIsDialogEnabled[17] == TRUE) && (m_stDialogBoxInfo[17].cMode == 1) && (iGetTopDialogBoxIndex() == 17)) ) \{ \par
+\}\par
+else if ((!m_bInputStatus) && (m_cBackupChatMsg[0] != '!') && (m_cBackupChatMsg[0] != '~') && (m_cBackupChatMsg[0] != '^') &&\par
+   (m_cBackupChatMsg[0] != '@')) \{\par
+ ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg));\par
+ strcpy(m_cChatMsg, m_cBackupChatMsg);\par
+ StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg); \par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "safeattack",10) == 0)\{\par
+if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME) \{\par
+ bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_TOGGLESAFEATTACKMODE, NULL, NULL, NULL, NULL, NULL); \par
+\}\par
+return;\par
+\}\par
+\par
+if(memcmp( cConfigHotkeys[wKey], "specialability",14) == 0)\{\par
+if (m_cGameMode != DEF_GAMEMODE_ONMAINGAME) return;\par
+if (m_bInputStatus) return;\par
+\par
+if (m_bIsSpecialAbilityEnabled == TRUE) \{\par
+ if (m_iSpecialAbilityType != 0) \{\par
+  bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_ACTIVATESPECABLTY, NULL, NULL, NULL, NULL, NULL);\par
+  m_bIsSpecialAbilityEnabled = FALSE;\par
+ \}\par
+ else AddEventList(ON_KEY_UP26, 10);\par
+\}\par
+else \{\par
+ if (m_iSpecialAbilityType == 0) AddEventList(ON_KEY_UP26, 10);\par
+ else \{\par
+  if ((m_sPlayerAppr4 & 0x00F0) != 0) \{\par
+   AddEventList(ON_KEY_UP28, 10);\par
+   return;\par
+  \}\par
+\par
+  i = (dwTime - m_dwSpecialAbilitySettingTime)/1000;\par
+  i = m_iSpecialAbilityTimeLeftSec - i;\par
+  if (i < 0) i = 0;\par
+        \par
+  ZeroMemory(G_cTxt, sizeof(G_cTxt));\par
+  if (i < 60) \{\par
+   switch (m_iSpecialAbilityType) \{\par
+   case 1: wsprintf(G_cTxt, ON_KEY_UP29, i); break;\par
+   case 2: wsprintf(G_cTxt, ON_KEY_UP30, i); break;\par
+   case 3: wsprintf(G_cTxt, ON_KEY_UP31, i); break;\par
+   case 4: wsprintf(G_cTxt, ON_KEY_UP32, i); break;\par
+   case 5: wsprintf(G_cTxt, ON_KEY_UP33, i); break;\par
+   case 50:wsprintf(G_cTxt, ON_KEY_UP34, i); break;\par
+   case 51:wsprintf(G_cTxt, ON_KEY_UP35, i); break;\par
+   case 52:wsprintf(G_cTxt, ON_KEY_UP36, i); break;\par
+   \}\par
+  \}\par
+  else \{\par
+   switch (m_iSpecialAbilityType) \{\par
+   case 1: wsprintf(G_cTxt, ON_KEY_UP37, i/60); break;\par
+   case 2: wsprintf(G_cTxt, ON_KEY_UP38, i/60); break;\par
+   case 3: wsprintf(G_cTxt, ON_KEY_UP39, i/60); break;\par
+   case 4: wsprintf(G_cTxt, ON_KEY_UP40, i/60); break;\par
+   case 5: wsprintf(G_cTxt, ON_KEY_UP41, i/60); break;\par
+   case 50:wsprintf(G_cTxt, ON_KEY_UP42, i/60); break;\par
+   case 51:wsprintf(G_cTxt, ON_KEY_UP43, i/60); break;\par
+   case 52:wsprintf(G_cTxt, ON_KEY_UP44, i/60); break;\par
+   \}\par
+  \}\par
+  AddEventList(G_cTxt, 10);\par
+ \}\par
+\}\par
+return;\par
+\}\par
+\}\par
+Not sure if I modified OnKeyUp:\par
+CODE\par
+void CGame::OnKeyUp(WPARAM wParam)\par
+\{\par
+switch (wParam) \{\par
+case VK_SHIFT:\par
+m_bShiftPressed = FALSE;\par
+break;\par
+case VK_CONTROL:\par
+m_bCtrlPressed = FALSE;\par
+break;\par
+\par
+case 107: //'+'\par
+if(m_bInputStatus == FALSE) m_bZoomMap = TRUE;\par
+break;\par
+\par
+case 109: //'-'\par
+if(m_bInputStatus == FALSE) m_bZoomMap = FALSE;\par
+break;\par
+\par
+case VK_F12:\par
+m_bEscPressed = TRUE;\par
+if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME)\par
+\{\par
+ if ((m_bIsObserverMode == TRUE) && (m_bShiftPressed)) \{ //ObserverMode Shift+ F12 ( not SHIFT+ESC )\par
+  // Log Out\par
+  if (m_cLogOutCount == -1) m_cLogOutCount = 1;\par
+  DisableDialogBox(19);\par
+  PlaySound('E', 14, 5);\par
+ \}\par
+ else if(m_cLogOutCount != -1) \{\par
+  if (m_bForceDisconn == FALSE) \{ //Esc\par
+   m_cLogOutCount = -1;\par
+   AddEventList(DLGBOX_CLICK_SYSMENU2, 10);\par
+  \}\par
+ \}\par
+ if (m_bIsGetPointingMode == TRUE) \{\par
+  m_bIsGetPointingMode = FALSE;\par
+  AddEventList(COMMAND_PROCESSOR1, 10);\par
+ \}\par
+ m_bIsF1HelpWindowEnabled = FALSE;\par
+\}\par
+break;\par
+\par
+case VK_ESCAPE:\par
+if(m_bInputStatus) return;\par
+if (m_bIsDialogEnabled[19] == FALSE)\par
+ EnableDialogBox(19, NULL, NULL, NULL);\par
+else DisableDialogBox(19);\par
+break;\par
+\par
+case VK_UP: \par
+m_cArrowPressed = 1;\par
+if( m_cGameMode == DEF_GAMEMODE_ONMAINGAME )\par
+\{\par
+ int iTotalMsg=0;\par
+ for( int i=DEF_MAXWHISPERMSG-1; i>=0; i-- )\par
+ \{\par
+  if( m_pWhisperMsg[i] != NULL )\par
+  \{\par
+   iTotalMsg = i;\par
+   break;\par
+  \}\par
+ \}\par
+ m_cWhisperIndex ++;\par
+ if( m_cWhisperIndex > iTotalMsg ) m_cWhisperIndex = 0;\par
+ if( m_cWhisperIndex < 0 ) m_cWhisperIndex = iTotalMsg;\par
+ if( m_pWhisperMsg[m_cWhisperIndex] != NULL ) \{\par
+ EndInputString();\par
+ wsprintf( m_cChatMsg, "/to %s", m_pWhisperMsg[m_cWhisperIndex]->m_pMsg );\par
+ StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg); \par
+ \}\par
+\}\par
+break;\par
+\par
+case VK_RIGHT: \par
+m_cArrowPressed = 2;\par
+break;\par
+\par
+case VK_DOWN: \par
+m_cArrowPressed = 3;\par
+if( m_cGameMode == DEF_GAMEMODE_ONMAINGAME )\par
+\{\par
+ int iTotalMsg=0;\par
+ for( int i=DEF_MAXWHISPERMSG-1; i>=0; i-- )\par
+ \{\par
+  if( m_pWhisperMsg[i] != NULL )\par
+  \{\par
+   iTotalMsg = i;\par
+   break;\par
+  \}\par
+ \}\par
+ m_cWhisperIndex --;\par
+ if( m_cWhisperIndex < 0 ) m_cWhisperIndex = iTotalMsg;\par
+ if( m_cWhisperIndex > iTotalMsg ) m_cWhisperIndex = 0;\par
+ if( m_pWhisperMsg[m_cWhisperIndex] != NULL ) \{\par
+ EndInputString();\par
+ wsprintf( m_cChatMsg, "/to %s", m_pWhisperMsg[m_cWhisperIndex]->m_pMsg );\par
+ StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg); \par
+ \}\par
+\}\par
+break;\par
+\par
+case VK_LEFT: \par
+m_cArrowPressed = 4;\par
+break;\par
+\par
+case VK_SNAPSHOT:\par
+CreateScreenShot();\par
+break;\par
+\par
+case VK_TAB:\par
+if( m_bShiftPressed )\par
+\{\par
+ m_cCurFocus--;\par
+ if( m_cCurFocus < 1 ) m_cCurFocus = m_cMaxFocus;\par
+\}\par
+else\par
+\{\par
+ m_cCurFocus++;\par
+ if( m_cCurFocus > m_cMaxFocus) m_cCurFocus = 1;\par
+\}\par
+\par
+if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME) \{\par
+ bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_TOGGLECOMBATMODE, NULL, NULL, NULL, NULL, NULL); \par
+\}\par
+break;\par
+\par
+case VK_RETURN:\par
+m_bEnterPressed = TRUE; \par
+break;\par
+\}\par
+\par
+// Cleroth - CTRL Hotkeys\par
+HandleScript(wParam);\par
+\}\par
+\par
+void CGame::OnKeyDown(WPARAM wParam)\par
+\{\par
+switch (wParam) \{\par
+case VK_CONTROL:\par
+ m_bCtrlPressed = TRUE;\par
+ break;\par
+case VK_SHIFT:\par
+ m_bShiftPressed = TRUE;\par
+ break;\par
+case VK_INSERT:\par
+case VK_DELETE:\par
+case VK_TAB:\par
+case VK_RETURN:\par
+case VK_ESCAPE:\par
+case VK_END: \par
+case VK_HOME:\par
+case VK_F1:\par
+case VK_F2:\par
+case VK_F3:\par
+case VK_F4:\par
+case VK_F5:\par
+case VK_F6:\par
+case VK_F7:\par
+case VK_F8:\par
+case VK_F9:\par
+case VK_F10:\par
+case VK_F11:\par
+case VK_F12:\par
+case VK_PRIOR: // Page-Up\par
+case VK_NEXT: // Page-Down\par
+case VK_LWIN:\par
+case VK_RWIN: \par
+case VK_MULTIPLY:\par
+case VK_ADD: //'+'\par
+case VK_SEPARATOR:\par
+case VK_SUBTRACT: //'-'\par
+case VK_DECIMAL:\par
+case VK_DIVIDE:\par
+case VK_NUMLOCK:\par
+case VK_SCROLL:\par
+ break;\par
+\par
+default:\par
+ if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME) \{\par
+ \tab if (m_bCtrlPressed) \{\par
+   switch (wParam) \{\par
+   case 48: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 9; break; // 0\par
+   case 49: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 0; break; // 1\par
+   case 50: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 1; break; // 2 \par
+   case 51: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 2; break; // 3\par
+   case 52: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 3; break; // 4 \par
+   case 53: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 4; break; // 5\par
+   case 54: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 5; break; // 6\par
+   case 55: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 6; break; // 7\par
+   case 56: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 7; break; // 8\par
+   case 57: EnableDialogBox(3, NULL, NULL, NULL); m_stDialogBoxInfo[3].sView = 8; break; // 9\par
+   \}\par
+ \tab\}\par
+ \tab else if ((m_bInputStatus == FALSE) && (GetAsyncKeyState(VK_MENU)>>15 == FALSE)) \{\par
+   StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg); \par
+   ClearInputString();\par
+ \tab\}\par
+ \}\par
+ break;\par
+\}\par
+\}\par
+\par
+Add:\par
+CODE\par
+void CGame::UpdateScreen_OnLoading(bool bActive)\par
+\{ \par
+int i;\par
+if( bActive ) UpdateScreen_OnLoading_Progress();\par
+\par
+switch( m_cLoading )\par
+\{\par
+case 0:\par
+ \{\par
+ \tab ZeroMemory(cIni, sizeof(cIni) );\par
+ \tab ZeroMemory(cConfigHotkeys, sizeof(cConfigHotkeys) );\par
+ \tab GetCurrentDirectory(1000, cIni);\par
+ \tab strcat(cIni,"\\\\config.ini");\par
+ \tab LoadHotkeys(cIni);\par
+\par
+\par
+In Game.h:\par
+CODE\par
+char cConfigHotkeys[140][50];\par
+char cIni[1000];\par
+void LoadHotkeys(char * cFile);\par
+void HandleScript(WORD wKey);\par
+\par
+\par
+CODE\par
+void CGame::EraseItem(char cItemID)\par
+\{\par
+int i;\par
+char cStr1[64], cStr2[64], cStr3[64];\par
+\par
+ZeroMemory(cStr1, sizeof(cStr1));\par
+ZeroMemory(cStr2, sizeof(cStr2));\par
+ZeroMemory(cStr3, sizeof(cStr3));\par
+// Cleroth - hotkeys\par
+for( i=0; i<13; i++ )\{\par
+ if (m_sShortCut[i] == cItemID) \{\par
+ \tab GetItemName(m_pItemList[cItemID], cStr1, cStr2, cStr3);\par
+ \tab sprintf(G_cTxt, ERASE_ITEM, cStr1, cStr2, cStr3, i);\par
+ \tab AddEventList(G_cTxt, 10);\par
+ \tab m_sShortCut[i] = -1;\par
+ \}\par
+\}\par
+\par
+if (cItemID == m_sRecentShortCut)\par
+m_sRecentShortCut = -1;\par
+\par
+for (i = 0; i < DEF_MAXITEMS; i++) \par
+if (m_cItemOrder[i] == cItemID) \par
+m_cItemOrder[i] = -1;\par
+\par
+for (i = 1; i < DEF_MAXITEMS; i++)\par
+if ((m_cItemOrder[i-1] == -1) && (m_cItemOrder[i] != -1)) \{\par
+ m_cItemOrder[i-1] = m_cItemOrder[i]; \par
+ m_cItemOrder[i]   = -1;\par
+\}\par
+\par
+delete m_pItemList[cItemID];\par
+m_pItemList[cItemID] = NULL;\par
+m_bIsItemEquipped[cItemID] = FALSE;\par
+m_bIsItemDisabled[cItemID] = FALSE;\par
+\}\par
+\par
+\par
+\par
+Create a config.ini file in the Client directory.\par
+For a classic hotkey configuration (for letters, you still have to press CTRL+LETTER):\par
+CODE\par
+[HOTKEYS]\par
+A=autoattack\par
+B=\par
+C=\par
+D=detail\par
+E=\par
+F=\par
+G=\par
+H=\par
+I=\par
+J=\par
+K=\par
+L=\par
+M=map\par
+N=\par
+O=\par
+P=\par
+Q=hppotion\par
+R=walkrun\par
+S=music\par
+T=to\par
+U=\par
+V=\par
+W=\par
+X=\par
+Y=\par
+Z=\par
+F1=help\par
+F2=spell02\par
+F3=spell03\par
+F4=lastspell\par
+F5=charinfo\par
+F6=inventory\par
+F7=magiccircle\par
+F8=skillinfo\par
+F9=history\par
+F10=\par
+F11=dialogtrans\par
+F12=\par
+Insert=hppotion\par
+Delete=mppotion\par
+End=lastmsg\par
+Home=safeattack\par
+PageUp=specialability\par
+PageDown=\par
+\par
+\par
+\par
+For hotkeys with spells on 0-9 and F1-F12 and other modified shits:\par
+CODE\par
+[HOTKEYS]\par
+A=charinfo\par
+B=music\par
+C=detail\par
+D=magiccircle\par
+E=/tp \par
+F=skillinfo\par
+G=history\par
+H=dialogtrans\par
+I=\par
+J=help\par
+K=\par
+L=\par
+M=\par
+N=to\par
+O=\par
+P=\par
+Q=hppotion\par
+R=/summon \par
+S=inventory\par
+T=/enableadmincommand \par
+U=\par
+V=map\par
+W=mppotion\par
+X=walkrun\par
+Y=/enableadmincreateitem \par
+Z=autoattack\par
+F1=spell01\par
+F2=spell02\par
+F3=spell03\par
+F4=spell04\par
+F5=spell05\par
+F6=spell06\par
+F7=spell07\par
+F8=spell08\par
+F9=spell09\par
+F10=spell10\par
+F11=spell11\par
+F12=spell12\par
+Insert=specialability\par
+Delete=safeattack\par
+End=lastmsg\par
+Home=lastspell\par
+PageUp=\par
+PageDown=\par
+0=spell10\par
+1=spell01\par
+2=spell02\par
+3=spell03\par
+4=spell04\par
+5=spell05\par
+6=spell06\par
+7=spell07\par
+8=spell08\par
+9=spell09\par
+\par
+\par
+Other than that, you can just create your own, that's what this is for. \par
+}
+ 

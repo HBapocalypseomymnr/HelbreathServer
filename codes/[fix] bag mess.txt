@@ -1,0 +1,57 @@
+HGSources -> Game.cpp -> Buscar:
+
+
+Código:
+wsprintf(G_cTxt, "RequestInitDataHandler error: Client(%s) Item(%d)", m_pClientList[iClientH]->m_cCharName, i);Unas lineas mas arriba encontramos esto:
+
+
+Código:
+iTotalItemA = 0;
+for (i = 0; i < DEF_MAXITEMS; i++)
+if (m_pClientList[iClientH]->m_pItemList[i] != NULL)
+iTotalItemA++;Lo reemplazamos por esto:
+
+
+Código:
+//fix for bag jumble
+int bFlag;
+
+bFlag = FALSE;
+while (bFlag == FALSE) {
+bFlag = TRUE;
+for (i = 0; i < DEF_MAXITEMS-1; i++)
+if ((m_pClientList[iClientH]->m_pItemList[i] == NULL) && (m_pClientList[iClientH]->m_pItemList[i+1] != NULL)) {
+m_pClientList[iClientH]->m_pItemList[i] = m_pClientList[iClientH]->m_pItemList[i+1];
+m_pClientList[iClientH]->m_pItemList[i+1] = NULL;
+
+m_pClientList[iClientH]->m_ItemPosList[i].x = m_pClientList[iClientH]->m_ItemPosList[i+1].x;
+m_pClientList[iClientH]->m_ItemPosList[i].y = m_pClientList[iClientH]->m_ItemPosList[i+1].y;
+bFlag = FALSE;
+}
+}Ahora buscamos esto:
+
+
+Código:
+			if (memcmp(token, "item-position-x", 15) == 0) {
+				cReadModeA = 50;
+				cReadModeB = 1;
+			}
+			if (memcmp(token, "item-position-y", 15) == 0) {
+				cReadModeA = 51;
+				cReadModeB = 1;
+			}Lo reemplazamos por esto:
+
+
+Código:
+			if (memcmp(token, "item-position-x", 16) == 0) {
+				cReadModeA = 50;
+				cReadModeB = 1;
+			}
+			if (memcmp(token, "item-position-y", 16) == 0) {
+				cReadModeA = 51;
+				cReadModeB = 1;
+			}
+
+y listo, bag mess fixed.
+
+by juggalo2

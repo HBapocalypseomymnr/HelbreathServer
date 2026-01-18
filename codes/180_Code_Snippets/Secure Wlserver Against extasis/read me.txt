@@ -1,0 +1,62 @@
+yada yada, i didnt have time atm to check if there are any new magnificent
+ways to protect your worldlogserver from unauthorized connections, besides
+my last "worlogfilter" err heres the topic url, page 2(scroll a bit down):
+http://www.unadvised.net/forums/index.php?...hl=filter&st=25
+
+that didnt earn much "yawn" if i could say so, and the url became wasted so i
+post here "new" url to it: http://members.tiscali.fi/tommi00/WorldLogServerFilter.zip
+
+
+
+BUT to the new method, its here: http://members.surfeu.fi/tommi00/wlpatsh_v3.zip
+its nifty executable patcher which launches WorldLogServer when you start
+patsh.exe, patches it so that it tried memory compare on
+WLServer.cfg with the ip address of the hgserver connecting to your worldlogserver
+
+and if match is found, it allows it, otherwise it goes failed =)
+
+be sure to understand this: it matches the ip against wlserver.cfg as a one
+string, so every ip which matches the connecting user's ip, will be allowed
+(gateserver ip = blaablaa) will be accepted :P (lazy, hurry, well generally
+you dont add foreigner's ip's to wlserver.cfg)
+
+if you want to disallow some ip, remove it completely from wlserver.cfg
+if the patch cannot open wlserver.cfg for one reason or another, it will
+allow every hgserver, be sure to try connecting to it yourself
+
+
+**********************
+
+usage: extract http://members.surfeu.fi/tommi00/wlpatsh_v3.zip
+to your worldlogserver's folder, rename your worldlogserver to
+_3WorldLServer.exe
+and then start patsh.exe and voila (pray that you have even remotely same
+kind of worldlogserver as i do, my wlserver's size is 106496bytes
+
+i'm no expert in asm so it might crash but as far as i tested it, it did not
+(well not anymore, at _last_ ;)
+
+
+**********************
+
+
+from. >_<
+
+
+
+UPDATE!!!!!! I released version 2 (v2) as I noted BIG FREAKIN' mistake >:(
+It let hgservers pass through due to a *drum drum* bug!
+
+Now this wlpatsh_v2.zip does not do it, it also makes check so it can't
+be crashed if hgserver sends its information as "zero". Keep posted, if I
+find new bugs, I'll try to fix them (hope there's none anymore)
+
+--------
+
+Update!
+After friggin stupid wlpatsh-hbhax overwriting-confusion(I just woke up), I managed to put this wlpatsh_v3.zip in the correct thread and correct .zip file..
+
+It should have fixed those crashed on different os'es as it now relocates those functions it's using and doesn't just jump there assuming its in X.
+Download the new version: http://members.surfeu.fi/tommi00/wlpatsh_v3.zip
+
+Thanks for the patience.

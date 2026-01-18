@@ -1,0 +1,55 @@
+Nuevos colores de Piel (By HBTere)
+En los sources del client:
+Game.cpp
+Buscan en la función: UpdateScreen_OnLoading
+
+Código:
+MakeSprite( "Bm", 500 + 15*8*0, 96, TRUE);// Black Man (Type: 1)
+         MakeSprite( "Wm", 500 + 15*8*1, 96, TRUE);// White Man (Type: 2)
+         MakeSprite( "Ym", 500 + 15*8*2, 96, TRUE);// Yellow Man (Type: 3)
+         m_cLoading = 20;
+      }
+      break;
+   case 20:
+      {   MakeSprite( "Bw", 500 + 15*8*3, 96, TRUE);// Black Woman (Type: 4)
+         MakeSprite( "Ww", 500 + 15*8*4, 96, TRUE);// White Woman (Type: 5)
+         MakeSprite( "Yw", 500 + 15*8*5, 96, TRUE);// Yellow Woman (Type: 6)
+         m_cLoading = 24;
+      }
+Y acá le agregan los sprites que van a usar.
+
+Luego, van a la función:
+
+UpdateScreen_OnCreateNewCharacter
+
+Y buscan lo siguiente:
+
+Código:
+case 4:
+         m_cSkinCol--;
+         if (m_cSkinCol < 1) m_cSkinCol = 3;
+         break;
+      case 5:
+         m_cSkinCol++;
+         if (m_cSkinCol > 3) m_cSkinCol = 1;
+         break;
+Y lo reemplazan por esto:
+
+Código:
+ase 4:
+         m_cSkinCol--;
+         if (m_cSkinCol < 1) m_cSkinCol = 4;
+         break;
+      case 5:
+         m_cSkinCol++;
+         if (m_cSkinCol > 4) m_cSkinCol = 1;
+         break;
+Despues Buscan lo siguiente 
+
+Código:
+m_cSkinCol   = rand() % 3 + 1;
+Y lo reemplazan por esto:
+
+Código:
+m_cSkinCol   = rand() % 4 + 1;
+By (HBTere Modificado por "Arg")

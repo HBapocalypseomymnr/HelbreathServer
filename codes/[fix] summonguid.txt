@@ -1,0 +1,199 @@
+Coder : Drawjer
+Brought To You By Juggalo2
+
+this will summon all players logged on the same HGserver next to the guildmaster, with a cost.
+
+
+OPEN GAME.CPP
+
+ADD AT THE END
+
+
+
+Code: Select all
+void CGame::AdminOrder_SummonGuild(int iClientH, char *pData, DWORD dwMsgSize)
+{
+char   seps[] = "= \t\n";
+char   * cBuff[256], cLocation[11]; 
+int    pX, pY, i;
+char buff [100];
+if (m_pClientList[iClientH] == NULL) return;
+if ((dwMsgSize) <= 0) return;
+
+ZeroMemory(cBuff, sizeof(cBuff));
+memcpy(cBuff, pData, dwMsgSize);
+
+pX = m_pClientList[iClientH]->m_sX;
+pY = m_pClientList[iClientH]->m_sY;
+memcpy(cLocation, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 11);
+wsprintf(buff,"Summon-Guild: %s (%s) %s %d %d",m_pClientList[iClientH]->m_cCharName,m_pClientList[iClientH]->m_cGuildName,cLocation,pX,pY);
+PutLogList(buff);
+for (i = 0; i < DEF_MAXCLIENTS; i++)
+
+if ((m_pClientList[i] != NULL) && (strcmp(m_pClientList[i]->m_cGuildName,m_pClientList[iClientH]->m_cGuildName) == 0) && (i != iClientH)) {
+RequestTeleportHandler(i, "2   ", cLocation, pX, pY);
+}
+} 
+
+
+
+
+FIND
+
+
+Code: Select all
+if (memcmp(cp, "/version", 8) == 0) {
+  ShowVersion(iClientH);
+  return;
+} 
+
+
+
+
+AFTER ADD
+
+
+
+Code: Select all
+if (memcmp(cp, "/summonguild", 12) == 0) {
+if ((!m_bIsCrusadeMode) || (m_pClientList[iClientH]->m_iGuildRank == 0)) {    
+if (m_pClientList[iClientH]->m_iGuildRank == 0) {    
+  if (dwGetItemCount(iClientH, "Gold") >= 5000)  {
+  SetItemCount(iClientH, "Gold", dwGetItemCount(iClientH, "Gold") - 5000);
+  AdminOrder_SummonGuild(iClientH, cp, dwMsgSize - 21);
+return;
+}
+}
+}
+} 
+
+
+
+OPEN GAME.H
+
+FIND
+
+
+
+Code: Select all
+};
+
+
+
+
+BEFORE ADD
+
+Code: Select all
+void AdminOrder_SummonGuild(int iClientH, char *pData, DWORD dwMsgSize);
+
+Credits for Drawjer
+
+Notes: Will only summon players on same HG and as default has 5000 gold cost. If you have on your sources anything related to SummonGuild on GAME.CPP or GAME.H must delete or comment it out. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+New by Snoopy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Little variant:
+Admins can summon any Guild.
+Work on all servers.
+
+
+
+Code: Select all
+void CGame::AdminOrder_SummonGuild(int iClientH, char *pData, DWORD dwMsgSize)
+{char   seps[] = "= \t\n";
+char   * token, * cp, cBuff[256], cMapName[11]; 
+char cGuildName[20]; 
+WORD   *wp;
+int    pX, pY, i;
+class  CStrTok * pStrTok;
+DWORD  dwGoldCount;
+if (m_pClientList[iClientH] == NULL) return;
+if ((dwMsgSize) <= 0) return;
+if (   (m_pClientList[iClientH]->m_iAdminUserLevel < m_iAdminLevelSummonGuild)
+&& (m_pClientList[iClientH]->m_iAdminUserLevel != 0))
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);
+return;
+}
+if (m_pClientList[iClientH]->m_iAdminUserLevel == 0) // Check if gm:
+{ if (m_pClientList[iClientH]->m_iGuildRank != 0) return;  
+dwGoldCount = dwGetItemCount(iClientH, "Gold");  // dwGoldCount = player gold
+if (m_iSummonGuildCost > dwGoldCount) 
+{ return;
+}else // if summonguildcost is less than player gold
+{ SetItemCount(iClientH, "Gold", dwGoldCount - m_iSummonGuildCost); // reduce gold by summonguildcost   
+}
+}else
+{ //wsprintf(G_cTxt, "GM Order(%-10s): /summonguild (%s)", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_cGuildName);
+//bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, FALSE, G_cTxt);
+}
+ZeroMemory(cBuff, sizeof(cBuff));
+memcpy(cBuff, pData, dwMsgSize);
+pStrTok = new class CStrTok(cBuff, seps);
+token = pStrTok->pGet();
+token = pStrTok->pGet();
+if (token == NULL) 
+{ delete pStrTok;
+return;
+}
+pX = m_pClientList[iClientH]->m_sX;
+pY = m_pClientList[iClientH]->m_sY;
+ZeroMemory(cMapName, sizeof(cMapName));
+memcpy(cMapName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 11);
+ZeroMemory(cGuildName, sizeof(cGuildName));
+if (strlen(token) > 20)
+  memcpy(cGuildName, token, 20);
+else memcpy(cGuildName, token, strlen(token));
+for (i = 0; i < DEF_MAXCLIENTS; i++)
+if ((m_pClientList[i] != NULL) && (strcmp(m_pClientList[i]->m_cGuildName, token) == 0)) 
+{ wsprintf(G_cTxt,"PC(%s) summoned by Guild(%s) to %s.", m_pClientList[i]->m_cCharName, cGuildName, cMapName);
+PutLogList(G_cTxt);
+RequestTeleportHandler(i, "2   ", cMapName, pX, pY);  
+}
+wsprintf(G_cTxt,"Guild(%s) summoned by PC(%s) to %s.", cGuildName, m_pClientList[iClientH]->m_cCharName, cMapName);
+PutLogList(G_cTxt);
+ZeroMemory(cBuff, sizeof(cBuff));
+cp = (char *)cBuff;
+*cp = GSM_REQUEST_SUMMONGUILD;
+cp++;
+memcpy(cp, cGuildName, 20);
+cp += 20;
+memcpy(cp, cMapName, 10);
+cp += 10;
+wp = (WORD *)cp;
+*wp = m_pClientList[iClientH]->m_sX;
+cp += 2;
+wp = (WORD *)cp;
+*wp = m_pClientList[iClientH]->m_sY;
+cp += 2;
+bStockMsgToGateServer(cBuff, 35);
+delete pStrTok;
+} 
+
+in CGame::ServerStockMsgHandler(char *pData):
+
+
+
+Code: Select all
+case GSM_REQUEST_SUMMONGUILD:
+  cp++;
+  ZeroMemory(cGuildName, sizeof(cGuildName));
+  memcpy(cGuildName, cp, 20);
+  cp += 20;
+  ZeroMemory(cTemp, sizeof(cMapName));
+  memcpy(cMapName, cp, 10);
+  cp += 10;
+  cp2 = (char *) cTemp + 10;
+  wp = (WORD *)cp;
+  wV1 = *wp;
+  cp += 2;
+  wp = (WORD *)cp;
+  wV2 = *wp;
+  cp += 2;
+  for (i = 0; i < DEF_MAXCLIENTS; i++)
+  if ((m_pClientList[i] != NULL) && (strcmp(m_pClientList[i]->m_cGuildName, cGuildName) == 0)) 
+  { wsprintf(G_cTxt,"PC(%s) summoned by Guild(%s) to %s.", m_pClientList[i]->m_cCharName, cGuildName, cMapName);
+   PutLogList(G_cTxt);
+   RequestTeleportHandler(i, "2   ", cMapName, wV1, wV2);
+  }
+  break; 

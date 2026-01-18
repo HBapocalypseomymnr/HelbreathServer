@@ -1,0 +1,178 @@
+Item.cfg:
+
+CODE  
+
+Item = anyfreeid Lotery 3 0 11 4 2 0 0 0 0 1 0 6 9 price 1 -1 0 0 0 0 0 -1 42 0
+ 
+
+
+
+
+Game.h
+
+
+CODE  
+
+void
+LoteryHandler(int iClientH);
+ 
+
+
+
+Game.cpp
+
+CODE  
+
+void
+CGame::LoteryHandler (int iClientH)
+{
+ class CItem *pItem;
+ int iItemID;
+ int Kostka;
+ if (m_pClientList[iClientH] == NULL)
+   return;
+ switch (iDice (1, 38))
+   {
+   case 1:
+     iItemID = 188;
+     break;   //SnakeMeat
+   case 2:
+     iItemID = 189;
+     break;   //SnakeSkin
+   case 3:
+     iItemID = 190;
+     break;   //SnakeTeeth
+   case 4:
+     iItemID = 191;
+     break;   //SnakeTongue
+   case 5:
+     iItemID = 192;
+     break;   //AntLeg
+   case 6:
+     iItemID = 193;
+     break;   //AntFeeler
+   case 7:
+     iItemID = 194;
+     break;   //CyclopsEye
+   case 8:
+     iItemID = 195;
+     break;   //CyclopsHandEdge
+   case 9:
+     iItemID = 196;
+     break;   //CyclopsHeart
+   case 10:
+     iItemID = 197;
+     break;   //CyclopsMeat
+   case 11:
+     iItemID = 198;
+     break;   //CyclopsLeather 
+   case 12:
+     iItemID = 199;
+     break;   //HelboundHeart
+   case 13:
+     iItemID = 200;
+     break;   //HelboundLeather
+   case 14:
+     iItemID = 201;
+     break;   //HelboundTail
+   case 15:
+     iItemID = 202;
+     break;   //HelboundTeeth
+   case 16:
+     iItemID = 203;
+     break;   //HelboundClaw
+   case 17:
+     iItemID = 204;
+     break;   //HelboundTongue
+   case 18:
+     iItemID = 205;
+     break;   //LumpofClay
+   case 19:
+     iItemID = 206;
+     break;   //OrcMeat
+   case 20:
+     iItemID = 207;
+     break;   //OrcLeather
+   case 21:
+     iItemID = 208;
+     break;   //OrcTeeth
+   case 22:
+     iItemID = 209;
+     break;   //OgreHair
+   case 23:
+     iItemID = 210;
+     break;   //OgreHeart
+   case 24:
+     iItemID = 211;
+     break;   //OgreMeat
+   case 25:
+     iItemID = 212;
+     break;   //OgreLeather
+   case 26:
+     iItemID = 213;
+     break;   //OgreTeeth
+   case 27:
+     iItemID = 214;
+     break;   //OgreClaw
+   case 28:
+     iItemID = 215;
+     break;   //ScorpionPincers
+   case 29:
+     iItemID = 216;
+     break;   //ScorpionMeat
+   case 30:
+     iItemID = 217;
+     break;   //ScorpionSting
+   case 31:
+     iItemID = 218;
+     break;   //ScorpionSkin
+   case 32:
+     iItemID = 219;
+     break;   //SkeletonBones
+   case 33:
+     iItemID = 220;
+     break;   //SlimeJelly
+   case 34:
+     iItemID = 221;
+     break;   //StoneGolemPiece
+   case 35:
+     iItemID = 222;
+     break;   //TrollHeart
+   case 36:
+     iItemID = 223;
+     break;   //TrollMeat
+   case 37:
+     iItemID = 224;
+     break;   //TrollLeather
+   case 38:
+     iItemID = 225;
+     break;   //TrollClaw
+   }
+ Kostka = iDice (1, 100);
+ if ((Kostka >= 0) && (Kostka <= 2))
+   iItemID = 650;
+ if ((Kostka >= 3) && (Kostka <= 5))
+   iItemID = 657;
+ if ((Kostka >= 6) && (Kostka <= 9))
+   iItemID = 656;
+ pItem = new class CItem;
+ if (_bInitItemAttr (pItem, iItemID) == FALSE)
+   {
+     delete pItem;
+   }
+ else
+   {
+     m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->
+bSetItem (m_pClientList[iClientH]->m_sX,
+   m_pClientList[iClientH]->m_sY, pItem);
+     SendEventToNearClient_TypeB (MSGID_EVENT_COMMON,
+      DEF_COMMONTYPE_ITEMDROP,
+      m_pClientList[iClientH]->m_cMapIndex,
+      m_pClientList[iClientH]->m_sX,
+      m_pClientList[iClientH]->m_sY,
+      pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); // v1.4
+   }
+}
+ 
+
+

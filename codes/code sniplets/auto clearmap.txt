@@ -1,0 +1,199 @@
+CODE  
+
+in CGame::CGame(HWND hWnd) add
+
+dwItemCleanLastTime = GetTickCount();
+dwItemCleanDelay = 600000; //600k ms = 10 mins
+dwItemDeleteDelay = 300000; //300k ms = 5 mins
+ 
+
+
+
+
+
+CODE  
+
+in "class CGame" add
+
+DWORD dwItemCleanLastTime;  //Last time a map was cleaned
+DWORD dwItemCleanDelay;   //After how long before we should clean
+DWORD dwItemDeleteDelay;  //How long should an item be on floor before it gets deleted
+
+ 
+
+
+
+
+CODE  
+
+in "class CItem" add
+
+DWORD m_dwItemTime;
+ 
+
+
+
+
+CODE  
+
+in "CItem::CItem()" add
+
+m_dwItemTime = GetTickCount();
+ 
+
+
+
+
+CODE  
+
+in DropItemHandler add
+
+ if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP) && 
+  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_wCurLifeSpan == 0)) {
+   delete m_pClientList[iClientH]->m_pItemList[sItemIndex];
+   m_pClientList[iClientH]->m_pItemList[sItemIndex] = NULL;
+  }
+ else {
+  //Update item time *NEW*
+  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwItemTime = GetTickCount();
+
+  m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX, 
+   m_pClientList[iClientH]->m_sY, 
+   m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+
+ 
+
+
+
+
+CODE  
+
+in DelayEventProcessor() add
+
+if ((dwTime - dwItemCleanLastTime) > dwItemCleanDelay) //Had time elapsed ?
+ AutoClearMap();
+ 
+
+
+
+
+CODE  
+
+in Map.cpp add this new function
+
+int CMap::iGetTotalItemsOnTile(short sX, short sY)
+{
+class CTile * pTile; 
+class CItem * pItem;
+if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return NULL;
+
+pTile = (class CTile *)(m_pTile + sX + sY*m_sSizeY);
+pItem =  pTile->m_pItem[0];
+return pTile->m_cTotalItem;
+}
+ 
+
+
+
+
+CODE  
+
+in Map.h add this function declaration
+
+int iGetTotalItemsOnTile(short sX, short sY);
+ 
+
+
+
+
+CODE  
+
+add a new function void CGame::AutoClearMap()
+
+void CGame::AutoClearMap()
+{
+
+int i, k, j, m_y, m_x;
+
+for (i = 0; i < DEF_MAXMAPS; i++) { //Enum all maps
+ if (m_pMapList[i] != NULL) { //Is allocated map
+  m_x = m_pMapList[i]->m_sSizeX;
+  m_y = m_pMapList[i]->m_sSizeY;
+  for(j = 1; j < m_x; j++) {
+   for(k = 1; k < m_y; k++){
+    m_pMapList[i]->CleanTile(j, k, dwItemDeleteDelay);
+   }
+  }
+ }
+}
+
+PutLogList("(!!!) AutoClearMap Executed!");
+
+//Update last clean time
+dwItemCleanLastTime = GetTickCount();
+}
+ 
+
+
+
+
+CODE  
+
+in Game.h add this function declaration
+
+void AutoClearMap();
+ 
+
+
+
+
+CODE  
+
+add a new function in Map.cpp
+
+void CMap::CleanTile(short sX, short sY, DWORD dwItemDeleteDelay)
+{
+class CTile * pTile; 
+class CItem * pItem[DEF_TILE_PER_ITEMS];
+register int i,j;
+DWORD dwTime;
+
+if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return;
+
+pTile = (class CTile *)(m_pTile + sX + sY*m_sSizeY);
+if (pTile->m_cTotalItem == 0) return;
+
+dwTime = GetTickCount(); //Get time
+
+ZeroMemory(pItem, sizeof(pItem)); //Zero the whole pItem structure
+
+for (i = 0, j = 0; i <= DEF_TILE_PER_ITEMS-2; i++){ //Enum all items on tile
+ if (pTile->m_pItem[i] != NULL)
+ {
+  if ((dwTime - pTile->m_pItem[i]->m_dwItemTime) > dwItemDeleteDelay) //Item has been on ground for too long
+  {
+   delete pTile->m_pItem[i]; //Delete item which has been on floor for too long
+   pTile->m_pItem[i] = NULL;
+  }
+  else{ //This code only keeps live items
+   pItem[j++] = pTile->m_pItem[i]; //Copy item to a temp place
+  }
+ }
+}
+
+//Copy back data of items
+//No need to NULL out pTile as pItem has its sturcture NULLED out at the start
+for (i = 0; i <= DEF_TILE_PER_ITEMS-2; i++)
+ pTile->m_pItem[i] = pItem[i];
+
+}
+ 
+
+
+
+
+CODE  
+
+in Map.h add this function declaration
+
+void CleanTile(short sX, short sY, DWORD dwItemDeleteDelay); 

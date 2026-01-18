@@ -1,0 +1,62 @@
+This is in another topic somewhere but this is the right section. Add this in the backend of CGame::ClientKilledHandler. Preferably before the return 
+
+CODE  
+
+//----------------------------EK Announcer-------------------------
+//---- Function: CGame::ClientKilledHandler
+//---- Description: Announces a message to alert all connected 
+//---- clients an EK has taken place                          
+//---- Version: HBX 2.03 Build                                
+//---- Date: November 07 2005                                 
+//---- By: Daxation                                                          
+//-----------------------------------------------------------------
+char cEKMsg[1000];
+ZeroMemory(cEKMsg, sizeof(cEKMsg));
+// Multiple EK Messages
+// Note - Remove section '01' and replace with alternative code for a single message
+// Alternative code: wsprintf(cEKMsg, "%s killed %s", cAttackerName, m_pClientList[iClientH]->m_cCharName);
+// 01
+switch (iDice(1,3)) 
+// You can add extra messages by creating a new case.
+// Remember to increase iDice
+{
+case 1: // To reverse the order the names appear in the message reverse the last 2 parameters
+wsprintf(cEKMsg, "%s killed %s message 1", cAttackerName, m_pClientList[iClientH]->m_cCharName);
+break;
+case 2:
+wsprintf(cEKMsg, "%s killed %s message 2", cAttackerName, m_pClientList[iClientH]->m_cCharName);
+break;
+case 3:
+wsprintf(cEKMsg, "%s killed %s message 2", cAttackerName, m_pClientList[iClientH]->m_cCharName);
+break;
+default:
+wsprintf(cEKMsg, "%s killed %s message 3", cAttackerName, m_pClientList[iClientH]->m_cCharName);
+break;
+}
+// 01
+for (i = 1; i < DEF_MAXCLIENTS; i++) // Check all clients
+{
+if ((m_pClientList[i] != NULL))  // Check if client is avtice
+{
+ SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cEKMsg); // Send message to client
+ // Log EK
+ wsprintf(G_cTxt, "%s killed %s", cAttackerName, m_pClientList[iClientH]->m_cCharName); // Log message
+ PutLogFileList(G_cTxt); // Enter into logs
+}
+}
+//-----------------------------------------------------------------
+//----                   End EK Announcer Code                 ----
+//-----------------------------------------------------------------
+ 
+
+
+
+[EDIT]
+Heres the 2 line version which is spoken of further down the topic.
+
+QUOTE  
+wsprintf(G_cTxt, "%s killed %s", cAttackerName, m_pClientList[iClientH]->m_cCharName);
+for (i = 1; i < DEF_MAXCLIENTS; i++) if (m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG,    NULL, NULL, NULL, G_cTxt); 
+
+
+This 1 goes in the same place. 

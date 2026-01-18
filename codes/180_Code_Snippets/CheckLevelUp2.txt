@@ -1,0 +1,75 @@
+    Coder : Dax
+    brought To You By Juggalo2
+
+
+
+
+Issues this function fixes:
+- It now handles majestic points inside the loop. Your additional experience is carried over so you can get multiple majestic levels.
+- Level up gold is handled from inside the loop also. If you are level 1 and you get 3 levels you'll receive 1 single message saying "You received 300 Gold!" insted of any missing gold or getting multiple messages.(Which is better then how nemesis fixed it.)
+- The loop has been improved by removing any counting and merging normal levels with majestic levels. All level up situations under massive exp will not produce bugs. Example: You can level from level 18~MAX without bugs, 1 gold message for 600 gold, and 17 majestic points.
+
+This isnt exactly a cut and paste job thanks to the fact i changed it from bool to void. You will need to change every call made to this function. If you can manage to add it then i suggest you use it. It's a very clean code and it's exactly how it should of been. A hint to addint it would be that you don't need the old level up gold methods. These ones dont bug and will work 100% for multiple levels. That is why it was a bool before.
+
+
+
+    Dax - Level Up
+    Max Level
+    +1 Majestic Points
+    Reset EXP to Max Level (Returns any additional EXP)
+    Can handle multiple levels
+    Level Up
+    +1 Level
+    +3 Level Up Points
+    Reset Next Level EXP
+    Level 5 and Under receive +100 Bonus Gold
+    Level 20 and Under receive +300 Bonus Gold
+    Can handle multiple levels
+
+Code: Select all
+    void CGame::CheckLevelUp(int iClientH)
+    {
+    class CItem * pItem;
+
+    if (m_pClientList[iClientH] == NULL) return;
+    if (m_pClientList[iClientH]->m_iExp < m_pClientList[iClientH]->m_iNextLevelExp) return;
+
+    while (m_pClientList[iClientH]->m_iExp >= m_pClientList[iClientH]->m_iNextLevelExp) // Check Level Up Loop
+    {
+    if (m_pClientList[iClientH]->m_iLevel >= DEF_PLAYERMAXLEVEL) // Max Level
+    {
+      m_pClientList[iClientH]->m_iExp -= (m_pClientList[iClientH]->m_iNextLevelExp - m_iLevelExpTable[m_iPlayerMaxLevel]);
+      if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft < DEF_MAXGIZONPOINT )
+       m_pClientList[iClientH]->m_iGizonItemUpgradeLeft++;
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_EXP, NULL, NULL, NULL, NULL);
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, 1, NULL, NULL);
+    }
+    else // Level Up
+    {
+      if (m_pClientList[iClientH]->m_iLevel <= 20)
+      {
+       if (pItem == NULL)
+       {
+        pItem = new class CItem;
+        if (_bInitItemAttr(pItem, "Gold") == FALSE)
+        {
+         delete pItem;
+         return;
+        }
+       }
+       if (m_pClientList[iClientH]->m_iLevel <= 5) pItem->m_dwCount += 100;
+       else pItem->m_dwCount += 300;
+      }
+      m_pClientList[iClientH]->m_iLevel++;
+      m_pClientList[iClientH]->m_iLU_Pool += 3;
+      m_pClientList[iClientH]->m_iNextLevelExp = m_iLevelExpTable[m_pClientList[iClientH]->m_iLevel + 1];
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_LEVELUP, NULL, NULL, NULL, NULL);
+      CalcTotalItemEffect(iClientH, -1, FALSE);
+      if ((m_pClientList[iClientH]->m_iLevel >= DEF_CIVILIANLIMIT) && (m_pClientList[iClientH]->m_bIsHunter == TRUE ) )
+       SetNoHunterMode(iClientH,TRUE);
+    }
+    }
+    if(pItem != NULL)
+    bAddItem(iClientH, pItem, NULL);
+    return;
+    } 

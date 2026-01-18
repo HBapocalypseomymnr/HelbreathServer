@@ -1,0 +1,92 @@
+Hey guys Just here to post a little addon to KLKS's ShowClientMsg Function its a really simple function he made here but he missed out on an addition that i have made.. he didnt make it so you can choose by command line wich ChatType you wanna use So its stuck on 1 chat type the green font at the bottem WELL i played around with it a bit and i was like well it would be cool to have a multi-chattype in this function so i made it...
+
+Ok First off Lets get to Changing the code
+
+find the function in game.cpp
+void CGame::ShowClientMsg(
+
+replace the full function with this or make a complete new one its up to you but if you do rename it if your not a copy+paster and know at least 1 step of C++...
+
+
+CODE  
+
+//Original Code by KLKS
+//Updated by Acidx
+void CGame::ShowClientMsg(int iClientH, char* pMsg, int iChatType)
+{
+char * cp, cTemp[256];
+DWORD * dwp, dwMsgSize;
+WORD * wp;
+short * sp;
+
+ZeroMemory(cTemp, sizeof(cTemp));
+
+dwp = (DWORD *)cTemp;
+*dwp = MSGID_COMMAND_CHATMSG;
+
+wp  = (WORD *)(cTemp + DEF_INDEX2_MSGTYPE);
+*wp = NULL;
+
+cp  = (char *)(cTemp + DEF_INDEX2_MSGTYPE + 2);
+sp  = (short *)cp;
+*sp = NULL;
+cp += 2;
+
+sp  = (short *)cp;
+*sp = NULL;
+cp += 2;
+
+memcpy(cp, "Server", 6); // Player name :P
+cp += 10;
+
+*cp = iChatType; // chat type
+cp++;
+
+dwMsgSize = strlen(pMsg);
+if(dwMsgSize > 50) dwMsgSize = 50;
+memcpy(cp, pMsg, dwMsgSize);
+cp += dwMsgSize;
+
+m_pClientList[iClientH]->m_pXSock->iSendMsg(cTemp, dwMsgSize + 22);
+}
+ 
+
+
+
+Now in Game.H find the define
+void ShowClientMsg(
+replace with 
+
+CODE  
+void ShowClientMsg(int iClientH, char* pMsg, int iChatType); 
+
+
+
+
+Now If you just replaced the command find everything calling the function ShowClientMsg(
+and add your ChatType to the end such as
+ShowClientMsg(iClientH,"Text", 1);
+Now this saying Show the client the message Text with chat type 1
+Now im sure alot of ppl dont know what Chat type is wich so i took the libraty of Listing them
+
+
+CODE  
+
+Full chat types
+1  = @ Guild Chat - GREEN TOP
+2  = ! Global Chat - RED TOP
+3  = ~ Town Chat - Blue TOP
+4  = $ Party Chat - Goldish TOP
+10 = GM CHAT - GREEN Bottem
+ 
+
+
+
+so if you want to use Global change 
+ShowClientMsg(iClientH,"Text",1);
+to 
+ShowClientMsg(iClientH,"Text",2);
+and so on
+
+Hope this helps you guys out 
+Thanks to KLKS for the original code

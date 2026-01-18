@@ -1,0 +1,11 @@
+if (memcmp(cp, "/summonguild", 12) == 0) {
+ if ((!m_bIsCrusadeMode) || (m_pClientList[iClientH]->m_iGuildRank == 0)) {    
+ if (m_pClientList[iClientH]->m_iGuildRank == 0) {    
+  if (dwGetItemCount(iClientH, "Gold") >= 5000)  {
+  SetItemCount(iClientH, "Gold", dwGetItemCount(iClientH, "Gold") - 5000);
+  AdminOrder_SummonGuild(iClientH, cp, dwMsgSize - 21);
+ return;
+ }
+ }
+ }
+}

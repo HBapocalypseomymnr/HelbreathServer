@@ -1,0 +1,610 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Apocalypse y Apocalypse Thunder (By Snoopy)\par
+Bueno esta es la Apocalypse de Snoopy espero que alguno le sirva para algo siempre a todo se le puede dar un buen uso :F\par
+\par
+C\'f3digo:\par
+/**************************************************************************************  \par
+// HBx server introduced only the skeletton off Apocalypse functions, and sometime not so good!  \par
+// I rewrote them, maybe not following the "official" pattern but it works!  \par
+// I also needed to add many new functions.  \par
+//**************************************************************************************  \par
+// SNOOPY: GlobalStartApocalypseMode  \par
+// Called by: by local command or GM command  \par
+// -> Notify all game servers to start apocalypse  \par
+// -> Used to force Open or Closed the initial Gates  \par
+//**************************************************************************************  \par
+void CGame::GlobalStartApocalypseMode(int iClientH, int iMode)  \par
+\{ char * cp, cData[120];  \par
+DWORD * dwp, dwApocalypseGUID;  \par
+char cString[200];  \par
+ZeroMemory(cString, sizeof(cString));  \par
+if ((iClientH != 0) && (m_pClientList[iClientH]->m_iAdminUserLevel < 3)) \{  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);  \par
+return;  \par
+\}  \par
+if ((m_bIsApocalypseMode == TRUE) && (iMode == 0)) return;  \par
+if (m_bIsHeldenianMode == TRUE) return;  \par
+if (m_bIsCrusadeMode == TRUE) return;  \par
+ \par
+switch (iMode)\{  \par
+case 1: // Force open Gates  \par
+dwApocalypseGUID = 1;  \par
+if (iClientH !=0)  \par
+\{ wsprintf(G_cTxt, "Admin Order(%s): /openapocalypsegate \\tAdminIP(%s)"  \par
+, m_pClientList[iClientH]->m_cCharName  \par
+, m_pClientList[iClientH]->m_cIPaddress);  \par
+wsprintf(cString, "Apocalypse gate opening in progress.");  \par
+\}else  \par
+\{ wsprintf(G_cTxt, "Local command: openapocalypsegate");  \par
+\};  \par
+break;  \par
+case 2: // Force close gates  \par
+dwApocalypseGUID = 2;  \par
+if (iClientH !=0)  \par
+\{ wsprintf(G_cTxt, "Admin Order(%s): /closeapocalypsegate \\tAdminIP(%s)"  \par
+, m_pClientList[iClientH]->m_cCharName  \par
+, m_pClientList[iClientH]->m_cIPaddress);  \par
+wsprintf(cString, "Apocalypse gate closing in progress.");  \par
+\}else  \par
+\{ wsprintf(G_cTxt, "Local command: closeapocalypsegate");  \par
+\};  \par
+break;  \par
+case 0: // Start Apocalypse  \par
+dwApocalypseGUID = timeGetTime();  \par
+if (dwApocalypseGUID < 10) dwApocalypseGUID += 10;  \par
+if (iClientH !=0)  \par
+\{ wsprintf(G_cTxt, "Admin Order(%s): /beginapocalypse \\tAdminIP(%s)"  \par
+, m_pClientList[iClientH]->m_cCharName  \par
+, m_pClientList[iClientH]->m_cIPaddress);  \par
+wsprintf(cString, "Apocalypse starting in progress.");  \par
+\}else  \par
+\{ wsprintf(G_cTxt, "Local command: beginapocalypse");  \par
+\};  \par
+break;  \par
+\}  \par
+PutAdminLogFileList(G_cTxt);  \par
+PutLogEventFileList(G_cTxt);  \par
+PutLogList(G_cTxt);  \par
+if (iClientH !=0)  \par
+\{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cString);  \par
+\}  \par
+ \par
+ZeroMemory(cData, sizeof(cData));  \par
+cp = (char *)cData;  \par
+*cp = GSM_BEGINAPOCALYPSE;  \par
+cp++;  \par
+dwp = (DWORD *)cp;  \par
+*dwp = dwApocalypseGUID;  \par
+cp += 4;  \par
+bStockMsgToGateServer(cData, 5);  \par
+LocalStartApocalypse(dwApocalypseGUID); // Gate will no return order to this server  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// LocalStartApocalypse  \par
+// called by: started by Gate msg  \par
+// -> Notify players  \par
+// -> Opens the gates  \par
+// -> Prevent npc generation on "kill all to go out" maps  \par
+// -> Execute local Openning or closing gates by GM command  \par
+//**************************************************************************************  \par
+void CGame::LocalStartApocalypse(DWORD dwApocalypseGUID)  \par
+\{ if (dwApocalypseGUID == 1)// Means want to open Gate  \par
+\{ ForceOpen_ApocalypseGate();  \par
+return;  \par
+\}  \par
+if (dwApocalypseGUID == 2)// Means want to open Gate  \par
+\{ ForceClose_ApocalypseGate();  \par
+return;  \par
+\}  \par
+register int i;  \par
+m_bIsApocalypseMode = TRUE;  \par
+if (dwApocalypseGUID != NULL)  \par
+\{ _CreateApocalypseGUID(dwApocalypseGUID);  \par
+m_dwApocalypseGUID = dwApocalypseGUID;  \par
+m_dwApocalypseGateOpenTime = dwApocalypseGUID;  \par
+m_dwApocalypseGateCloseTime = dwApocalypseGUID +20*60*1000; // will close in 20 minutes  \par
+\}  \par
+for (i = 1; i < DEF_MAXCLIENTS; i++)  \par
+\{ if (m_pClientList[i] != NULL)  \par
+\{ SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);  \par
+\}  \par
+\}  \par
+for (i = 0; i < DEF_MAXMAPS; i++)  \par
+\{ if (m_pMapList[i] != NULL)  \par
+\{ if (m_pMapList[i]->m_iApocalypseMobGenType != 0)  \par
+//1 for no respawn, 2 for Boss spawn when map empty  \par
+\{ m_pMapList[i]->m_iMaximumObjectDefault = m_pMapList[i]->m_iMaximumObject;  \par
+m_pMapList[i]->m_iMaximumObject = 0;  \par
+\}  \par
+\}  \par
+\}  \par
+OpenCloseApocalypseGate();  \par
+wsprintf(G_cTxt,"(!)Apocalypse Mode ON.");  \par
+PutLogEventFileList(G_cTxt);  \par
+PutLogList(G_cTxt);  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// GlobalEndApocalypseMode:  \par
+// -> Notify all game servers  \par
+//**************************************************************************************  \par
+void CGame::GlobalEndApocalypseMode(int iClientH)  \par
+\{ char * cp, cData[120];  \par
+if (m_bIsApocalypseMode == FALSE) return;  \par
+ \par
+if (iClientH > 0)  \par
+\{ wsprintf(G_cTxt, "Admin Order(%s): /endapocalypse \\tAdminIP(%s)"  \par
+, m_pClientList[iClientH]->m_cCharName  \par
+, m_pClientList[iClientH]->m_cIPaddress);  \par
+char cString[200];  \par
+ZeroMemory(cString, sizeof(cString));  \par
+wsprintf(cString, "Apocalypse ending in progress.");  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cString);  \par
+\}else  \par
+\{ wsprintf(G_cTxt, "Automated: endapocalypse");  \par
+\}  \par
+PutAdminLogFileList(G_cTxt);  \par
+PutLogEventFileList(G_cTxt);  \par
+PutLogList(G_cTxt);  \par
+ \par
+ZeroMemory(cData, sizeof(cData));  \par
+cp = (char *)cData;  \par
+*cp = GSM_ENDAPOCALYPSE;  \par
+cp++;  \par
+bStockMsgToGateServer(cData, 5);  \par
+LocalEndApocalypse(); // Gate will not return order to this server  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// LocalEndApocalypse: started by Gate msg  \par
+// -> Notify players  \par
+// -> Close the gates  \par
+// -> Enable npc generation on all maps  \par
+//**************************************************************************************  \par
+void CGame::LocalEndApocalypse()  \par
+\{ register int i;  \par
+m_bIsApocalypseMode = FALSE;  \par
+m_bIsApocalypseGateOpen = FALSE;  \par
+WORD dwTime = timeGetTime();  \par
+m_dwApocalypseGateCloseTime = dwTime -1;  \par
+m_dwApocalypseGateOpenTime = dwTime -100; // alreaddy closed  \par
+ \par
+for (i = 1; i < DEF_MAXCLIENTS; i++)  \par
+\{ if (m_pClientList[i] != NULL)  \par
+\{ SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);  \par
+if ( (m_pClientList[i]->m_iAdminUserLevel == 0)  \par
+&& (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_bIsApocalypseMap == TRUE))  \par
+\{ // forced recall  \par
+SendNotifyMsg(NULL, i, DEF_NOTIFY_TOBERECALLED, NULL, NULL, NULL, NULL);  \par
+RequestTeleportHandler(i, "0 ");  \par
+\}  \par
+\}  \par
+\}  \par
+// restore normal spawn on apoc maps  \par
+for (i = 0; i < DEF_MAXMAPS; i++)  \par
+\{ if (m_pMapList[i] != NULL)  \par
+\{ if (m_pMapList[i]->m_iApocalypseMobGenType != 0)  \par
+//1 for not respawn, 2 for Boss spawn.  \par
+\{ m_pMapList[i]->m_iMaximumObject = m_pMapList[i]->m_iMaximumObjectDefault;  \par
+\}  \par
+if (m_pMapList[i]->m_cDynamicGateType == 4 )  \par
+\{ m_pMapList[i]->m_cDynamicGateType = 3;  \par
+\}  \par
+if (m_pMapList[i]->m_cDynamicGateType == 2)  \par
+\{ GenerateSlime(i); // to force the gate to close  \par
+\}  \par
+Open_EmptyMap_Gate(i);  \par
+\}  \par
+\}  \par
+wsprintf(G_cTxt,"(!)Apocalypse Mode OFF.");  \par
+PutLogEventFileList(G_cTxt);  \par
+PutLogList(G_cTxt);  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// OpenCloseApocalypseGate  \par
+// Called by ::ForceOpen_ApocalypseGate, ::ForceClose_ApocalypseGate  \par
+// Called by ::LocalStartApocalypse  \par
+// Check if Gates's needs to be openned or closed  \par
+// then notify any change to all clients.on current server  \par
+// NB: Opens/closes only type 1 Gates  \par
+//**************************************************************************************  \par
+void CGame::OpenCloseApocalypseGate()  \par
+\{ DWORD dwTime = timeGetTime();  \par
+BOOL bIsOpen = m_bIsApocalypseGateOpen;  \par
+if ( (dwTime >= m_dwApocalypseGateOpenTime)  \par
+&& (dwTime < m_dwApocalypseGateCloseTime))  \par
+\{ m_bIsApocalypseGateOpen = TRUE;  \par
+\}else  \par
+\{ m_bIsApocalypseGateOpen = FALSE;  \par
+\}  \par
+// If nothing has changed return...  \par
+if (bIsOpen == m_bIsApocalypseGateOpen) return;  \par
+ \par
+if (m_bIsApocalypseGateOpen == TRUE)  \par
+\{ wsprintf(G_cTxt,"(!)Apocalypse Gate opened.");  \par
+\}else  \par
+\{ wsprintf(G_cTxt,"(!)Apocalypse Gate closed.");  \par
+\}  \par
+PutLogList(G_cTxt);  \par
+PutLogEventFileList(G_cTxt);  \par
+// Then notify all clients of change,  \par
+register int i;  \par
+for (i = 1; i < DEF_MAXCLIENTS; i++)  \par
+\{ if (m_pClientList[i] != NULL)  \par
+\{ Notify_ApocalypseGateState(i);  \par
+\}  \par
+\}  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// Notify_ApocalypseGateState  \par
+// Called by ::RequestInitDataHandler (when client log in)  \par
+// Called by ::RequestTeleportHandler (when client changes map on same server)  \par
+// Called by ::OpenCloseApocalypseGate (when Gate is openned or closed)  \par
+// Notify the client of Gate's state, needed to show in player's screen  \par
+//**************************************************************************************  \par
+void CGame::Notify_ApocalypseGateState(int iClientH)  \par
+\{ if (iClientH <= 0) return;  \par
+if (m_pClientList[iClientH] <= 0) return;  \par
+if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;  \par
+int iMapIndex = m_pClientList[iClientH]->m_cMapIndex;  \par
+ \par
+int gX, gY;  \par
+gX = (m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1 + m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX2)/2;  \par
+gY = (m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY1 + m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY2)/2;  \par
+ \par
+switch (m_pMapList[iMapIndex]->m_cDynamicGateType)\{  \par
+case 0: // No gate on current map  \par
+if(m_bIsApocalypseGateOpen == TRUE)  \par
+\{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEOPEN, 0, 0, NULL, m_pClientList[iClientH]->m_cMapName);  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);  \par
+\}else  \par
+\{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATECLOSE, 0, 0, NULL, m_pClientList[iClientH]->m_cMapName);  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);  \par
+\}  \par
+break;  \par
+ \par
+case 1: // Initial Dynamic gates (toh, IB, D4...)  \par
+if(m_bIsApocalypseGateOpen == TRUE)  \par
+\{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEOPEN, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);  \par
+\}else  \par
+\{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATECLOSE, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);  \par
+\}  \par
+break;  \par
+ \par
+case 2: // Empty maps Dynamic gates (inferniaA, inferniaB, procella...)  \par
+if (m_pMapList[iMapIndex]->m_iTotalAliveObject == 0)  \par
+\{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEOPEN, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);  \par
+\}else  \par
+\{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATECLOSE, gX, gY , NULL, m_pClientList[iClientH]->m_cMapName);  \par
+\}  \par
+break;  \par
+ \par
+case 3: // Hide the n\'b03 gates ..  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATECLOSE, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);  \par
+break;  \par
+ \par
+case 4: // Show the gate on abaddon map..when Abaddon spawning.  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEOPEN, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);  \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);  \par
+break;  \par
+\}  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// Use_ApocalypseGate  \par
+// Called by ::CheckClientResponseTime()  \par
+// Test if client uses Dynamic Gate, then TP him  \par
+//**************************************************************************************  \par
+void CGame::Use_ApocalypseGate(int iClientH)  \par
+\{ if (iClientH <= 0) return;  \par
+if (m_pClientList[iClientH] <= 0) return;  \par
+if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;  \par
+if (m_bIsApocalypseMode == FALSE) return;  \par
+int iMapIndex = m_pClientList[iClientH]->m_cMapIndex;  \par
+if (m_pMapList[iMapIndex]->m_cDynamicGateType == 0 ) return; // No Dynamic Gate on this map  \par
+ \par
+if ( (m_pMapList[iMapIndex]->m_cDynamicGateType == 1 )  \par
+&& (m_bIsApocalypseGateOpen == FALSE))  \par
+return; // Dynamic Gate is closed  \par
+ \par
+if ( (m_pMapList[iMapIndex]->m_cDynamicGateType == 2 )  \par
+&& (m_pMapList[iMapIndex]->m_iTotalAliveObject != 0))  \par
+return; // There are still creatures on the map  \par
+ \par
+if (m_pMapList[iMapIndex]->m_cDynamicGateType == 3 )  \par
+return; // Type 3 will be changed to 4 at Abaddons spawning.  \par
+ \par
+if ( (m_pClientList[iClientH]->m_sX >= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1)  \par
+&& (m_pClientList[iClientH]->m_sX <= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX2)  \par
+&& (m_pClientList[iClientH]->m_sY >= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY1)  \par
+&& (m_pClientList[iClientH]->m_sY <= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY2))  \par
+\{ RequestTeleportHandler(iClientH, "2 "  \par
+, m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap  \par
+, m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtX  \par
+, m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtY);  \par
+\}  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// Open_EmptyMap_Gate  \par
+// Called by ::NpcKilledHandler when last npc killed on map  \par
+// Show just openned gates to the client  \par
+//**************************************************************************************  \par
+void CGame::Open_EmptyMap_Gate(int MapIndex)  \par
+\{ if (m_pMapList[MapIndex]->m_cDynamicGateType < 2 ) return;  \par
+//if (m_pMapList[MapIndex]->m_cDynamicGateType == 3 ) return;  \par
+register int i;  \par
+for (i = 1; i < DEF_MAXCLIENTS; i++)  \par
+\{ if (m_pClientList[i] == NULL) continue;  \par
+if (m_pClientList[i]->m_cMapIndex != MapIndex) continue;  \par
+Notify_ApocalypseGateState(i);  \par
+\}  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// GenerateApocalypseBoss  \par
+// Called by ::NpcKilledHandler  \par
+// Creates the appropriate npc depending on map definition file  \par
+// then change the Dynamic Gate type from 3 to 4 (to open it)  \par
+//**************************************************************************************  \par
+void CGame::GenerateApocalypseBoss(int MapIndex)  \par
+\{ if (m_pMapList[MapIndex]->m_iTotalAliveObject != 0) return;  \par
+char cName[21], cNpcName[21], cNpcWaypoint[11];  \par
+int x, i5;  \par
+int iNamingValue;  \par
+ZeroMemory(cNpcWaypoint, sizeof(cNpcWaypoint));  \par
+ \par
+iNamingValue = m_pMapList[MapIndex]->iGetEmptyNamingValue();  \par
+if (iNamingValue == -1)  \par
+\{\}else  \par
+\{ ZeroMemory(cNpcName, sizeof(cNpcName));  \par
+switch (m_pMapList[MapIndex]->m_iApocalypseBossMobNpcID) \{  \par
+case 0: return; break;  \par
+case 49: strcpy(cNpcName, "Hellclaw");break;  \par
+case 50: strcpy(cNpcName, "Tigerworm");break;  \par
+case 66: strcpy(cNpcName, "Wyvern");break;  \par
+case 73: strcpy(cNpcName, "Fire-Wyvern");break;  \par
+case 81: strcpy(cNpcName, "Abaddon");break;  \par
+default: strcpy(cNpcName, "Demon");break;  \par
+\}  \par
+ZeroMemory(cName, sizeof(cName));  \par
+wsprintf(cName, "XX%d", iNamingValue);  \par
+cName[0] = '_';  \par
+cName[1] = MapIndex+65;  \par
+if (bCreateNewNpc(cNpcName, cName, m_pMapList[MapIndex]->m_cName, 0, 0  \par
+, DEF_MOVETYPE_RANDOMAREA, NULL, NULL, cNpcWaypoint, &m_pMapList[MapIndex]->m_sApocalypseBossMobRect, NULL, -1, FALSE, FALSE, FALSE, TRUE) == FALSE)  \par
+\{ m_pMapList[MapIndex]->SetNamingValueEmpty(iNamingValue);  \par
+\}  \par
+else  \par
+\{ wsprintf(G_cTxt, "(!) %s has spawned in %s"  \par
+, cNpcName  \par
+, m_pMapList[MapIndex]->m_cName);  \par
+PutLogList(G_cTxt);  \par
+PutLogFileList(G_cTxt);  \par
+PutLogEventFileList(G_cTxt);  \par
+\}  \par
+ \par
+// Search npc ID  \par
+for (i5 = 1; i5 < DEF_MAXNPCS; i5++)  \par
+\{ if ((m_pNpcList[i5] != NULL) && (memcmp(m_pNpcList[i5]->m_cName, cName, 5) == 0) )  \par
+\{ break;  \par
+\}  \par
+\}  \par
+ \par
+// Show Spawns on minimap, and tell everybody on Apocalypse server.  \par
+for (x = 1; x < DEF_MAXCLIENTS; x++)  \par
+if ( (m_pClientList[x] != NULL)  \par
+&& (m_pClientList[x]->m_bIsInitComplete == TRUE))  \par
+\{ if(memcmp(m_pMapList[MapIndex]->m_cName, m_pMapList[m_pClientList[x]->m_cMapIndex]->m_cName, strlen(m_pMapList[MapIndex]->m_cName)) == 0)  \par
+\{ SendNotifyMsg(NULL, x, DEF_NOTIFY_SPAWNEVENT, m_pNpcList[i5]->m_sX, m_pNpcList[i5]->m_sY, m_pMapList[MapIndex]->m_iApocalypseBossMobNpcID, NULL, NULL, NULL);  \par
+\}  \par
+// Tell everybody on this server if Abaddon has appeared  \par
+if (m_pMapList[MapIndex]->m_iApocalypseBossMobNpcID == 81)  \par
+\{ char cInfoString[100];  \par
+ZeroMemory(cInfoString, sizeof(cInfoString));  \par
+wsprintf(cInfoString, "Abbadon has appeared ...");  \par
+SendNotifyMsg(NULL, x, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString);  \par
+\}  \par
+\}  \par
+ \par
+// Prepare Abaddon's death, and Apocalypse end.  \par
+if (m_pMapList[MapIndex]->m_iApocalypseBossMobNpcID == 81)  \par
+\{ // Abaddon should die by himself  \par
+DWORD dwTime = timeGetTime();  \par
+dwTime += 1000*60*5; // 5 minute  \par
+bRegisterDelayEvent(DEF_DELAYEVENTTYPE_KILL_ABADDON, 0, dwTime, i5  \par
+, DEF_OWNERTYPE_NPC, MapIndex, 0, 0, 0, 0, 0);  \par
+dwTime = timeGetTime();  \par
+dwTime += 1000*60*15; // 15 minutes  \par
+bRegisterDelayEvent(DEF_DELAYEVENTTYPE_END_APOCALYPSE, 0, dwTime, 0  \par
+, 0, MapIndex, 0, 0, 0, 0, 0);  \par
+\}  \par
+ \par
+// Finally open the Exit Gate if type 3 & not 2  \par
+if (m_pMapList[MapIndex]->m_cDynamicGateType == 3 )  \par
+\{ m_pMapList[MapIndex]->m_cDynamicGateType = 4;  \par
+Open_EmptyMap_Gate(MapIndex);  \par
+\}  \par
+\}  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// GenerateSlime  \par
+// Generate a npc now to close the gate  \par
+//**************************************************************************************  \par
+void CGame::GenerateSlime(int MapIndex)  \par
+\{  \par
+if (m_pMapList[MapIndex]->m_iTotalAliveObject != 0) return;  \par
+char cName[21], cNpcName[21], cNpcWaypoint[11];  \par
+int iNamingValue;  \par
+ZeroMemory(cNpcWaypoint, sizeof(cNpcWaypoint));  \par
+ \par
+iNamingValue = m_pMapList[MapIndex]->iGetEmptyNamingValue();  \par
+if (iNamingValue == -1) \{  \par
+\}  \par
+else \{  \par
+strcpy(cNpcName, "Slime");  \par
+ZeroMemory(cName, sizeof(cName));  \par
+wsprintf(cName, "XX%d", iNamingValue);  \par
+cName[0] = '_';  \par
+cName[1] = MapIndex+65;  \par
+ \par
+if (bCreateNewNpc(cNpcName, cName, m_pMapList[MapIndex]->m_cName, 0, 0  \par
+, DEF_MOVETYPE_RANDOMAREA, NULL, NULL, cNpcWaypoint, &m_pMapList[MapIndex]->m_sApocalypseBossMobRect, NULL, NULL, FALSE, FALSE, FALSE, TRUE) == FALSE)  \par
+\{ m_pMapList[MapIndex]->SetNamingValueEmpty(iNamingValue);  \par
+\}  \par
+\}  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// ForceOpen_ApocalypseGate  \par
+// Local execution off a global GM command to force open the gate  \par
+// Beware this will affect only current server  \par
+//**************************************************************************************  \par
+void CGame::ForceOpen_ApocalypseGate()  \par
+\{ if (m_bIsApocalypseMode == FALSE) return;  \par
+DWORD dwTime = timeGetTime();  \par
+m_dwApocalypseGateOpenTime = dwTime;  \par
+m_dwApocalypseGateCloseTime = dwTime +15*60*1000; // will close in 15 minutes  \par
+OpenCloseApocalypseGate();  \par
+\}  \par
+ \par
+//**************************************************************************************  \par
+// SNOOPY: Revamped Apocalypse functions:  \par
+// ForceClose_ApocalypseGate  \par
+// GM command to force open the gate  \par
+// Beware this will affect only current server  \par
+//**************************************************************************************  \par
+void CGame::ForceClose_ApocalypseGate()  \par
+\{ if (m_bIsApocalypseMode == FALSE) return;  \par
+DWORD dwTime = timeGetTime();  \par
+m_dwApocalypseGateCloseTime = dwTime -1;  \par
+m_dwApocalypseGateOpenTime = dwTime -100; // alreaddy closed  \par
+OpenCloseApocalypseGate();  \par
+\}  \par
+//************************************************************************************** \par
+\par
+\par
+Y aca les dejo el Apocalypse Thunder \par
+\par
+C\'f3digo:\par
+    void CGame::SendThunder(int iClient, short sX, short sY, short sV3, short sV4)  \par
+    \{ char  * cp, cData[100];  \par
+    DWORD * dwp;  \par
+    WORD * wp;  \par
+    short * sp;  \par
+    int iRet;  \par
+    ZeroMemory(cData, sizeof(cData));  \par
+    dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);  \par
+    *dwp = MSGID_EVENT_COMMON;  \par
+    wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);  \par
+    *wp  = DEF_COMMONTYPE_MAGIC;  \par
+    cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);  \par
+    sp  = (short *)cp;  \par
+    *sp = sX;  \par
+    cp += 2;  \par
+    sp  = (short *)cp;  \par
+    *sp = sY;  \par
+    cp += 2;  \par
+    sp  = (short *)cp;  \par
+    *sp = sX;  \par
+    cp += 2;  \par
+    sp  = (short *)cp;  \par
+    *sp = sY;  \par
+    cp += 2;  \par
+    sp  = (short *)cp;  \par
+    *sp = sV3;  \par
+    cp += 2;  \par
+    sp  = (short *)cp;  \par
+    *sp = sV4;  \par
+    cp += 2;  \par
+    iRet = m_pClientList[iClient]->m_pXSock->iSendMsg(cData, 18);  \par
+    \}  \par
+     \par
+    void CGame::DoAbaddonThunderDamageHandler(char cMapIndex)  \par
+    \{ int iResult;  \par
+    register int i;  \par
+    //if (m_bIsApocalypseMode != TRUE) return;  \par
+    if (iDice(1, 15) != 13) return;  \par
+    DWORD dwTime = timeGetTime();  \par
+    for (i = 0; i < DEF_MAXCLIENTS; i++)  \par
+    \{ if (m_pClientList[i] != NULL)  \par
+    \{ //if (m_pClientList[i]->m_iAdminUserLevel > 0) return;  \par
+     if ((memcmp(m_pClientList[i]->m_cMapName, "abaddon", 7) == 0)  \par
+      || (m_pClientList[i]->m_cMapIndex == cMapIndex))  \par
+     \{ switch (iDice(1,4)) \{  \par
+      case 1:  \par
+       SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 203, m_pClientList[i]->m_sType);  \par
+       SendThunder(i, m_pClientList[i]->m_sX-iDice(1,7), m_pClientList[i]->m_sY+iDice(1,5), 161, m_pClientList[i]->m_sType);  \par
+       break;  \par
+      case 2:  \par
+       SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 202, m_pClientList[i]->m_sType);  \par
+       SendThunder(i, m_pClientList[i]->m_sX+iDice(1,7), m_pClientList[i]->m_sY-iDice(1,5), 161, m_pClientList[i]->m_sType);  \par
+       break;  \par
+      case 3:  \par
+       SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 201, m_pClientList[i]->m_sType);  \par
+       SendThunder(i, m_pClientList[i]->m_sX+iDice(1,7), m_pClientList[i]->m_sY+5-iDice(1,9), 161, m_pClientList[i]->m_sType);  \par
+       break;  \par
+      case 4:  \par
+       SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 200, m_pClientList[i]->m_sType);  \par
+       SendThunder(i, m_pClientList[i]->m_sX+5-iDice(1,9), m_pClientList[i]->m_sY+7-iDice(1,4), 161, m_pClientList[i]->m_sType);  \par
+       break;  \par
+      \}      \par
+      if (m_pClientList[i]->m_iAdminUserLevel > 0) continue;  \par
+       \par
+      iResult = iDice(1,20) + 100;  \par
+       if (  (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)  \par
+       || (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5))  \par
+      \{   iResult /= 2;  \par
+      \}  \par
+      // Not for v3.51: SendNotifyMsg(NULL, i, DEF_NOTIFY_0BE5, NULL, NULL, NULL, NULL);  \par
+      m_pClientList[i]->m_iHP -= iResult;  \par
+      if (m_pClientList[i]->m_iHP <= 0)  \par
+      \{ ClientKilledHandler(i, NULL, NULL, iResult);  \par
+      \}else if (iResult > 0)  \par
+      \{ m_pClientList[i]->m_dwLastDamageTime = dwTime;        \par
+       SendNotifyMsg(NULL, i, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);  \par
+       SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, NULL, NULL);  \par
+       if (m_pClientList[i]->m_bSkillUsingStatus[19] != TRUE)  \par
+       \{ m_pMapList[m_pClientList[i]->m_cMapIndex]->ClearOwner(0, i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);  \par
+        m_pMapList[m_pClientList[i]->m_cMapIndex]->SetOwner(i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);  \par
+       \}  \par
+       if (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0)  \par
+       \{   SendNotifyMsg(NULL, i, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, 2, NULL, NULL);  \par
+        bRemoveFromDelayEventList(i, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);        \par
+        m_pClientList[i]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = NULL;  \par
+    \} \} \} \} \}  \par
+\par
+---\par
+\par
+HG OBIAMENTE......\par
+\par
+te falta poner los mensajes HG > CLEINT ... me parese que hay cambiados.. en el CLIENT hay que cambiar cositas tbm pero minimas...\par
+\par
+recomeindo lo sigiente... los mensajes de HG > CLEINT ... busquen en los src de snopy ..\par
+en el client : busquen las variables que resiben los mensajes y una por una vallan agregando en dnd van ..\par
+\par
+en el readmapinfo tbm falta.... tenes q poner los cases por q las coords de dnd lee los posiciones de los portales... usando tras variables...\par
+\par
+m_sDynamicGateCoordRectX1\par
+m_sDynamicGateCoordRectX2\par
+\par
+las booleanas tbm .. .xD ... es mucho mas largo no te qiero tirar abajo xD ..\par
+}
+ 

@@ -1,0 +1,12 @@
+void CGame::ClassUpgradeHandler(int iClientH, char * pData, DWORD dwMsgSize)
+{
+int iClassValue ,* ip ;
+DWORD * dwp;
+WORD  * wp;
+
+ip = (int *)(pData + DEF_INDEX2_MSGTYPE + 2);	
+iClassValue = *ip;
+
+m_pClientList[iClientH]->m_iFirstClass += iClassValue;
+SendNotifyMsg(NULL, iClientH, CLASSCHANGE, NULL, NULL, NULL, NULL);
+}

@@ -1,0 +1,32 @@
+Ticket Summon Npc [Adaptado por MundoHelbreath]
+Buscar en game.cpp del HG
+Código:
+case 8: strcpy(cNpcName, "Orge"); break;
+Agregar debajo
+
+Código:
+          
+//    www.mundohelbreath.com | Ticket Potion de summon npc
+//    www.mundohelbreath.com | Ticket Potion de summon npc
+      case 15: strcpy(cNpcName, "Sor-Aresden"); break;
+      case 16: strcpy(cNpcName, "DSK-Aresden"); break;
+      case 17: strcpy(cNpcName, "HBT-Aresden"); break;
+      case 18: strcpy(cNpcName, "Bar-Aresden"); break;
+      case 19: strcpy(cNpcName, "Gagoyle");      break;
+//    www.mundohelbreath.com | Ticket Potion de summon npc
+//    www.mundohelbreath.com | Ticket Potion de summon npc
+Por ultimo, agregar en item3.cfg de tus files
+Código:
+Item = 4006 SummonSorceress 7 0 11 5 15 0 0 0 0 1 0 6 9 -5000 100 -1 0 0 0 0 0 -1 21 5
+Item = 4007 SummonDarkShadow 7 0 11 5 16 0 0 0 0 1 0 6 9 -5000 100 -1 0 0 0 0 0 -1 21 3
+Item = 4008 SummonBattleTank 7 0 11 5 17 0 0 0 0 1 0 6 9 -5000 100 -1 0 0 0 0 0 -1 21 4
+Item = 4009 SummonBarbarian 7 0 11 5 18 0 0 0 0 1 0 6 9 -5000 100 -1 0 0 0 0 0 -1 21 1
+Item = 4010 SummonGagoyle 7 0 11 5 19 0 0 0 0 1 0 6 9 -5000 100 -1 0 0 0 0 0 -1 21 8
+Para modificar los npc que quieren que les creen los tiket, tienen que colocar el nombre real del npc que les figura en el npc.cfg de sus files.
+
+Por ejemplo, cambiamos el
+Código:
+case 15: strcpy(cNpcName, "Sor-Aresden"); break;
+Por
+Código:
+case 15: strcpy(cNpcName, "Ettin"); break;

@@ -1,0 +1,1208 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 TradeEk (by Tomasarg)\par
+buenas\par
+\par
+aca dejo el code del TradeEk, esta hecho para que funcione dentro del playerpanel que subi, pero se puede adaptar tranquilamente a que sea por ch, con algun hotkey o nose\par
+\par
+HG\par
+en NetMessages.h agregar:\par
+C\'f3digo:\par
+ //TradeEK\par
+ #define DEF_COMMONTYPE_REQ_TRADEEK\tab\tab\tab\tab\tab\tab 0x0A62\par
+ #define DEF_NOTIFY_TRADEEKSUCCEEDED\tab\tab\tab\tab\tab 0x0A63\par
+en game.h agregar:\par
+C\'f3digo:\par
+//TradeEK\par
+\tab void RequestTradeEKItemHandler(int iClientH, char * pItemName, int iNum);\par
+ahora en game.cpp, en la funcion ClientCommonHandler buscar:\par
+C\'f3digo:\par
+\tab case DEF_COMMONTYPE_REQ_PURCHASEITEM:\par
+\tab\tab RequestPurchaseItemHandler(iClientH, pString, iV1);\par
+\tab\tab break;\par
+abajo agregar:\par
+C\'f3digo:\par
+\tab //TradeEK\par
+\tab case DEF_COMMONTYPE_REQ_TRADEEK:\par
+\tab\tab RequestTradeEKItemHandler(iClientH, pString, iV1);\par
+\tab\tab break;\par
+en la funcion SendItemNotifyMsg buscar:\par
+C\'f3digo:\par
+\tab case DEF_NOTIFY_CANNOTCARRYMOREITEM:\par
+\tab\tab iRet =m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6);\par
+\tab\tab break;\par
+arriba agregar:\par
+\par
+C\'f3digo:\par
+\tab //TradeEK\par
+\tab case DEF_NOTIFY_TRADEEKSUCCEEDED:\par
+\tab\tab *cp = 1;\par
+\tab\tab cp++;\par
+\tab\tab\par
+\tab\tab memcpy(cp, pItem->m_cName, 20);\par
+\tab\tab cp += 20;\par
+\tab\tab\par
+\tab\tab dwp  = (DWORD *)cp;\par
+\tab\tab *dwp = pItem->m_dwCount;\par
+\tab\tab cp += 4;\par
+\tab\tab\par
+\tab\tab *cp = pItem->m_cItemType;\par
+\tab\tab cp++;\par
+\tab\tab\par
+\tab\tab *cp = pItem->m_cEquipPos;\par
+\tab\tab cp++;\par
+\tab\tab\par
+\tab\tab *cp = (char)0;\par
+\tab\tab cp++;\par
+\tab\tab\par
+\tab\tab sp  = (short *)cp;\par
+\tab\tab *sp = pItem->m_sLevelLimit;\par
+\tab\tab cp += 2;\par
+\tab\tab\par
+\tab\tab *cp = pItem->m_cGenderLimit;\par
+\tab\tab cp++;\par
+\tab\tab\par
+\tab\tab wp = (WORD *)cp;\par
+\tab\tab *wp = pItem->m_wCurLifeSpan;\par
+\tab\tab cp += 2;\par
+\tab\tab\par
+\tab\tab wp = (WORD *)cp;\par
+\tab\tab *wp = pItem->m_wWeight;\par
+\tab\tab cp += 2;\par
+\tab\tab\par
+\tab\tab sp  = (short *)cp;\par
+\tab\tab *sp = pItem->m_sSprite;\par
+\tab\tab cp += 2;\par
+\tab\tab\par
+\tab\tab sp  = (short *)cp;\par
+\tab\tab *sp = pItem->m_sSpriteFrame;\par
+\tab\tab cp += 2;\par
+\tab\tab\par
+\tab\tab *cp = pItem->m_cItemColor;\par
+\tab\tab cp++;\par
+\par
+\tab\tab wp  = (WORD *)cp;\par
+\tab\tab *wp = iV1; // iEKCost\par
+\tab\tab\par
+\tab\tab\par
+\tab\tab iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 48);\par
+\tab\tab break;\par
+y por ultimo en el hg, agregar la funcion:\par
+C\'f3digo:\par
+//TradeEK\par
+void CGame::RequestTradeEKItemHandler(int iClientH, char * pItemName, int iNum)\par
+\{\par
+ class CItem * pItem;\par
+ char  * cp, cItemName[21], cData[100];\par
+ short * sp;\par
+ DWORD * dwp, dwItemCount;\par
+ WORD  * wp, wTempPrice;\par
+ int   i, iRet, iEraseReq;\par
+ int   iEKCost, iEKCount, iItemID;\par
+ \par
+\tab if (m_pClientList[iClientH] == NULL) return;\par
+\tab if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;\par
+\par
+\tab ZeroMemory(cData, sizeof(cData));\tab\par
+\tab ZeroMemory(cItemName, sizeof(cItemName));\par
+\par
+\tab memcpy(cItemName, pItemName, 20);\par
+\tab dwItemCount = 1;\par
+\tab\par
+\tab for (i = 1; i <= iNum; i++) \par
+\tab\{\par
+\par
+\tab\tab pItem = new class CItem;\par
+\tab\tab if (_bInitItemAttr(pItem, cItemName) == FALSE) \par
+\tab\tab\{\tab delete pItem;\par
+\tab\tab\}\par
+\tab\tab else \par
+\tab\tab\{\tab if (pItem->m_bIsForSale == TRUE) \par
+\tab\tab\tab\{\par
+\tab\tab\tab\tab delete pItem;\par
+\tab\tab\tab\tab return;\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\tab pItem->m_dwCount = dwItemCount;\par
+\par
+\tab\tab\tab iItemID = pItem->m_sIDnum;\par
+\tab\tab\tab iEKCount = m_pClientList[iClientH]->m_iEnemyKillCount;\par
+\par
+\tab\tab\tab switch (iItemID)\par
+\tab\tab\tab\{\tab\par
+\tab\tab\tab case 650: //ZemstoneofSacrifice\par
+\tab\tab\tab\tab iEKCost = 200;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 656: //StoneOfXelima\par
+\tab\tab\tab\tab iEKCost = 200;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 657: //StoneOfMerien\par
+\tab\tab\tab\tab iEKCost = 200;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 852: //CancelManual\par
+\tab\tab\tab\tab iEKCost = 1800;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 857: //I.M.CManual\par
+\tab\tab\tab\tab iEKCost = 2000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 853: //E.S.W.Manual\par
+\tab\tab\tab\tab iEKCost = 2000;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 734: //RingofArcmage\par
+\tab\tab\tab\tab iEKCost = 1200;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 631: //RingoftheAbaddon\par
+\tab\tab\tab\tab iEKCost = 1400;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 618: \par
+\tab\tab\tab\tab iEKCost = 2000;\par
+\tab\tab\tab\tab break;//DarkElfBow\par
+\par
+\tab\tab\tab case 491: //BloodAxe\par
+\tab\tab\tab\tab iEKCost = 1000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 850: //KlonessAxe\par
+\tab\tab\tab\tab iEKCost = 2400;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 611: //XelimaAxe\par
+\tab\tab\tab\tab iEKCost = 4000;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 492: //BloodRapier\par
+\tab\tab\tab\tab iEKCost = 800;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 851: //KlonessEsterk\par
+\tab\tab\tab\tab iEKCost = 2000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 612: //XelimaRapier\par
+\tab\tab\tab\tab iEKCost = 3800;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 762: //Giant-Battle-Hammer\par
+\tab\tab\tab\tab iEKCost = 1800;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\par
+\tab\tab\tab case 490: //BloodSword\par
+\tab\tab\tab\tab iEKCost = 800;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 616: //DemonSlayer\par
+\tab\tab\tab\tab iEKCost = 1000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 20: //Excaliber\par
+\tab\tab\tab\tab iEKCost = 1000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 849: //KlonessBlade\par
+\tab\tab\tab\tab iEKCost = 2200;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 648: //LightingBlade\par
+\tab\tab\tab\tab iEKCost = 2500;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 647: //DarkExecutor\par
+\tab\tab\tab\tab iEKCost = 2500;\par
+\tab\tab\tab\tab break;\tab\tab\par
+\tab\tab\tab case 845: //StormBringer\par
+\tab\tab\tab\tab iEKCost = 2500;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 846: //The_Devastator\par
+\tab\tab\tab\tab iEKCost = 2800;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 614: //SwordOfIceElemental\par
+\tab\tab\tab\tab iEKCost = 1200;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 610: //XelimaBlade\par
+\tab\tab\tab\tab iEKCost = 3600;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 613: //SwordOfMedusa\par
+\tab\tab\tab\tab iEKCost = 5000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\par
+\tab\tab\tab case 859: //NecklaceOfKloness\par
+\tab\tab\tab\tab iEKCost = 2500;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 860: //NecklaceOfXelima\par
+\tab\tab\tab\tab iEKCost = 3500;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 858: //NecklaceOfMerien\par
+\tab\tab\tab\tab iEKCost = 3500;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 641: //NecklaceOfMedusa\par
+\tab\tab\tab\tab iEKCost = 5000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 646: //NecklaceOfBeholder\par
+\tab\tab\tab\tab iEKCost = 5000;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 291: //MagicWand(MS30-LLF)\par
+\tab\tab\tab\tab iEKCost = 1000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 259: //MagicWand(M.Shield)\par
+\tab\tab\tab\tab iEKCost = 1200;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 862: //BerserkWand (MS10)\par
+\tab\tab\tab\tab iEKCost = 2000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 861: //BerserkWand (MS20)\par
+\tab\tab\tab\tab iEKCost = 2500;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 864: //KlonessWand (MS10)\par
+\tab\tab\tab\tab iEKCost = 2000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 863: //KlonessWand (MS20)\par
+\tab\tab\tab\tab iEKCost = 2500;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 866: //ResurWand (MS10)\par
+\tab\tab\tab\tab iEKCost = 1800;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 865: //ResurWand (MS20)\par
+\tab\tab\tab\tab iEKCost = 2000;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\par
+\tab\tab\tab case 620: //MerienShield\par
+\tab\tab\tab\tab iEKCost = 4500;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 621: //MerienPlateMailM\par
+\tab\tab\tab\tab iEKCost = 4200;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 622: //MerienPlateMailW\par
+\tab\tab\tab\tab iEKCost = 4200;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab default: \par
+\tab\tab\tab\tab delete pItem;\par
+\tab\tab\tab\tab return;\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\tab if ( iEKCount < iEKCost ) \par
+\tab\tab\tab\{\tab delete pItem;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);\par
+\tab\tab\tab\tab *dwp = MSGID_NOTIFY;\par
+\tab\tab\tab\tab wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);\par
+\tab\tab\tab\tab *wp  = DEF_NOTIFY_NOTENOUGHGOLD;\par
+\tab\tab\tab\tab cp   = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);\par
+\tab\tab\tab\tab *cp  = -1;\par
+\tab\tab\tab\tab cp++;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 7);\par
+\tab\tab\tab\tab switch (iRet) \par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_QUENEFULL:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_SOCKETERROR:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_CRITICALERROR:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_SOCKETCLOSED:\par
+\tab\tab\tab\tab\tab DeleteClient(iClientH, TRUE, TRUE);\par
+\tab\tab\tab\tab\tab return;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab return;\par
+\tab\tab\tab\}\par
+\tab\tab\tab\par
+\tab\tab\tab if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) \par
+\tab\tab\tab\{\tab if (m_pClientList[iClientH]->m_iCurWeightLoad < 0) m_pClientList[iClientH]->m_iCurWeightLoad = 0;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);\par
+\tab\tab\tab\tab *dwp = MSGID_NOTIFY;\par
+\tab\tab\tab\tab wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);\par
+\tab\tab\tab\tab *wp  = DEF_NOTIFY_ITEMPURCHASED;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);\par
+\tab\tab\tab\tab *cp = 1;\par
+\tab\tab\tab\tab cp++;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab memcpy(cp, pItem->m_cName, 20);\par
+\tab\tab\tab\tab cp += 20;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab dwp  = (DWORD *)cp;\par
+\tab\tab\tab\tab *dwp = pItem->m_dwCount;\par
+\tab\tab\tab\tab cp += 4;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab *cp = pItem->m_cItemType;\par
+\tab\tab\tab\tab cp++;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab *cp = pItem->m_cEquipPos;\par
+\tab\tab\tab\tab cp++;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab *cp = (char)0;\par
+\tab\tab\tab\tab cp++;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab sp  = (short *)cp;\par
+\tab\tab\tab\tab *sp = pItem->m_sLevelLimit;\par
+\tab\tab\tab\tab cp += 2;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab *cp = pItem->m_cGenderLimit;\par
+\tab\tab\tab\tab cp++;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab wp = (WORD *)cp;\par
+\tab\tab\tab\tab *wp = pItem->m_wCurLifeSpan;\par
+\tab\tab\tab\tab cp += 2;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab wp = (WORD *)cp;\par
+\tab\tab\tab\tab *wp = pItem->m_wWeight;\par
+\tab\tab\tab\tab cp += 2;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab sp  = (short *)cp;\par
+\tab\tab\tab\tab *sp = pItem->m_sSprite;\par
+\tab\tab\tab\tab cp += 2;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab sp  = (short *)cp;\par
+\tab\tab\tab\tab *sp = pItem->m_sSpriteFrame;\par
+\tab\tab\tab\tab cp += 2;\par
+\par
+\tab\tab\tab\tab *cp = pItem->m_cItemColor;\par
+\tab\tab\tab\tab cp++;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab\tab *wp = (iEKCost);\par
+\tab\tab\tab\tab wTempPrice = (iEKCost);\par
+\tab\tab\tab\tab cp += 2;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab if (iEraseReq == 1) delete pItem;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 48);\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_iEnemyKillCount = iEKCount - iEKCost;\par
+\tab\tab\tab\tab iCalcTotalWeight(iClientH);\par
+/*\par
+\tab\tab\tab\tab wsprintf(cTxt, "(!) iItemID: (%s) - iEKCost: (%s) - iEKCount: (%s)", iItemID, iEKCost, iEKCount);\par
+\tab\tab\tab\tab PutLogList(cTxt);\par
+*/\tab\tab\tab\tab\par
+\tab\tab\tab\tab switch (iRet) \par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_QUENEFULL:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_SOCKETERROR:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_CRITICALERROR:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_SOCKETCLOSED:\par
+\tab\tab\tab\tab\tab DeleteClient(iClientH, TRUE, TRUE);\par
+\tab\tab\tab\tab\tab return;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ENEMYKILLS, m_pClientList[iClientH]->m_iEnemyKillCount, NULL, NULL, NULL);\par
+\tab\tab\tab\}\par
+\tab\tab\tab else \par
+\tab\tab\tab\{\par
+\tab\tab\tab\tab delete pItem;\par
+\par
+\tab\tab\tab\tab iCalcTotalWeight(iClientH);\par
+\par
+\tab\tab\tab\tab dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);\par
+\tab\tab\tab\tab *dwp = MSGID_NOTIFY;\par
+\tab\tab\tab\tab wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);\par
+\tab\tab\tab\tab *wp  = DEF_NOTIFY_CANNOTCARRYMOREITEM;\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6);\par
+\tab\tab\tab\tab switch (iRet) \par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_QUENEFULL:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_SOCKETERROR:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_CRITICALERROR:\par
+\tab\tab\tab\tab case DEF_XSOCKEVENT_SOCKETCLOSED:\par
+\tab\tab\tab\tab\tab DeleteClient(iClientH, TRUE, TRUE);\par
+\tab\tab\tab\tab\tab return;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+ \tab\}\par
+\}\par
+AHORA CLIENT\par
+\par
+en NetMessages.h agregar:\par
+C\'f3digo:\par
+//TradeEK\par
+#define DEF_COMMONTYPE_REQ_TRADEEK\tab\tab\tab\tab\tab\tab 0x0A62\par
+#define DEF_NOTIFY_TRADEEKSUCCEEDED\tab\tab\tab\tab\tab\tab 0x0A63\par
+en LAN_ENG.h agregar:\par
+C\'f3digo:\par
+//TradeEK cMode = 4\par
+#define\tab DRAW_DIALOGBOX_TRADEEK1\tab "TRADE EK"\par
+#define\tab DRAW_DIALOGBOX_TRADEEK2\tab "Item (EKs / Contri)"\par
+\par
+#define\tab NOTIFYMSG_TRADEEK1\tab\tab "You cannot buy anything because your bag is full."\par
+#define\tab NOTIFYMSG_TRADEEK2\tab\tab "You trade a %s for %d EKs."\par
+en game.h agregar:\par
+C\'f3digo:\par
+\tab //TradeEK\par
+\tab void DrawDialogBox_TradeEK(short msX, short msY, short msZ, char cLB);//55\par
+\tab void DlgBoxClick_TradeEK(short msX, short msY);\par
+\tab BOOL __bDecodeTradeEKContents(char * pBuffer);\par
+\tab void NotifyMsg_TradeEKSucceeded(char * pData);\par
+pasamos a game.cpp, buscar en CGame:\par
+C\'f3digo:\par
+\tab //Guild Hall Menu Dialog\par
+\tab m_stDialogBoxInfo[51].sX = 337;\par
+\tab m_stDialogBoxInfo[51].sY = 57;\par
+\tab m_stDialogBoxInfo[51].sSizeX = 258;\par
+\tab m_stDialogBoxInfo[51].sSizeY = 339;\par
+abajo agregar:\par
+C\'f3digo:\par
+\tab //TradeEK\par
+\tab m_stDialogBoxInfo[53].sX = 70;\par
+\tab m_stDialogBoxInfo[53].sY = 50;\par
+\tab m_stDialogBoxInfo[53].sSizeX = 258;\par
+\tab m_stDialogBoxInfo[53].sSizeY = 339;\par
+en la funcion _bCheckDlgBoxClick buscar:\par
+C\'f3digo:\par
+\tab\tab\tab case 51:\par
+\tab\tab\tab\tab DlgBoxClick_CMDHallMenu(msX, msY);\par
+\tab\tab\tab\tab break;\par
+agregar abajo:\par
+C\'f3digo:\par
+\tab\tab\tab //TradeEK\par
+\tab\tab\tab case 53:\par
+\tab\tab\tab\tab DlgBoxClick_TradeEK(msX, msY);\par
+\tab\tab\tab\tab break;\par
+en la funcion _LoadShopMenuContents buscar:\par
+C\'f3digo:\par
+\tab pFile = fopen(cFileName, "rt");\par
+\tab if (pFile == NULL) return;\par
+\tab else \{\par
+\tab\tab pBuffer = new char[dwFileSize+1];\par
+\tab\tab ZeroMemory(pBuffer, dwFileSize+1);\par
+\tab\tab fread(pBuffer, dwFileSize, 1, pFile);\par
+de ahi hasta abajo, reemplazar lo que queda de la funcion por:\par
+C\'f3digo:\par
+\tab //TradeEK\par
+\tab if (cType == 3) \par
+\tab\{\tab __bDecodeTradeEKContents(pBuffer);\par
+\tab\}\par
+\tab else \par
+\tab\{\tab __bDecodeContentsAndBuildItemForSaleList(pBuffer);\par
+\tab\}\par
+\par
+\tab\tab delete[] pBuffer;\par
+\tab\}\par
+\tab fclose(pFile);\par
+\}\par
+agregar la siguiente funcion:\par
+C\'f3digo:\par
+//TradeEK\par
+BOOL CGame::__bDecodeTradeEKContents(char * pBuffer)\par
+\{\par
+ char * pContents, * token;\par
+ char seps[] = "= ,\\t\\n";\par
+ char cReadModeA = 0;\par
+ char cReadModeB = 0;\par
+ int  iItemForSaleListIndex = 0;\par
+ class CStrTok * pStrTok;\par
+\par
+\tab pContents = pBuffer;\par
+\par
+\tab pStrTok = new class CStrTok(pContents, seps);\par
+\tab token = pStrTok->pGet();\par
+\tab while( token != NULL ) \{\par
+\tab\tab if (cReadModeA != 0) \{\par
+\tab\tab\tab //\par
+\tab\tab\tab switch (cReadModeA) \{\par
+\tab\tab\tab case 1:\par
+\tab\tab\tab\tab switch (cReadModeB) \{\par
+\tab\tab\tab\tab case 1:\par
+\tab\tab\tab\tab\tab ZeroMemory(m_pItemForSaleList[iItemForSaleListIndex]->m_cName, sizeof(m_pItemForSaleList[iItemForSaleListIndex]->m_cName));\par
+\tab\tab\tab\tab\tab memcpy(m_pItemForSaleList[iItemForSaleListIndex]->m_cName, token, strlen(token));\par
+\tab\tab\tab\tab\tab cReadModeB = 2;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 2:\tab // m_cItemType\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_cItemType = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 3;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 3: // m_cEquipPos\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_cEquipPos = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 4;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 4: // m_sItemEffectType\par
+\tab\tab\tab\tab\tab //m_pItemForSaleList[iItemForSaleListIndex]->m_sItemEffectType = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 5;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 5:\tab // m_sItemEffectValue1\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sItemEffectValue1 = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 6;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 6: // m_sItemEffectValue2\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sItemEffectValue2 = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 7;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 7: // m_sItemEffectValue3\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sItemEffectValue3 = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 8;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 8: // m_sItemEffectValue4\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sItemEffectValue4 = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 9;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 9: // m_sItemEffectValue5\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sItemEffectValue5 = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 10;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 10: // m_sItemEffectValue6\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sItemEffectValue6 = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 11;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 11: // m_wMaxLifeSpan\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_wMaxLifeSpan = (WORD)atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 12;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 12: // m_sMaxFixCount\par
+\tab\tab\tab\tab\tab //m_pItemForSaleList[iItemForSaleListIndex]->m_sMaxFixCount = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 13;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 13: // m_sSprite\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sSprite = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 14;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 14: // m_sSpriteFrame\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sSpriteFrame = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 15;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 15: // m_wPrice\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_wPrice = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 16;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 16: // m_wWeight\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_wWeight = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 17;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 17: // Appr Value\par
+\tab\tab\tab\tab\tab //m_pItemForSaleList[iItemForSaleListIndex]->m_cApprValue = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 18;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 18: // m_cSpeed\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_cSpeed = atoi(token);\par
+\tab\tab\tab\tab\tab cReadModeB = 19;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab case 19: // Level Limit\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_sLevelLimit = atoi(token);\par
+\tab\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex]->m_dwCount = 1;\par
+\tab\tab\tab\tab\tab cReadModeA = 0;\par
+\tab\tab\tab\tab\tab cReadModeB = 0;\par
+\tab\tab\tab\tab\tab iItemForSaleListIndex++;\par
+\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab default:\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\}\par
+\tab\tab\}else\par
+\tab\tab\{\tab if (memcmp(token, "ItemForSale", 4) == 0)\par
+\tab\tab\tab\{\tab if (iItemForSaleListIndex >= DEF_MAXMENUITEMS)\par
+\tab\tab\tab\tab\{\tab delete pStrTok;\par
+\tab\tab\tab\tab\tab return FALSE;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab cReadModeA = 1;\par
+\tab\tab\tab\tab cReadModeB = 1;\par
+\tab\tab\tab\tab m_pItemForSaleList[iItemForSaleListIndex] = new class CItem;\par
+\tab\tab\}\tab\}\par
+\tab\tab token = pStrTok->pGet();\par
+\tab\}\par
+\tab delete pStrTok;\par
+\tab if ((cReadModeA != 0) || (cReadModeB != 0)) return FALSE;\par
+\tab return TRUE;\par
+\}\par
+buscar en la funcion _iCheckDlgBoxFocus :\par
+C\'f3digo:\par
+case 40:// resur\par
+abajo agregar:\par
+C\'f3digo:\par
+case 53://TradeEK\par
+en la funcion DrawDialogBoxs, buscar:\par
+C\'f3digo:\par
+\tab\tab case 51: // Gail\par
+\tab\tab\tab DrawDialogBox_CMDHallMenu(msX, msY);\par
+\tab\tab\tab break;\par
+agregar:\par
+C\'f3digo:\par
+\tab\tab case 53: //TradeEK\par
+\tab\tab\tab DrawDialogBox_TradeEK(msX, msY, msZ, cLB);\par
+\tab\tab\tab break;\par
+en la funcion EnableDialogBox, buscar:\par
+C\'f3digo:\par
+switch (iBoxID) \{\par
+abajo del break del case 11, agregar:\par
+C\'f3digo:\par
+//TradeEK\par
+\tab case 53:\par
+\tab\tab if (m_bIsDialogEnabled[53] == FALSE)\par
+\tab\tab\{\tab switch (cType) \{\par
+\tab\tab\tab case NULL:\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab default:\par
+\tab\tab\tab\tab _LoadShopMenuContents(cType);\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].sV1 = cType;\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].cMode\tab = 0;\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].sView = 0;\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].bFlag = TRUE;\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].sV3   = 1;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\}\tab\}\par
+\tab\tab break;\par
+en la funcion DisableDialogBox, buscar:\par
+C\'f3digo:\par
+\tab case 11:\par
+\tab\tab for (i = 0; i < DEF_MAXMENUITEMS; i++)\par
+\tab\tab if (m_pItemForSaleList[i] != NULL) \{\par
+\tab\tab\tab delete m_pItemForSaleList[i];\par
+\tab\tab\tab m_pItemForSaleList[i] = NULL;\par
+\tab\tab\}\par
+\tab\tab m_stDialogBoxInfo[39].sV3 = 0;\par
+\tab\tab m_stDialogBoxInfo[39].sV4 = 0; // v1.4\par
+\tab\tab m_stDialogBoxInfo[39].sV5 = 0;\par
+\tab\tab m_stDialogBoxInfo[39].sV6 = 0;\par
+\tab\tab break;\par
+abajo agregar:\par
+C\'f3digo:\par
+//TradeEK\par
+\tab case 53:\par
+\tab\tab for (i = 0; i < DEF_MAXMENUITEMS; i++)\par
+\tab\tab if (m_pItemForSaleList[i] != NULL) \{\par
+\tab\tab\tab delete m_pItemForSaleList[i];\par
+\tab\tab\tab m_pItemForSaleList[i] = NULL;\par
+\tab\tab\}\par
+\tab\tab m_stDialogBoxInfo[39].sV3 = 0;\par
+\tab\tab m_stDialogBoxInfo[39].sV4 = 0; // v1.4\par
+\tab\tab m_stDialogBoxInfo[39].sV5 = 0;\par
+\tab\tab m_stDialogBoxInfo[39].sV6 = 0;\par
+\par
+\tab\tab m_bIsItemDisabled[m_stDialogBoxInfo[53].sView] = FALSE;\par
+\tab\tab break;\par
+agregar la siguiente funcion:\par
+C\'f3digo:\par
+//TradeEK\par
+void CGame::DlgBoxClick_TradeEK(short msX, short msY)\par
+\{\par
+ int i;\par
+ short sX, sY;\par
+ char cTemp[21];\par
+\tab sX = m_stDialogBoxInfo[53].sX;\par
+\tab sY = m_stDialogBoxInfo[53].sY;\par
+\par
+\tab switch ( m_stDialogBoxInfo[53].cMode ) \{\par
+\tab case 0:\par
+\tab\tab for (i = 0; i < 13; i++)\par
+\tab\tab if ((msX >= sX + 20) && (msX <= sX + 220) && (msY >= sY + i*18 + 65) && (msY <= sY + i*18 + 79)) \{\par
+\tab\tab\tab if (_iGetTotalItemNum() >= 50) \{\par
+\tab\tab\tab\tab AddEventList(NOTIFYMSG_TRADEEK1, 10);\par
+\tab\tab\tab\tab return;\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\tab if (m_pItemForSaleList[m_stDialogBoxInfo[53].sView + i] != NULL)\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].cMode = m_stDialogBoxInfo[53].sView + i + 1;\par
+\tab\tab\tab return;\par
+\tab\tab\}\par
+\tab\tab break;\par
+\par
+\tab default:\par
+\tab\tab if ((msX >= sX + 145) && (msX <= sX + 162) && (msY >= sY + 209) && (msY <= sY + 230))\par
+\tab\tab\{\tab m_stDialogBoxInfo[53].sV3 += 10;\par
+\tab\tab\tab if (m_stDialogBoxInfo[53].sV3 >= (50 - _iGetTotalItemNum()))\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].sV3 = (50 - _iGetTotalItemNum());\par
+\tab\tab\}\par
+\par
+\tab\tab if ((msX >= sX + 145) && (msX <= sX + 162) && (msY >= sY + 234) && (msY <= sY + 251))\par
+\tab\tab\{\tab m_stDialogBoxInfo[53].sV3 -= 10;\par
+\tab\tab\tab if (m_stDialogBoxInfo[53].sV3 <= 1)\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].sV3 = 1;\par
+\tab\tab\}\par
+\par
+\tab\tab if ((msX >= sX + 163) && (msX <= sX + 180) && (msY >= sY + 209) && (msY <= sY + 230))\par
+\tab\tab\{\tab m_stDialogBoxInfo[53].sV3++;\par
+\tab\tab\tab if (m_stDialogBoxInfo[53].sV3 >= (50 - _iGetTotalItemNum()))\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].sV3 = (50 - _iGetTotalItemNum());\par
+\tab\tab\}\par
+\par
+\tab\tab if ((msX >= sX + 163) && (msX <= sX + 180) && (msY >= sY + 234) && (msY <= sY + 251))\par
+\tab\tab\{\tab m_stDialogBoxInfo[53].sV3--;\par
+\tab\tab\tab if (m_stDialogBoxInfo[53].sV3 <= 1)\par
+\tab\tab\tab\tab m_stDialogBoxInfo[53].sV3 = 1;\par
+\tab\tab\}\par
+\par
+\tab\tab if ((msX >= sX + 30) && (msX <= sX + 30 + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab\{\tab // Purchase Click\par
+\tab\tab\tab if ((50 - _iGetTotalItemNum()) < m_stDialogBoxInfo[53].sV3)\par
+\tab\tab\tab\{\tab AddEventList(DLGBOX_CLICK_SHOP1, 10);//"you cannot buy anything because your bag is full."\par
+\tab\tab\tab\}else\par
+\tab\tab\tab\{\tab ZeroMemory(cTemp, sizeof(cTemp));\par
+\tab\tab\tab\tab strcpy(cTemp, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cName);\par
+\tab\tab\tab\tab bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_TRADEEK, NULL, m_stDialogBoxInfo[53].sV3, NULL, NULL, cTemp);\par
+\tab\tab\tab\}\par
+\tab\tab\tab m_stDialogBoxInfo[53].cMode = 0;\par
+\tab\tab\tab m_stDialogBoxInfo[53].sV3   = 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\par
+\tab\tab if ((msX >= sX + 154) && (msX <= sX + 154 + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab\{\tab // Cancel Click\par
+\tab\tab\tab m_stDialogBoxInfo[53].cMode = 0;\par
+\tab\tab\tab m_stDialogBoxInfo[53].sV3   = 1;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}\par
+\tab\tab break;\par
+\tab\}\par
+\}\par
+agregar la siguiente funcion:\par
+C\'f3digo:\par
+//TradeEK\par
+void CGame::NotifyMsg_TradeEKSucceeded(char * pData)\par
+\{\par
+ char  * cp;\par
+ short * sp;\par
+ DWORD * dwp;\par
+ WORD  * wp;\par
+ int i, j;\par
+\par
+ DWORD dwCount;\par
+ char  cName[21], cItemType, cEquipPos, cGenderLimit;\par
+ BOOL  bIsEquipped;\par
+ short sSprite, sSpriteFrame, sLevelLimit;\par
+ WORD  wCost, wWeight, wCurLifeSpan;\par
+ char  cTxt[120], cItemColor;\par
+\par
+\tab cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+\tab cp++;\par
+\par
+\tab ZeroMemory(cName, sizeof(cName));\par
+\tab memcpy(cName, cp, 20);\par
+\tab cp += 20;\par
+\par
+\tab dwp = (DWORD *)cp;\par
+\tab dwCount = *dwp;\par
+\tab cp += 4;\par
+\par
+\tab cItemType = *cp;\par
+\tab cp++;\par
+\par
+\tab cEquipPos = *cp;\par
+\tab cp++;\par
+\par
+\tab bIsEquipped = (BOOL)*cp;\par
+\tab cp++;\par
+\par
+\tab sp = (short *)cp;\par
+\tab sLevelLimit = *sp;\par
+\tab cp += 2;\par
+\par
+\tab cGenderLimit = *cp;\par
+\tab cp++;\par
+\par
+ \tab wp = (WORD *)cp;\par
+\tab wCurLifeSpan = *wp;\par
+\tab cp += 2;\par
+\par
+\tab wp = (WORD *)cp;\par
+\tab wWeight = *wp;\par
+\tab cp += 2;\par
+\par
+\tab sp = (short *)cp;\par
+\tab sSprite = *sp;\par
+\tab cp += 2;\par
+\par
+\tab sp = (short *)cp;\par
+\tab sSpriteFrame = *sp;\par
+\tab cp += 2;\par
+\par
+\tab cItemColor = *cp; // v1.4\par
+\tab cp++;\par
+\par
+\tab wp = (WORD *)cp;\par
+\tab wCost = *wp;\par
+\par
+\tab ZeroMemory(cTxt, sizeof(cTxt));\par
+\tab char cStr1[64], cStr2[64], cStr3[64];\par
+\tab GetItemName( cName, NULL, cStr1, cStr2, cStr3 );\par
+\tab wsprintf(cTxt, NOTIFYMSG_TRADEEK2, cStr1, wCost);\par
+\tab AddEventList(cTxt, 10);\par
+\par
+\tab if ( (cItemType == DEF_ITEMTYPE_CONSUME) || (cItemType == DEF_ITEMTYPE_ARROW))\par
+\tab\{\tab for (i = 0; i < DEF_MAXITEMS; i++)\par
+\tab\tab if ((m_pItemList[i] != NULL) && (memcmp(m_pItemList[i]->m_cName, cName, 20) == 0))\par
+\tab\tab\{\tab m_pItemList[i]->m_dwCount += dwCount;\par
+\tab\tab\tab return;\par
+\tab\}\tab\}\par
+\par
+ short nX, nY;\par
+ for (i = 0; i < DEF_MAXITEMS; i++)\par
+  \{\tab   if ( ( m_pItemList[i] != NULL) && (memcmp(m_pItemList[i]->m_cName, cName, 20) == 0))\par
+\tab   \{\tab   nX = m_pItemList[i]->m_sX;\par
+\tab\tab   nY = m_pItemList[i]->m_sY;\par
+\tab\tab   break;\par
+\tab   \}else\par
+\tab   \{  nX = 40;\par
+\tab\tab   nY = 30;\par
+  \}  \}\par
+\par
+\tab for (i = 0; i < DEF_MAXITEMS; i++)\par
+\tab if (m_pItemList[i] == NULL)\par
+\tab\{\tab m_pItemList[i] = new class CItem;\par
+\tab\tab memcpy(m_pItemList[i]->m_cName, cName, 20);\par
+\tab\tab m_pItemList[i]->m_dwCount      = dwCount;\par
+\tab\tab //m_pItemList[i]->m_sX           = 40;\par
+\tab\tab //m_pItemList[i]->m_sY           = 30;\par
+\tab\tab m_pItemList[i]->m_sX           = nX;\par
+\tab\tab m_pItemList[i]->m_sY           = nY;\par
+\tab\tab bSendCommand(MSGID_REQUEST_SETITEMPOS, NULL, i, nX, nY, NULL, NULL);\par
+\tab\tab m_pItemList[i]->m_cItemType    = cItemType;\par
+\tab\tab m_pItemList[i]->m_cEquipPos    = cEquipPos;\par
+\tab\tab m_bIsItemDisabled[i]           = FALSE;\par
+\tab\tab m_bIsItemEquipped[i]           = FALSE;\par
+\tab\tab m_pItemList[i]->m_sLevelLimit  = sLevelLimit;\par
+\tab\tab m_pItemList[i]->m_cGenderLimit = cGenderLimit;\par
+\tab\tab m_pItemList[i]->m_wCurLifeSpan = wCurLifeSpan;\par
+\tab\tab m_pItemList[i]->m_wWeight      = wWeight;\par
+\tab\tab m_pItemList[i]->m_sSprite      = sSprite;\par
+\tab\tab m_pItemList[i]->m_sSpriteFrame = sSpriteFrame;\par
+\tab\tab m_pItemList[i]->m_cItemColor   = cItemColor;    // v1.4\par
+\par
+\tab\tab // fixed v1.11\par
+\tab\tab for (j = 0; j < DEF_MAXITEMS; j++)\par
+\tab\tab if (m_cItemOrder[j] == -1) \{\par
+\tab\tab\tab m_cItemOrder[j] = i;\par
+\tab\tab\tab return;\par
+\tab\tab\}\par
+\par
+\tab\tab return;\par
+\tab\}\par
+\}\par
+agregar la siguiente funcion:\par
+C\'f3digo:\par
+//TradeEK\par
+void CGame::DrawDialogBox_TradeEK(short msX, short msY, short msZ, char cLB)\par
+\{short sX, sY, szX;\par
+ DWORD dwTime = m_dwCurTime;\par
+ int  i, iTemp;\par
+ char cTemp[255], cStr2[255], cStr3[255];\par
+\par
+ int  iCost;\par
+\par
+ int  iTotalLines, iPointerLoc;\par
+ BOOL bFlagStatLow = FALSE;\par
+ BOOL bFlagRedShown = FALSE;\par
+ double d1, d2, d3;\par
+\par
+\tab sX = m_stDialogBoxInfo[53].sX;\par
+\tab sY = m_stDialogBoxInfo[53].sY;\par
+\tab szX = m_stDialogBoxInfo[53].sSizeX;\par
+\par
+\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2, FALSE, m_bDialogTrans);\par
+\par
+\tab PutString_SprFont(sX + (szX / 2)-(8*5),sY+35,"Trade EKs",1,1,8);//"Trade EKs"\par
+\par
+\tab switch (m_stDialogBoxInfo[53].cMode) \{\par
+\tab case 0:\par
+\tab\tab iTotalLines = 0;\par
+\tab\tab for (i = 0; i < DEF_MAXMENUITEMS; i++)\par
+\tab\tab if (m_pItemForSaleList[i] != NULL) iTotalLines++;\par
+\tab\tab if (iTotalLines > 13) \{\par
+\tab\tab\tab d1 = (double)m_stDialogBoxInfo[53].sView;\par
+\tab\tab\tab d2 = (double)(iTotalLines-13);\par
+\tab\tab\tab d3 = (274.0f * d1)/d2;\par
+\tab\tab\tab iPointerLoc = (int)(d3);\par
+\tab\tab\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 3);\par
+\tab\tab\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX+242, sY + iPointerLoc + 35, 7);\par
+\tab\tab\}else iPointerLoc = 0;\par
+\par
+\tab\tab if (cLB != 0 && iTotalLines > 13)\par
+\tab\tab\{\tab if ((iGetTopDialogBoxIndex() == 53))\par
+\tab\tab\tab\{\tab if ((msX >= sX + 235) && (msX <= sX + 260) && (msY >= sY + 10) && (msY <= sY + 310))\par
+\tab\tab\tab\tab\{ \tab d1 = (double)(msY -(sY+35));\par
+\tab\tab\tab\tab\tab d2 = (double)(iTotalLines-13);\par
+\tab\tab\tab\tab\tab d3 = (d1 * d2)/274.0f;\par
+\tab\tab\tab\tab\tab m_stDialogBoxInfo[53].sView = (int)(d3+0.5);\par
+\tab\tab\tab\}\tab\}\par
+\tab\tab\}else m_stDialogBoxInfo[53].bIsScrollSelected = FALSE;\par
+\tab\tab if( iGetTopDialogBoxIndex() == 53 && msZ != 0 )\par
+\tab\tab\{\tab m_stDialogBoxInfo[53].sView = m_stDialogBoxInfo[53].sView - msZ/60;\par
+\tab\tab\tab m_DInput.m_sZ = 0;\par
+\tab\tab\}\par
+\tab\tab if( iTotalLines > 13 && m_stDialogBoxInfo[11].sView > iTotalLines-13 ) m_stDialogBoxInfo[53].sView = iTotalLines-13;\par
+\tab\tab if( m_stDialogBoxInfo[53].sView < 0 || iTotalLines < 13 ) m_stDialogBoxInfo[53].sView = 0;\par
+\tab\tab PutAlignedString(sX + 22, sX +250, sY + 52, DRAW_DIALOGBOX_TRADEEK2); // "ITEM"\par
+\tab\tab PutAlignedString(sX + 23, sX +251, sY + 52, DRAW_DIALOGBOX_TRADEEK2);\par
+\par
+\tab\tab for (i = 0; i < 13; i++)\par
+\tab\tab if (((i+ m_stDialogBoxInfo[53].sView) < DEF_MAXMENUITEMS) && (m_pItemForSaleList[i + m_stDialogBoxInfo[53].sView] != NULL))\par
+\tab\tab\{\tab ZeroMemory(cTemp, sizeof(cTemp));\par
+\tab\tab\tab GetItemName(m_pItemForSaleList[i + m_stDialogBoxInfo[53].sView], cTemp, cStr2, cStr3);\par
+\tab\tab\tab if ((msX >= sX + 20) && (msX <= sX + 220) && (msY >= sY + i*18 + 65) && (msY <= sY + i*18 + 79))\par
+\tab\tab\tab\{\tab   PutAlignedString(sX +10, sX +190, sY + i*18 + 65, cTemp, 255, 255, 255);\par
+\tab\tab\tab\}else PutAlignedString(sX +10, sX +190, sY + i*18 + 65, cTemp, 4,0,50);\par
+\tab\tab\}\par
+\par
+\tab\tab for (i = 0; i < 13; i++)\par
+\tab\tab if (((i+ m_stDialogBoxInfo[53].sView) < DEF_MAXMENUITEMS) && (m_pItemForSaleList[i + m_stDialogBoxInfo[53].sView] != NULL))\par
+\tab\tab\{\par
+\tab\tab\tab iCost = (m_pItemForSaleList[i + m_stDialogBoxInfo[53].sView]->m_wPrice);\par
+\tab\tab\tab ZeroMemory(cTemp, sizeof(cTemp));\par
+\tab\tab\tab wsprintf(cTemp, "%6d", iCost);\par
+\tab\tab\tab if ((msX >= sX+20) && (msX <= sX+220) && (msY >= sY+i*18+65) && (msY <= sY+i*18+79))\par
+\tab\tab\tab\tab\tab PutAlignedString(sX+148, sX+260, sY+i*18+65, cTemp, 255, 255, 255);\par
+\tab\tab\tab else\tab PutAlignedString(sX+148, sX+260, sY+i*18+65, cTemp, 4,0,50);\par
+\tab\tab\}\par
+\tab\tab break;\par
+\par
+\tab default:\par
+\tab\tab m_pSprite[DEF_SPRID_ITEMPACK_PIVOTPOINT + m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sSprite]->PutSpriteFast(sX + 62 + 30 -35, sY + 84 + 30 -10,\par
+\tab\tab           m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sSpriteFrame, dwTime);\par
+\par
+\tab\tab ZeroMemory(cTemp, sizeof(cTemp));\par
+\tab\tab GetItemName(m_pItemForSaleList[m_stDialogBoxInfo[53].cMode-1], cTemp, cStr2, cStr3);\par
+\par
+\tab\tab PutAlignedString(sX +25, sX+240, sY+50, cTemp, 255,255,255);\par
+\tab\tab PutAlignedString(sX +26, sX+241, sY+50, cTemp, 255,255,255);\par
+\par
+\tab\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP3); //"PRICE"\par
+\tab\tab PutString(sX + 90, sY + 78 + 30 -10, cTemp, RGB(40,10,10));\par
+\tab\tab PutString(sX + 91, sY + 78 + 30 -10, cTemp, RGB(40,10,10));\par
+\tab\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP6); // "Weight"\par
+\tab\tab PutString(sX + 90, sY + 93 + 30 -10, cTemp, RGB(40,10,10));\par
+\tab\tab PutString(sX + 91, sY + 93 + 30 -10, cTemp, RGB(40,10,10));\par
+\par
+\tab\tab iCost = (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode -1]->m_wPrice);\par
+\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP7, iCost );\par
+\tab\tab PutString(sX + 140, sY + 98, cTemp, RGB(45,25,25));\par
+\par
+\tab\tab iTemp = m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_wWeight/100;\par
+\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP8, iTemp);\par
+\tab\tab                //": %d Stone"\par
+\tab\tab PutString(sX + 140, sY + 113, cTemp, RGB(45,25,25));\par
+\par
+\tab\tab switch (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cEquipPos) \{\par
+\tab\tab case DEF_EQUIPPOS_RHAND:\par
+\tab\tab case DEF_EQUIPPOS_TWOHAND:\par
+\tab\tab\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP9);  // Damage\par
+\tab\tab\tab PutString(sX + 90, sY + 145, cTemp, RGB(40,10,10));\par
+\tab\tab\tab PutString(sX + 91, sY + 145, cTemp, RGB(40,10,10));\par
+\tab\tab\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP10); //"Speed(Min.~Max.)"\par
+\tab\tab\tab PutString(sX + 40, sY + 175, cTemp, RGB(40,10,10));\par
+\tab\tab\tab PutString(sX + 41, sY + 175, cTemp, RGB(40,10,10));\par
+\par
+\tab\tab\tab if (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue3 != 0)\par
+\tab\tab\tab\{\tab wsprintf(cTemp, ": %dD%d+%d (S-M)", m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue1,\par
+\tab\tab\tab\tab\tab                                 m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue2,\par
+\tab\tab\tab\tab\tab\tab\tab\tab                     m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue3);\par
+\tab\tab\tab\}else\par
+\tab\tab\tab\{\tab wsprintf(cTemp, ": %dD%d (S-M)", m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue1,\par
+\tab\tab\tab\tab\tab                              m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue2);\par
+\tab\tab\tab\}\par
+\tab\tab\tab PutString(sX + 140, sY + 145, cTemp, RGB(45,25,25));\par
+\tab\tab\tab if (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue6 != 0)\par
+\tab\tab\tab\{\tab wsprintf(cTemp, ": %dD%d+%d (L)", m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue4,\par
+\tab\tab\tab\tab\tab                               m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5,\par
+\tab\tab\tab\tab\tab\tab\tab\tab                   m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue6);\par
+\tab\tab\tab\}else\par
+\tab\tab\tab\{\tab wsprintf(cTemp, ": %dD%d (L)", m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue4,\par
+\tab\tab\tab\tab\tab                            m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5);\par
+\tab\tab\tab\}\par
+\tab\tab\tab PutString(sX + 140, sY + 160, cTemp, RGB(45,25,25));\par
+\tab\tab\tab if (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cSpeed == 0)   wsprintf(cTemp, ": 0(10~10)");\par
+\tab\tab\tab else wsprintf(cTemp, ": %d(%d ~ %d)",m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cSpeed, iTemp,m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cSpeed*13);\par
+\tab\tab\tab PutString(sX + 140, sY + 175, cTemp, RGB(45,25,25));\par
+\par
+\tab\tab\tab if ((m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_wWeight/100) > m_iStr)\par
+\tab\tab\tab\{\tab wsprintf(cTemp,DRAW_DIALOGBOX_SHOP11, (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_wWeight/100)) ;\par
+\tab\tab\tab\tab PutAlignedString(sX +25, sX+240, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 258, cTemp, 195,25,25); // *Your STR should be at least %d to use this item."\par
+\tab\tab\tab\tab bFlagRedShown = TRUE;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case DEF_EQUIPPOS_LHAND:\par
+\tab\tab\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP12); // "Defence"\par
+\tab\tab\tab PutString(sX + 90, sY + 145, cTemp, RGB(40,10,10));\par
+\tab\tab\tab PutString(sX + 91, sY + 145, cTemp, RGB(40,10,10));\par
+\tab\tab\tab wsprintf(cTemp, ": +%d%", m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue1);\par
+\tab\tab\tab PutString(sX + 140, sY + 145, cTemp, RGB(45,25,25));\par
+\tab\tab\tab if ((m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_wWeight/100) > m_iStr)\par
+\tab\tab\tab\{\tab wsprintf(cTemp,DRAW_DIALOGBOX_SHOP11, (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_wWeight/100)) ;\par
+\tab\tab\tab\tab PutAlignedString(sX +25, sX+240, sY + 258, cTemp, 195,25,25); // "*Your STR should be at least %d to use this item."\par
+\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab bFlagRedShown = TRUE;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case DEF_EQUIPPOS_HEAD:\par
+\tab\tab case DEF_EQUIPPOS_BODY:\par
+\tab\tab case DEF_EQUIPPOS_BOOTS:\par
+\tab\tab case DEF_EQUIPPOS_ARMS:\par
+\tab\tab case DEF_EQUIPPOS_PANTS:\par
+\tab\tab\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP12); // "Defence"\par
+\tab\tab\tab PutString(sX + 90, sY + 145, cTemp, RGB(40,10,10));\par
+\tab\tab\tab PutString(sX + 91, sY + 145, cTemp, RGB(40,10,10));\par
+\tab\tab\tab wsprintf(cTemp, ": +%d%", m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue1);\par
+\tab\tab\tab PutString(sX + 140, sY + 145, cTemp, RGB(45,25,25));\par
+\tab\tab\tab bFlagStatLow = FALSE;\par
+\tab\tab\tab switch(m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue4) \{\par
+\tab\tab\tab case 10://"Available for above Str %d"\par
+\tab\tab\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP15, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5);\par
+\tab\tab\tab\tab if (m_iStr >= m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5)\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\}else\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab bFlagStatLow = TRUE; // Means some red msg need to be shown at the bottom\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 11: // "Available for above Dex %d"\par
+\tab\tab\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP16, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5);\par
+\tab\tab\tab\tab if (m_iDex >= m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5)\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\}else\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab bFlagStatLow = TRUE; // Means some red msg need to be shown at the bottom\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 12: // "Available for above Vit %d"\par
+\tab\tab\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP17, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5);\par
+\tab\tab\tab\tab if (m_iVit >= m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5)\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\}else\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab bFlagStatLow = TRUE; // Means some red msg need to be shown at the bottom\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 13: // "Available for above Int %d"\par
+\tab\tab\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP18, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5);\par
+\tab\tab\tab\tab if (m_iInt >= m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5)\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\}else\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab bFlagStatLow = TRUE; // Means some red msg need to be shown at the bottom\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 14: // "Available for above Mag %d"\par
+\tab\tab\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP19, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5);\par
+\tab\tab\tab\tab if (m_iMag >= m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5)\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\}else\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab bFlagStatLow = TRUE; // Means some red msg need to be shown at the bottom\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case 15: // "Available for above Chr %d"\par
+\tab\tab\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP20, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5);\par
+\tab\tab\tab\tab if (m_iCharisma >= m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sItemEffectValue5)\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 45,25,25);\par
+\tab\tab\tab\tab\}else\par
+\tab\tab\tab\tab\{\tab PutAlignedString(sX +25, sX+240, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 160, cTemp, 125,25,25);\par
+\tab\tab\tab\tab\tab bFlagStatLow = TRUE; // Means some red msg need to be shown at the bottom\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab default:\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\}\par
+\tab\tab\tab if ((m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_wWeight/100) > m_iStr)\par
+\tab\tab\tab\{\tab wsprintf(cTemp,DRAW_DIALOGBOX_SHOP11, (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_wWeight/100)) ;\par
+\tab\tab\tab\tab PutAlignedString(sX +25, sX+240, sY + 288, cTemp, 195,25,25);\par
+\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 288, cTemp, 195,25,25); // "*Your STR should be at least %d to use this item."\par
+\tab\tab\tab\tab bFlagRedShown = TRUE;\par
+\tab\tab\tab\}else if (bFlagStatLow == TRUE) // Means some stat is too low\par
+\tab\tab\tab\{\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP21); // "(Warning!) Your stat is too low for this item."\par
+\tab\tab\tab\tab PutAlignedString(sX +25, sX+240, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab bFlagRedShown = TRUE;\par
+\tab\tab\tab\}else if ( (strstr(m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cName, "(M)") != NULL)\par
+\tab\tab\tab\tab\tab && (m_sPlayerType > 3))\par
+\tab\tab\tab\{\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP22); // "(Warning!) only for male."\par
+\tab\tab\tab\tab PutAlignedString(sX +25, sX+240, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab bFlagRedShown = TRUE;\par
+\tab\tab\tab\}else if ( (strstr(m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cName, "(W)") != NULL)\par
+\tab\tab\tab\tab\tab && (m_sPlayerType <= 3))\par
+\tab\tab\tab\{\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP23); // "(Warning!) only for female."\par
+\tab\tab\tab\tab PutAlignedString(sX +25, sX+240, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab PutAlignedString(sX +26, sX+241, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab bFlagRedShown = TRUE;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case DEF_EQUIPPOS_NONE:\par
+\tab\tab\tab break;\par
+\tab\tab\}\par
+\par
+\tab\tab if (m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sLevelLimit != 0)\par
+\tab\tab\{\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP24); // "Level"\par
+\tab\tab\tab if (m_iLevel >= m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sLevelLimit)\par
+\tab\tab\tab\{\tab PutString(sX + 90, sY + 190, cTemp, RGB(40,10,10));\par
+\tab\tab\tab\tab PutString(sX + 91, sY + 190, cTemp, RGB(40,10,10));\par
+\tab\tab\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP25, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sLevelLimit);\par
+\tab\tab\tab\tab PutString(sX + 140, sY + 190, cTemp, RGB(45,25,25));// ": above %d"\par
+\tab\tab\tab\}else\par
+\tab\tab\tab\{\tab PutString(sX + 90, sY + 190, cTemp, RGB(40,10,10));\par
+\tab\tab\tab\tab PutString(sX + 91, sY + 190, cTemp, RGB(40,10,10));\par
+\tab\tab\tab\tab wsprintf(cTemp, DRAW_DIALOGBOX_SHOP25, m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_sLevelLimit);\par
+\tab\tab\tab\tab PutString(sX + 140, sY + 190, cTemp, RGB(125,25,25));// ": above %d"\par
+\tab\tab\tab\tab if (bFlagRedShown == FALSE)\par
+\tab\tab\tab\tab\{\tab strcpy(cTemp, DRAW_DIALOGBOX_SHOP26); // "(Warning!) Your level is too low for this item."\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +25\tab   , sX+240   , sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab\tab PutAlignedString(sX +25 +1, sX+240 +1, sY + 258, cTemp, 195,25,25);\par
+\tab\tab\tab\tab\tab bFlagRedShown = TRUE;\par
+\tab\tab\}\tab\}\tab\}\par
+\tab\tab\par
+\tab\tab if (((m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cName) == "ZemstoneofSacrifice")\par
+\tab\tab\tab ||((m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cName) == "StoneOfXelima")\par
+\tab\tab\tab ||((m_pItemForSaleList[m_stDialogBoxInfo[53].cMode - 1]->m_cName) == "StoneOfMerien"))\par
+\tab\tab\{\par
+\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME2]->PutSpriteFast(sX + 156, sY + 219, 19, dwTime);\par
+\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME2]->PutSpriteFast(sX + 170, sY + 219, 19, dwTime);\par
+\tab\tab\tab PutString(sX + 123 -35, sY + 237 -10, DRAW_DIALOGBOX_SHOP27, RGB(40,10,10)); // "Quantity:"\par
+\tab\tab\tab PutString(sX + 124 -35, sY + 237 -10, DRAW_DIALOGBOX_SHOP27, RGB(40,10,10));\par
+\tab\tab\tab if( iGetTopDialogBoxIndex() == 53 && msZ != 0 )\par
+\tab\tab\tab\{\tab m_stDialogBoxInfo[53].sV3 = m_stDialogBoxInfo[53].sV3 + msZ/60;\par
+\tab\tab\tab\tab m_DInput.m_sZ = 0;\par
+\tab\tab\tab\}\par
+\tab\tab\tab if (m_stDialogBoxInfo[53].sV3 > (50 - _iGetTotalItemNum())) m_stDialogBoxInfo[53].sV3 = (50 - _iGetTotalItemNum());\par
+\tab\tab\tab if (m_stDialogBoxInfo[53].sV3 < 1) m_stDialogBoxInfo[53].sV3 = 1;\par
+\par
+\tab\tab\tab if (m_stDialogBoxInfo[53].sV3 >= 10)\par
+\tab\tab\tab\{\tab ZeroMemory(cTemp, sizeof(cTemp));\par
+\tab\tab\tab\tab _itoa(m_stDialogBoxInfo[53].sV3, cTemp, 10);\par
+\tab\tab\tab\tab cTemp[1] = NULL;\par
+\tab\tab\tab\tab PutString(sX -35 + 186, sY -10 + 237, cTemp, RGB(40,10,10));\par
+\tab\tab\tab\tab PutString(sX -35 + 187, sY -10 + 237, cTemp, RGB(40,10,10));\par
+\tab\tab\tab\tab ZeroMemory(cTemp, sizeof(cTemp));\par
+\tab\tab\tab\tab _itoa(m_stDialogBoxInfo[53].sV3, cTemp, 10);\par
+\tab\tab\tab\tab PutString(sX -35 + 200, sY -10 + 237, (cTemp+1), RGB(40,10,10));\par
+\tab\tab\tab\tab PutString(sX -35 + 201, sY -10 + 237, (cTemp+1), RGB(40,10,10));\par
+\tab\tab\tab\}else\par
+\tab\tab\tab\{\tab PutString(sX -35 + 186, sY -10 + 237, "0", RGB(40,10,10));\par
+\tab\tab\tab\tab PutString(sX -35 + 187, sY -10 + 237, "0", RGB(40,10,10));\par
+\tab\tab\tab\tab ZeroMemory(cTemp, sizeof(cTemp));\par
+\tab\tab\tab\tab _itoa(m_stDialogBoxInfo[53].sV3, cTemp, 10);\par
+\tab\tab\tab\tab PutString(sX -35 + 200, sY -10 + 237, (cTemp), RGB(40,10,10));\par
+\tab\tab\tab\tab PutString(sX -35 + 201, sY -10 + 237, (cTemp), RGB(40,10,10));\par
+\tab\tab\tab\}\par
+\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME2]->PutSpriteFast(sX +156, sY + 244, 20, dwTime);\par
+\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_ND_GAME2]->PutSpriteFast(sX +170, sY + 244, 20, dwTime);\par
+\tab\tab\}\par
+\tab\tab //else\par
+\tab\tab //\{\par
+\tab\tab //\}\par
+\par
+\tab\tab if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab\tab  DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 31);\par
+\tab\tab else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 30);\par
+\par
+\tab\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\tab\tab  DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 17);\par
+\tab\tab else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 16);\par
+\tab\tab break;\par
+\tab\}\par
+\}\par
+LISTO!\par
+\par
+cualquier duda cosnulten, saludos\par
+\par
+Edit:\par
+me olvidaba, me falto agregar el "contents3" descargar:contents3.txt\par
+voy a tratar de agregarle un valor mas a los items, para identificar si son del TradeEk o no, asi se acorta bastante mas este code, sin tener que crear una funcion que lea el nuevo .txt, y sin tener que ponerle en el hg el valor de cada item, porque se podria poner como el costo de Gold\par
+}
+ 

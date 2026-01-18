@@ -1,0 +1,49 @@
+* Updated *
+Added 6 addresses to fix annoying "Level Up" text from appearing in bottom right of screen
+
+Alright, since people have been asking for it, here it is. I tried to make this tutorial as simple as possible. If you find any errors let me know. Thanks!
+
+
+1) Obtain a 3.51 client (perferrably unmodified).
+
+2) Start your hex editor (For this tutorial I will use FRHed, download here http://www.kibria.de/frhed.html)
+
+3) Open the client in your editor (File -> Open)
+
+3) Bring up the Go To dialog (CTRL+G)
+
+4) A dialog similar to this should appear,
+
+~4a) Type in 259219 and press enter
+
+5) You should now see a screen like this
+
+
+
+6) Look for C8 00 00 00, click on C8 and change this, enter the hex number for what you want your max stat to be.
+~6a) If you don't know what the number is in hex go to http://www.geocities.com/binary_converter/
+~6b) Type in what you want for max stats in the Decimal field then click somewhere else on the page
+~6c) The number you need will appear in the Hex field
+~6d) Take this number and then go back into the editor and type it in reversed. (If your number was 500, HEX 01F4, change C8 00 00 00 to F4 01 00 00).
+
+
+7) Repeat steps 3-6 once for each of these addresses (replace number in step 3 with the following):
+259336
+259453
+259570
+259687
+259800
+
+55540
+55561
+55582
+55602
+55623
+55644
+
+
+8) Save your file and exit your hex editor.
+
+9) Congratulations, you're done!
+
+[9/01/04 ~ Mystic] 

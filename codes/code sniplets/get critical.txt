@@ -1,0 +1,47 @@
+add to game.cpp 
+
+CODE  
+}
+
+  if (memcmp(cp, "/getcrit ", 12) == 0) {
+  PlayerCommand_critical(iClientH);
+  return; 
+ } 
+
+
+
+then again game.cpp
+
+
+CODE  
+void CGame::PlayerCommand_critical(int iClientH)
+{
+char cGizonLow[256], cGizonDone[256];
+register int iMax;
+int iEffectResult = 0;
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft < 1){
+ZeroMemory(cGizonLow, sizeof(cGizonLow));
+wsprintf(cGizonLow,"You Need 1 Majestic");
+ShowClientMsg(iClientH, cGizonLow);
+}
+else{
+  iMax = m_pClientList[iClientH]->m_iLevel / 5;
+  if (m_pClientList[iClientH]->m_iSuperAttackLeft < iMax) m_pClientList[iClientH]->m_iSuperAttackLeft += 62;
+  iEffectResult = 7;
+ZeroMemory(cGizonDone, sizeof(cGizonDone));
+wsprintf(cGizonDone, "Your critical Is Now Full!");
+ShowClientMsg(iClientH, cGizonDone);
+m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= 1;
+DeleteClient(iClientH, TRUE, TRUE);
+}
+} 
+
+
+
+adn then to game.h
+
+CODE  
+// life[GM] coded
+void PlayerCommand_critical(int iClientH); 

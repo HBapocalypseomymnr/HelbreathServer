@@ -1,0 +1,10 @@
+30HP luego de morir en connection lost
+Como el titulo lo dice, el tipico bug que pasa cuando mueres, y juego despues te tira connection lost y apareces con 30hp.
+
+En los Src del HGserver abrir el Game.cpp y buscar:
+Código:
+m_pClientList[iClientH]->m_iHP = 30;
+Remplazar todo eso por:
+Código:
+m_pClientList[iClientH]->m_iHP = iGetMaxHP(iClientH);//50Cent - 30HP CL Fix
+By ?

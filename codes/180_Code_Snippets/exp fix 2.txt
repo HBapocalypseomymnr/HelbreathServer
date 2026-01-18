@@ -1,0 +1,23 @@
+
+ To fix your negative exp bug place an if inside of the GetExp function. Just so I don't get spammed with questions i'll cover this 1 propperly.
+
+A character's exp is stored in the data type int. Int has a range of –2,147,483,648 to 2,147,483,647. When a player's exp exceeds 2,147,483,647 it will rollover back to it's maximum negative value (–2,147,483,648) so the idea of this code is to not allow players to exceed 2,147,483,648 EXP.
+
+Go into game.cpp and find CGame::GetExp (2.24b has 2 functions, 1 is commented. Use the one the compiler will read obviously)
+
+Under 
+CODE  
+if (m_pClientList[iClientH] == NULL) return; 
+
+
+Paste this 
+CODE  
+if (m_pClientList[iClientH]->m_iExp > 2100000000) 
+{
+  m_pClientList[iClientH]->m_iExp = 2100000000;
+  ShowClientMsg(iClientH, " You have reached maximum experience. You cannot level any further") 
+  return;
+} 
+
+
+ 

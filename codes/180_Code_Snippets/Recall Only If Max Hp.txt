@@ -1,0 +1,48 @@
+Author helbards & Jehovah
+
+Find:
+
+    case DEF_MAGICTYPE_TELEPORT:
+        // A?â€¦A?L?A‚Â·A‚ÂaA?â€ A?Â·A?â€ A‚Â® A‚Â¸A‚Â¶A‚ÂaA?Â?. sValue 4A‚ÂzA‚Â? A‚ÂµA?Â»A‚Â¶A?ÂlA‚ÂLA‚Â­ A?â€¦A?L?A‚Â·A‚ÂaA?â€ A?Â·A?â€ A‚Â® A‚Â¸A?Â±A?â‚¬A?Â»A?ÂA?Â¶A‚Â°A‚Â? A‚Â°A?Â?A?ÂA‚Â¤A‚ÂµA?Ë†A‚Â´A?â„?.
+        m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+
+        switch (m_pMagicConfigList[sType]->m_sValue4) {
+        case 1:
+        // A?â‚¬A?L?A‚Â?A?â€¦A?â‚¬A?L’ A‚ÂLA?â€™A‚ÂLA?â€sA‚ÂµA?Ë† A‚Â¸A‚Â¶A?â‚¬A‚Â»A‚Â·A?L? A?â€¦A?L?A‚Â·A‚ÂaA?â€ A?Â·A?â€ A‚Â®. RecallA?â‚¬A?L’A‚Â´A?â„?.
+        if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) && (sOwnerH == iClientH) ) {
+          // A?â‚¬A?L?A‚Â?A?â€¦A‚ÂzA?L“A‚ÂzA‚Â?A‚Â´A?â€š RecallA?â€?A?â€™ A‚ÂLA?Â¶ A‚ÂlA?Â¸A‚Â´A?â„?.
+          RequestTeleportHandler(iClientH, "1  ");
+        }
+        break;
+        }
+        break;
+
+
+
+And Replace with
+
+case DEF_MAGICTYPE_TELEPORT:
+    // A?â€¦A?L?A‚Â·A‚ÂaA?â€ A?Â·A?â€ A‚Â® A‚Â¸A‚Â¶A‚ÂaA?Â?. sValue 4A‚ÂzA‚Â? A‚ÂµA?Â»A‚Â¶A?ÂlA‚ÂLA‚Â­ A?â€¦A?L?A‚Â·A‚ÂaA?â€ A?Â·A?â€ A‚Â® A‚Â¸A?Â±A?â‚¬A?Â»A?ÂA?Â¶A‚Â°A‚Â? A‚Â°A?Â?A?ÂA‚Â¤A‚ÂµA?Ë†A‚Â´A?â„?.
+    m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+
+    switch (m_pMagicConfigList[sType]->m_sValue4) {
+    case 1:
+    // A?â‚¬A?L?A‚Â?A?â€¦A?â‚¬A?L’ A‚ÂLA?â€™A‚ÂLA?â€sA‚ÂµA?Ë† A‚Â¸A‚Â¶A?â‚¬A‚Â»A‚Â·A?L? A?â€¦A?L?A‚Â·A‚ÂaA?â€ A?Â·A?â€ A‚Â®. RecallA?â‚¬A?L’A‚Â´A?â„?.
+    if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) && (sOwnerH == iClientH) ) {
+      // A?â‚¬A?L?A‚Â?A?â€¦A‚ÂzA?L“A‚ÂzA‚Â?A‚Â´A?â€š RecallA?â€?A?â€™ A‚ÂLA?Â¶ A‚ÂlA?Â¸A‚Â´A?â„?.
+DWORD dwTime;
+dwTime = timeGetTime(); 
+if(m_pClientList[iClientH]->m_iHP != iGetMaxHP(iClientH)) {
+if (m_pClientList[iClientH]->m_iHP < iGetMaxHP(iClientH)) {
+if ((dwTime - m_pClientList[iClientH]->m_dwRecentAttackTime) < 10000){
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You must have full health to recall.");
+
+goto MAGIC_NOEFFECT;
+}
+}
+}
+      RequestTeleportHandler(iClientH, "1  ");
+    }
+    break;
+    }
+    break;

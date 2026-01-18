@@ -1,0 +1,642 @@
+Agregar arma nueva + Agregar glare (By SabbaT[GM])
+bueno..despues de mucho deducir ... xD ... y renegar obio xD jaja..
+
+Esta prohibido el post de esta información
+cualquier otra comunidadforo
+
+aca dejo la gui para agregar un arma nueva al client y al hg ..
+
+bueno primero que nada.. busqe los archivos WBabHammer y MBabHammer
+
+la W es para mina y la M es para macho...
+
+asen una copia de esos archibitos y les ponen 
+WBBAabHammer usando el pack WBabHammer
+WBBAabHammer usando el pack de MBabHammer
+
+listo ya tenemos los archivos (ponganlos en la carpeta sprite u.u) ...
+
+ahora al cleitne para q los lea..
+Client 
+
+busquen esto 
+
+en la funcion UpdateScreen_OnLoading
+
+en el case 88 encontraran esto 
+
+Código
+case 88
+        {    MakeSprite( WAxe1,        DEF_SPRID_WEAPON_W + 6420, 56, TRUE); Axe
+            MakeSprite( WAxe2,        DEF_SPRID_WEAPON_W + 6421, 56, TRUE);
+            MakeSprite( WAxe3,        DEF_SPRID_WEAPON_W + 6422, 56, TRUE);
+            MakeSprite( WAxe4,        DEF_SPRID_WEAPON_W + 6423, 56, TRUE);
+            MakeSprite( WAxe5,        DEF_SPRID_WEAPON_W + 6424, 56, TRUE);
+            MakeSprite( WpickAxe1,    DEF_SPRID_WEAPON_W + 6425, 56, TRUE);
+            MakeSprite( WAxe6,        DEF_SPRID_WEAPON_W + 6426, 56, TRUE);
+            MakeSprite( Whoe,            DEF_SPRID_WEAPON_W + 6427, 56, TRUE);
+            MakeSprite( WKlonessAxe,    DEF_SPRID_WEAPON_W + 6428, 56, TRUE);
+            MakeSprite( WLightBlade,  DEF_SPRID_WEAPON_W + 6429, 56, TRUE);
+            MakeSprite( WHammer,        DEF_SPRID_WEAPON_W + 6430, 56, TRUE);
+            MakeSprite( WBHammer,        DEF_SPRID_WEAPON_W + 6431, 56, TRUE);
+            MakeSprite( WBabHammer,    DEF_SPRID_WEAPON_W + 6432, 56, TRUE);
+            MakeSprite( WBShadowSword,DEF_SPRID_WEAPON_W + 6433, 56, TRUE);
+            MakeSprite( WBerserkWand, DEF_SPRID_WEAPON_W + 6434, 56, TRUE);
+            MakeSprite( Wstaff1,        DEF_SPRID_WEAPON_W + 6435, 56, TRUE);
+            MakeSprite( Wstaff2,        DEF_SPRID_WEAPON_W + 6436, 56, TRUE);
+            MakeSprite( WStaff3,        DEF_SPRID_WEAPON_W + 6437, 56, TRUE);
+            MakeSprite( WKlonessWand, DEF_SPRID_WEAPON_W + 6439, 56, TRUE);
+            MakeSprite( WReMagicWand, DEF_SPRID_WEAPON_W + 6438, 56, TRUE);
+             bows 40 41 below
+            MakeSprite( WDirectBow,    DEF_SPRID_WEAPON_W + 6442, 56, TRUE);
+            MakeSprite( WFireBow,        DEF_SPRID_WEAPON_W + 6443, 56, TRUE);
+            m_cLoading = 92;
+        }
+        break;
+bueno... a eso le agregan esto 
+
+Código
+MakeSprite( WBBAabHammer,    DEF_SPRID_WEAPON_W + 6490, 56, TRUE);
+en el case 64 encontramos esto 
+
+Código
+case 64
+        {    MakeSprite( MHammer,        DEF_SPRID_WEAPON_M + 6430, 56, TRUE);
+            MakeSprite( MBHammer,        DEF_SPRID_WEAPON_M + 6431, 56, TRUE);
+            MakeSprite( MBabHammer,    DEF_SPRID_WEAPON_M + 6432, 56, TRUE);
+            MakeSprite( MBShadowSword,DEF_SPRID_WEAPON_M + 6433, 56, TRUE);
+            MakeSprite( MBerserkWand, DEF_SPRID_WEAPON_M + 6434, 56, TRUE);
+            MakeSprite( Mstaff1,        DEF_SPRID_WEAPON_M + 6435, 56, TRUE); Staff
+            MakeSprite( Mstaff2,        DEF_SPRID_WEAPON_M + 6436, 56, TRUE);
+            MakeSprite( MStaff3,        DEF_SPRID_WEAPON_M + 6437, 56, TRUE);
+            MakeSprite( MReMagicWand, DEF_SPRID_WEAPON_M + 6438, 56, TRUE);
+            MakeSprite( MKlonessWand, DEF_SPRID_WEAPON_M + 6439, 56, TRUE);
+            MakeSprite( MDirectBow,    DEF_SPRID_WEAPON_M + 6442, 56, TRUE);
+            MakeSprite( MFireBow,        DEF_SPRID_WEAPON_M + 6443, 56, TRUE);
+
+            m_cLoading = 68;
+        }
+        break;
+ahi agreguen esto 
+Código
+MakeSprite( MBBAabHammer,    DEF_SPRID_WEAPON_M + 6490, 56, TRUE);
+listo ya nos lee los dos archivos...
+
+ahora aca dejo el item.
+Código
+Item = 1506 BlackKnightBBH          1 9 24 10 10 10 10 10 10 45000 0 15 10 -15000 30000 90 15 310 0 0 0 14 1 11
+bueno.. ahora busquen estan fuincion 
+
+int CGame_iGetAttackType()
+
+la reemplasan por esta 
+
+Código
+int CGame_iGetAttackType()
+{int wWeaponType;
+    wWeaponType = ((m_sPlayerAppr2 & 0x0FF0)  4);
+    if (wWeaponType == 0)
+    {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[5] = 100)) return 20;
+        else return 1;         Boxe
+    }else if ((wWeaponType = 1) && (wWeaponType = 2))
+    {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[7] = 100)) return 21;
+        else return 1;        Dag, SS
+    }else if ((wWeaponType  2) && (wWeaponType  20))
+    {    if ((wWeaponType == 7)(wWeaponType == 18))
+        {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[9] = 100)) return 22;
+            else return 1;   Esterk
+        }else if (wWeaponType == 15)
+        {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[8] = 100)) return 30;
+            else return 5;   StormBlade
+        }else{    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[8] = 100)) return 23;
+    else return 1;     LongSwords
+    }
+    }else if ((wWeaponType = 20) && (wWeaponType  29))
+    {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[10] = 100)) return 24;
+        else return 1;         Haches
+    }else if ((wWeaponType == 30)  (wWeaponType == 31)  (wWeaponType == 32)  (wWeaponType == 90))
+    {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[14] = 100)) return 26;
+        else return 1;         Hammers
+    }else if ((wWeaponType = 34) && (wWeaponType  40))
+    {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[21] = 100)) return 27;
+        else return 1;
+    }else if ((wWeaponType = 40) && (wWeaponType  44))
+    {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[6] = 100)) return 25;
+        else return 2;         Bows
+    }else if ((wWeaponType == 29)  (wWeaponType == 33))
+    {    if ((m_iSuperAttackLeft  0) && (m_bSuperAttackMode == TRUE) && (m_cSkillMastery[8] = 100)) return 23;
+        else return 1;         LS
+    }
+    return 0;
+}
+buscan esta 
+
+int CGame_iGetWeaponSkillType()
+
+reemplasan por esta 
+
+Código
+int CGame_iGetWeaponSkillType()
+{int wWeaponType;
+    wWeaponType = ((m_sPlayerAppr2 & 0x0FF0)  4);
+    if (wWeaponType == 0)
+    {    return 5;  Openhand
+    }else if ((wWeaponType = 1) && (wWeaponType  3))
+    {    return 7;  SS
+    }else if ((wWeaponType = 3) && (wWeaponType  20))
+    {    if ((wWeaponType == 7)(wWeaponType == 18))  Esterk or KlonessEsterk
+             return 9;  Fencing
+        else return 8;  LS
+    }else if ((wWeaponType = 20) && (wWeaponType  29))
+    {    return 10;  Axe (20..28)
+    }else if ((wWeaponType == 30)  (wWeaponType == 31)  (wWeaponType == 32)  (wWeaponType == 90))
+    {    return 14;  Hammer (30,31,32)
+    }else if ((wWeaponType = 34) && (wWeaponType  40))
+    {    return 21;  Wand
+    }else if ((wWeaponType = 40) && (wWeaponType  44))
+    {    return 6;   Bow
+    }else if ((wWeaponType == 29)  (wWeaponType == 33))
+    {    return 8;   LS LightingBlade  BlackShadow
+    }
+    return 1;  Fishing !
+}
+en la funcion 
+
+DrawObject_OnAttack
+
+busquen dnd dise el primer Switch de todos..
+Código
+switch (_tmp_sOwnerType) {
+    case 1
+    case 2
+    case 3
+        if ((_tmp_sAppr2 & 0xF000) != 0) {
+iWeapon = ((_tmp_sAppr2 & 0x0FF0)  4);
+if (iWeapon == 0) iAdd = 6;
+abajo de if ((iWeapon = 1) && (iWeapon = 39)) iAdd = 6;
+
+agreguen esto 
+Código
+if (((iWeapon = 90) && (iWeapon = 91))) iAdd = 6;
+mas abajo esta el case 4,5,6 ... abajo de (se repite)
+if ((iWeapon = 1) && (iWeapon = 39)) iAdd = 6; ..
+
+agreguen nuevamente 
+
+Código
+if ((iWeapon = 90) && (iWeapon = 91)) iAdd = 6;
+en la funcion
+
+DrawObject_OnAttackMove
+
+hacemos los mismo. case 1,2,3 copian y pegan lo de arriba.
+case 4,5,6 copian y pegan tbm...
+
+en la funcion 
+
+iObjectFrameCounter
+
+busquen (esta bastante abajo xD...) 
+Código
+if ((sWeaponType = 1) && (sWeaponType = 2))
+{    m_pGame-PlaySound('C', 1, sDist, lPan);
+}
+apartir  m_pGame-PlaySound('C', 11, sDist, lPan);
+hasta  break;
+
+copien y peguen esto 
+Código
+m_pGame-PlaySound('C', 11, sDist, lPan);
+                        }else if (m_pData[dX][dY].m_cOwnerFrame == 5)  vu comme case 5
+                        {    sWeaponType = ((m_pData[dX][dY].m_sAppr2 & 0x0FF0)  4);
+                            if ((sWeaponType = 1) && (sWeaponType = 2))
+                            {    m_pGame-PlaySound('C', 1, sDist, lPan);
+                            }else if ((sWeaponType = 3) && (sWeaponType = 19))
+                            {    m_pGame-PlaySound('C', 2, sDist, lPan);
+                               }else if ((sWeaponType = 20) && (sWeaponType = 39))
+                            {    m_pGame-PlaySound('C', 18, sDist, lPan);
+                               }else if ((sWeaponType = 40) && (sWeaponType = 59))
+                            {    m_pGame-PlaySound('C', 3, sDist, lPan);
+                            }else if ((sWeaponType = 90) && (sWeaponType = 91))
+                            {    m_pGame-PlaySound('C', 18, sDist, lPan);
+                        }    }
+                        break;
+bajen mas abajo y van a encontrar lo mismo... en esto 
+
+Código
+switch (m_pData[dX][dY].m_sOwnerType) {
+                    case 1
+                    case 2
+                    case 3
+                    case 4
+                    case 5
+                    case 6
+reemplasen todo eso por esto 
+
+Código
+switch (m_pData[dX][dY].m_sOwnerType) {
+                    case 1
+                    case 2
+                    case 3
+                    case 4
+                    case 5
+                    case 6
+                        if ((m_pData[dX][dY].m_sAppr2 & 0xF000) != 0)
+                        {    sWeaponType = ((m_pData[dX][dY].m_sAppr2 & 0x0FF0)  4);
+                            if ((sWeaponType = 1) && (sWeaponType = 2))
+                            {    if (m_pData[dX][dY].m_cOwnerFrame == 5)
+                                {    m_pGame-PlaySound('C', 1, sDist, lPan);
+                                }
+                            }else if ((sWeaponType = 3) && (sWeaponType = 19))
+                            {    if (m_pData[dX][dY].m_cOwnerFrame == 5)
+                                {    m_pGame-PlaySound('C', 2, sDist, lPan);
+                                   }
+                            }else if ((sWeaponType = 20) && (sWeaponType = 39))
+                            {    if (m_pData[dX][dY].m_cOwnerFrame == 2)
+                                {    m_pGame-PlaySound('C', 18, sDist, lPan);
+                                   }
+                            }else if ((sWeaponType = 40) && (sWeaponType = 59))
+                            {    if (m_pData[dX][dY].m_cOwnerFrame == 3)
+                            {    m_pGame-PlaySound('C', 3, sDist, lPan);
+                                }
+                            }else if  ((sWeaponType = 90) && (sWeaponType = 91))
+                            {    if (m_pData[dX][dY].m_cOwnerFrame == 2)
+                                {    m_pGame-PlaySound('C', 18, sDist, lPan);
+                           }    }    }
+                        break;
+ahora vamos al hg xD...
+
+esta funcion _iGetWeaponSkillType
+la reemplasan por esta 
+Código
+int CGame_iGetWeaponSkillType(int iClientH)
+{
+ int wWeaponType;
+
+    if (m_pClientList[iClientH] == NULL) return 0;
+
+    wWeaponType = ((m_pClientList[iClientH]-m_sAppr2 & 0x0FF0)  4);
+
+    if (wWeaponType == 0) {
+        return 5;
+    }
+    else if ((wWeaponType = 1) && (wWeaponType = 2)) {
+        return 7;
+    }
+    else if ((wWeaponType  2) && (wWeaponType  20)) {
+        if (wWeaponType == 7) 
+             return 9;
+        else return 8;
+    }
+    else if ((wWeaponType = 20) && (wWeaponType  30)) {
+        return 10;
+    }
+    else if ((wWeaponType = 30) && (wWeaponType  35)) {
+        return 14;
+    }
+    else if ((wWeaponType = 90) && (wWeaponType  92)) {
+        return 14;
+    }
+    else if ((wWeaponType = 35) && (wWeaponType  40)){
+        return 21;
+    }
+    else if ((wWeaponType  40) && (wWeaponType  44)) {
+        return 6;
+    }
+    
+    return 1;
+}
+en la funcion iCalculateAttackEffect
+
+bajen un toque y tienen esto 
+
+Código
+cAttackerSide = m_pClientList[sAttackerH]-m_cSide;
+a apartir de eso ... hasta esto 
+Código
+iAttackerHitRatio += 50;
+copien y peguen reemplasando eso por esto(fijensen que esta incluido !!!!!!) 
+
+Código
+cAttackerSide = m_pClientList[sAttackerH]-m_cSide;
+        if (wWeaponType == 0) {
+            iAP_SM = iAP_L    = iDice(1, (m_pClientList[sAttackerH]-m_iStr  12));
+            if (iAP_SM = 0) iAP_SM = 1;
+            if (iAP_L  = 0) iAP_L  = 1;
+            iAttackerHitRatio = m_pClientList[sAttackerH]-m_iHitRatio + m_pClientList[sAttackerH]-m_cSkillMastery[5];
+            m_pClientList[sAttackerH]-m_sUsingWeaponSkill = 5 ;
+
+        }
+        else if ((wWeaponType = 1) && (wWeaponType  40)) {
+            iAP_SM = iDice(m_pClientList[sAttackerH]-m_cAttackDiceThrow_SM, m_pClientList[sAttackerH]-m_cAttackDiceRange_SM);
+            iAP_L  = iDice(m_pClientList[sAttackerH]-m_cAttackDiceThrow_L, m_pClientList[sAttackerH]-m_cAttackDiceRange_L);
+
+            iAP_SM += m_pClientList[sAttackerH]-m_cAttackBonus_SM;
+            iAP_L  += m_pClientList[sAttackerH]-m_cAttackBonus_L;
+
+            iAttackerHitRatio = m_pClientList[sAttackerH]-m_iHitRatio;
+
+            dTmp1 = (double)iAP_SM;
+            if (m_pClientList[sAttackerH]-m_iStr = 0)
+                dTmp2 = 1.0f;
+            else dTmp2 = (double)m_pClientList[sAttackerH]-m_iStr;
+
+            dTmp2 = dTmp2  5.0f;
+            dTmp3 = dTmp1 + (dTmp1  (dTmp2  100.0f));
+            iAP_SM = (int)(dTmp3 +0.5f);
+
+            dTmp1 = (double)iAP_L;
+            if (m_pClientList[sAttackerH]-m_iStr = 0)
+                dTmp2 = 1.0f;
+            else dTmp2 = (double)m_pClientList[sAttackerH]-m_iStr;
+
+            dTmp2 = dTmp2  5.0f;
+            dTmp3 = dTmp1 + (dTmp1  (dTmp2  100.0f));
+            iAP_L = (int)(dTmp3 +0.5f);
+        }
+        else if ((wWeaponType = 90) && (wWeaponType  92)) {
+            iAP_SM = iDice(m_pClientList[sAttackerH]-m_cAttackDiceThrow_SM, m_pClientList[sAttackerH]-m_cAttackDiceRange_SM);
+            iAP_L  = iDice(m_pClientList[sAttackerH]-m_cAttackDiceThrow_L, m_pClientList[sAttackerH]-m_cAttackDiceRange_L);
+
+            iAP_SM += m_pClientList[sAttackerH]-m_cAttackBonus_SM;
+            iAP_L  += m_pClientList[sAttackerH]-m_cAttackBonus_L;
+
+            iAttackerHitRatio = m_pClientList[sAttackerH]-m_iHitRatio;
+
+            dTmp1 = (double)iAP_SM;
+            if (m_pClientList[sAttackerH]-m_iStr = 0)
+                dTmp2 = 1.0f;
+            else dTmp2 = (double)m_pClientList[sAttackerH]-m_iStr;
+
+            dTmp2 = dTmp2  5.0f;
+            dTmp3 = dTmp1 + (dTmp1  (dTmp2  100.0f));
+            iAP_SM = (int)(dTmp3 +0.5f);
+
+            dTmp1 = (double)iAP_L;
+            if (m_pClientList[sAttackerH]-m_iStr = 0)
+                dTmp2 = 1.0f;
+            else dTmp2 = (double)m_pClientList[sAttackerH]-m_iStr;
+
+            dTmp2 = dTmp2  5.0f;
+            dTmp3 = dTmp1 + (dTmp1  (dTmp2  100.0f));
+            iAP_L = (int)(dTmp3 +0.5f);
+        }
+        else if ((wWeaponType  40) && (wWeaponType  90)) {
+            iAP_SM = iDice(m_pClientList[sAttackerH]-m_cAttackDiceThrow_SM, m_pClientList[sAttackerH]-m_cAttackDiceRange_SM);
+            iAP_L  = iDice(m_pClientList[sAttackerH]-m_cAttackDiceThrow_L, m_pClientList[sAttackerH]-m_cAttackDiceRange_L);
+
+            iAP_SM += m_pClientList[sAttackerH]-m_cAttackBonus_SM;
+            iAP_L  += m_pClientList[sAttackerH]-m_cAttackBonus_L;
+
+            iAttackerHitRatio = m_pClientList[sAttackerH]-m_iHitRatio;
+            bNormalMissileAttack = TRUE;
+
+            iAP_SM += iDice(1, (m_pClientList[sAttackerH]-m_iStr  20));
+            iAP_L  += iDice(1, (m_pClientList[sAttackerH]-m_iStr  20));
+        }    
+iAttackerHitRatio += 50;
+ballan abajo de todo... busquen el CAE_SKIPCOUNTERATTACK ... copien y reemplasen por esto xD.. 
+
+Código
+CAE_SKIPCOUNTERATTACK;
+
+                if ((iDice(1,3) == 2) && (m_pNpcList[sTargetH]-m_cActionLimit == 0))
+                    m_pNpcList[sTargetH]-m_dwTime = dwTime;
+
+                if (cAttackerType == DEF_OWNERTYPE_PLAYER) 
+                    sAttackerWeapon = ((m_pClientList[sAttackerH]-m_sAppr2 & 0x0FF0)  4);
+                else sAttackerWeapon = 1;
+
+                if ((wWeaponType  40) && (m_pNpcList[sTargetH]-m_cActionLimit == 4)) {
+                     if (sTgtX == sAtkX) {
+                        if (sTgtY == sAtkY)     goto CAE_SKIPDAMAGEMOVE2;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 5;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 1;
+                    }
+                    else if (sTgtX  sAtkX) {
+                        if (sTgtY == sAtkY)     cDamageMoveDir = 3;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 4;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 2;
+                    }
+                    else if (sTgtX  sAtkX) {
+                        if (sTgtY == sAtkY)     cDamageMoveDir = 7;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 6;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 8;                            
+                    }
+                if (((wWeaponType = 90) && (wWeaponType = 91)) && (m_pNpcList[sTargetH]-m_cActionLimit == 4)) {
+                     if (sTgtX == sAtkX) {
+                        if (sTgtY == sAtkY)     goto CAE_SKIPDAMAGEMOVE2;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 5;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 1;
+                    }
+                    else if (sTgtX  sAtkX) {
+                        if (sTgtY == sAtkY)     cDamageMoveDir = 3;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 4;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 2;
+                    }
+                    else if (sTgtX  sAtkX) {
+                        if (sTgtY == sAtkY)     cDamageMoveDir = 7;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 6;
+                        else if (sTgtY  sAtkY) cDamageMoveDir = 8;                            
+                }
+                }
+
+                    dX = m_pNpcList[sTargetH]-m_sX + _tmp_cTmpDirX[cDamageMoveDir];
+                    dY = m_pNpcList[sTargetH]-m_sY + _tmp_cTmpDirY[cDamageMoveDir];
+
+                    if (m_pMapList[m_pNpcList[sTargetH]-m_cMapIndex]-bGetMoveable(dX, dY, NULL) == FALSE) {
+                        cDamageMoveDir = iDice(1,8);
+                        dX = m_pNpcList[sTargetH]-m_sX + _tmp_cTmpDirX[cDamageMoveDir];
+                        dY = m_pNpcList[sTargetH]-m_sY + _tmp_cTmpDirY[cDamageMoveDir];
+
+                        if (m_pMapList[m_pNpcList[sTargetH]-m_cMapIndex]-bGetMoveable(dX, dY, NULL) == FALSE) goto CAE_SKIPDAMAGEMOVE2;
+                    }
+
+                    m_pMapList[m_pNpcList[sTargetH]-m_cMapIndex]-ClearOwner(5, sTargetH, DEF_OWNERTYPE_NPC, m_pNpcList[sTargetH]-m_sX, m_pNpcList[sTargetH]-m_sY);
+                    m_pMapList[m_pNpcList[sTargetH]-m_cMapIndex]-SetOwner(sTargetH, DEF_OWNERTYPE_NPC, dX, dY);
+                    m_pNpcList[sTargetH]-m_sX   = dX;
+                    m_pNpcList[sTargetH]-m_sY   = dY;
+                    m_pNpcList[sTargetH]-m_cDir = cDamageMoveDir;
+
+                    SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, NULL, NULL, NULL);
+
+                    dX = m_pNpcList[sTargetH]-m_sX + _tmp_cTmpDirX[cDamageMoveDir];
+                    dY = m_pNpcList[sTargetH]-m_sY + _tmp_cTmpDirY[cDamageMoveDir];
+
+                    if (m_pMapList[m_pNpcList[sTargetH]-m_cMapIndex]-bGetMoveable(dX, dY, NULL) == FALSE) {
+                        cDamageMoveDir = iDice(1,8);
+                        dX = m_pNpcList[sTargetH]-m_sX + _tmp_cTmpDirX[cDamageMoveDir];
+                        dY = m_pNpcList[sTargetH]-m_sY + _tmp_cTmpDirY[cDamageMoveDir];
+                        if (m_pMapList[m_pNpcList[sTargetH]-m_cMapIndex]-bGetMoveable(dX, dY, NULL) == FALSE) goto CAE_SKIPDAMAGEMOVE2;
+                    }
+
+                    m_pMapList[m_pNpcList[sTargetH]-m_cMapIndex]-ClearOwner(5, sTargetH, DEF_OWNERTYPE_NPC, m_pNpcList[sTargetH]-m_sX, m_pNpcList[sTargetH]-m_sY);
+                    m_pMapList[m_pNpcList[sTargetH]-m_cMapIndex]-SetOwner(sTargetH, DEF_OWNERTYPE_NPC, dX, dY);
+                    m_pNpcList[sTargetH]-m_sX   = dX;
+                    m_pNpcList[sTargetH]-m_sY   = dY;
+                    m_pNpcList[sTargetH]-m_cDir = cDamageMoveDir;
+
+                    SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, NULL, NULL, NULL);
+
+                     if (bCheckEnergySphereDestination(sTargetH, sAttackerH, cAttackerType) == TRUE) {
+                        if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+                            iExp = (m_pNpcList[sTargetH]-m_iExp3);
+                            if (m_pNpcList[sTargetH]-m_iNoDieRemainExp  0)
+                                iExp += m_pNpcList[sTargetH]-m_iNoDieRemainExp;
+
+                            if (m_pClientList[sAttackerH]-m_iAddExp != NULL) {
+                                dTmp1 = (double)m_pClientList[sAttackerH]-m_iAddExp;
+                                dTmp2 = (double)iExp;
+                                dTmp3 = (dTmp1100.0f)dTmp2;
+                                iExp += (int)dTmp3;
+                            }
+
+                            if ((m_bIsCrusadeMode == TRUE) && (iExp  10)) iExp = 10;
+
+                            GetExp(sAttackerH, iExp);
+
+                            DeleteNpc(sTargetH);
+                            return FALSE;
+                        }
+                    }
+ahora en CAE_SKIPDAMAGEMOVE2 desde ahy asta el fin de la funcion copien y peguen esto ... reemplasen obio u.u ...
+
+Código
+CAE_SKIPDAMAGEMOVE2;
+                }
+                else {
+                    SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, sAttackerWeapon, NULL);
+                }
+
+                if (m_pNpcList[sTargetH]-m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] == 1) {
+                    m_pNpcList[sTargetH]-m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = NULL;
+                    bRemoveFromDelayEventList(sTargetH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_HOLDOBJECT);
+                }
+                else if (m_pNpcList[sTargetH]-m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] == 2) {
+                    if ((m_pNpcList[sTargetH]-m_iHitDice  50) && (iDice(1, 10) == 5)) {
+                        m_pNpcList[sTargetH]-m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = NULL;
+                        bRemoveFromDelayEventList(sTargetH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_HOLDOBJECT);
+                    }
+                }
+
+                if ( (m_pNpcList[sTargetH]-m_iNoDieRemainExp  0) && (m_pNpcList[sTargetH]-m_bIsSummoned != TRUE) && 
+                    (cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != NULL) ) {
+                        if (m_pNpcList[sTargetH]-m_iNoDieRemainExp  iDamage) {
+                            iExp = iDamage;
+                            m_pNpcList[sTargetH]-m_iNoDieRemainExp -= iDamage;
+                        }
+                        else {
+                            iExp = m_pNpcList[sTargetH]-m_iNoDieRemainExp;
+                            m_pNpcList[sTargetH]-m_iNoDieRemainExp = 0;
+                        }
+
+                        if (m_pClientList[sAttackerH]-m_iAddExp != NULL) {
+                            dTmp1 = (double)m_pClientList[sAttackerH]-m_iAddExp;
+                            dTmp2 = (double)iExp;
+                            dTmp3 = (dTmp1100.0f)dTmp2;
+                            iExp += (int)dTmp3;
+                        }
+
+                        if (m_bIsCrusadeMode == TRUE) iExp = iExp3;
+
+                        if (m_pClientList[sAttackerH]-m_iLevel  100 ) {
+                            switch (m_pNpcList[sTargetH]-m_sType) {
+                            case 55
+                            case 56
+                                iExp = 0;
+                                break;
+                            default break;
+                            }
+                        }
+                    }
+            }
+            break;
+        }
+
+        if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+            if (m_pClientList[sAttackerH]-m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)
+                sWeaponIndex = m_pClientList[sAttackerH]-m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+            else sWeaponIndex = m_pClientList[sAttackerH]-m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+
+            if ((sWeaponIndex != -1) && (bArrowUse != TRUE)) {
+                if ((m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex] != NULL) &&
+                    (m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex]-m_sIDnum != 231) ) {
+                        if (bKilled == FALSE)
+                            CalculateSSN_ItemIndex(sAttackerH, sWeaponIndex, 1);
+                        else {
+                            if (m_pClientList[sAttackerH]-m_iHP = 3)
+                                CalculateSSN_ItemIndex(sAttackerH, sWeaponIndex, iDice(1, iKilledDice)2);
+                            else CalculateSSN_ItemIndex(sAttackerH, sWeaponIndex, iDice(1, iKilledDice));
+                        }
+                    }
+
+                    if ( (m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex] != NULL) && 
+                        (m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex]-m_wMaxLifeSpan != 0) ) {
+                            iWepLifeOff = 1;
+                            if ((wWeaponType = 1) && (wWeaponType  40)) {
+                                switch (m_pMapList[m_pClientList[sAttackerH]-m_cMapIndex]-m_cWhetherStatus) {
+                                case 0    break;
+                                case 1    if (iDice(1,3) == 1) iWepLifeOff++; break;
+                                case 2    if (iDice(1,2) == 1) iWepLifeOff += iDice(1,2); break;
+                                case 3    if (iDice(1,2) == 1) iWepLifeOff += iDice(1,3); break;
+                                }
+                            }
+                    if ( (m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex] != NULL) && 
+                        (m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex]-m_wMaxLifeSpan != 0) ) {
+                            iWepLifeOff = 1;
+                            if ((wWeaponType = 90) && (wWeaponType = 91)) {
+                                switch (m_pMapList[m_pClientList[sAttackerH]-m_cMapIndex]-m_cWhetherStatus) {
+                                case 0    break;
+                                case 1    if (iDice(1,3) == 1) iWepLifeOff++; break;
+                                case 2    if (iDice(1,2) == 1) iWepLifeOff += iDice(1,2); break;
+                                case 3    if (iDice(1,2) == 1) iWepLifeOff += iDice(1,3); break;
+                                }    }
+                }
+                    if (m_pClientList[sAttackerH]-m_cSide != 0) {
+                            if (m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex]-m_wCurLifeSpan  iWepLifeOff) 
+                                    m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex]-m_wCurLifeSpan = 0;
+                                else m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex]-m_wCurLifeSpan -= iWepLifeOff;
+                            }
+
+                            if (m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex]-m_wCurLifeSpan == 0) {
+                                SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[sAttackerH]-m_pItemList[sWeaponIndex]-m_cEquipPos, sWeaponIndex, NULL, NULL);
+                                ReleaseItemHandler(sAttackerH, sWeaponIndex, TRUE);
+                            }
+                        }
+            }
+            else {
+                if (wWeaponType == 0) {
+                    CalculateSSN_SkillIndex(sAttackerH, 5, 1);
+                }
+            }
+        }
+    }
+    else {
+        if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+            m_pClientList[sAttackerH]-m_iComboAttackCount = 0;
+        }
+    }
+
+    return iExp;
+}
+ultimamente volvamos al cliente buscamos 
+void CGameDKGlare(int iWeaponColor, int iWeaponIndex, int iWeaponGlare)
+
+reemplasamos por 
+
+Código
+void CGameDKGlare(int iWeaponColor, int iWeaponIndex, int iWeaponGlare)
+{    if (((iWeaponIndex = DEF_SPRID_WEAPON_M + 6414)&&(iWeaponIndex  DEF_SPRID_WEAPON_M + 6414 + 56))
+         ((iWeaponIndex = DEF_SPRID_WEAPON_W + 6414)&&(iWeaponIndex  DEF_SPRID_WEAPON_W + 6414 + 56)))
+    {    iWeaponGlare = 3;
+    }else if (((iWeaponIndex = DEF_SPRID_WEAPON_M + 6437)&&(iWeaponIndex  DEF_SPRID_WEAPON_M + 6437 + 56))
+         ((iWeaponIndex = DEF_SPRID_WEAPON_W + 6437)&&(iWeaponIndex  DEF_SPRID_WEAPON_W + 6437 + 56)))
+    {    iWeaponGlare = 2;
+    }else if (((iWeaponIndex = DEF_SPRID_WEAPON_M + 6490)&&(iWeaponIndex  DEF_SPRID_WEAPON_M + 6490 + 56))
+         ((iWeaponIndex = DEF_SPRID_WEAPON_W + 6490)&&(iWeaponIndex  DEF_SPRID_WEAPON_W + 6490 + 56)))
+    {    iWeaponGlare = 1;
+    }
+}
+ya esta !... arma con glare y sprite nuevo listo para usarse xD ... agreguen a itemupgrade y la asen +15 con los mps ...
+
+espero les sirva... CHAUUUUUU !! D

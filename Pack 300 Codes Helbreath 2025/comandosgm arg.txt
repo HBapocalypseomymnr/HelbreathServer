@@ -1,0 +1,63 @@
+Comandos de Administración (Nivel 5)
+Gestión de puntos y recompensas
+/asigek <player> <cantidad> – Asigna puntos a un jugador.
+/addrep <player> <cantidad> – Añade reputación a un jugador.
+/addpk <player> <cantidad> – Añade puntos PK a un jugador.
+/addcoins <player> <cantidad> – Añade monedas a un jugador.
+Portales y eventos
+/getticket – Obtiene un ticket de zona de combate.
+/portal <ubicación> – Teletransporta a un jugador a una ubicación específica.
+/closeportal1 – Cierra el portal 1.
+/closeportal2 – Cierra el portal 2.
+/closeallportal – Cierra todos los portales.
+Eventos de juego
+/openrush – Inicia el evento Rush.
+/closerush – Finaliza el evento Rush.
+/startctf – Inicia el evento Capture The Flag.
+/endctf – Finaliza el evento Capture The Flag.
+/startabaddon – Inicia el evento Abaddon.
+/endabaddon – Finaliza el evento Abaddon.
+/startworldwar – Inicia la Guerra Mundial.
+/endworldwar – Finaliza la Guerra Mundial.
+/starttd – Inicia el evento Tower Defence.
+/endtd – Finaliza el evento Tower Defence.
+/allvsall – Inicia el evento Todos contra Todos.
+/endallvsall – Finaliza el evento Todos contra Todos.
+/soccer – Activa el modo fútbol.
+/terminar – Finaliza el modo fútbol.
+/happyhour <multiplicador> – Inicia la Happy Hour con un multiplicador.
+/happyday <multiplicador> – Inicia el Happy Day con un multiplicador.
+/finalfight – Inicia el evento Final Fight.
+/closefinalfight – Finaliza el evento Final Fight.
+/startcvc – Inicia el evento City vs. City.
+/endcvc – Finaliza el evento City vs. City.
+/summonevent – Inicia el evento de invocación de monstruos.
+/endsummonevent – Finaliza el evento de invocación de monstruos.
+/reloadsummon – Recarga la configuración del evento de invocación.
+/starthod – Inicia el evento Hell of Death.
+/endhod – Finaliza el evento Hell of Death.
+Gestión de usuarios y baneos
+/dc <player> – Expulsa a un jugador del servidor.
+/checkuserip <player> – Verifica la IP de un jugador.
+/ipban <IP> – Banea una dirección IP.
+/reloadbanlist – Recarga la lista de baneos.
+Control de chat y mensajes
+/activarchat – Activa o desactiva el chat de administrador.
+/onlines – Muestra la cantidad de jugadores en línea.
+/actives – Muestra la cantidad de jugadores activos.
+Modos de ataque y habilidades
+/setattackmode <modo> – Establece el modo de ataque de un jugador.
+/checkprocess – Revisa procesos sospechosos en los jugadores.
+/reloadantihack – Recarga las configuraciones del sistema antitrampas.
+Gestión de mapas y accesos
+/openvip – Abre el mapa VIP.
+/closevip – Cierra el mapa VIP.
+/openmasacre – Abre el mapa Masacre.
+/closemasacre – Cierra el mapa Masacre.
+/opendkevent – Abre el mapa DK Event.
+/closedkevent – Cierra el mapa DK Event.
+/opentower – Abre el mapa Tower of Hell.
+/closedtower – Cierra el mapa Tower of Hell.
+Gestión del mercado
+/openmarket – Abre el mercado.
+/closemarket – Cierra el mercado y elimina los ítems en venta.

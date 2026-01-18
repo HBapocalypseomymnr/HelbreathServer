@@ -1,0 +1,30 @@
+El IC siempre tuvo un bug ... cuando te lo tiraban y tenias AMP o PFM, te entraba igual, aca les traigo el fix que arme.
+
+en los srcs de tu hg, game.cpp buscar:
+
+
+Código:
+case DEF_MAGICTYPE_INHIBITION:reemplazar todo el case por:
+
+
+Código:
+case DEF_MAGICTYPE_INHIBITION:
+					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+					switch (cOwnerType) {
+					case DEF_OWNERTYPE_PLAYER:
+						if ((m_pClientList[sOwnerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5) || (m_pClientList[sOwnerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)) goto MAGIC_NOEFFECT; // juan - ic fix para que no pegue si tiene AMP o PFM .
+						if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
+						if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INHIBITION ] != 0) goto MAGIC_NOEFFECT;
+						if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) == 0) goto MAGIC_NOEFFECT ;
+						//if (m_pClientList[sOwnerH]->m_iAdminUserLevel != 0) goto MAGIC_NOEFFECT;
+						m_pClientList[sOwnerH]->m_bInhibition = TRUE;
+						bRegisterDelayEvent(DEF_DELAYEVENTTYPE_MAGICRELEASE, DEF_MAGICTYPE_INHIBITION, dwTime + (m_pMagicConfigList[sType]->m_dwLastTime*1000), 
+							sOwnerH, cOwnerType, NULL, NULL, NULL, m_pMagicConfigList[sType]->m_sValue4, NULL, NULL);
+						break;
+					}
+					break;
+
+listo .. ic andando.
+
+
+by juan249

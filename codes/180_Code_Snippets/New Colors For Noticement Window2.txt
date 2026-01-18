@@ -1,0 +1,62 @@
+Author: zebedEE
+This code will add some new colors that can be displayed in the noticement window. If you already tried to find some new colors adding special char at the beginning of each line of your noticement, you should have noticed that only Black, White and Dark Blue colors were available.
+
+Image
+
+In Game.cpp, in function:
+
+Code: Select all
+    void CGame::DrawDialogBox_Text
+
+
+Find :
+
+Code: Select all
+    for (i = 0; i < 17; i++)
+    if (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView] != NULL) {
+    if (m_bDialogTrans == FALSE) { // v2.173
+      switch (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg[0]) {
+      case '_': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 255,255,255); break;
+      case ';': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 4, 0, 50); break;
+      default: PutAlignedString(sX +24, sX +236, sY + 50 +i*13, m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg, 45,25,25); break;
+      }
+    }
+    else PutAlignedString(sX +24, sX +236, sY + 50 +i*13, m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg, 0,0,0);
+    } 
+
+
+
+then replace with:
+
+Code: Select all
+    for (i = 0; i < 17; i++)
+    if (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView] != NULL) {
+    if (m_bDialogTrans == FALSE) { // v2.173
+      switch (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg[0]) {
+      // White
+      case '_': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 255,255,255); break;
+      // Dark Blue
+      case ';': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 4, 0, 50); break;
+      // Red
+      case ':': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 255, 0, 0); break;
+      // Yellow
+      case '/': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 250, 250, 0); break;
+      // Lime
+      case '*': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 0, 255, 0); break;
+      // Green
+      case '#': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 0, 200, 0); break;
+      // Blue
+      case '!': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 0, 0, 255); break;
+      // Magenta
+      case '?': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 255, 0, 255); break;
+      // Pink
+      case ',': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 255, 155, 255); break;
+      // Gray
+      case '$': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 155, 155, 155); break;
+      // Orange
+      case '^': PutAlignedString(sX +24, sX +236, sY + 50 +i*13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg+1), 255, 205, 0); break;
+      // Default Color
+      default: PutAlignedString(sX +24, sX +236, sY + 50 +i*13, m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg, 45,25,25); break;
+      }
+    }
+    else PutAlignedString(sX +24, sX +236, sY + 50 +i*13, m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg, 0,0,0);

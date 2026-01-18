@@ -1,0 +1,41 @@
+bueno, posteo el famoso anti-downer exclusivo para HBSS
+
+en la funcion:
+
+
+BOOL CGame::bAccept(class XSocket * pXSock)
+
+abajo de:
+
+
+PutLogList(G_cTxt);agregar:
+
+
+Código:
+        //Anti-Downer
+        ZeroMemory(m_pClientList[i]->m_cIPaddress, sizeof(m_pClientList[i]->m_cIPaddress)); 
+          m_pClientList[i]->m_pXSock->iGetPeerAddress(m_pClientList[i]->m_cIPaddress); 
+          for (x = 1; x < DEF_MAXCLIENTS; x++) 
+          if(m_pClientList[x] != NULL) { 
+          if(strcmp(m_pClientList[x]->m_cIPaddress, m_pClientList[i]->m_cIPaddress) == 0) iTotalip++; 
+          } 
+          if(iTotalip > 10) { 
+               delete m_pClientList[i]; 
+               m_pClientList[i] = NULL; 
+               return FALSE; 
+          } 
+          if(strlen(m_pClientList[i]->m_cIPaddress) < 10) { 
+               delete m_pClientList[i]; 
+               m_pClientList[i] = NULL; 
+               return FALSE; 
+          }
+
+--
+Arriba, en la funcion:
+
+ register int i, x;
+ int iTotalip;
+------
+
+
+by marleythe9

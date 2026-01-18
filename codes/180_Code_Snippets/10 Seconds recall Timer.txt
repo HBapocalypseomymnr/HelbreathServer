@@ -1,0 +1,43 @@
+Author: Kiruku
+
+Replace:
+
+Code: Select all
+    case DEF_MAGICTYPE_TELEPORT:
+         m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+        switch (m_pMagicConfigList[sType]->m_sValue4) {
+        case 1:
+        if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) && (sOwnerH == iClientH) ) {
+          RequestTeleportHandler(iClientH, "1  ");
+        }
+        break;
+        }
+        break;
+
+
+
+With:
+
+Code: Select all
+    case DEF_MAGICTYPE_TELEPORT:
+         m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+        switch (m_pMagicConfigList[sType]->m_sValue4) {
+        case 1:
+        if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) && (sOwnerH == iClientH) ) {
+    if ((dwTime - m_pClientList[iClientH]->m_dwLogoutHackCheck) > 10000) {
+    RequestTeleportHandler(iClientH, "1 ");
+    }else{
+    char cCannotRecall[256];
+    wsprintf(cCannotRecall,"Piss off you can't recall now ;P.");
+    ShowClientMsg(iClientH, cCannotRecall);
+    goto MAGIC_NOEFFECT;
+    }
+        }
+        break;
+        }
+        break;
+
+
+
+
+i guess thats it, if there are any errors it should be easy to fix, if its not easy to fix your just a too big noob to add. BTW. The timer part with the logout check checks for all kind of dmg and u can edit the delay however u want... if u want 20 seconds just change 10000 to 20000...

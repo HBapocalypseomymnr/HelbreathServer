@@ -1,0 +1,533 @@
+/---------------------------HG---------------------/
+
+/////////////////Game.h///////////
+
+CODE  
+
+//voteing
+char m_cVotemsg[50];
+char m_cVAnswer1[20];
+char m_cVAnswer2[20];
+int m_VResult1;
+int m_VResult2;
+BOOL bVote;
+int GM_VOTE;
+DWORD m_dwWaitV;
+//functions voteing
+void VoteHandler(int iClientH, char * pData, DWORD dwMsgSize);
+void AdminVote(int iClientH, char * pData, DWORD dwMsgSize);
+void VoteTime(); 
+
+
+
+/////////////////Game.cpp///////////////
+
+/***********add new function - Vote Ends*********/
+
+CODE  
+
+void CGame::VoteTime()
+{
+int m_ivote = 0;
+//m_dwWaitV
+DWORD dwTime = timeGetTime();
+if ((dwTime - m_dwWaitV) > 1000*30) {
+m_ivote = 1;
+m_dwWaitV = dwTime;
+}
+//-------------message------------//
+char cTxt[1024];
+if(bVote == TRUE) {
+if(m_ivote == 1) {
+//if(GM_VOTE == NULL) return;
+if(m_VResult1 > m_VResult2) {
+wsprintf(cTxt, "Resualts Answer1: %d Answer2: %d Resualt: %s", m_VResult1, m_VResult2, m_cVAnswer1);
+ShowRepNotice(GM_VOTE,cTxt);
+}
+if(m_VResult1 < m_VResult2) {
+wsprintf(cTxt, "Resualts Answer1: %d Answer2: %d Resualt: %s", m_VResult1, m_VResult2, m_cVAnswer2);
+ShowRepNotice(GM_VOTE, cTxt);
+}
+if(m_VResult1 == m_VResult2) {
+wsprintf(cTxt, "Resualts Answer1: %d Answer2: %d Resualt: %s Tied %s", m_VResult1, m_VResult2, m_cVAnswer1, m_cVAnswer2);
+ShowRepNotice(GM_VOTE,cTxt);
+}
+//reset everything back to nothing.
+strcpy(m_cVotemsg, "0");
+strcpy(m_cVAnswer1, "0");
+strcpy(m_cVAnswer2, "0");
+m_VResult1 = 0;
+m_VResult2 = 0;
+bVote = FALSE;
+GM_VOTE = NULL;
+return;
+}
+if(m_ivote == 1) {
+wsprintf(cTxt, "Error???");
+ShowRepNotice(GM_VOTE,cTxt);
+return;
+}
+}
+//-------------------end vote handler------------//
+}
+
+
+/**************Vote Begin**********/
+void CGame::AdminVote(int iClientH, char * pData, DWORD dwMsgSize)
+{
+//timer
+DWORD dwTime;
+char  cTxt[1024];
+ZeroMemory(cTxt, sizeof(cTxt));
+char   seps[] = "= \t\n";
+char   * token, cBuff[256], dM[50], dA[20], dA2[20];
+class  CStrTok * pStrTok;
+dwTime = timeGetTime();
+strcpy(dM, "0");
+strcpy(dA, "0");
+strcpy(dA2, "0");
+if (m_pClientList[iClientH] == NULL) return;
+if(bVote == TRUE) {
+wsprintf(cTxt, "Vote Already in Proggress");
+ShowRepNotice(iClientH,cTxt);
+return;
+}
+if (m_pClientList[iClientH]->m_iAdminUserLevel <= 0) {
+ // check admin level
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);
+ return;
+}
+if (m_pClientList[iClientH] == NULL) return;
+if ((dwMsgSize) <= 0) return;
+
+ZeroMemory(cBuff, sizeof(cBuff));
+memcpy(cBuff, pData, dwMsgSize);
+
+pStrTok = new class CStrTok(cBuff, seps);
+token = pStrTok->pGet();
+
+/*token = pStrTok->pGet();
+if (token != NULL) {
+ ZeroMemory(cMapName, sizeof(cMapName));
+ strcpy(cMapName, token);*/
+/*token = pStrTok->pGet();
+if (token != NULL) {
+ cMapName = atoi(token); 
+}*/
+
+token = pStrTok->pGet();
+if (token != NULL) {
+ strcpy(dM, token);
+}
+token = pStrTok->pGet();
+if (token != NULL) {
+ strcpy(dA, token);
+}
+token = pStrTok->pGet();
+if (token != NULL) {
+ strcpy(dA2, token);
+}
+//crusade apoc stuff...
+if(strcmp("crusade", dM) == 0) { 
+ strcpy(dM, "C");
+strcpy(m_cVAnswer1, "Yes");
+strcpy(m_cVAnswer2, "No");
+}
+if(strcmp("apocolypse", dM) == 0) {
+strcpy(dM, "A");
+strcpy(m_cVAnswer1, "Yes");
+strcpy(m_cVAnswer2, "No");
+}
+if(strcmp("heldenian", dM) == 0) {
+strcpy(dM, "H");
+strcpy(m_cVAnswer1, "Yes");
+strcpy(m_cVAnswer2, "No");
+}
+else {
+strcpy(m_cVotemsg, dM);
+strcpy(m_cVAnswer1, dA);
+strcpy(m_cVAnswer2, dA2);
+}
+int i;
+for (i = 0; i < DEF_MAXCLIENTS; i++) {
+//if(m_pClientList[i] == NULL) return;
+SendNotifyMsg(NULL, i, DEF_NOTIFY_VOTE, NULL, NULL, NULL, NULL);
+bVote = TRUE;
+GM_VOTE = iClientH;
+m_dwWaitV = dwTime;
+//VoteTime();
+}
+}
+
+/**********Incomeing Votes*********/
+void CGame::VoteHandler(int iClientH, char * pData, DWORD dwMsgSize)
+{
+char * cp;
+int   * ip;
+int m_iAnswer = 0;
+if (m_pClientList[iClientH] == NULL) return;
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+
+ip = (int *)cp;
+m_iAnswer = *ip;
+cp += 4;
+//add the votes
+if(bVote == FALSE) return;
+if(m_pClientList[iClientH]->m_iAdminUserLevel > 0)
+{
+if(m_iAnswer == 1) m_VResult1 += 2;
+if(m_iAnswer == 2) m_VResult2 += 2;
+}
+else {
+if(m_iAnswer == 1) m_VResult1 += 1;
+if(m_iAnswer == 2) m_VResult2 += 1;
+}
+}
+ 
+
+
+///////////CGame::SendNotifyMsg/////////
+add this under
+switch (wMsgType) {
+//////////////////////////////////////
+
+CODE  
+
+//*******notify clients vote started*******//
+case DEF_NOTIFY_VOTE:
+  //vote question
+ memcpy(cp, m_cVotemsg, 50);
+ cp += 50;
+ //vote answers
+ memcpy(cp, m_cVAnswer1, 20);
+ cp += 20;
+ memcpy(cp, m_cVAnswer2, 20);
+ cp += 20;
+
+ iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6 + 90 + 1);
+ break; 
+
+
+
+//////////////////CGame::MsgProcess()//////////////
+add under
+switch (cFrom) {
+//////////////////////////////
+
+CODE  
+
+  //incomeing votes
+  case MSGID_VOTE:
+   if(bVote == FALSE) break;
+   VoteHandler(iClientH, pData, dwMsgSize);
+   break; 
+
+
+//////////////////cGame::OnTimer()////////////////
+add uder
+"if ((dwTime - m_dwGameTime6) > 1000) {"
+/////////////////////////////////////
+
+CODE  
+//voteing timer refresh
+VoteTime(); 
+
+
+
+////////////CGame::CGame(HWND hWnd)//////////////
+
+CODE  
+bVote = FALSE; 
+
+
+
+//////////////CGame::ChatMsgHandler////////////new command//
+
+CODE  
+
+//cutom votes / voteing
+if (memcmp(cp, "/vote ", 6) == 0) {
+//DWORD dwTime = timeGetTime();
+AdminVote(iClientH, cp, dwMsgSize - 21);
+return;
+} 
+
+
+
+/--------------------------------Client--------------------------/
+
+///////////////Game.h///////////
+
+CODE  
+
+char cVotemsg[50];
+char cVanswer1[20];
+char cVanswer2[20];
+DWORD  m_dwVOTEC;
+BOOL bVote;
+
+void NotifyMsg_Vote(char * pData);
+void DrawDialogBox_Vote(short msX, short msY);
+void DlgBoxClick_Vote(short msX, short msY); 
+
+
+
+//////////////Game.cpp///////////
+
+//////////////New Functions////////
+
+CODE  
+
+//Voteing Started
+void CGame::NotifyMsg_Vote(char * pData)
+{char * cp;
+int  * ip;
+int i; 
+DWORD dwTime = timeGetTime();
+if(bVote == TRUE) return;
+ZeroMemory(cVotemsg, sizeof(cVotemsg));
+ZeroMemory(cVanswer1, sizeof(cVanswer1));
+ZeroMemory(cVanswer2, sizeof(cVanswer2));
+
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+
+//strcpy(cVotemsg, cp);
+memcpy(cVotemsg, cp, 50);
+cp += 50;
+
+memcpy(cVanswer1, cp, 20);
+cp += 20;
+
+memcpy(cVanswer2, cp, 20);
+cp += 20;
+
+if(((strlen(cVotemsg) > 0) && cVanswer1 > 0) && cVanswer2 > 0) bVote = TRUE; 
+if(bVote == FALSE) return;
+if (m_bIsDialogEnabled[54] == TRUE) return;
+m_dwVOTEC = dwTime;
+PlaySound('E', 6, 0);
+EnableDialogBox(54, NULL, NULL, NULL);
+}
+
+//------------vote dlg------------//
+void CGame::DrawDialogBox_Vote(short msX, short msY)//54
+{
+short sX, sY, szX,szY;
+char cTxt[120];
+char cTxt2[120];
+int nickheight=16;
+DWORD dwTime = timeGetTime();
+BOOL bFlag = FALSE;
+COLORREF tmpColor;
+sX = m_stDialogBoxInfo[54].sX;
+sY = m_stDialogBoxInfo[54].sY;
+szX = m_stDialogBoxInfo[54].sSizeX;
+szY = m_stDialogBoxInfo[54].sSizeY;
+//main dialog
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 6);
+if(strcmp("C", cVotemsg) == 0) { PutString_SprFont(sX+90,sY+15,VOTE_CRUSADE,1,1,8); bFlag = TRUE; }
+if(strcmp("A", cVotemsg) == 0) { PutString_SprFont(sX+90,sY+15,VOTE_APOC,1,1,8); bFlag = TRUE; }
+if(strcmp("H", cVotemsg) == 0) { PutString_SprFont(sX+90,sY+15,VOTE_HELD,1,1,8); bFlag = TRUE; }
+if(bFlag == TRUE) {
+wsprintf(cTxt, "%s", VOTE_YES);
+wsprintf(cTxt2, "%s", VOTE_NO);
+}
+else {
+PutString_SprFont(sX+90,sY+15,cVotemsg,1,1,8);
+wsprintf(cTxt, "%s", cVanswer1);
+wsprintf(cTxt2, "%s", cVanswer2);
+}
+//buttons
+if ((msX>sX+80) && (msX<sX+80+(strlen(cTxt) * 5)) && (msY>sY+25+14) && (msY<sY+45+14)) {  
+PutString(sX+80,sY+25+14,cTxt,RGB(255,255,255));
+}
+else {
+PutString(sX+80,sY+25+14,cTxt,RGB(0,0,0));
+}
+if ((msX>sX+140) && (msX<sX+140+(strlen(cTxt2) * 5)) && (msY>sY+25+14) && (msY<sY+45+14)) {
+PutString(sX+140,sY+25+14,cTxt2,RGB(255,255,255));
+}
+else {
+PutString(sX+140,sY+25+14,cTxt2,RGB(0,0,0));
+}
+//------------timer------//
+if(bVote == TRUE) {
+if ((dwTime - m_dwVOTEC) > 1000*30) {
+bVote = FALSE;
+//disable dialog
+if (m_bIsDialogEnabled[54] == TRUE) {
+DisableDialogBox(54);
+//end
+}
+m_dwVOTEC = dwTime;
+}
+}
+}
+
+
+//------------click vote dialog-----------//
+void CGame::DlgBoxClick_Vote(short msX, short msY) // 54 - marley
+{
+short sX, sY, szX,szY;
+int tmp,i;
+char cTxt[100];
+int m_iAnswer;
+
+sX = m_stDialogBoxInfo[54].sX;
+sY = m_stDialogBoxInfo[54].sY;
+szX = m_stDialogBoxInfo[54].sSizeX;
+szY = m_stDialogBoxInfo[54].sSizeY;
+
+if(bVote == TRUE) {
+if ((msX>sX+80) && (msX<sX+80+(strlen(cVanswer1) * 5)+14) && (msY>sY+25+14) && (msY<sY+45+14)) {
+m_iAnswer = 1;
+bVote = FALSE;
+bSendCommand(MSGID_VOTE, NULL, NULL, m_iAnswer, NULL, NULL, NULL);
+DisableDialogBox(54);
+PlaySound('E', 14, 5);
+}
+if ((msX>sX+140) && (msX<sX+140+(strlen(cVanswer2) * 5)) && (msY>sY+25+14) && (msY<sY+45+14)) {
+m_iAnswer = 2;
+bVote = FALSE;
+bSendCommand(MSGID_VOTE, NULL, NULL, m_iAnswer, NULL, NULL, NULL);
+DisableDialogBox(54);
+PlaySound('E', 14, 5);
+}
+  }
+} 
+
+
+
+//////////////CGame::CGame()////////////
+
+
+CODE  
+
+bVote =  FALSE;
+//voteing dialog
+m_stDialogBoxInfo[54].sX = 15;
+m_stDialogBoxInfo[54].sY = 15;
+m_stDialogBoxInfo[54].sSizeX = 270;
+m_stDialogBoxInfo[54].sSizeY = 105; 
+
+
+
+////////CGame::EnableDialogBox(int iBoxID, int cType, int sV1, int sV2, char * pString)/////
+add after
+switch (iBoxID) {
+/////////////////////////////
+
+CODE  
+
+case 54:
+if (m_bIsDialogEnabled[54] == FALSE)
+{
+  m_stDialogBoxInfo[54].sX = 15;
+  m_stDialogBoxInfo[54].sY = 15;
+}
+break; 
+
+
+
+////////////_iCheckDlgBoxFocus(short msX, short msY, char cButtonSide)/////
+add after
+switch (cDlgID) {
+////////////////////////////
+
+CODE  
+
+case 54: // marley - vote
+   m_stMCursor.cSelectedObjectType = DEF_SELECTEDOBJTYPE_DLGBOX;
+   m_stMCursor.sSelectedObjectID   = cDlgID;
+   break; 
+
+
+
+/////////////CGame::DrawDialogBoxs(short msX, short msY, short msZ, char cLB)/////
+add after
+switch (m_cDialogBoxOrder[i]) {
+///////////////////////////////
+
+CODE  
+
+ case 54:
+  DrawDialogBox_Vote(msX, msY);
+  break; 
+
+
+
+////////////_bCheckDlgBoxClick(short msX, short msY)/////////
+add after
+switch (cDlgID) {
+/////////////////////////
+
+CODE  
+
+  case 54:
+   DlgBoxClick_Vote(msX, msY);
+   break; 
+
+
+
+////////////CGame::NotifyMsgHandler(char * pData)///////
+add after
+switch (wEventType) {
+/////////////////////////
+
+
+CODE  
+//vote
+case DEF_NOTIFY_VOTE: //0x0B84
+ NotifyMsg_Vote(pData);
+ break; 
+
+
+
+////////////CGame::bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int iV2, int iV3, char * pString, int iV4)///
+add after
+switch (dwMsgID) {
+//////////////////////////
+
+CODE  
+
+//voteing
+case MSGID_VOTE:
+
+ dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);
+ *dwp = dwMsgID;
+ wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);
+ *wp = NULL;
+
+ cp = (char *)(cMsg + DEF_INDEX2_MSGTYPE + 2);
+
+ ip = (int *)cp;
+ *ip = iV1;
+ cp += 4;
+
+ iRet = m_pGSock->iSendMsg(cMsg, 10);
+ break; 
+
+
+
+/////////////lan_eng.h//////////////
+
+CODE  
+
+//---------------voteing------------//
+#define VOTE_CRUSADE "Crusade on?"
+#define VOTE_APOC "Apocolypse on?"
+#define VOTE_HELD "Heldenian on?"
+#define VOTE_YES "Yes"
+#define VOTE_NO "No" 
+
+
+
+Something i did for fun 
+
+Gms can make Custom Votes basicly 
+
+command /vote Question Answer1 Answer2
+
+/vote crusade, /vote apocalypse, /vote heldenian will auto set vote.
+
+code by marleythe9 

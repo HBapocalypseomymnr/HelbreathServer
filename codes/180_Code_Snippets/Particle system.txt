@@ -1,0 +1,1831 @@
+Particle system
+Author - Orkl
+
+
+
+Page: 1/4
+
+THIS IS BEING UPDATED!
+
+I will be updating this snippet as more code will be released!
+
+Page 1 : .h files
+Page 2 : .cpp files
+Page 3 : Demo code
+Page 4 : Implementing to HB
+
+If you're too retarded to read instructions, dont try this... Code is commented well enough so that if you have some sort of maths and physics knowledge you should be able to understand.
+
+
+YOU WILL NEED THE FOLLOWING:
+
+-DirectX7 SDK
+-C++ 6.0
+-A Brain
+
+WILL BE EASIER FOR YOU IF YOU HAVE EXPERIENCE IN:
+
+-Graphics Programming
+-Strong knowledge of physics
+-Strong knowledge of mathematics
+
+
+I suggest starting this in a new project, until we implement it into the Helbreath engine itself.
+
+So first we need to create some new files, isn't that fun ?
+
+CREATE::
+
+Particle.h
+Particle.cpp
+ParticleSystem.h
+ParticleSystem.cpp
+
+So lets start off with our header files
+
+IN Particle.h::
+
+//--------------------------------------------------------------------------
+//
+// File: Particle.h
+//
+// Contents: Declaration of Particle
+//
+// To do: N/A at this time
+//
+// Note: This isn't a good example of a Class
+// I chose not to use access routines - feel free to use them if you really want to.
+// Particle system has full access to particle.
+//
+// Created By: Orkl
+//---------------------------------------------------------------------------
+
+#ifndef __PARTICLE_H_
+#define __PARTICLE_H_
+
+#pragma once
+
+#include "D3DTypes.h" //D3D required file
+
+friend class ParticleSystem; //Its my friend ^^
+
+
+class Particle
+{
+
+public:
+
+//Constructor, Destructor
+Particle();
+~Particle();
+
+//Time-Based movement
+bool Update( float fTimeDelta );
+
+// Last particle location
+D3DVECTOR m_d3dvPrevLocation;
+
+// Current particle location
+D3DVECTOR m_d3dvLocation;
+
+// Current particle velocity (yes, particles use physics!)
+D3DVECTOR m_d3dvVelocity;
+
+// Colour, and colour over time
+D3DCOLORVALUE m_d3dcColor;
+D3DCOLORVALUE m_d3dcColorDelta;
+
+// Particles age (seconds) [Particles have an age, defines when to make the particle "Dissapear" (see next)
+float m_fAge;
+
+// Lifetime (see above)
+float m_fLifetime;
+
+// Particles size, and size over time (we can make it grow, or shrink)
+float m_fSize;
+float m_fSizeDelta;
+
+// Transparency and over time
+// 0.0f alpha = transparent
+float m_fAlpha;
+float m_fAlphaDelta;
+
+// gravity, and over time
+// this is proportional to normal gravity and can be a negative value (ie. it floats away)
+float m_fGravity;
+float m_fGravityDelta;
+
+// ParticleSystem = Parent of Particle
+void SetParent(ParticleSystem* Parent){ m_pParent = Parent;}
+
+private:
+// our parent <3
+ParticleSystem* m_pParent;
+
+
+};
+
+#endif
+
+Simple enough, right?
+
+IN ParticleSystem.h::
+
+//--------------------------------------------------------------------------
+//
+// File: ParticleSystem.h
+//
+// Contents: Declaration of ParticleSystem
+//
+// To do: N/A at this time
+//
+// Note: This isn't a good example of a Class
+// I chose not to use access routines - feel free to use them if you really want to.
+// MyD3DApplication had full access to ParticleSystem
+//
+// Created By: Orkl
+//---------------------------------------------------------------------------
+
+#ifndef __PARTICLESYSTEM_H_
+#define __PARTICLESYSTEM_H_
+
+#pragma once
+
+//we need these, so dont fuck them up
+#include
+#include "D3DApp.h"
+#include "D3DMath.h"
+#include "D3DTextr.h"
+#include "D3DUtil.h"
+
+#include "Particle.h" //Include our particle header ^^'
+
+// return a float in the range 0.0f - 1.0f
+#define RANDOM_NUM (((FLOAT)rand()-(FLOAT)rand())/RAND_MAX)
+
+// return a vector. x,y,z are between 0.0f and 1.0f (not a normalised vector)
+#define RANDOM_VECTOR D3DVECTOR(RANDOM_NUM,RANDOM_NUM,RANDOM_NUM)
+
+// max number of particles (dont fuck with this too much)
+#define MAX_PARTICLES 10000
+
+// some definitions!
+#define MIN_SPEED 0.0f // world units / sec
+#define MIN_LIFETIME 0.1f // seconds
+#define MIN_SPREAD 0.01f // degrees
+#define MIN_EMISSION 1.0f // particles / sec
+#define MIN_SIZE 0.5f // world units
+#define MIN_GRAVITY -5.0f // multiple of normal gravity
+#define MIN_ALPHA 0.0f // ratio
+
+#define MAX_SPEED 250.0f // world units / sec
+#define MAX_LIFETIME 10.0f // seconds
+#define MAX_SPREAD 180.0f // degrees
+#define MAX_EMISSION 1000.0f // particles / sec
+#define MAX_SIZE 10.0f // world units
+#define MAX_GRAVITY 5.0f // multiple of normal gravity
+#define MAX_ALPHA 1.0f // ratio
+
+#define MAX_TEXTURES 5 //Dont fuck with it unless you add more textures
+
+// add new presets = change this number
+#define MAX_PRESETS 9
+//---
+
+// guarantee that values are within a given range #define Clamp(x, min, max) x = (x
+
+// class
+class ParticleSystem
+{
+// give access to private members of particlesystem friend class MyD3DApplication;
+
+public:
+ParticleSystem(); //constructor
+~ParticleSystem(); //destructor
+
+// Update particles and system with timedelta
+bool Update(float fTimeDelta);
+// render
+void Draw(LPDIRECT3DDEVICE7 lpd3dDevice);
+// Not used, but can be used to move the particle
+system (defined it because it could be useful later)
+void Move(D3DVECTOR vLocation);
+
+// this is bad.. Normally you would access routines to change the data
+void ChangeParams(const BYTE Keys[]);
+
+// is system moving, colliding, or attracting?
+bool IsMoving();
+bool IsColliding();
+bool IsAttractive();
+
+// find where system is in world space
+void GetLocation(D3DVECTOR& vLocation);
+// number of active particles
+unsigned int NumParticles();
+// Load current texture into D3D
+HRESULT LoadCurrentTexture(LPDIRECT3DDEVICE7 lpd3dDevice);
+
+private:
+// pointer main app, incase reference is needed void* m_pApplication;
+
+// texture ID so we know which one is being used unsigned int m_uTextureID;
+
+// particles per second to emit
+unsigned int m_uParticlesPerSec;
+
+// stores what particles are currently active
+unsigned int m_uParticlesAlive;
+
+// last known location of system, used for interpolation D3DVECTOR m_d3dvPrevLocation;
+// current location of system
+D3DVECTOR m_d3dvLocation;
+// current velocity as a vector
+D3DVECTOR m_d3dvVelocity;
+// current system direction. particles emit using vector and a variant
+D3DVECTOR m_d3dvDirection;
+
+// as particles age, we keep interpolating between start and end parameters
+// var parameter is used to keep things a little random
+// we change particle parameters over time to create various different effects, from explosions, to "wind" effects.
+
+// percentage of normal gravity. gravity could be made as a vector to show gravity pushing in a different direction (wind effect)
+float m_fGravityStart;
+float m_fGravityVar;
+float m_fGravityEnd;
+
+// particle size (world units)
+float m_fSizeStart;
+float m_fSizeVar;
+float m_fSizeEnd;
+
+// transparency of particles. Alpha 0 = invisible, Alpha 1 = full visibility
+float m_fAlphaStart;
+float m_fAlphaVar;
+float m_fAlphaEnd;
+
+// colour, start and finish
+// colour is interpolated between the two values over time
+D3DCOLORVALUE m_d3dcColorStart;
+D3DCOLORVALUE m_d3dcColorVar;
+D3DCOLORVALUE m_d3dcColorEnd;
+
+// scalar speed is combined with normalised diection vector of system to get a velocity vector
+float m_fSpeed;
+float m_fSpeedVar;
+
+// particle life (seconds)
+float m_fLife;
+float m_fLifeVar;
+
+// randomness of particles in directional vector float m_fTheta;
+
+// is system moving autonomously?
+bool m_bIsMoving;
+// are particles attracted to system?
+bool m_bIsAttractive;
+
+// can particles be emitted? or will they build up?
+bool m_bIsSuppressed;
+
+// are particles colliding with ground?
+bool m_bIsColliding;
+
+// age of system (seconds)
+float m_fAge;
+
+// last time system was updated
+float m_fTimeLastUpdate;
+
+// value that allows precise amounts of particles to be emitted.
+// example: if we wanted 0.5 particles/sec to be emitted, it cant be done because 0.5 particle != full particle
+// therefore we remember what wanted to be emitted and add that to the next emission value
+// This can be used to create some cool effects, for example, water that is very slowly leaking.. The particle mass will become bigger and bigger until there is enough for it to "Drip"
+float m_fEmissionResidue;
+
+// fixed particle array
+CParticle m_rParticles[MAX_PARTICLES];
+
+// Geometry
+// 4 quad vertices. D3DLVertices means we handle lighting (custom lighting = better effects :D)
+D3DLVERTEX m_Mesh[4];
+
+};
+
+#endif
+
+Particle system
+Author - Orkl
+
+
+
+Page: 2/4
+
+Next we're going to do an implementation of Particle.h
+
+
+IN Particle.cpp::
+
+//--------------------------------------------------------------------------
+//
+// File: Particle.cpp
+//
+// Contents: Implementation of Particle.h
+//
+// To do: N/A at this time
+//
+// Note: READ THE FUCKING COMMENTS :D
+//
+// Created By: Orkl
+//---------------------------------------------------------------------------
+
+#include "D3DApp.h" //Include our D3D shit
+#include "D3DUtil.h"
+
+#include "Particle.h"
+#include "ParticleSystem.h"
+
+//Define it at standard gravity (9.8m/s/s) for now
+#define GRAVITY D3DVECTOR(0.0f, -9.8f, 0.0f)
+
+Particle::Particle()
+{
+// note to self: should use newer version of parameter initialisation
+m_fAge = 0.0f;
+m_fSize = 1.0f;
+m_d3dcColor.r = 1.0f;
+m_d3dcColor.g = 0.0f;
+m_d3dcColor.b = 0.0f;
+m_d3dcColor.a = 0.5f;
+}
+
+
+Particle::~Particle()
+{
+// nothing to do in here
+}
+
+
+//-----------------------------------------------------------------------------
+//
+// Particle::Update
+//
+// What it does: Updates the particle with passed in time delta.
+// If particle dies, false returned
+//
+//-----------------------------------------------------------------------------
+bool Particle::Update( float fTimeDelta )
+{
+
+// Some systems can have particles with no lifetime, so they have
+// to collide with terrain or stay constantly alive if fixed particles are
+// defined
+if ( m_fAge + fTimeDelta >= m_fLifetime )
+{
+m_fAge = -1.0f;
+return FALSE;
+}
+else
+{
+
+// all particles age, increase time
+m_fAge += fTimeDelta;
+
+// current location = previous location next iteration
+m_d3dvPrevLocation = m_d3dvLocation;
+
+// move particle with last known velocity and time passed
+// (delta)
+m_d3dvLocation += m_d3dvVelocity * fTimeDelta;
+
+// allow collision - this should be per particle, but cbf
+// this will snap any particle below ground, to ground level
+if ( m_pParent->IsColliding() )
+{
+if ( m_d3dvLocation.y < -25.0f )
+{
+// if they are moving at a fast rate, deflect
+// vertically
+if ( m_d3dvVelocity.y > -5.0f ) // -5.0f <= velocity.y <= 0.0f
+{
+m_d3dvLocation.y = -25.0f;
+m_d3dvVelocity.y = 0.0f;
+}
+// else, rest on ground
+else
+{
+m_d3dvLocation.y = m_d3dvPrevLocation.y;
+m_d3dvVelocity.y = -m_d3dvVelocity.y*0.5f;
+}
+}
+}
+
+// gravity is hardcoded above, can be made a vector to
+// to simulate "wind"
+m_d3dvVelocity += ( GRAVITY * m_fGravity * fTimeDelta );
+
+// if parent supports attractive
+if ( m_pParent->IsAttractive() )
+{
+
+D3DVECTOR AttractLocation;
+
+// Find parent to track it
+m_pParent->GetLocation(AttractLocation);
+
+// Can be points in space, makes cool effects,
+// commented for now
+//AttractLocation = D3DVECTOR(50,50,50);
+
+// calc vector between particle and attractor
+D3DVECTOR AttractDir = AttractLocation - m_d3dvLocation;
+
+// can turn off attraction for certain axes
+// AttractDir.y = 0; etc. etc.
+
+// note to self: not accurate gravitation - look in your
+// physics book later
+m_d3dvVelocity += Normalize(AttractDir) * 25.0f * fTimeDelta;
+
+}
+
+// adjust colour from deltas and time elapsed
+m_d3dcColor.r += m_d3dcColorDelta.r * fTimeDelta;
+m_d3dcColor.g += m_d3dcColorDelta.g * fTimeDelta;
+m_d3dcColor.b += m_d3dcColorDelta.b * fTimeDelta;
+
+// adjust alpha
+m_fAlpha += m_fAlphaDelta * fTimeDelta;
+// adjust size
+m_fSize += m_fSizeDelta * fTimeDelta;
+// adjust gravity
+m_fGravity += m_fGravityDelta * fTimeDelta;
+
+}
+
+// if we got this far, everything is probably cool
+return TRUE;
+
+}
+
+
+
+ParticleSystem.cpp::
+
+//--------------------------------------------------------------------------
+//
+// File: ParticleSystem.cpp
+//
+// Contents: Implementation of ParticleSystem.h
+//
+// To do: N/A at this time
+//
+// Note: Smiley-Face :)
+//
+// Created By: Orkl
+//---------------------------------------------------------------------------
+
+#include "ParticleSystem.h" //No point of this file without the header for it
+
+#include "D3DApp.h" //D3D shit we need
+#include "D3DTextr.h" //...
+#include "D3DUtil.h" //...
+#include "D3DMath.h" //...
+
+//------------------------------------------
+ParticleSystem::ParticleSystem()
+{
+//the new C++ init methods are faster, but meh..
+m_fAge = 0.0f;
+m_fTimeLastUpdate = 0.0f;
+m_fEmissionResidue = 0.0f;
+m_d3dvDirection = D3DVECTOR(0,1,0);
+
+//we have prev location, set to current location, or can cause fucked data in first update
+m_d3dvLocation = m_d3dvPrevLocation = D3DVECTOR( 0.0f, 0.0f, 0.0f);
+
+//init the vertices of mesh to acceptable values
+// D3DVECTOR(-1.0f,-1.0f, 0.0f ) is location of vertex in local space
+// 0x40ffffff is the D3DCOLOR value. doesn't matter, we recalc it every frame anyway
+// 0xaarrggbb..
+// this is white with 0.25 opacity (0x40/0xff) = 64/255 ~= 0.25
+// 0 is specular value (not using it)
+// 0.0f, 1.0f are UV coordinates for the vertex. basically it tells renderer how to map the texture onto triangles that are rendered
+m_Mesh[0] = D3DLVERTEX( D3DVECTOR(-1.0f,-1.0f, 0.0f ), 0x40ffffff, 0, 0.0f, 1.0f );
+m_Mesh[1] = D3DLVERTEX( D3DVECTOR(-1.0f, 1.0f, 0.0f ), 0x40ffffff, 0, 0.0f, 0.0f );
+m_Mesh[2] = D3DLVERTEX( D3DVECTOR( 1.0f,-1.0f, 0.0f ), 0x40ffffff, 0, 1.0f, 1.0f );
+m_Mesh[3] = D3DLVERTEX( D3DVECTOR( 1.0f, 1.0f, 0.0f ), 0x40ffffff, 0, 1.0f, 0.0f );
+}
+
+//------------------------------------------
+ParticleSystem::~ParticleSystem()
+{
+// dont need anything here
+}
+
+
+//------------------------------------------
+// ParticleSystem::Update
+//
+// Will always return true for this, but are reasons why you may want
+//it to return false, I wont go into them...
+//------------------------------------------
+
+bool ParticleSystem::Update(float fTime)
+{
+//fTime is absolute time. we need to calculate relative time
+//displacement or delta that has elapsed
+float fTimeDelta = fTime - m_fTimeLastUpdate;
+
+m_fTimeLastUpdate = fTime;
+
+// test out a moving particle system
+if (m_bIsMoving)
+{
+static float fThetaHoriz = 0.0f;
+static float fThetaVert = 180.0f;
+
+fThetaHoriz += 50.0f * fTimeDelta;
+fThetaVert += 30.0f * fTimeDelta;
+
+if ( fThetaHoriz > 359.0f )
+fThetaHoriz = 0.0f;
+
+if ( fThetaVert > 359.0f )
+fThetaVert = 0.0f;
+
+m_d3dvLocation.x = 30.0f * (float)cos( fThetaHoriz * 0.01745f );
+m_d3dvLocation.y = 50.0f + 30.0f * (float)sin( fThetaVert * 0.01745f );
+m_d3dvLocation.z = 30.0f * (float)sin( fThetaHoriz * 0.01745f );
+
+}
+else
+{
+// this will reset every frae, and will reset to the origin if its
+// not moving
+m_d3dvLocation.x = 0.0f;
+m_d3dvLocation.y = 10.0f;
+m_d3dvLocation.z = 0.0f;
+
+}
+
+// clear counter before counting (else it'd be useless) m_uParticlesAlive = 0;
+
+// update all particles that system owns
+for ( int i=0; i
+{
+if (m_rParticles[i].m_fAge >= 0.0f )
+if ( m_rParticles[i].Update( fTimeDelta )) // update function will return FALSE if particle died
+m_uParticlesAlive++;
+}
+
+// calc how many particles to create taking into consideration time elapsed and emissionresidue from last frame
+float fParticlesNeeded = m_uParticlesPerSec * fTimeDelta + m_fEmissionResidue;
+
+// see how many particles really need to be created
+unsigned int uParticlesCreated = (unsigned int)fParticlesNeeded;
+
+if ( !m_bIsSuppressed )
+{
+// difference between what we wanted to create and how many we created.
+m_fEmissionResidue = fParticlesNeeded - uParticlesCreated;
+}
+else
+{
+m_fEmissionResidue = fParticlesNeeded;
+uParticlesCreated = 0;
+}
+
+// see if there are actually any to create
+if ( uParticlesCreated > 0 )
+{
+// loop through all particles to see if any available
+for ( i=0; i
+{
+// if enough particles are created, this will be 0 and can
+// skip the rest
+// (could also keep list of free and used particles) if ( !uParticlesCreated )
+break;
+
+// if age is -1.0f then particle not in use
+if ( m_rParticles[i].m_fAge < 0.0f )
+{
+// New particle so it's age is 0.0f
+m_rParticles[i].m_fAge = 0.0f;
+m_rParticles[i].m_fLifetime = m_fLife + RANDOM_NUM * m_fLifeVar;
+Clamp( m_rParticles[i].m_fLifetime, MIN_LIFETIME, MAX_LIFETIME );
+
+// start colour is going to be the systems startcolour + the systems colour variation
+m_rParticles[i].m_d3dcColor.r = m_d3dcColorStart.r + RANDOM_NUM * m_d3dcColorVar.r;
+m_rParticles[i].m_d3dcColor.g = m_d3dcColorStart.g + RANDOM_NUM * m_d3dcColorVar.g;
+m_rParticles[i].m_d3dcColor.b = m_d3dcColorStart.b + RANDOM_NUM * m_d3dcColorVar.b;
+// dont use the alpha value of the color here
+m_rParticles[i].m_d3dcColor.a = 1.0f;
+
+// colour may overflow due to variation, stop that
+Clamp( m_rParticles[i].m_d3dcColor.r, 0.0f, 1.0f );
+Clamp( m_rParticles[i].m_d3dcColor.g, 0.0f, 1.0f );
+Clamp( m_rParticles[i].m_d3dcColor.b, 0.0f, 1.0f );
+
+// calc a delta so that when the particle dies, it will have reached its colorend
+m_rParticles[i].m_d3dcColorDelta.r = (m_d3dcColorEnd.r - m_rParticles[i].m_d3dcColor.r) / m_rParticles[i].m_fLifetime;
+m_rParticles[i].m_d3dcColorDelta.g = (m_d3dcColorEnd.g - m_rParticles
+[i].m_d3dcColor.g) / m_rParticles[i].m_fLifetime;
+m_rParticles[i].m_d3dcColorDelta.b = (m_d3dcColorEnd.b - m_rParticles
+[i].m_d3dcColor.b) / m_rParticles[i].m_fLifetime;
+
+// calc alphra from system alphastart and alphavar
+m_rParticles[i].m_fAlpha = m_fAlphaStart + RANDOM_NUM * m_fAlphaVar;
+// clamp any overflow
+Clamp( m_rParticles[i].m_fAlpha, MIN_ALPHA, MAX_ALPHA );
+// calc a delta so that when the particle dies, it will have reached its alphaend
+m_rParticles[i].m_fAlphaDelta = (m_fAlphaEnd - m_rParticles[i].m_fAlpha) / m_rParticles[i].m_fLifetime;
+
+
+m_rParticles[i].m_fSize = m_fSizeStart + RANDOM_NUM * m_fSizeVar;
+Clamp( m_rParticles[i].m_fSize, MIN_SIZE, MAX_SIZE );
+m_rParticles[i].m_fSizeDelta = (m_fSizeEnd - m_rParticles[i].m_fSize) / m_rParticles[i].m_fLifetime;
+
+
+m_rParticles[i].m_fGravity = m_fGravityStart*9.8f + RANDOM_NUM * m_fGravityVar*9.8f;
+// lots of repetitive calculation ( * 9.8f ), but it keeps the meaning of m_fgravity clear
+// its a percentage of normal gravity
+Clamp( m_rParticles[i].m_fGravity, MIN_GRAVITY*9.8f, MAX_GRAVITY*9.8f );
+m_rParticles[i].m_fGravityDelta = ( m_fGravityEnd*9.8f - m_rParticles[i].m_fGravity ) / m_rParticles[i].m_fLifetime;
+
+// calc velocity particle would have to have travelled to move from prevlocation to location in delta secs
+// then calc points in path by passing different time deltas (note random_num * ftimedelta)
+D3DVECTOR tempVelocity = (m_d3dvLocation - m_d3dvPrevLocation)/fTimeDelta;
+
+// emit particles from a location between the last known location and the current location
+m_rParticles[i].m_d3dvLocation = m_d3dvPrevLocation + tempVelocity * RANDOM_NUM * fTimeDelta;
+
+// simple way of randomisation
+// can also emit from a source primitive e.g.
+/*
+m_rParticles[i].m_d3dvLocation.x += 2.0f - RANDOM_NUM * 4.0f;
+m_rParticles[i].m_d3dvLocation.y += 2.0f - RANDOM_NUM * 4.0f;
+m_rParticles[i].m_d3dvLocation.z += 2.0f - RANDOM_NUM * 4.0f;
+*/
+
+// update previous location so the next update we can remember where we were
+m_rParticles[i].m_d3dvPrevLocation = m_d3dvLocation;
+
+//emitter has a diection, code below adds some randomness to direction so that just a line of particles isn't emitted.
+//at the moment it assumes a randomness of 360deg in yaw direction. Will amend code later to allow this to be
+//modified separately from the pitch. normally define PI 3.14159 and use a DEG_2_RAD macro.. but I haven't yet.
+float RandomYaw = RANDOM_NUM * 3.14159f * 2.0f;
+float RandomPitch = RANDOM_NUM * m_fTheta * 3.14159f / 180.0f;
+
+//use spherical coordinates to randomise direction of particle (velocity vector)
+m_rParticles[i].m_d3dvVelocity.y = cosf( RandomPitch );
+m_rParticles[i].m_d3dvVelocity.x = sinf(RandomPitch) * cosf(RandomYaw);
+m_rParticles[i].m_d3dvVelocity.z = sinf(RandomPitch) * sinf(RandomYaw);
+
+//at the moment, velocity is just direction vector, and needs to be multiplied by speed to be true velocity
+float fNewSpeed = m_fSpeed + RANDOM_NUM * m_fSpeedVar;
+Clamp( fNewSpeed, MIN_SPEED, MAX_SPEED );
+// D3D knows how to multiply vectors by scalars (fucking smartass microsoft :D)
+m_rParticles[i].m_d3dvVelocity *= fNewSpeed;
+
+// who's yo daddy particle?
+m_rParticles[i].SetParent(this);
+
+// decrement number of needed particles
+uParticlesCreated--;
+}
+}
+}
+
+///set prevlocation to current location so next frame we know where we were
+m_d3dvPrevLocation = m_d3dvLocation;
+
+return TRUE;
+}
+
+
+//------------------------------------------
+// ParticleSystem::Draw
+//
+// render all active particles as billboards! *yay*
+//------------------------------------------
+
+void ParticleSystem::Draw(LPDIRECT3DDEVICE7 lpd3dDevice)
+{
+
+// as the function says.. load the fkn texture. LoadCurrentTexture(lpd3dDevice);
+
+// render!
+for( DWORD i=0; i
+{
+
+// if particle is alive, its age wont be zero
+if ( m_rParticles[i].m_fAge >= 0.0f )
+{
+
+// set mesh colour to current particles RGBA value
+m_Mesh[0].color =
+m_Mesh[1].color =
+m_Mesh[2].color =
+m_Mesh[3].color = D3DRGBA( m_rParticles
+[i].m_d3dcColor.r,
+m_rParticles[i].m_d3dcColor.g,
+m_rParticles[i].m_d3dcColor.b,
+m_rParticles[i].m_fAlpha);
+
+D3DMATRIX ViewMatrix;
+// makes sure we have a clean matrix before doing stuff with it
+D3DUtil_SetIdentityMatrix( ViewMatrix );
+// get viewmatrix from d3d
+lpd3dDevice->GetTransform( D3DTRANSFORMSTATE_VIEW, &ViewMatrix );
+
+D3DMATRIX InvViewMatrix;
+
+D3DUtil_SetIdentityMatrix( InvViewMatrix );
+// get inverse of viewmatrix
+D3DMath_MatrixInvert( InvViewMatrix, ViewMatrix );
+
+// set translation portion of the InvViewMatrix to location of the particles in world space
+InvViewMatrix._41 = m_rParticles[i].m_d3dvLocation.x;
+InvViewMatrix._42 = m_rParticles[i].m_d3dvLocation.y;
+InvViewMatrix._43 = m_rParticles[i].m_d3dvLocation.z;
+
+// set scale of particles in local space so when transformed they are correct size
+m_Mesh[0].dvX = -m_rParticles[i].m_fSize;
+m_Mesh[0].dvY = -m_rParticles[i].m_fSize;
+
+m_Mesh[1].dvX = -m_rParticles[i].m_fSize;
+m_Mesh[1].dvY = m_rParticles[i].m_fSize;
+
+m_Mesh[2].dvX = m_rParticles[i].m_fSize;
+m_Mesh[2].dvY = -m_rParticles[i].m_fSize;
+
+m_Mesh[3].dvX = m_rParticles[i].m_fSize;
+m_Mesh[3].dvY = m_rParticles[i].m_fSize;
+
+// set new world transform and render particle
+lpd3dDevice->SetTransform( D3DTRANSFORMSTATE_WORLD, &InvViewMatrix );
+
+// Note: should get all polygons in array and then pass as trianglelist, but cbf
+lpd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, D3DFVF_LVERTEX, m_Mesh, 4, 0 );
+
+}
+}
+
+}
+Particle system
+Author - Orkl
+
+
+
+Page: 3/4
+
+CREATE NEW:
+
+demo.cpp
+
+
+IN demo.cpp::
+//--------------------------------------------------------------------------
+//
+// File: Demo.cpp
+//
+// Contents: Particle Application
+//
+// To do: make it better?
+//
+// Note: uses d3d framework helper lib
+//
+// Created By: Orkl
+//---------------------------------------------------------------------------
+
+#define D3D_OVERLOADS
+#define STRICT
+
+#include
+#include
+#include "D3DApp.h"
+#include "D3DTextr.h"
+#include "D3DUtil.h"
+#include "D3DMath.h"
+
+#include "ParticleSystem.h"
+
+//-----------------------------------------------------------------------------
+// Class MyD3DApplication
+//
+// Desc: Application class >.>
+//-----------------------------------------------------------------------------
+class MyD3DApplication : public D3DApplication
+{
+//4 vertices of quad used to render billboarded particles
+D3DLVERTEX m_Mesh[4];
+
+// used to draw the axes
+D3DLVERTEX m_Axes[6];
+
+// used to draw edges of ground plane
+D3DLVERTEX m_Edges[5];
+
+// reference to particle system
+ParticleSystem* m_ParticleSystem;
+
+// time reference, this is when the application was started
+FLOAT m_fStartTimeKey;
+
+// camera manipulation
+FLOAT m_fCameraYaw;
+FLOAT m_fCameraPitch;
+FLOAT m_fCameraRadius;
+
+// array of byte to hold key presses
+BYTE m_bKey[256];
+
+// mouse button presses
+INT m_iMouseButtons;
+
+// current location of Mouse
+INT m_iMouseX;
+INT m_iMouseY;
+
+// size of our window
+INT m_iScreenWidth;
+INT m_iScreenHeight;
+
+// which system preset we have set
+INT m_iPreset;
+
+static HRESULT ConfirmDevice( DDCAPS*
+pddDriverCaps, D3DDEVICEDESC7* pd3dDeviceDesc );
+
+protected:
+HRESULT OneTimeSceneInit();
+HRESULT InitDeviceObjects();
+HRESULT DeleteDeviceObjects();
+HRESULT Render();
+HRESULT FrameMove( FLOAT fTimeKey );
+HRESULT FinalCleanup();
+HRESULT DrawAxes();
+HRESULT DrawPlatform();
+VOID ShowScreenInfo();
+VOID LoadPreset( int iPreset );
+VOID MoveCamera(void);
+
+public:
+LRESULT MyD3DApplication::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam,
+LPARAM lParam );
+MyD3DApplication();
+};
+
+//-----------------------------------------------------------------------------
+// Name: WinMain()
+// Desc: Entry point
+//-----------------------------------------------------------------------------
+INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
+{
+MyD3DApplication d3dApp;
+
+if( FAILED( d3dApp.Create( hInst, strCmdLine ) ) ) return 0;
+
+return d3dApp.Run();
+}
+
+//-----------------------------------------------------------------------------
+// Name: MyD3DApplication()
+// Desc: Application constructor
+//-----------------------------------------------------------------------------
+MyD3DApplication::MyD3DApplication()
+:D3DApplication()
+{
+m_strWindowTitle = TEXT( "Orkl's Particle System!" );
+m_bAppUseZBuffer = FALSE;
+m_bAppUseStereo = FALSE;
+m_bShowStats = FALSE;
+m_fnConfirmDevice = ConfirmDevice;
+
+m_ParticleSystem = NULL;
+
+m_fStartTimeKey = 0.0f;
+
+memset(m_bKey, 0x00, 256);
+
+m_iMouseButtons = 0;
+}
+
+//-----------------------------------------------------------------------------
+// Name: OneTimeSceneInit()
+// Desc: Called during initial startup
+//-----------------------------------------------------------------------------
+HRESULT MyD3DApplication::OneTimeSceneInit()
+{
+// create our one instance of a particle system
+m_ParticleSystem = new ParticleSystem();
+
+// bail out if our particle system didn't get created
+if ( !m_ParticleSystem )
+{
+MessageBox(NULL, "Error Creating Particle System!", "Fatal Error", MB_OK );
+return E_FAIL;
+}
+
+HRESULT hrError = S_OK;
+
+// generic white texture for drawing bars
+hrError |= D3DTextr_CreateTextureFromFile( "tex1.tga", 0 );
+
+// load in our particle textures - replace with real texture names,
+//etc. respectively.
+hrError |= D3DTextr_CreateTextureFromFile( "tex2.tga", 0);
+hrError |= D3DTextr_CreateTextureFromFile( "tex3.tga", 0);
+hrError |= D3DTextr_CreateTextureFromFile( "tex4.tga", 0);
+hrError |= D3DTextr_CreateTextureFromFile( "tex5.tga", 0);
+hrError |= D3DTextr_CreateTextureFromFile( "tex6.tga", 0);
+
+if ( hrError != S_OK )
+{
+MessageBox(NULL, "One or more textures didn't load!", "Fatal Error", MB_OK );
+return E_FAIL;
+}
+
+// setup camera and initial particle system appearance
+LoadPreset(0);
+
+return S_OK;
+
+}
+
+
+//-----------------------------------------------------------------------------
+// Name: FrameMove()
+// Desc: Called once per frame, animates the scene
+//-----------------------------------------------------------------------------
+HRESULT MyD3DApplication::FrameMove( FLOAT fTimeKey )
+{
+static float fLastUpdate;
+float fElapsedTime;
+
+// update things like color done by keystrokes
+m_ParticleSystem->ChangeParams( &m_bKey[0] );
+
+// update system and let it know how much time has gone
+m_ParticleSystem->Update(fTimeKey);
+
+if ( m_fExportTimer > 0.0f )
+{
+fElapsedTime = fTimeKey - fLastUpdate;
+
+m_fExportTimer = m_fExportTimer > fElapsedTime ? m_fExportTimer - fElapsedTime : 0.0f;
+}
+
+if (( m_bKey[VK_F12] )&&( m_fExportTimer == 0.0f ))
+{
+ExportParameters();
+m_fExportTimer = 2.0f;
+}
+
+// save so next update knows how much time has gone
+fLastUpdate = fTimeKey;
+
+return S_OK;
+}
+
+//-----------------------------------------------------------------------------
+// Name: Render()
+// Desc: Called once per frame, sets up render states, clears the
+// viewport, and renders the scene.
+//-----------------------------------------------------------------------------
+HRESULT MyD3DApplication::Render()
+{
+static TCHAR buffer[80];
+static float fDeltaX = 0.0f,
+fDeltaY = 0.0f,
+fDeltaZ = 0.0f;
+
+// this is here instead of in FrameMove() so that we can pause the system, but still move the camera.
+MoveCamera();
+
+
+// clear viewport
+// m_pd3dDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER, 0L, 1.0f, 0L );
+m_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET, 0x00000000, 1.0f, 0L );
+
+// Begin scene
+if( SUCCEEDED( m_pd3dDevice->BeginScene() ) )
+{
+// fuck z-buffering
+// m_pd3dDevice->SetRenderState( D3DRENDERSTATE_ZENABLE, FALSE );
+
+// enable alpha blend
+m_pd3dDevice->SetRenderState( D3DRENDERSTATE_ALPHABLENDENABLE, TRUE );
+
+// set alpha blend mode
+m_pd3dDevice->SetRenderState( D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA );
+m_pd3dDevice->SetRenderState( D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE );
+
+// render the bitch!
+m_ParticleSystem->Draw(m_pd3dDevice); //fix me
+
+// restore render states
+m_pd3dDevice->SetRenderState( D3DRENDERSTATE_ALPHABLENDENABLE, FALSE );
+
+// use white, we're only drawing lines.
+m_pd3dDevice->SetTexture( 0, D3DTextr_GetSurface("tex1.tga") );
+
+D3DMATRIX WorldMatrix;
+// guarantee clean matrix before using it
+D3DUtil_SetIdentityMatrix( WorldMatrix );
+
+m_pd3dDevice->SetTransform( D3DTRANSFORMSTATE_WORLD, &WorldMatrix );
+
+// Draw axes at 0,0,0 as point of reference DrawAxes();
+
+// if particles can collide with ground plane then draw reference ground plane egde
+if ( m_ParticleSystem->IsColliding() )
+DrawPlatform();
+
+// this is really slow way of doing, but draw number
+// of particles alive
+sprintf( buffer, "%u", m_ParticleSystem->NumParticles());
+OutputText( 10, 10, buffer );
+
+// FPS and resolution
+ShowScreenInfo();
+
+m_pd3dDevice->EndScene();
+}
+
+return S_OK;
+}
+
+//-----------------------------------------------------------------------------
+// Name: InitDeviceObjects()
+// Desc: Init scene objects
+//-----------------------------------------------------------------------------
+HRESULT MyD3DApplication::InitDeviceObjects()
+{
+D3DTextr_RestoreAllTextures( m_pd3dDevice );
+
+// dimensions for background image
+D3DVIEWPORT7 vp;
+m_pd3dDevice->GetViewport(&vp);
+
+// render material
+D3DMATERIAL7 mtrl;
+D3DUtil_InitMaterial( mtrl );
+m_pd3dDevice->SetMaterial( &mtrl );
+
+// view matrices
+D3DVECTOR vEyePt = D3DVECTOR( 0.0f, 0.0f, -50.0f );
+D3DVECTOR vLookatPt = D3DVECTOR( 0.0f, 0.0f, 0.0f );
+D3DVECTOR vUpVec = D3DVECTOR( 0.0f, 1.0f, 0.0f );
+
+D3DUtil_SetViewMatrix( m_matView, vEyePt, vLookatPt, vUpVec );
+
+m_pd3dDevice->SetTransform( D3DTRANSFORMSTATE_VIEW, &m_matView );
+
+// projection transform
+D3DMATRIX matProj;
+D3DUtil_SetProjectionMatrix( matProj); //, 1.57f, 1.0f, 1.0f, 100.0f );
+m_pd3dDevice->SetTransform( D3DTRANSFORMSTATE_PROJECTION, &matProj );
+
+// default texture states
+D3DTextr_RestoreAllTextures( m_pd3dDevice );
+
+// setup our texture stages knowing that we want to do some alpha blending
+m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
+
+m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
+
+m_pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTFN_LINEAR);
+m_pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
+
+m_pd3dDevice->SetRenderState( D3DRENDERSTATE_DITHERENABLE, FALSE );
+
+m_pd3dDevice->SetRenderState( D3DRENDERSTATE_LIGHTING, FALSE );
+
+return S_OK;
+}
+
+//-----------------------------------------------------------------------------
+// Name: FinalCleanup()
+// Desc: clean up else windows hates me :(
+//-----------------------------------------------------------------------------
+HRESULT MyD3DApplication::FinalCleanup()
+{
+
+// die system!
+if ( m_ParticleSystem )
+{
+delete m_ParticleSystem;
+
+// paranoid much?
+m_ParticleSystem = NULL;
+}
+
+// give back textures
+D3DTextr_DestroyTexture( "tex1.tga" );
+
+D3DTextr_DestroyTexture( "tex2.tga" );
+D3DTextr_DestroyTexture( "tex3.tga" );
+D3DTextr_DestroyTexture( "tex4.tga" );
+D3DTextr_DestroyTexture( "tex5.tga" );
+D3DTextr_DestroyTexture( "tex6.tga" );
+
+return S_OK;
+}
+
+//-----------------------------------------------------------------------------
+// Name: DeleteDeviceObjects()
+// Desc: call when exit, or device change
+//-----------------------------------------------------------------------------
+HRESULT MyD3DApplication::DeleteDeviceObjects()
+{
+D3DTextr_InvalidateAllTextures();
+
+return S_OK;
+}
+
+//----------------------------------------------------------------------------
+// Name: MsgProc()
+// Desc: handle mouse + keyboard
+//----------------------------------------------------------------------------
+LRESULT MyD3DApplication::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam,
+LPARAM lParam )
+{
+switch( uMsg )
+{
+// is key up or down?
+case WM_KEYUP:
+m_bKey[wParam] = 0;
+break;
+
+case WM_KEYDOWN:
+m_bKey[wParam] = 1;
+break;
+
+//mouse
+case WM_LBUTTONDOWN:
+case WM_LBUTTONUP:
+case WM_RBUTTONDOWN:
+case WM_RBUTTONUP:
+case WM_MOUSEMOVE:
+m_iMouseButtons = wParam;
+m_iMouseX = LOWORD(lParam);
+m_iMouseY = HIWORD(lParam) < m_iScreenHeight ? HIWORD(lParam) : 0;
+break;
+
+// resolution changes
+case WM_SIZE:
+m_iScreenWidth = LOWORD(lParam);
+m_iScreenHeight = HIWORD(lParam);
+break;
+
+}
+
+// fall to main windows proc function
+return D3DApplication::MsgProc( hWnd, uMsg, wParam, lParam );
+}
+
+HRESULT MyD3DApplication::DrawAxes()
+{
+m_Axes[0] = D3DLVERTEX( D3DVECTOR( 0.0f, 0.0f, 0.0f ), 0xffff0000, 0, 0.0f, 0.0f );
+m_Axes[1] = D3DLVERTEX( D3DVECTOR( 10.0f, 0.0f, 0.0f ), 0xffff0000, 0, 0.0f, 0.0f );
+
+m_Axes[2] = D3DLVERTEX( D3DVECTOR( 0.0f, 0.0f, 0.0f ), 0xff0000ff, 0, 0.0f, 0.0f );
+m_Axes[3] = D3DLVERTEX( D3DVECTOR( 0.0f, 10.0f, 0.0f ), 0xff0000ff, 0, 0.0f, 0.0f );
+
+m_Axes[4] = D3DLVERTEX( D3DVECTOR( 0.0f, 0.0f, 0.0f ), 0xff00ff00, 0, 0.0f, 0.0f );
+m_Axes[5] = D3DLVERTEX( D3DVECTOR( 0.0f, 0.0f, 10.0f ), 0xff00ff00, 0, 0.0f, 0.0f );
+
+// draw lines
+m_pd3dDevice->DrawPrimitive( D3DPT_LINELIST, D3DFVF_LVERTEX, m_Axes, 6, 0 );
+
+return S_OK;
+}
+
+HRESULT MyD3DApplication::DrawPlatform()
+{
+m_Edges[0] = D3DLVERTEX( D3DVECTOR( -50.0f, -25.0f, -50.0f ), 0xffffffff, 0, 0.0f, 0.0f );
+m_Edges[1] = D3DLVERTEX( D3DVECTOR( 50.0f, -25.0f, -50.0f ), 0xffffffff, 0, 0.0f, 0.0f );
+m_Edges[2] = D3DLVERTEX( D3DVECTOR( 50.0f, -25.0f, 50.0f ), 0xffffffff, 0, 0.0f, 0.0f );
+m_Edges[3] = D3DLVERTEX( D3DVECTOR( -50.0f, -25.0f, 50.0f ), 0xffffffff, 0, 0.0f, 0.0f );
+m_Edges[4] = D3DLVERTEX( D3DVECTOR( -50.0f, -25.0f, -50.0f ), 0xffffffff, 0, 0.0f, 0.0f );
+
+// draw ground plane, more lines ^^
+m_pd3dDevice->DrawPrimitive( D3DPT_LINESTRIP, D3DFVF_LVERTEX, m_Edges, 5, 0 );
+
+return S_OK;
+}
+
+VOID MyD3DApplication::ShowScreenInfo()
+{
+static FLOAT fFPS = 0.0f;
+static FLOAT fLastTime = 0.0f;
+static DWORD dwFrames = 0L;
+
+// time lapse and frame count
+FLOAT fTime = timeGetTime() * 0.001f; // current time in sec
+++dwFrames;
+
+// update once per second
+if( fTime - fLastTime > 1.0f )
+{
+fFPS = dwFrames / (fTime - fLastTime);
+fLastTime = fTime;
+dwFrames = 0L;
+}
+
+// setup text buffer to write out dimensions- once again. slow~
+TCHAR buffer[80];
+
+sprintf( buffer, "%4d FPS %d x %d x %d", (int)fFPS,
+m_ddsdRenderTarget.dwWidth,
+m_ddsdRenderTarget.dwHeight,
+
+m_ddsdRenderTarget.ddpfPixelFormat.dwRGBBitCount );
+
+OutputText( m_ddsdRenderTarget.dwWidth/2 - 50, 10, buffer );
+
+}
+
+//-----------------------------------------------------------------------------
+//
+// MyD3DApplication::LoadPreset
+//
+// setup camera and particle system parameters associated with the
+// given preset number
+//-----------------------------------------------------------------------------
+void MyD3DApplication::LoadPreset(int iPreset)
+{
+// update variable
+m_iPreset = iPreset;
+
+switch ( iPreset )
+{
+
+case 0:
+// camera
+m_fCameraPitch = 0.0f;
+m_fCameraYaw = 0.0f;
+m_fCameraRadius = 50.0f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.g = 0.8f;
+m_ParticleSystem->m_d3dcColorStart.b = 0.5f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.g = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.b = 1.0f;
+
+m_ParticleSystem->m_fAlphaStart = 0.5f;
+m_ParticleSystem->m_fAlphaVar = 0.0f;
+m_ParticleSystem->m_fAlphaEnd = 0.0f;
+
+m_ParticleSystem->m_fSizeStart = 4.0f;
+m_ParticleSystem->m_fSizeVar = 0.0f;
+m_ParticleSystem->m_fSizeEnd = 8.0f;
+
+m_ParticleSystem->m_fSpeed = 15.0f;
+m_ParticleSystem->m_fSpeedVar = 0.0f;
+
+m_ParticleSystem->m_fTheta = 180.0f;
+
+m_ParticleSystem->m_fLife = 1.0f;
+m_ParticleSystem->m_fLifeVar = 0.5f;
+
+m_ParticleSystem->m_fGravityStart = 0.0f;
+m_ParticleSystem->m_fGravityVar = 0.0f;
+m_ParticleSystem->m_fGravityEnd = 0.0f;
+
+m_ParticleSystem->m_uParticlesPerSec = 80;
+
+m_ParticleSystem->m_bIsMoving = FALSE;
+m_ParticleSystem->m_bIsAttractive = FALSE;
+m_ParticleSystem->m_bIsColliding = FALSE;
+
+m_ParticleSystem->m_uTextureID = 0;
+break;
+
+case 1:
+// camera
+m_fCameraPitch = 0.75f;
+m_fCameraYaw = 0.0f;
+m_fCameraRadius = 100.0f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.g = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.b = 0.2f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 1.0f;
+m_ParticleSystem->m_d3dcColorEnd.g = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.b = 0.0f;
+
+m_ParticleSystem->m_fAlphaStart = 1.0f;
+m_ParticleSystem->m_fAlphaVar = 0.0f;
+m_ParticleSystem->m_fAlphaEnd = 0.0f;
+
+m_ParticleSystem->m_fSizeStart = 0.5f;
+m_ParticleSystem->m_fSizeVar = 0.0f;
+m_ParticleSystem->m_fSizeEnd = 10.0f;
+
+m_ParticleSystem->m_fSpeed = 0.0f;
+m_ParticleSystem->m_fSpeedVar = 0.0f;
+
+m_ParticleSystem->m_fTheta = 0.0f;
+
+m_ParticleSystem->m_fLife = 2.0f;
+m_ParticleSystem->m_fLifeVar = 0.0f;
+
+m_ParticleSystem->m_fGravityStart = 1.0f;
+m_ParticleSystem->m_fGravityVar = 0.0f;
+m_ParticleSystem->m_fGravityEnd = 1.0f;
+
+m_ParticleSystem->m_uParticlesPerSec = 100;
+
+m_ParticleSystem->m_bIsMoving = TRUE;
+m_ParticleSystem->m_bIsAttractive = FALSE;
+m_ParticleSystem->m_bIsColliding = TRUE;
+
+m_ParticleSystem->m_uTextureID = 0;
+break;
+
+case 2:
+// camera
+m_fCameraPitch = 0.25f;
+m_fCameraYaw = 0.0f;
+m_fCameraRadius = 150.0f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.g = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.b = 1.0f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.g = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.b = 1.0f;
+
+m_ParticleSystem->m_fAlphaStart = 1.0f;
+m_ParticleSystem->m_fAlphaVar = 0.0f;
+m_ParticleSystem->m_fAlphaEnd = 0.0f;
+
+m_ParticleSystem->m_fSizeStart = 4.0f;
+m_ParticleSystem->m_fSizeVar = 0.0f;
+m_ParticleSystem->m_fSizeEnd = 0.5f;
+
+m_ParticleSystem->m_fSpeed = 100.0f;
+m_ParticleSystem->m_fSpeedVar = 10.0f;
+
+m_ParticleSystem->m_fTheta = 45.0f;
+
+m_ParticleSystem->m_fLife = 3.0f;
+m_ParticleSystem->m_fLifeVar = 0.0f;
+
+m_ParticleSystem->m_fGravityStart = 4.0f;
+m_ParticleSystem->m_fGravityVar = 0.0f;
+m_ParticleSystem->m_fGravityEnd = 4.0f;
+
+m_ParticleSystem->m_uParticlesPerSec = 100;
+
+m_ParticleSystem->m_bIsMoving = FALSE;
+m_ParticleSystem->m_bIsAttractive = FALSE;
+m_ParticleSystem->m_bIsColliding = TRUE;
+
+m_ParticleSystem->m_uTextureID = 0;
+break;
+
+case 3:
+// camera
+m_fCameraPitch = 0.25f;
+m_fCameraYaw = 0.0f;
+m_fCameraRadius = 120.0f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 0.0f;
+m_ParticleSystem->m_d3dcColorStart.g = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 1.0f;
+m_ParticleSystem->m_d3dcColorEnd.g = 1.0f;
+m_ParticleSystem->m_d3dcColorEnd.b = 1.0f;
+
+m_ParticleSystem->m_fAlphaStart = 1.0f;
+m_ParticleSystem->m_fAlphaVar = 0.0f;
+m_ParticleSystem->m_fAlphaEnd = 1.0f;
+
+m_ParticleSystem->m_fSizeStart = 10.0f;
+m_ParticleSystem->m_fSizeVar = 0.0f;
+m_ParticleSystem->m_fSizeEnd = 5.0f;
+
+m_ParticleSystem->m_fSpeed = 50.0f;
+m_ParticleSystem->m_fSpeedVar = 0.0f;
+
+m_ParticleSystem->m_fTheta = 180.0f;
+
+m_ParticleSystem->m_fLife = 4.0f;
+m_ParticleSystem->m_fLifeVar = 0.0f;
+
+m_ParticleSystem->m_fGravityStart = 0.0f;
+m_ParticleSystem->m_fGravityVar = 0.0f;
+m_ParticleSystem->m_fGravityEnd = 0.0f;
+
+m_ParticleSystem->m_uParticlesPerSec = 50;
+
+m_ParticleSystem->m_bIsMoving = FALSE;
+m_ParticleSystem->m_bIsAttractive = TRUE;
+m_ParticleSystem->m_bIsColliding = FALSE;
+
+m_ParticleSystem->m_uTextureID = 0;
+break;
+
+case 4:
+// camera
+m_fCameraPitch = 3.14f;
+m_fCameraYaw = 1.57f;
+m_fCameraRadius = 50.0f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.g = 0.0f;
+m_ParticleSystem->m_d3dcColorStart.b = 1.0f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.g = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.b = 1.0f;
+
+m_ParticleSystem->m_fAlphaStart = 1.0f;
+m_ParticleSystem->m_fAlphaVar = 0.0f;
+m_ParticleSystem->m_fAlphaEnd = 0.0f;
+
+m_ParticleSystem->m_fSizeStart = 1.0f;
+m_ParticleSystem->m_fSizeVar = 0.0f;
+m_ParticleSystem->m_fSizeEnd = 10.0f;
+
+m_ParticleSystem->m_fSpeed = 5.0f;
+m_ParticleSystem->m_fSpeedVar = 0.0f;
+
+m_ParticleSystem->m_fTheta = 180.0f;
+
+m_ParticleSystem->m_fLife = 2.0f;
+m_ParticleSystem->m_fLifeVar = 0.0f;
+
+m_ParticleSystem->m_fGravityStart = 0.0f;
+m_ParticleSystem->m_fGravityVar = 0.0f;
+m_ParticleSystem->m_fGravityEnd = -1.0f;
+
+m_ParticleSystem->m_uParticlesPerSec = 25;
+
+m_ParticleSystem->m_bIsMoving = FALSE;
+m_ParticleSystem->m_bIsAttractive = FALSE;
+m_ParticleSystem->m_bIsColliding = FALSE;
+
+m_ParticleSystem->m_uTextureID = 1;
+break;
+
+case 5:
+// camera
+m_fCameraPitch = 1.571f;
+m_fCameraYaw = 0.0f;
+m_fCameraRadius = 300.0f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.g = 0.0f;
+m_ParticleSystem->m_d3dcColorStart.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 1.0f;
+m_ParticleSystem->m_d3dcColorEnd.g = 1.0f;
+m_ParticleSystem->m_d3dcColorEnd.b = 1.0f;
+
+m_ParticleSystem->m_fAlphaStart = 0.25f;
+m_ParticleSystem->m_fAlphaVar = 0.0f;
+m_ParticleSystem->m_fAlphaEnd = 1.0f;
+
+m_ParticleSystem->m_fSizeStart = 0.5f;
+m_ParticleSystem->m_fSizeVar = 0.0f;
+m_ParticleSystem->m_fSizeEnd = 2.0f;
+m_ParticleSystem->m_fSpeed = 100.0f;
+m_ParticleSystem->m_fSpeedVar = 50.0f;
+
+m_ParticleSystem->m_fTheta = 45.0f;
+
+m_ParticleSystem->m_fLife = 3.0f;
+m_ParticleSystem->m_fLifeVar = 0.0f;
+
+m_ParticleSystem->m_fGravityStart = 0.0f;
+m_ParticleSystem->m_fGravityVar = 0.0f;
+m_ParticleSystem->m_fGravityEnd = 0.0f;
+
+m_ParticleSystem->m_uParticlesPerSec = 150;
+
+m_ParticleSystem->m_bIsMoving = 0;
+m_ParticleSystem->m_bIsAttractive = 0;
+m_ParticleSystem->m_bIsColliding = 0;
+
+m_ParticleSystem->m_uTextureID = 4;
+break;
+
+case 6:
+// camera
+m_fCameraPitch = -0.01f;
+m_fCameraYaw = 0.69f;
+m_fCameraRadius = 85.00f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 1.00f;
+m_ParticleSystem->m_d3dcColorStart.g = 1.00f;
+m_ParticleSystem->m_d3dcColorStart.b = 0.30f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.00f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.00f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.00f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 0.00f;
+m_ParticleSystem->m_d3dcColorEnd.g = 1.00f;
+m_ParticleSystem->m_d3dcColorEnd.b = 0.00f;
+
+m_ParticleSystem->m_fAlphaStart = 0.96f;
+m_ParticleSystem->m_fAlphaVar = 1.00f;
+m_ParticleSystem->m_fAlphaEnd = 0.16f;
+
+m_ParticleSystem->m_fSizeStart = 2.74f;
+m_ParticleSystem->m_fSizeVar = 2.00f;
+m_ParticleSystem->m_fSizeEnd = 6.09f;
+
+m_ParticleSystem->m_fSpeed = 14.71f;
+m_ParticleSystem->m_fSpeedVar = 50.00f;
+
+m_ParticleSystem->m_fTheta = 74.12f;
+
+m_ParticleSystem->m_fLife = 0.97f;
+m_ParticleSystem->m_fLifeVar = 0.50f;
+
+m_ParticleSystem->m_fGravityStart = -0.69f;
+m_ParticleSystem->m_fGravityVar = 1.00f;
+m_ParticleSystem->m_fGravityEnd = -0.49f;
+
+m_ParticleSystem->m_uParticlesPerSec = 441;
+
+m_ParticleSystem->m_bIsMoving = 0;
+m_ParticleSystem->m_bIsAttractive = 0;
+m_ParticleSystem->m_bIsColliding = 0;
+
+m_ParticleSystem->m_uTextureID = 0;
+break;
+
+case 7:
+// camera
+m_fCameraPitch = 1.57f;
+m_fCameraYaw = 0.0f;
+m_fCameraRadius = 159.0f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 0.00f;
+m_ParticleSystem->m_d3dcColorStart.g = 0.00f;
+m_ParticleSystem->m_d3dcColorStart.b = 0.00f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 1.00f;
+m_ParticleSystem->m_d3dcColorVar.g = 1.00f;
+m_ParticleSystem->m_d3dcColorVar.b = 1.00f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 0.00f;
+m_ParticleSystem->m_d3dcColorEnd.g = 0.00f;
+m_ParticleSystem->m_d3dcColorEnd.b = 0.00f;
+
+m_ParticleSystem->m_fAlphaStart = 0.87f;
+m_ParticleSystem->m_fAlphaVar = 1.00f;
+m_ParticleSystem->m_fAlphaEnd = 0.89f;
+
+m_ParticleSystem->m_fSizeStart = 0.59f;
+m_ParticleSystem->m_fSizeVar = 0.00f;
+m_ParticleSystem->m_fSizeEnd = 9.35f;
+
+m_ParticleSystem->m_fSpeed = 188.73f;
+m_ParticleSystem->m_fSpeedVar = 10.00f;
+m_ParticleSystem->m_fTheta = 54.71f;
+
+m_ParticleSystem->m_fLife = 0.78f;
+m_ParticleSystem->m_fLifeVar = 0.00f;
+
+m_ParticleSystem->m_fGravityStart = -0.20f;
+m_ParticleSystem->m_fGravityVar = 0.00f;
+m_ParticleSystem->m_fGravityEnd = -0.20f;
+
+m_ParticleSystem->m_uParticlesPerSec = 676;
+
+m_ParticleSystem->m_bIsMoving = 0;
+m_ParticleSystem->m_bIsAttractive = 0;
+m_ParticleSystem->m_bIsColliding = 0;
+
+m_ParticleSystem->m_uTextureID = 3;
+break;
+
+case 8:
+// camera
+m_fCameraPitch = 1.57f;
+m_fCameraYaw = 0.00f;
+m_fCameraRadius = 229.00f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 0.40f;
+m_ParticleSystem->m_d3dcColorStart.g = 0.40f;
+m_ParticleSystem->m_d3dcColorStart.b = 0.35f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.00f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.00f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.00f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 0.75f;
+m_ParticleSystem->m_d3dcColorEnd.g = 1.00f;
+m_ParticleSystem->m_d3dcColorEnd.b = 1.00f;
+
+m_ParticleSystem->m_fAlphaStart = 0.78f;
+m_ParticleSystem->m_fAlphaVar = 0.00f;
+m_ParticleSystem->m_fAlphaEnd = 0.31f;
+
+m_ParticleSystem->m_fSizeStart = 0.50f;
+m_ParticleSystem->m_fSizeVar = 0.00f;
+m_ParticleSystem->m_fSizeEnd = 5.53f;
+
+m_ParticleSystem->m_fSpeed = 30.00f;
+m_ParticleSystem->m_fSpeedVar = 0.00f;
+
+m_ParticleSystem->m_fTheta = 90.00f;
+
+m_ParticleSystem->m_fLife = 3.21f;
+m_ParticleSystem->m_fLifeVar = 0.50f;
+
+m_ParticleSystem->m_fGravityStart = -0.29f;
+m_ParticleSystem->m_fGravityVar = 0.00f;
+m_ParticleSystem->m_fGravityEnd = 0.10f;
+
+m_ParticleSystem->m_uParticlesPerSec = 59;
+
+m_ParticleSystem->m_bIsMoving = 1;
+m_ParticleSystem->m_bIsAttractive = 0;
+m_ParticleSystem->m_bIsColliding = 0;
+
+m_ParticleSystem->m_uTextureID = 2;
+break;
+
+default:
+// camera
+m_fCameraPitch = 0.0f;
+m_fCameraYaw = 0.0f;
+m_fCameraRadius = 50.0f;
+
+// system
+m_ParticleSystem->m_d3dcColorStart.r = 1.0f;
+m_ParticleSystem->m_d3dcColorStart.g = 0.8f;
+m_ParticleSystem->m_d3dcColorStart.b = 0.5f;
+
+m_ParticleSystem->m_d3dcColorVar.r = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.g = 0.0f;
+m_ParticleSystem->m_d3dcColorVar.b = 0.0f;
+
+m_ParticleSystem->m_d3dcColorEnd.r = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.g = 0.0f;
+m_ParticleSystem->m_d3dcColorEnd.b = 1.0f;
+
+m_ParticleSystem->m_fAlphaStart = 0.5f;
+m_ParticleSystem->m_fAlphaVar = 0.0f;
+m_ParticleSystem->m_fAlphaEnd = 0.0f;
+
+m_ParticleSystem->m_fSizeStart = 4.0f;
+m_ParticleSystem->m_fSizeVar = 0.0f;
+m_ParticleSystem->m_fSizeEnd = 8.0f;
+
+m_ParticleSystem->m_fSpeed = 15.0f;
+m_ParticleSystem->m_fSpeedVar = 0.0f;
+
+m_ParticleSystem->m_fTheta = 180.0f;
+
+m_ParticleSystem->m_fLife = 1.0f;
+m_ParticleSystem->m_fLifeVar = 0.5f;
+
+m_ParticleSystem->m_fGravityStart = 0.0f;
+m_ParticleSystem->m_fGravityVar = 0.0f;
+m_ParticleSystem->m_fGravityEnd = 0.0f;
+
+m_ParticleSystem->m_uParticlesPerSec = 80;
+
+m_ParticleSystem->m_bIsMoving = FALSE;
+m_ParticleSystem->m_bIsAttractive = FALSE;
+m_ParticleSystem->m_bIsColliding = FALSE;
+
+m_ParticleSystem->m_uTextureID = 0;
+break;
+
+}
+
+}
+
+//-----------------------------------------------------------------------------
+//
+// MyD3DApplication::MoveCamera
+//
+// rotate using arrow keys
+// zoom in and out by using a/z
+// change preset using d
+//
+//-----------------------------------------------------------------------------
+void MyD3DApplication::MoveCamera(void)
+{
+if ( m_bKey[VK_LEFT] )
+{
+m_fCameraYaw += 0.03f;
+}
+
+if ( m_bKey[VK_RIGHT] )
+{
+m_fCameraYaw -= 0.03f;
+}
+
+if ( m_bKey[VK_DOWN] )
+{
+m_fCameraPitch -= 0.03f;
+}
+if ( m_bKey[VK_UP] )
+{
+m_fCameraPitch += 0.03f;
+}
+
+if ( m_bKey['A'] )
+{
+m_fCameraRadius -= 1.0f;
+}
+
+if ( m_bKey['Z'] )
+{
+m_fCameraRadius += 1.0f;
+}
+if( m_bKey['D'] )
+{
+m_iPreset++;
+m_iPreset %= MAX_PRESETS;
+LoadPreset(m_iPreset);
+}
+
+// wrap yaw rotation at edges for continous movement
+if ( m_fCameraYaw < 0.0f )
+{
+m_fCameraYaw = 6.28f;
+}
+else if ( m_fCameraYaw > 6.28f )
+{
+m_fCameraYaw = 0.0f;
+}
+
+Clamp( m_fCameraPitch, -1.57f, 1.57f );
+Clamp( m_fCameraRadius, 10.0f, 500.0f );
+
+// spherical coordinate rotation
+float fDeltaX = (float)(cos(m_fCameraYaw) * cos(m_fCameraPitch) * m_fCameraRadius);
+float fDeltaZ = (float)(sin(m_fCameraYaw) * cos(m_fCameraPitch) * m_fCameraRadius);
+float fDeltaY = (float)(sin(m_fCameraPitch) * m_fCameraRadius);
+
+#if 0 // followcam !
+// follow particle system, user can still change distance and rotation
+D3DVECTOR vEyePt = m_ParticleSystem->m_d3dvLocation + D3DVECTOR( fDeltaX, fDeltaY,fDeltaZ );
+D3DVECTOR vLookatPt = m_ParticleSystem->m_d3dvLocation; //D3DVECTOR( 0.0f, 0.0f, 0.0f);
+D3DVECTOR vUpVec = D3DVECTOR( 0.0f, 1.0f, 0.0f );
+#else
+D3DVECTOR vEyePt = D3DVECTOR( fDeltaX, fDeltaY,fDeltaZ );
+D3DVECTOR vLookatPt = D3DVECTOR( 0.0f, 0.0f, 0.0f);
+D3DVECTOR vUpVec = D3DVECTOR( 0.0f, 1.0f, 0.0f );
+#endif
+
+// inform D3D where we are looking from
+D3DUtil_SetViewMatrix( m_matView, vEyePt, vLookatPt, vUpVec );
+m_pd3dDevice->SetTransform( D3DTRANSFORMSTATE_VIEW, &m_matView );
+
+} 

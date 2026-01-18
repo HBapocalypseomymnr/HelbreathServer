@@ -1,0 +1,112 @@
+    Coder : Snoopy
+    Brought To You By Juggalo2
+
+
+
+
+What Most Everyone Benn Looking For
+
+Find
+
+Code: Select all
+       if (m_sDamageMoveAmount > 0)
+            wsprintf(cTxt, "-%dPts", m_sDamageMoveAmount); //pts
+        else strcpy(cTxt, "Critical!");
+
+                int iFontType;   
+                if ((m_sDamageMoveAmount >= 0) && (m_sDamageMoveAmount < 12))      iFontType = 21;
+                else if ((m_sDamageMoveAmount >= 12) && (m_sDamageMoveAmount < 40)) iFontType = 22;
+                else if ((m_sDamageMoveAmount >= 40) || (m_sDamageMoveAmount < 0))   iFontType = 23;
+
+
+
+
+Replace With
+
+Code: Select all
+    // damage Criticals a 200+
+    short sV1 = m_sDamageMoveAmount;
+                if (sV1 < 0) sV1 = 256 + sV1;
+                if (sV1 >= 200) strcpy(cTxt, COMMAND_PROCESSOR6); // "Critical!"
+                else         wsprintf(cTxt, "-%dPts", sV1); //pts
+                int iFontType;   
+                if ((sV1 >= 0) && (sV1 < 20))      iFontType = 21;
+                else if ((sV1 >= 20) && (sV1 < 50)) iFontType = 22;
+                else if ((sV1 >= 50) || (sV1 < 0))   iFontType = 23;
+
+
+
+
+
+Find
+
+
+Code: Select all
+           if (sV1 > 0)
+        wsprintf(cTxt, "-%luPts!", sV1); //pts
+          else strcpy(cTxt, "Critical!");
+
+             int iFontType;
+             if ((sV1 >= 0) && (sV1 < 12))      iFontType = 21;
+             else if ((sV1 >= 12) && (sV1 < 40)) iFontType = 22;
+             else if ((sV1 >= 40) || (sV1 < 0))   iFontType = 23;
+
+
+
+Replace With
+
+
+Code: Select all
+    // damage Criticals a 200+
+
+             if (sV1 < 0) sV1 = 256 + sV1;
+             if (sV1 >= 200)   strcpy(cTxt, COMMAND_PROCESSOR6); // "Critical!"
+             else          wsprintf(cTxt, "-%dPts!", sV1); //pts         
+             int iFontType;
+             if ((sV1 >= 0) && (sV1 < 20))      iFontType = 21;
+             else if ((sV1 >= 20) && (sV1 < 50)) iFontType = 22;
+             else if (sV1 >= 50)   iFontType = 23;
+
+
+
+
+Find
+
+Code: Select all
+       if (sV1 != 0)
+             {   if (sV1 > 0)
+                   wsprintf(cTxt, "-%dPts", sV1); //pts
+                else strcpy(cTxt, COMMAND_PROCESSOR6); // "Critical!"
+                int iFontType;
+                if ((sV1 >= 0) && (sV1 < 12))      iFontType = 21;
+                else if ((sV1 >= 12) && (sV1 < 40)) iFontType = 22;
+                else if ((sV1 >= 40) || (sV1 < 0))   iFontType = 23;
+
+                m_pChatMsgList[i] = new class CMsg(iFontType, cTxt, m_dwCurTime);
+             }else
+             {   strcpy(cTxt, " * Failed! *");
+                m_pChatMsgList[i] = new class CMsg(22, cTxt, m_dwCurTime);
+                PlaySound('C', 17, 0);
+             }
+
+
+
+Replace With
+
+Code: Select all
+             if (sV1 != 0)
+             {   if (sV1 < 0) sV1 = 256 + sV1;
+                
+                if (sV1 >= 200)   strcpy(cTxt, COMMAND_PROCESSOR6); // "Critical!"
+                else          wsprintf(cTxt, "-%dPts", sV1); //pts
+                int iFontType;
+                if ((sV1 >= 0) && (sV1 < 20))      iFontType = 21;
+                else if ((sV1 >= 20) && (sV1 < 50)) iFontType = 22;
+                else if (sV1 >= 50)   iFontType = 23;
+
+                m_pChatMsgList[i] = new class CMsg(iFontType, cTxt, m_dwCurTime);
+             }else
+             {   strcpy(cTxt, " * Failed! *");
+                m_pChatMsgList[i] = new class CMsg(22, cTxt, m_dwCurTime);
+                PlaySound('C', 17, 0);
+             }

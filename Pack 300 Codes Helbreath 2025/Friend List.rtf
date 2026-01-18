@@ -1,0 +1,703 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20  Friend List HG/Client (By 50Cent)\par
+[CODE] Friend List [HGServer Edition]\par
+\par
+\par
+\par
+La tipica friend list, solo que ahora guarda los nombres en el server, cosa que si desinstalas el hb, formateas, se quema tu pc, etc, no pierdes a tus amigos. Puse un maximo de 20 amigos para agregar, pero se puede ampliar sin ningun problema. Nunca tuve la oportunidad de usar la friend list por drajwer, asique capaz sea algo diferente a la "tipica" friend list.\par
+\par
+Recuerden que si tienen la friend list por drajwer, recomendaria removerla antes de agregar la mia, ya que puede haber conflictos con nombres de variables o etc.\par
+\par
+\par
+\par
+CLIENT PART:\par
+\par
+ClientSRC:\par
+Game.cpp:\par
+Buscar:\par
+\par
+m_bShowFPS = FALSE;\par
+justo arriba agregar:\par
+\par
+//50Cent - Friend List\par
+iTotalFriends = 0;\par
+iIndexSelected = -1;\par
+for(i = 0; i < DEF_MAXFRIENDS; i++)\par
+\{\par
+ZeroMemory(m_stFriendList[i].cPlayerName, sizeof(m_stFriendList[i].cPlayerName));\par
+m_stFriendList[i].sStatus = 0;\par
+\}\par
+Buscar:\par
+\par
+m_bCtrlPressed = FALSE;\par
+justo arriba agregar:\par
+\par
+//50Cent - Friend List\par
+m_stDialogBoxInfo[52].sX = 337;\par
+m_stDialogBoxInfo[52].sY = 57;\par
+m_stDialogBoxInfo[52].sSizeX = 258;\par
+m_stDialogBoxInfo[52].sSizeY = 339;\par
+Buscar:\par
+\par
+case 51:\par
+DlgBoxClick_CMDHallMenu(msX, msY);\par
+break;\par
+justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+case 52:\par
+DlgBoxClick_FriendList(msX, msY);\par
+break;\par
+Buscar:\par
+\par
+case 51: // Snoopy: Drag Gail menu\par
+m_stMCursor.cSelectedObjectType\tab = DEF_SELECTEDOBJTYPE_DLGBOX;\par
+m_stMCursor.sSelectedObjectID = cDlgID;\par
+break;\par
+justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+case 52:\par
+m_stMCursor.cSelectedObjectType\tab = DEF_SELECTEDOBJTYPE_DLGBOX;\par
+m_stMCursor.sSelectedObjectID = cDlgID;\par
+break;\par
+Buscar:\par
+\par
+case 51: // Gail\par
+DrawDialogBox_CMDHallMenu(msX, msY);\par
+break;\par
+justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+case 52:\par
+DrawDialogBox_FriendList(msX, msY);\par
+break;\par
+Buscar:\par
+\par
+case 81://'Q'\par
+y remplazar todo el case por este, recuerden tambien eliminar lo referente a los #ifndef _DEBUG y #endif:\par
+\par
+//50Cent - Friend List\par
+case 81://'Q'\par
+if((m_bCtrlPressed == TRUE) && (m_cGameMode == DEF_GAMEMODE_ONMAINGAME))\par
+\{\tab\par
+if(m_bIsDialogEnabled[52] == TRUE) DisableDialogBox(52);\par
+else EnableDialogBox(52, 0, 0, 0, NULL);\par
+\}\par
+break;\par
+Buscar:\par
+\par
+case DEF_NOTIFY_0BE5:\par
+justo arriba agregar:\par
+\par
+//50Cent - Friend List\par
+case DEF_NOTIFY_FRIENDLIST_FOREVERALONE:\par
+m_stDialogBoxInfo[52].cMode = 1;\par
+break;\par
+case DEF_NOTIFY_FRIENDLIST_SENDINGLIST:\par
+cp = (char *)(pData\tab + DEF_INDEX2_MSGTYPE + 2);\par
+ip = (int *)cp;\par
+iTotalFriends = (short)*ip;\par
+cp += 4;\par
+\par
+int x;\par
+for(x = 0; x < iTotalFriends; x++)\par
+\{\par
+ZeroMemory(m_stFriendList[x].cPlayerName, sizeof(m_stFriendList[x].cPlayerName));\par
+memcpy(m_stFriendList[x].cPlayerName, cp, 10);\par
+cp += 10;\par
+\par
+sp = (short *)cp;\par
+m_stFriendList[x].sStatus = *sp;\par
+cp += 2;\par
+\}\par
+iIndexSelected = -1;\par
+m_stDialogBoxInfo[52].cMode = 2;\par
+break;\par
+\par
+Go to next page...\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+Alfinal del Game.cpp agregar:\par
+\par
+//50Cent - Friend List\par
+void CGame::DrawDialogBox_FriendList(short msX, short msY)\par
+\{short sX, sY, szX;\par
+char cTxt[120];\par
+sX = m_stDialogBoxInfo[52].sX;\par
+sY = m_stDialogBoxInfo[52].sY;\par
+szX = m_stDialogBoxInfo[52].sSizeX;\par
+\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);\par
+\par
+PutString_SprFont(sX+90,sY+35,"Friend list",1,1,8);\par
+\par
+switch (m_stDialogBoxInfo[52].cMode) \par
+\{\par
+case 0://Cargando Lista\par
+bSendCommand(MSGID_REQUEST_FRIENDLIST, NULL, NULL, NULL, NULL, NULL, NULL);\par
+PutAlignedString(sX, sX + szX, sY + 70, "Cargando lista de amigos", 0,0,0);\par
+break;\par
+case 1://For ever alone\par
+PutAlignedString(sX, sX + szX, sY + 70, "No hay amigos para mostrar", 0,0,0);\par
+if((msX > sX + 25) && (msX < sX + 80) && (msY > sY + 305) && (msY < sY + 315))\par
+PutString(sX + 25, sY + 305, "Add", RGB(255,255,255));\par
+else\par
+PutString(sX + 25, sY + 305, "Add", RGB(0,0,255));\par
+\par
+if((msX > sX + 80) && (msX < sX + 135) && (msY > sY + 305) && (msY < sY + 315))\par
+PutString(sX + 80, sY + 305, "Delete", RGB(255,255,255));\par
+else\par
+PutString(sX + 80, sY + 305, "Delete", RGB(0,0,255));\par
+\par
+if((msX > sX + 135) && (msX < sX + 190) && (msY > sY + 305) && (msY < sY + 315))\par
+PutString(sX + 135, sY + 305, "Whisp", RGB(255,255,255));\par
+else\par
+PutString(sX + 135, sY + 305, "Whisp", RGB(0,0,255));\par
+\par
+if((msX > sX + 190) && (msX < sX + 245) && (msY > sY + 305) && (msY < sY + 315))\par
+PutString(sX + 190, sY + 305, "Reload", RGB(255,255,255));\par
+else\par
+PutString(sX + 190, sY + 305, "Reload", RGB(0,0,255));\par
+break;\par
+case 2:\par
+for(int i = 0; i < iTotalFriends; i++)\par
+\{\par
+if((msX > sX + 35) && (msX < sX + 220) && (msY > sY + (i * 12) + 70) && (msY < sY + (i * 12) + 82))\par
+PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,255,255));\par
+else\par
+\{\par
+if(i == iIndexSelected) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,255,255));\par
+else\par
+\{\par
+if(m_stFriendList[i].sStatus == 0) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,0,0));\par
+else PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(0,255,0));\par
+\}\par
+/*if(m_stFriendList[i].bIsSelected) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,255,255));\par
+else\par
+\{\par
+if(m_stFriendList[i].sStatus == 0) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,0,0));\par
+else PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(0,255,0));\par
+\}*/\par
+\}\par
+\}\par
+if((msX > sX + 25) && (msX < sX + 80) && (msY > sY + 305) && (msY < sY + 315))\par
+PutString(sX + 25, sY + 305, "Add", RGB(255,255,255));\par
+else\par
+PutString(sX + 25, sY + 305, "Add", RGB(0,0,255));\par
+\par
+if((msX > sX + 80) && (msX < sX + 135) && (msY > sY + 305) && (msY < sY + 315))\par
+PutString(sX + 80, sY + 305, "Delete", RGB(255,255,255));\par
+else\par
+PutString(sX + 80, sY + 305, "Delete", RGB(0,0,255));\par
+\par
+if((msX > sX + 135) && (msX < sX + 190) && (msY > sY + 305) && (msY < sY + 315))\par
+PutString(sX + 135, sY + 305, "Whisp", RGB(255,255,255));\par
+else\par
+PutString(sX + 135, sY + 305, "Whisp", RGB(0,0,255));\par
+\par
+if((msX > sX + 190) && (msX < sX + 245) && (msY > sY + 305) && (msY < sY + 315))\par
+PutString(sX + 190, sY + 305, "Reload", RGB(255,255,255));\par
+else\par
+PutString(sX + 190, sY + 305, "Reload", RGB(0,0,255));\par
+break;\par
+\}\par
+\}\par
+void CGame::DlgBoxClick_FriendList(short msX, short msY)\par
+\{\par
+char cMsg[256];\par
+short sX, sY;\par
+sX = m_stDialogBoxInfo[52].sX;\par
+sY = m_stDialogBoxInfo[52].sY;\par
+switch (m_stDialogBoxInfo[52].cMode) \par
+\{\par
+case 0://Cargando lista\par
+break;\par
+case 1://For ever alone\par
+if((msX > sX + 25) && (msX < sX + 80) && (msY > sY + 305) && (msY < sY + 315))\par
+\{\par
+ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg) );\par
+strcpy(m_cChatMsg, "/addfriend ");\par
+StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+PlaySound('E', 14, 5);\par
+\}\par
+\par
+if((msX > sX + 80) && (msX < sX + 135) && (msY > sY + 305) && (msY < sY + 315))\par
+\{\par
+if(iIndexSelected != -1)\par
+\{\par
+ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg));\par
+wsprintf(cMsg, "/deletefriend %s", m_stFriendList[iIndexSelected].cPlayerName);\par
+strcpy(m_cChatMsg, cMsg);\par
+StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+\}\par
+else\par
+\{\par
+AddEventList("Selecciona un amigo primero", 10);\par
+PlaySound('E', 14, 5);\par
+\}\par
+\}\par
+\par
+if((msX > sX + 135) && (msX < sX + 190) && (msY > sY + 305) && (msY < sY + 315))\par
+\{\par
+if(iIndexSelected != -1)\par
+\{\par
+ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg));\par
+wsprintf(cMsg, "/to %s", m_stFriendList[iIndexSelected].cPlayerName);\par
+strcpy(m_cChatMsg, cMsg);\par
+StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+\}\par
+else\par
+\{\par
+AddEventList("Selecciona un amigo primero", 10);\par
+PlaySound('E', 14, 5);\par
+\}\par
+\}\par
+\par
+if((msX > sX + 190) && (msX < sX + 245) && (msY > sY + 305) && (msY < sY + 315))\par
+\{\par
+bSendCommand(MSGID_REQUEST_FRIENDLIST, NULL, NULL, NULL, NULL, NULL, NULL);\par
+PlaySound('E', 14, 5);\par
+\}\par
+break;\par
+case 2:\par
+for(int i = 0; i < iTotalFriends; i++)\par
+\{\par
+if((msX > sX + 35) && (msX < sX + 220) && (msY > sY + (i * 12) + 70) && (msY < sY + (i * 12) + 82))\par
+\{\par
+if(iIndexSelected == -1) iIndexSelected = i;\par
+else iIndexSelected = -1;\par
+PlaySound('E', 14, 5);\par
+\}\par
+\}\par
+\par
+if((msX > sX + 25) && (msX < sX + 80) && (msY > sY + 305) && (msY < sY + 315))\par
+\{\par
+ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg) );\par
+strcpy(m_cChatMsg, "/addfriend ");\par
+StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+PlaySound('E', 14, 5);\par
+\}\par
+\par
+if((msX > sX + 80) && (msX < sX + 135) && (msY > sY + 305) && (msY < sY + 315))\par
+\{\par
+if(iIndexSelected != -1)\par
+\{\par
+ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg));\par
+wsprintf(cMsg, "/deletefriend %s", m_stFriendList[iIndexSelected].cPlayerName);\par
+strcpy(m_cChatMsg, cMsg);\par
+StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+\}\par
+else\par
+\{\par
+AddEventList("Selecciona un amigo primero", 10);\par
+PlaySound('E', 14, 5);\par
+\}\par
+\}\par
+\par
+if((msX > sX + 135) && (msX < sX + 190) && (msY > sY + 305) && (msY < sY + 315))\par
+\{\par
+if(iIndexSelected != -1)\par
+\{\par
+ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg));\par
+wsprintf(cMsg, "/to %s", m_stFriendList[iIndexSelected].cPlayerName);\par
+strcpy(m_cChatMsg, cMsg);\par
+StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+\}\par
+else\par
+\{\par
+AddEventList("Selecciona un amigo primero", 10);\par
+PlaySound('E', 14, 5);\par
+\}\par
+\}\par
+\par
+if((msX > sX + 190) && (msX < sX + 245) && (msY > sY + 305) && (msY < sY + 315))\par
+\{\par
+AddEventList("Recargando lista...", 10);\par
+bSendCommand(MSGID_REQUEST_FRIENDLIST, NULL, NULL, NULL, NULL, NULL, NULL);\par
+PlaySound('E', 14, 5);\par
+\}\par
+break;\par
+\}\par
+\}\par
+Game.h:\par
+Buscar:\par
+\par
+#define DEF_MAXCRUSADESTRUCTURES\tab 300\par
+y justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+#define DEF_MAXFRIENDS\tab  20\par
+Agregar lo siguiente:\par
+\par
+//50Cent - Friend List\par
+void DrawDialogBox_FriendList(short msX, short msY);\par
+void DlgBoxClick_FriendList(short msX, short msY);\par
+//50Cent - Friend List\par
+int iTotalFriends;\par
+int iIndexSelected;\par
+struct\par
+\{\par
+char cPlayerName[11];\par
+short sStatus;\par
+\} m_stFriendList[DEF_MAXFRIENDS];\par
+Netmessage.h:\par
+Agregar:\par
+\par
+//50Cent - Friend List\par
+#define MSGID_REQUEST_FRIENDLIST\tab  0x1F16\par
+#define DEF_NOTIFY_FRIENDLIST_FOREVERALONE\tab  0x1F17\par
+#define DEF_NOTIFY_FRIENDLIST_SENDINGLIST\tab  0x1F18\par
+\par
+\par
+---\par
+\par
+\par
+Re: [CODE] Friend List HG/Client\par
+Parte del HG Server Sources...\par
+Si tienen cases repetidos cambienlos. (Recomendando por Sensation.)\par
+\par
+\par
+\par
+HGSRC:\par
+Client.cpp:\par
+Agregar:\par
+\par
+//50Cent - Friend List\par
+m_iTotalFriends = 0;\par
+for (i = 0; i < DEF_MAXFRIENDS; i++)\par
+\{\par
+ZeroMemory(m_stFriendList[i].cPlayerName, sizeof(m_stFriendList[i].cPlayerName));\par
+m_stFriendList[i].sStatus = 0;\par
+\}\par
+Client.h\par
+Buscar:\par
+7:\par
+#define DEF_SPECABLTYTIMESEC\tab 1200\par
+justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+#define DEF_MAXFRIENDS\tab  20\par
+Agregar:\par
+\par
+//50Cent - Friend List\par
+int m_iTotalFriends;\par
+struct\par
+\{\par
+char cPlayerName[11];\par
+short sStatus;\par
+\} m_stFriendList[DEF_MAXFRIENDS];\par
+Game.cpp:\par
+Buscar:\par
+\par
+case 81: // v2.15 \'c1\'f6\'c1\'b8\'be\'c6\'c0\'cc\'c5\'db\'be\'f7\'b1\'d7\'b7\'b9\'c0\'cc\'b5\'e5\par
+if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+PutLogList(cTxt);\par
+delete pContents;\par
+delete pStrTok;\par
+return FALSE;\par
+\}\par
+\par
+m_pClientList[iClientH]->m_iDonationPointsLeft = atoi(token);\par
+cReadModeA = 0;\par
+break;\par
+Agregar justo abajo\par
+\par
+//50Cent - Friend List\par
+case 82:\par
+if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+PutLogList(cTxt);\par
+delete pContents;\par
+delete pStrTok;\par
+return FALSE;\par
+\}\par
+\par
+m_pClientList[iClientH]->m_iTotalFriends = atoi(token);\par
+cReadModeA = 0;\par
+break;\par
+case 83:\par
+switch(cReadModeB)\par
+\{\par
+case 1:\par
+ZeroMemory(m_pClientList[iClientH]->m_stFriendList[iFriendIndex].cPlayerName, sizeof(m_pClientList[iClientH]->m_stFriendList[iFriendIndex].cPlayerName));\par
+strcpy(m_pClientList[iClientH]->m_stFriendList[iFriendIndex].cPlayerName, token);\par
+cReadModeB = 1;\par
+iFriendIndex++;\par
+if(iFriendIndex == m_pClientList[iClientH]->m_iTotalFriends) \par
+\{\par
+cReadModeB = 0;\par
+cReadModeA = 0;\par
+\}\par
+break;\par
+\}\par
+break;\par
+Buscar:\par
+\par
+if (memcmp(token, "player-donation-points", 22) == 0) cReadModeA = 81;\par
+Agregar justo abajo:\par
+\par
+//50Cent - Friend List\par
+if (memcmp(token, "friend-count", 12) == 0) cReadModeA = 82;\par
+if (memcmp(token, "friend-names", 12) == 0)\par
+\{\par
+cReadModeA = 83;\par
+cReadModeB = 1;\par
+\}\par
+Buscar:\par
+\par
+wsprintf(cTxt, "player-donation-points = %d", m_pClientList[iClientH]->m_iDonationPointsLeft);\par
+strcat(pData, cTxt);\par
+strcat(pData,"\\n");\par
+justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+wsprintf(cTxt, "friend-count = %d", m_pClientList[iClientH]->m_iTotalFriends);\par
+strcat(pData, cTxt);\par
+strcat(pData,"\\n");\par
+\par
+strcat(pData, "friend-names =");\par
+for(int x = 0; x < m_pClientList[iClientH]->m_iTotalFriends; x++)\par
+\{\par
+wsprintf(cTxt, " %s", m_pClientList[iClientH]->m_stFriendList[x].cPlayerName);\par
+strcat(pData, cTxt);\par
+\}\par
+strcat(pData,"\\n");\par
+Buscar:\par
+\par
+if (memcmp(cp, "/goto ", 6) == 0) \{\par
+AdminOrder_GoTo(iClientH, cp, dwMsgSize - 21);\par
+return;\par
+\}\par
+justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+if (memcmp(cp, "/addfriend ", 11) == 0) \par
+\{\par
+FriendList_PlayerOrder_AddFriend(iClientH, cp, dwMsgSize - 21);\par
+return;\par
+\}\par
+if (memcmp(cp, "/deletefriend ", 14) == 0) \par
+\{\par
+FriendList_PlayerOrder_DeleteFriend(iClientH, cp, dwMsgSize - 21);\par
+return;\par
+\}\par
+Buscar:\par
+\par
+case DEF_REQUEST_RESURRECTPLAYER_NO:\par
+RequestResurrectPlayer(iClientH, FALSE);\par
+break;\par
+justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+case MSGID_REQUEST_FRIENDLIST:\par
+RequestFriendList(iClientH);\par
+break;\par
+Buscar:\par
+\par
+case DEF_NOTIFY_CRAFTING_FAIL:\tab  //reversed by Snoopy: 0x0BF1:\par
+ip = (int *)cp;\par
+*ip = (int)sV1;\par
+cp += 4;\par
+iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 10);\par
+break;\par
+justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+case DEF_NOTIFY_FRIENDLIST_SENDINGLIST:\par
+ip = (int *)cp;\par
+*ip = (int)m_pClientList[iToH]->m_iTotalFriends;\par
+cp += 4;\par
+\par
+int x;\par
+for(x = 0; x < m_pClientList[iToH]->m_iTotalFriends; x++)\par
+\{\par
+memcpy(cp, m_pClientList[iToH]->m_stFriendList[x].cPlayerName, 10);\par
+cp += 10;\par
+\par
+sp = (short *)cp;\par
+*cp = m_pClientList[iToH]->m_stFriendList[x].sStatus;\par
+cp += 2;\par
+\}\par
+iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 18 + (m_pClientList[iToH]->m_iTotalFriends * 12));\par
+break;\par
+Buscar:\par
+\par
+case DEF_NOTIFY_ADMINUSERLEVELLOW:\par
+y justo abajo agregar:\par
+\par
+//50Cent - Friend List\par
+case DEF_NOTIFY_FRIENDLIST_FOREVERALONE:\par
+Alfinal del Game.cpp agregar:\par
+\par
+//50Cent - Friend List\par
+void CGame::FriendList_PlayerOrder_AddFriend(int iClientH, char* pData, DWORD dwMsgSize)\par
+\{\par
+char seps[] = "= \\t\\n";\par
+char * token, cBuff[256], cPlayerName[11], cMsg[256];\par
+class CStrTok * pStrTok;\par
+\par
+if (m_pClientList[iClientH] == NULL) return;\par
+if ((dwMsgSize)\tab <= 0) return;\par
+\par
+ZeroMemory(cPlayerName, sizeof(cPlayerName));\par
+ZeroMemory(cBuff, sizeof(cBuff));\par
+memcpy(cBuff, pData, dwMsgSize);\par
+\par
+pStrTok = new class CStrTok(cBuff, seps);\par
+token = pStrTok->pGet();\par
+\par
+token = pStrTok->pGet();\par
+if (token == NULL) \{\par
+delete pStrTok;\par
+return;\par
+\}\par
+\par
+if (strlen(token) > 10) \{\par
+memcpy(cPlayerName,token,10);\par
+\}\par
+else\{\par
+memcpy(cPlayerName,token,strlen(token));\par
+\}\par
+\par
+if((m_pClientList[iClientH]->m_iTotalFriends + 1) >= DEF_MAXFRIENDS)\par
+\{\par
+ShowClientMsg(iClientH, "Limite maximo de amigos alcansado.");\par
+return;\par
+\}\par
+\par
+if(memcmp(m_pClientList[iClientH]->m_cCharName, cPlayerName, strlen(cPlayerName)) == 0)\par
+\{\par
+ShowClientMsg(iClientH, "No puedes agregarte a ti mismo.");\par
+return;\par
+\}\par
+\par
+strcpy(m_pClientList[iClientH]->m_stFriendList[m_pClientList[iClientH]->m_iTotalFriends].cPlayerName, cPlayerName);\par
+m_pClientList[iClientH]->m_iTotalFriends++;\par
+\par
+wsprintf(cMsg,"%s ha sido agregado, quedan %d espacios.", cPlayerName, (DEF_MAXFRIENDS - (m_pClientList[iClientH]->m_iTotalFriends + 1)));\par
+ShowClientMsg(iClientH, cMsg);\par
+RequestFriendList(iClientH);\par
+delete pStrTok;\par
+\}\par
+\par
+void CGame::FriendList_PlayerOrder_DeleteFriend(int iClientH, char* pData, DWORD dwMsgSize)\par
+\{\par
+char seps[] = "= \\t\\n";\par
+char * token, cBuff[256], cPlayerName[11], cMsg[256];\par
+class CStrTok * pStrTok;\par
+int iFound = 0;\par
+\par
+if (m_pClientList[iClientH] == NULL) return;\par
+if ((dwMsgSize)\tab <= 0) return;\par
+\par
+ZeroMemory(cPlayerName, sizeof(cPlayerName));\par
+ZeroMemory(cBuff, sizeof(cBuff));\par
+memcpy(cBuff, pData, dwMsgSize);\par
+\par
+pStrTok = new class CStrTok(cBuff, seps);\par
+token = pStrTok->pGet();\par
+\par
+token = pStrTok->pGet();\par
+if (token == NULL) \{\par
+delete pStrTok;\par
+return;\par
+\}\par
+\par
+if (strlen(token) > 10) \{\par
+memcpy(cPlayerName,token,10);\par
+\}\par
+else\{\par
+memcpy(cPlayerName,token,strlen(token));\par
+\}\par
+\par
+if(m_pClientList[iClientH]->m_iTotalFriends == 0)\par
+\{\par
+ShowClientMsg(iClientH, "No tienes amigos, for ever alone.");\par
+return;\par
+\}\par
+\par
+for(int i = 0; i < m_pClientList[iClientH]->m_iTotalFriends; i++)\par
+\{\par
+if(m_pClientList[iClientH]->m_stFriendList[i].cPlayerName != NULL)\par
+\{\par
+if(memcmp(m_pClientList[iClientH]->m_stFriendList[i].cPlayerName, cPlayerName, strlen(cPlayerName)) == 0)\par
+\{\par
+ZeroMemory(m_pClientList[iClientH]->m_stFriendList[i].cPlayerName, sizeof(m_pClientList[iClientH]->m_stFriendList[i].cPlayerName));\par
+m_pClientList[iClientH]->m_iTotalFriends--;\par
+wsprintf(cMsg,"%s ha sido eliminado, quedan %d espacios.", cPlayerName, (DEF_MAXFRIENDS - (m_pClientList[iClientH]->m_iTotalFriends + 1)));\par
+ShowClientMsg(iClientH, cMsg);\par
+iFound++;\par
+break;\par
+\}\par
+\}\par
+\}\par
+\par
+if(iFound == 0)\par
+\{\par
+wsprintf(cMsg,"%s no se encontro en su lista.", cPlayerName);\par
+ShowClientMsg(iClientH, cMsg);\par
+\}\par
+RequestFriendList(iClientH);\par
+delete pStrTok;\par
+\}\par
+void CGame::RequestFriendList(int iClientH)\par
+\{\par
+if(m_pClientList[iClientH] == NULL) return;\par
+\par
+if(m_pClientList[iClientH]->m_iTotalFriends == 0)\par
+\{\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_FRIENDLIST_FOREVERALONE, NULL, NULL, NULL, NULL);\par
+return;\par
+\}\par
+\par
+for(int x = 0; x < DEF_MAXCLIENTS; x++)\par
+\{\par
+if(m_pClientList[x] != NULL)\par
+\{\par
+for(int y = 0; y < m_pClientList[iClientH]->m_iTotalFriends; y++)\par
+\{\par
+if(memcmp(m_pClientList[iClientH]->m_stFriendList[y].cPlayerName, m_pClientList[x]->m_cCharName, strlen(m_pClientList[x]->m_cCharName)) == 0)\par
+\{\par
+m_pClientList[iClientH]->m_stFriendList[y].sStatus = 1;\par
+break;\par
+\}\par
+else\par
+\{\par
+m_pClientList[iClientH]->m_stFriendList[y].sStatus = 0;\par
+\}\par
+\}\par
+\}\par
+\}\par
+\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_FRIENDLIST_SENDINGLIST, NULL, NULL, NULL, NULL);\par
+\}\par
+Game.h:\par
+Agregar:\par
+\par
+//50Cent - Friend List\par
+void FriendList_PlayerOrder_AddFriend(int iClientH, char* pData, DWORD dwMsgSize);\par
+void FriendList_PlayerOrder_DeleteFriend(int iClientH, char* pData, DWORD dwMsgSize);\par
+void RequestFriendList(int iClientH);\par
+Netmessage.h:\par
+Agregar:\par
+\par
+//50Cent - Friend List\par
+#define MSGID_REQUEST_FRIENDLIST\tab  0x1F16\par
+#define DEF_NOTIFY_FRIENDLIST_FOREVERALONE\tab  0x1F17\par
+#define DEF_NOTIFY_FRIENDLIST_SENDINGLIST\tab  0x1F18\par
+\par
+Code By 50Cent\par
+\par
+Bueno este code lo encontre en mi pc y lo posteo en mundo helbreath\par
+este code es de 50Cent,\par
+\par
+By 50Cent\par
+}
+ 

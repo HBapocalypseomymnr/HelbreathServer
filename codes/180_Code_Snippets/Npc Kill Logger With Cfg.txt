@@ -1,0 +1,1037 @@
+I'm sorry for making a new topic but it think it should be better than posting this new source in my old topic.
+
+You will need less than 5min to add this to your server.
+
+Files to edit : 4
+Files to create : 1
+Folders to create : 1
+
+
+STEP 1 : Create the Logs Directory
+
+Go to your HB Server root directory and create a new folder Called "NpcKillLogs".
+
+
+STEP 2 : Create the Config File
+
+Go to the "HB_Server/GameServers/GameConfigs/" and create a new file called NpcLogSettings.cfg. It must contains this
+
+CODE  
+monsters-log-type = ALL
+kill-logger-mode  = ON 
+
+
+
+Here are the aivable configs :
+- monsters-log-type : ALL (logs all monsters), MIGHTY (logs Barlog, Ettin, Demon, Unicorn, Gagoyle, Centaurus, Giant-Lizard, MasterMage-Orc, Minotaurs, Nizie, Hellclaw, Tigerworm, Wyvern, Fire-Wyvern, Abaddon, Crops), BOSS (logs only Hellclaw, Tigerworm, Wyvern, Fire-Wyvern, Abaddon, Crops)
+- kill-logger-mode : ON or OFF. Will activate or not the logging of npc kills
+
+STEP 3 : OPEN CLIENT.H
+
+ADD
+
+CODE  
+// NPC Kill Log By Diuuude
+int m_iSlimeKillCount, m_iRabbitKillCount, m_iCatKillCount, m_iGiantAntKillCount, m_iAmphisKillCount, m_iOrcKillCount, m_iDummyKillCount;
+int m_iAttackDummyKillCount, m_iZombieKillCount, m_iScorpionKillCount, m_iSkeletonKillCount, m_iOrcMageKillCount, m_iClayGolemKillCount;
+int m_iStoneGolemKillCount, m_iHellboundKillCount, m_iGiantFrogKillCount, m_iRudolphKillCount, m_iTrollKillCount, m_iCyclopsKillCount;
+int m_iIceGolemKillCount, m_iBeholderKillCount, m_iCannibalPlantKillCount, m_iOrgeKillCount, m_iMountainGiantKillCount, m_iDireBoarKillCount;
+int m_iTentocleKillCount, m_iGiantCrayfishKillCount, m_iGiantPlantKillCount, m_iLicheKillCount, m_iStalkerKillCount, m_iWerewolfKillCount;
+int m_iDarkElfKillCount, m_iFrostKillCount, m_iClawTurtleKillCount, m_iBarlogKillCount, m_iEttinKillCount, m_iDemonKillCount;
+int m_iUnicornKillCount, m_iGagoyleKillCount, m_iCentaurusKillCount, m_iGiantLizardKillCount, m_iMasterMageOrcKillCount, m_iMinotaursKillCount;
+int m_iNizieKillCount, m_iHellclawKillCount, m_iTigerwormKillCount, m_iWyvernKillCount, m_iFireWyvernKillCount, m_iAbaddonKillCount, m_iCropsKillCount; 
+
+
+
+STEP 4 : OPEN CLIENT.CPP
+
+ADD
+
+CODE  
+// NPC Kill Log By Diuuude
+m_iSlimeKillCount = 0;
+m_iRabbitKillCount = 0;
+m_iCatKillCount = 0;
+m_iGiantAntKillCount = 0;
+m_iAmphisKillCount = 0;
+m_iOrcKillCount = 0;
+m_iDummyKillCount = 0;
+m_iAttackDummyKillCount = 0;
+m_iZombieKillCount = 0;
+m_iScorpionKillCount = 0;
+m_iSkeletonKillCount = 0;
+m_iOrcMageKillCount = 0;
+m_iClayGolemKillCount = 0;
+m_iStoneGolemKillCount = 0;
+m_iHellboundKillCount = 0;
+m_iGiantFrogKillCount = 0;
+m_iRudolphKillCount = 0;
+m_iTrollKillCount = 0;
+m_iCyclopsKillCount = 0;
+m_iIceGolemKillCount = 0;
+m_iBeholderKillCount = 0;
+m_iCannibalPlantKillCount = 0;
+m_iOrgeKillCount = 0;
+m_iMountainGiantKillCount = 0;
+m_iDireBoarKillCount = 0;
+m_iTentocleKillCount = 0;
+m_iGiantCrayfishKillCount = 0;
+m_iGiantPlantKillCount = 0;
+m_iLicheKillCount = 0;
+m_iStalkerKillCount = 0;
+m_iWerewolfKillCount = 0;
+m_iDarkElfKillCount = 0;
+m_iFrostKillCount = 0;
+m_iClawTurtleKillCount = 0;
+m_iBarlogKillCount = 0;
+m_iEttinKillCount = 0;
+m_iDemonKillCount = 0;
+m_iUnicornKillCount = 0;
+m_iGagoyleKillCount = 0;
+m_iCentaurusKillCount = 0;
+m_iGiantLizardKillCount = 0;
+m_iMasterMageOrcKillCount = 0;
+m_iMinotaursKillCount = 0;
+m_iNizieKillCount = 0;
+m_iHellclawKillCount = 0;
+m_iTigerwormKillCount = 0;
+m_iWyvernKillCount = 0;
+m_iFireWyvernKillCount = 0;
+m_iAbaddonKillCount = 0;
+m_iCropsKillCount = 0; 
+
+
+
+STEP 5 : OPEN GAME.H
+
+ADD
+
+CODE  
+// NPC Kill Log By Diuuude
+void ReadNpcKillLogFile(char * cPlayer, int iClientH);
+void SaveNpcKillLogFile(char * cPlayer, int iClientH);
+void ReadNpcKillLogSettings(); 
+
+
+
+ADD
+
+CODE  
+// Npc Kill Log By Diuuude
+char * m_cMonstersLogType;
+char * m_cMonstersLogMode; 
+
+
+
+
+STEP 6 : OPEN GAME.CPP - GO TO InitPlayerData()
+
+ADD, BEFORE THE LAST return;
+
+CODE  
+// Load The Npc Kill Count LogFile by Diuuude
+if (m_cMonstersLogMode == "ON") {
+ ReadNpcKillLogFile(m_pClientList[iClientH]->m_cCharName, iClientH);
+} 
+
+
+
+STEP 7 : STILL IN GAME.CPP - GO TO DeleteClient()
+
+FIND
+
+CODE  
+if (m_pClientList[iClientH] == NULL) return; 
+
+
+
+BEFORE, ADD
+
+CODE  
+//Npc Kill Log By Diuuude
+if (m_cMonstersLogMode == "ON") {
+ SaveNpcKillLogFile(m_pClientList[iClientH]->m_cCharName, iClientH);
+} 
+
+
+STEP 8 : STILL IN GAME.CPP - GO TO NpcKilledHandler()
+
+FIND
+
+CODE  
+if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+ switch (m_pNpcList[iNpcH]->m_sType) {
+ case 32: 
+  m_pClientList[sAttackerH]->m_iRating -= 5;
+  if (m_pClientList[sAttackerH]->m_iRating < -10000) m_pClientList[sAttackerH]->m_iRating = 0;
+  if (m_pClientList[sAttackerH]->m_iRating >  10000) m_pClientList[sAttackerH]->m_iRating = 0;
+  break;
+
+ case 33:
+  break;
+ }
+} 
+
+
+
+AFTER, ADD
+
+CODE  
+// NPC Kill Log By Diuuude
+if (m_cMonstersLogMode == "ON") { 
+ if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+  if (m_cMonstersLogType == "BOSS" || m_cMonstersLogType == "MIGHTY" || m_cMonstersLogType == "ALL"){
+   if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Hellclaw"  , 8) == 0) m_pClientList[sAttackerH]->m_iHellclawKillCount += 1;
+   if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Tigerworm"  , 9) == 0) m_pClientList[sAttackerH]->m_iTigerwormKillCount += 1;
+   if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Wyvern"  , 6) == 0) m_pClientList[sAttackerH]->m_iWyvernKillCount += 1;
+   if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Fire-Wyvern"  , 11) == 0) m_pClientList[sAttackerH]->m_iFireWyvernKillCount += 1;
+   if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Abaddon"  , 7) == 0) m_pClientList[sAttackerH]->m_iAbaddonKillCount += 1;
+   if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Crops"  , 5) == 0) m_pClientList[sAttackerH]->m_iCropsKillCount += 1;
+   if (m_cMonstersLogType == "MIGHTY" || m_cMonstersLogType == "ALL"){
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Barlog"  , 6) == 0) m_pClientList[sAttackerH]->m_iBarlogKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Ettin"  , 5) == 0) m_pClientList[sAttackerH]->m_iEttinKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Demon"  , 5) == 0) m_pClientList[sAttackerH]->m_iDemonKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Unicorn"  , 7) == 0) m_pClientList[sAttackerH]->m_iUnicornKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Gagoyle"  , 7) == 0) m_pClientList[sAttackerH]->m_iGagoyleKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Centaurus"  , 9) == 0) m_pClientList[sAttackerH]->m_iCentaurusKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Giant-Lizard"  , 12) == 0) m_pClientList[sAttackerH]->m_iGiantLizardKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "MasterMage-Orc"  , 14) == 0) m_pClientList[sAttackerH]->m_iMasterMageOrcKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Minotaurs"  , 9) == 0) m_pClientList[sAttackerH]->m_iMinotaursKillCount += 1;
+    if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Nizie"  , 5) == 0) m_pClientList[sAttackerH]->m_iNizieKillCount += 1;
+    if (m_cMonstersLogType == "ALL"){
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Slime", 5) == 0) m_pClientList[sAttackerH]->m_iSlimeKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Rabbit", 6) == 0) m_pClientList[sAttackerH]->m_iRabbitKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Cat", 3) == 0) m_pClientList[sAttackerH]->m_iCatKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Giant-Ant", 9) == 0) m_pClientList[sAttackerH]->m_iGiantAntKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Amphis", 6) == 0) m_pClientList[sAttackerH]->m_iAmphisKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Orc", 3) == 0) m_pClientList[sAttackerH]->m_iOrcKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Dummy", 5) == 0) m_pClientList[sAttackerH]->m_iDummyKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Attack-Dummy", 12) == 0) m_pClientList[sAttackerH]->m_iAttackDummyKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Zombie", 6) == 0) m_pClientList[sAttackerH]->m_iZombieKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Scorpion", 8) == 0) m_pClientList[sAttackerH]->m_iScorpionKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Skeleton", 8) == 0) m_pClientList[sAttackerH]->m_iSkeletonKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Orc-Mage", 8) == 0) m_pClientList[sAttackerH]->m_iOrcMageKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Clay-Golem", 10) == 0) m_pClientList[sAttackerH]->m_iClayGolemKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Stone-Golem", 11) == 0) m_pClientList[sAttackerH]->m_iStoneGolemKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Hellbound", 9) == 0) m_pClientList[sAttackerH]->m_iHellboundKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Giant-Frog", 10) == 0) m_pClientList[sAttackerH]->m_iGiantFrogKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Rudolph", 7) == 0) m_pClientList[sAttackerH]->m_iRudolphKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Troll", 5) == 0) m_pClientList[sAttackerH]->m_iTrollKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Cyclops", 7) == 0) m_pClientList[sAttackerH]->m_iCyclopsKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Ice-Golem", 9) == 0) m_pClientList[sAttackerH]->m_iIceGolemKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Beholder"  , 8) == 0) m_pClientList[sAttackerH]->m_iBeholderKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Cannibal-Plant"  , 14) == 0) m_pClientList[sAttackerH]->m_iCannibalPlantKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Orge"  , 4) == 0) m_pClientList[sAttackerH]->m_iOrgeKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Mountain-Giant"  , 14) == 0) m_pClientList[sAttackerH]->m_iMountainGiantKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "DireBoar"  , 8) == 0) m_pClientList[sAttackerH]->m_iDireBoarKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Tentocle"  , 8) == 0) m_pClientList[sAttackerH]->m_iTentocleKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Giant-Crayfish"  , 14) == 0) m_pClientList[sAttackerH]->m_iGiantCrayfishKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Giant-Plant"  , 11) == 0) m_pClientList[sAttackerH]->m_iGiantPlantKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Liche"  , 5) == 0) m_pClientList[sAttackerH]->m_iLicheKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Stalker"  , 7) == 0) m_pClientList[sAttackerH]->m_iStalkerKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "WereWolf"  , 8) == 0) m_pClientList[sAttackerH]->m_iWerewolfKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Dark-Elf"  , 8) == 0) m_pClientList[sAttackerH]->m_iDarkElfKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Frost"  , 5) == 0) m_pClientList[sAttackerH]->m_iFrostKillCount += 1;
+     if (memcmp(m_pNpcList[iNpcH]->m_cNpcName, "Claw-Turtle"  , 11) == 0) m_pClientList[sAttackerH]->m_iClawTurtleKillCount += 1;
+    } 
+   }
+  }
+ }
+} 
+
+
+
+STEP 9 : STILL IN GAME.CPP
+
+ADD
+
+
+CODE  
+// NPC Kill Log by Diuuude
+void CGame::ReadNpcKillLogFile(char * cPlayer, int iClientH) 
+{ 
+  FILE * pFile; 
+  HANDLE hFile; 
+  DWORD  dwFileSize; 
+  char * cp, * token, cReadMode;
+  char cFn[120], cTxt[120]; 
+  char seps[] = "= \t\n"; 
+  class CStrTok * pStrTok; 
+
+  cReadMode = 0; 
+
+  strcpy (cFn,"..\\..\\NpcKillLogs\\");
+  strcat (cFn,cPlayer);
+  strcat (cFn,".txt");
+
+  hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL); 
+  dwFileSize = GetFileSize(hFile, NULL); 
+  if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile); 
+
+  pFile = fopen(cFn, "rt"); 
+  if (pFile == NULL) {  
+     return; 
+  } 
+  else { 
+     cp = new char[dwFileSize+2]; 
+     ZeroMemory(cp, dwFileSize+2); 
+     fread(cp, dwFileSize, 1, pFile); 
+
+     pStrTok = new class CStrTok(cp, seps); 
+     token = pStrTok->pGet(); 
+     //token = strtok( cp, seps );    
+     while( token != NULL )   { 
+
+        if (cReadMode != 0) { 
+           switch (cReadMode) { 
+
+           case 1: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iSlimeKillCount = atoi(token); 
+              }
+              cReadMode = 0; 
+              break; 
+           case 2: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iRabbitKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 3: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iCatKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 4: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iGiantAntKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 5: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iAmphisKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 6: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iOrcKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 7: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iDummyKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 8: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iAttackDummyKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 9: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iZombieKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 10: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iScorpionKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 11: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iSkeletonKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 12: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iOrcMageKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 13: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iClayGolemKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 14: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iStoneGolemKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 15: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iHellboundKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 16: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iGiantFrogKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 17: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iRudolphKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 18: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iTrollKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 19: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iCyclopsKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 20: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iIceGolemKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 21: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iBeholderKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 22: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iCannibalPlantKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 23: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iOrgeKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 24: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iMountainGiantKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 25: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iDireBoarKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 26: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iTentocleKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 27: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iGiantCrayfishKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 28: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iGiantPlantKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 29: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iLicheKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 30: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iStalkerKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 31: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iWerewolfKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 32: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iDarkElfKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 33: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iFrostKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 34: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iClawTurtleKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 35: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iBarlogKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 36: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iEttinKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 37: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iDemonKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 38: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iUnicornKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 39: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iGagoyleKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 40: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iCentaurusKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 41: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iGiantLizardKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 42: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iMasterMageOrcKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 43: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iMinotaursKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 44: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iNizieKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 45: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iHellclawKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 46: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iTigerwormKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 47: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iWyvernKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 48: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iFireWyvernKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 49: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iAbaddonKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+           case 50: 
+              if ((strlen(token) != 0) && (strlen(token) <= 10000) && (strlen(token) >= 1)) 
+              { 
+                 m_pClientList[iClientH]->m_iCropsKillCount = atoi(token); 
+              } 
+              cReadMode = 0; 
+              break; 
+             }
+        } 
+        else { 
+  if (memcmp(token, "Slime"  , 5) == 0)   cReadMode = 1;
+  if (memcmp(token, "Rabbit"  , 6) == 0)   cReadMode = 2;
+  if (memcmp(token, "Cat"  , 3) == 0)   cReadMode = 3; 
+  if (memcmp(token, "Giant-Ant"  , 9) == 0)   cReadMode = 4; 
+  if (memcmp(token, "Amphis"  , 6) == 0)   cReadMode = 5; 
+  if (memcmp(token, "Orc"  , 3) == 0)   cReadMode = 6; 
+  if (memcmp(token, "Dummy"  , 5) == 0)   cReadMode = 7; 
+  if (memcmp(token, "Attack-Dummy"  , 12) == 0)   cReadMode = 8; 
+  if (memcmp(token, "Zombie"  , 6) == 0)   cReadMode = 9; 
+  if (memcmp(token, "Scorpion"  , 8) == 0)   cReadMode = 10; 
+  if (memcmp(token, "Skeleton"  , 8) == 0)   cReadMode = 11; 
+  if (memcmp(token, "Orc-Mage"  , 8) == 0)   cReadMode = 12; 
+  if (memcmp(token, "Clay-Golem"  , 10) == 0)   cReadMode = 13; 
+  if (memcmp(token, "Stone-Golem"  , 11) == 0)   cReadMode = 14;
+  if (memcmp(token, "Hellbound"  , 9) == 0)   cReadMode = 15; 
+  if (memcmp(token, "Giant-Frog"  , 10) == 0)   cReadMode = 16; 
+  if (memcmp(token, "Rudolph"  , 7) == 0)   cReadMode = 17;
+  if (memcmp(token, "Troll"  , 5) == 0)   cReadMode = 18; 
+  if (memcmp(token, "Cyclops"  , 7) == 0)   cReadMode = 19; 
+  if (memcmp(token, "Ice-Golem"  , 9) == 0)   cReadMode = 20; 
+  if (memcmp(token, "Beholder"  , 8) == 0)   cReadMode = 21;
+  if (memcmp(token, "Cannibal-Plant"  , 14) == 0)   cReadMode = 22;
+  if (memcmp(token, "Orge"  , 4) == 0)   cReadMode = 23;
+  if (memcmp(token, "Mountain-Giant"  , 14) == 0)   cReadMode = 24;
+  if (memcmp(token, "DireBoar"  , 8) == 0)   cReadMode = 25;
+  if (memcmp(token, "Tentocle"  , 8) == 0)   cReadMode = 26;
+  if (memcmp(token, "Giant-Crayfish"  , 14) == 0)   cReadMode = 27;
+  if (memcmp(token, "Giant-Plant"  , 11) == 0)   cReadMode = 28;
+  if (memcmp(token, "Liche"  , 5) == 0)   cReadMode = 29;
+  if (memcmp(token, "Stalker"  , 7) == 0)   cReadMode = 30;
+  if (memcmp(token, "WereWolf"  , 8) == 0)   cReadMode = 31;
+  if (memcmp(token, "Dark-Elf"  , 8) == 0)   cReadMode = 32;
+  if (memcmp(token, "Frost"  , 5) == 0)   cReadMode = 33;
+  if (memcmp(token, "Claw-Turtle"  , 11) == 0)   cReadMode = 34;
+  if (memcmp(token, "Barlog"  , 6) == 0)   cReadMode = 35;
+  if (memcmp(token, "Ettin"  , 5) == 0)   cReadMode = 36;
+  if (memcmp(token, "Demon"  , 5) == 0)   cReadMode = 37;
+  if (memcmp(token, "Unicorn"  , 7) == 0)   cReadMode = 38;
+  if (memcmp(token, "Gagoyle"  , 7) == 0)   cReadMode = 39;
+  if (memcmp(token, "Centaurus"  , 9) == 0)   cReadMode = 40;
+  if (memcmp(token, "Giant-Lizard"  , 12) == 0)   cReadMode = 41;
+  if (memcmp(token, "MasterMage-Orc"  , 12) == 0)   cReadMode = 42;
+  if (memcmp(token, "Minotaurs"  , 9) == 0)   cReadMode = 43;
+  if (memcmp(token, "Nizie"  , 5) == 0)   cReadMode = 44;
+  if (memcmp(token, "Hellclaw"  , 8) == 0)   cReadMode = 45;
+  if (memcmp(token, "Tigerworm"  , 9) == 0)   cReadMode = 46;
+  if (memcmp(token, "Wyvern"  , 6) == 0)   cReadMode = 47;
+  if (memcmp(token, "Fire-Wyvern"  , 11) == 0)   cReadMode = 48;
+  if (memcmp(token, "Abaddon"  , 7) == 0)   cReadMode = 49;
+  if (memcmp(token, "Crops"  , 5) == 0)   cReadMode = 50;
+        } 
+
+        token = pStrTok->pGet(); 
+        //token = strtok( NULL, seps ); 
+     } 
+
+     delete pStrTok; 
+     delete cp; 
+  } 
+  if (pFile != NULL) fclose(pFile); 
+
+  wsprintf(cTxt, "(*) Loaded NPC Kill LogFile for Player: (%s)", cPlayer); 
+  PutLogList(cTxt);
+
+  return; 
+}   
+
+
+
+STEP 10 : STILL IN GAME.CPP
+
+ADD
+
+CODE  
+// NPC Kill Log by Diuuude
+void CGame::ReadNpcKillLogSettings() 
+{ 
+  FILE * pFile; 
+  HANDLE hFile; 
+  DWORD  dwFileSize; 
+  char * cp, * token, cReadMode;
+  char cFn[120]; 
+  char seps[] = "= \t\n"; 
+  class CStrTok * pStrTok; 
+
+  cReadMode = 0; 
+
+  strcpy (cFn,"..\\GameConfigs\\NpcLogSettings.cfg");
+
+  hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL); 
+  dwFileSize = GetFileSize(hFile, NULL); 
+  if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile); 
+
+  pFile = fopen(cFn, "rt"); 
+  if (pFile == NULL) {  
+     return; 
+  } 
+  else { 
+     cp = new char[dwFileSize+2]; 
+     ZeroMemory(cp, dwFileSize+2); 
+     fread(cp, dwFileSize, 1, pFile); 
+
+     pStrTok = new class CStrTok(cp, seps); 
+     token = pStrTok->pGet(); 
+     //token = strtok( cp, seps );    
+     while( token != NULL )   { 
+
+        if (cReadMode != 0) { 
+           switch (cReadMode) { 
+
+           case 1: 
+              if ((memcmp(token, "all", 3) == 0) || (memcmp(token, "ALL", 3) == 0))
+   {
+    m_cMonstersLogType = "ALL";
+   }
+   if ((memcmp(token, "mighty", 6) == 0) || (memcmp(token, "MIGHTY", 6) == 0))
+   {
+    m_cMonstersLogType = "MIGHTY";
+   }
+   if ((memcmp(token, "boss", 4) == 0) || (memcmp(token, "BOSS", 4) == 0))
+   {
+    m_cMonstersLogType = "BOSS";
+   }
+   cReadMode = 0;
+   break; 
+           case 2: 
+              if ((memcmp(token, "on", 2) == 0) || (memcmp(token, "ON", 2) == 0))
+   {
+    m_cMonstersLogMode = "ON";
+   }
+   if ((memcmp(token, "off", 3) == 0) || (memcmp(token, "OFF", 3) == 0))
+   {
+    m_cMonstersLogMode = "OFF";
+   }
+              cReadMode = 0; 
+              break;
+             }
+        } 
+        else { 
+           if (memcmp(token, "monsters-log-type"  , 17) == 0)   cReadMode = 1;
+           if (memcmp(token, "kill-logger-mode"  , 16) == 0)   cReadMode = 2;
+        } 
+
+        token = pStrTok->pGet(); 
+        //token = strtok( NULL, seps ); 
+     } 
+
+     delete pStrTok; 
+     delete cp; 
+  } 
+  if (pFile != NULL) fclose(pFile); 
+
+  PutLogList("(*) Loaded NPC Kill Log Config");
+
+  return; 
+}  
+
+
+STEP 11 - STILL IN GAME.CPP
+
+ADD
+
+
+CODE  
+// NPC Kill Log By Diuuude
+void CGame::SaveNpcKillLogFile(char * cPlayer, int iClientH)
+{
+FILE * pFile;
+HANDLE hFile;
+DWORD  dwFileSize;
+char cFn[120];
+char cBuffer[10];
+char cFn2[1200];
+char cTxt[120];
+
+strcpy (cFn,"..\\..\\NpcKillLogs\\");
+   strcat (cFn,cPlayer);
+   strcat (cFn,".txt");
+
+hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL); 
+   dwFileSize = GetFileSize(hFile, NULL); 
+   if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile); 
+
+   pFile = fopen(cFn, "wt"); 
+   if (pFile == NULL) {  
+     return; 
+   } 
+
+strcpy(cFn2, "Slime = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iSlimeKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Rabbit = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iRabbitKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Cat = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iCatKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Giant-Ant = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iGiantAntKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Amphis = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iAmphisKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Orc = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iOrcKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Dummy = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iDummyKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Atack-Dummy = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iAttackDummyKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Zombie = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iZombieKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Scorpion = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iScorpionKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Skeleton = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iSkeletonKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Orc-Mage = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iOrcMageKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Clay-Golem = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iClayGolemKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Stone-Golem = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iStoneGolemKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Hellbound = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iHellboundKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Giant-Frog = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iGiantFrogKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Rudolph = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iRudolphKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Troll = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iTrollKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Cyclops = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iCyclopsKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Ice-Golem = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iIceGolemKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Beholder = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iBeholderKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Cannibal-Plant = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iCannibalPlantKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Orge = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iOrgeKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Mountain-Giant = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iMountainGiantKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "DireBoar = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iDireBoarKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Tentocle = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iTentocleKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Giant-Crayfish = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iGiantCrayfishKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Giant-Plant = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iGiantPlantKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Liche = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iLicheKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Stalker = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iStalkerKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "WereWolf = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iWerewolfKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Dark-Elf = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iDarkElfKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Frost = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iFrostKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Claw-Turtle = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iClawTurtleKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Barlog = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iBarlogKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Ettin = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iEttinKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Demon = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iDemonKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Unicorn = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iUnicornKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Gagoyle = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iGagoyleKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Centaurus = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iCentaurusKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Giant-Lizard = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iGiantLizardKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "MasterMage-Orc = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iMasterMageOrcKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Minotaurs = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iMinotaursKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Nizie = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iNizieKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Hellclaw = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iHellclawKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Tigerworm = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iTigerwormKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Wyvern = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iWyvernKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Fire-Wyvern = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iFireWyvernKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Abaddon = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iAbaddonKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+strcat(cFn2, "Crops = ");
+wsprintf(cBuffer, "%d", m_pClientList[iClientH]->m_iCropsKillCount);
+strcat (cFn2, cBuffer);
+   strcat (cFn2,"\n");
+fwrite(cFn2, 1, strlen(cFn2), pFile);
+
+fclose(pFile);
+
+wsprintf(cTxt, "(*) Saved NPC Kill LogFile for Player: (%s)", cPlayer); 
+PutLogList(cTxt);
+} 
+
+

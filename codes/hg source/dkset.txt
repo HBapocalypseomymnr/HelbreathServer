@@ -1,0 +1,102 @@
+the code this this based on the code of drawjer”and modified by my so that single it is used in cityhall_X and has built-in so that when you receive dkset disconnects you to avoid flood.
+
+go to function ChatMsgHandler and add:
+
+
+CODE  
+ if (memcmp(cp, "/dkset", 6) == 0) {
+           GetDkSet(iClientH);
+           return;
+ } 
+
+
+
+later to add this at the end of game.cpp 
+
+
+CODE  
+
+//dkset by diuude and update by drawjer and modified by Ovl
+void CGame::GetDkSet(int iClientH) 
+{
+
+class CItem * pItem;
+int dkM[]={706,707,708,710};
+int dkW[]={724,725,726,728};
+int dmM[]={711,712,713,717};
+int dmW[]={729,730,731,717};
+int weapon, iItemID, i, iEraseReq;
+if(m_pClientList[iClientH] == NULL) return;
+if(m_pClientList[iClientH]->m_iLevel < 180) return;
+if (((strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "cityhall_1") == 0) || (strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "cityhall_2") == 0))) {
+for (i = 0; i <= 4; i++)
+{
+pItem = new class CItem;
+iItemID=-1;
+if (m_pClientList[iClientH]->m_cSex == 1)
+{
+ if (m_pClientList[iClientH]->m_iStr > 100)
+ {
+  iItemID=dkM[i];
+ }
+ else
+ {
+  iItemID=dmM[i];
+ }
+}
+else
+{
+ if (m_pClientList[iClientH]->m_iStr > 100)
+ {
+  iItemID=dkW[i];
+ }
+ else
+ {
+  iItemID=dmW[i];
+ }
+}
+if (i == 4)
+{
+ if (m_pClientList[iClientH]->m_iStr > m_pClientList[iClientH]->m_iInt)
+ { if (m_pClientList[iClientH]->m_cSex == 1){
+  weapon=709;
+ } 
+ else if (m_pClientList[iClientH]->m_cSex == 2){
+  weapon=727;
+ }
+ }
+ else
+ { if (m_pClientList[iClientH]->m_cSex == 1){
+  weapon=714;
+ } 
+ else if (m_pClientList[iClientH]->m_cSex == 2){
+  weapon=732;
+ }
+ }
+ iItemID = weapon;
+}
+if (iItemID != -1) //if any error occures, dont crash character
+{
+ _bInitItemAttr(pItem, iItemID);
+ pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+ pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
+ pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
+ pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
+ _bAddClientItemList(iClientH, pItem, &iEraseReq);
+ SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+ 
+}
+}
+} DeleteClient(iClientH, TRUE, FALSE, TRUE);
+
+} 
+
+
+
+and to register the function in game.h
+
+
+CODE  
+
+void GetDkSet(int iClientH);
+ 

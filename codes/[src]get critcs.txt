@@ -1,0 +1,139 @@
+-Nueva configuraci?n el Game.h
+
+Este es como los otros dos que postie, pero en uno y sin bugs.
+Lo que hace este comando es lo siguiente:
+1.-Detecta si el pj q lo usa es GM, si lo es, le da 2000 criticals a cambio de nada.
+2.-Detecta si el pj q usa el comando es max lvl, si lo es le pide 10 majestics y le da 1000 criticals
+3.-Detecta si no es max lvl, si no es, le pide 100000 gold para cambiarlo por 100 criticals
+4.-Si no cumple ningun requisito anterior le envia un mensaje de error
+5.-Todo esto es configurable, a traves de lo que van a agregar en game.h
+
+Les dejo el comando:
+
+En Game.cpp del HGServer, buscar:
+
+
+if (memcmp(cp, "/who", 4) == 0) {
+
+Y abajo de:
+
+
+if (memcmp(cp, "/who", 4) == 0) {
+			// New 08/05/2003
+			if (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelWho) {
+				// ?€ü?ƒ¼ »ç¿ë?€?š ¼ö¸¦ ¹¯´?‚ °Í?€?Œ´?™.
+				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOTALUSERS, NULL, NULL, NULL, NULL);
+			}
+			return;
+		}
+
+Agregar:
+
+
+//criticals by MihD
+		if (memcmp(cp, "/criticals",10) == 0) {
+			PlayerOrder_GetCrits(iClientH);
+			return;
+		}
+
+Ahora al final de Game.cpp, agregar:
+
+
+//criticals
+//criticals by MIHD
+//Para configurar: en Game.h y los mensajes aca abajo
+
+
+void CGame::PlayerOrder_GetCrits(int iClientH) {
+
+if(m_pClientList[iClientH] == NULL) return;
+if(m_pClientList[iClientH]->m_iSuperAttackLeft >= DEF_MAXCRITICALS) {
+	SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Ya no puedes cargar mas criticals");
+	return;
+}
+
+if(m_pClientList[iClientH]->m_iAdminUserLevel > 0) {
+	m_pClientList[iClientH]->m_iSuperAttackLeft += DEF_CRITICALSGM;
+	SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Tu GM ha ganado 2000 criticals");
+return;
+	   }
+
+
+if(m_pClientList[iClientH]->m_iLevel >= m_sMaxPlayerLevel) {
+	if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft >= DEF_MAJESTICSMAXLVL) {
+m_pClientList[iClientH]->m_iSuperAttackLeft += DEF_CRITICALSMAXLVL;
+       m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= DEF_MAJESTICSMAXLVL;
+	   SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Has ganado 1000 Criticals por 10 Majestics");
+	   return;
+	   }
+}
+				
+
+		DWORD dwGoldCount;
+
+	 		if(m_pClientList[iClientH]->m_iLevel < m_sMaxPlayerLevel) {
+			dwGoldCount = dwGetItemCount(iClientH, "Gold");
+				if(dwGoldCount >= DEF_GOLDMINLVL) {
+SetItemCount(iClientH, "Gold", dwGoldCount - DEF_GOLDMINLVL);
+m_pClientList[iClientH]->m_iSuperAttackLeft += DEF_CRITICALSMINLVL; 
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Has ganado 100 Criticals por 100k");
+return;
+				}
+			}
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "No tienes los requerimientos necesarios");
+
+}
+//Fin Criticals By MIHD
+
+Ahora en Game.h del HGServer, buscar:
+
+
+#include "TempNpcItem.h"
+
+Y abajo agregar:
+
+
+//MIHD Criticals CONFIG
+#define DEF_CRITICALSMINLVL			100
+#define DEF_GOLDMINLVL				100000
+#define DEF_CRITICALSMAXLVL			1000
+#define DEF_MAJESTICSMAXLVL			10
+#define DEF_CRITICALSGM				2000
+#define DEF_MAXCRITICALS			9999
+//FIN Criticals Config
+
+Ahora tambien en Game.h buscar:
+
+
+class CGame  
+{
+public:
+
+Y abajo agregar:
+Código:
+
+//Criticals config by MIHD
+void PlayerOrder_GetCrits(int iClientH);
+
+Configuracion:
+
+Para configurar los requisitos, haslo en esto q agregaste:
+
+
+//MIHD Criticals CONFIG
+#define DEF_CRITICALSMINLVL			100
+#define DEF_GOLDMINLVL				100000
+#define DEF_CRITICALSMAXLVL			1000
+#define DEF_MAJESTICSMAXLVL			10
+#define DEF_CRITICALSGM				2000
+#define DEF_MAXCRITICALS			9999
+//FIN Criticals Config
+
+Aca lo explico:
+
+En "#define DEF_CRITICALSMINLVL 100" el 100 es los criticals q te da si no eres max lvl
+En "#define DEF_GOLDMINLVL 100000" -- el 100000 es el gold q te pide para conseguir criticals cuando no eres max lvl
+En "#define DEF_CRITICALSMAXLVL 1000" -- El 1000 es los criticals q te da si eres max lvl
+En "#define DEF_MAJESTICSMAXLVL 10" -- el 10 es los majestics q te pide para cambiar por los criticals cuando eres max lvl
+En "#define DEF_CRITICALSGM 2000" -- El 2000 son los criticals q se le agrega a los gms, a cambio de nada xD
+En "#define DEF_MAXCRITICALS 9999" -- El 9999 es el limite de criticals q se puede tener.

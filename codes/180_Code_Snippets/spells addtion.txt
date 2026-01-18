@@ -1,0 +1,15 @@
+spell images are 100% client side, and are done using the spell #+99 in the cfg
+
+Magic missle is effect 100, or spell # 1 in the magic cfg (this is just so you have a point of reference)
+
+functions to add the spell
+
+void CGame::DrawEffects()
+
+void CGame::DrawEffectLights()
+
+BOOL CGame::bEffectFrameCounter()
+
+void CGame::bAddNewEffect(short sType, int sX, int sY, int dX, int dY, char cStartFrame, int iV1)
+
+basically look at things in all of those functions, things might not be needed in all of them, or there might be more but that should be a start as to where to look since i dont think anyone else has a constuctive post anywhere on spell coding 

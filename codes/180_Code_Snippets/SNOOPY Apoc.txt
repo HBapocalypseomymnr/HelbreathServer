@@ -1,0 +1,774 @@
+This the commented most important part, but there miss cfg, login, admincommands, and lot of places you may gave to adjust...
+Some new variables and constant have been added too.
+
+ie: 
+- m_sApocalypseBossMobRect; in cMap, loaded from;
+//------------------------NpcID---RECT----------------------
+ApocalypseBossMob = 81 79 76 136 107
+
+- m_bIsApocalypseGateOpen: Global variable for server. After some time, the gate closes but players alreaddy at Apoc maps can go on... A GM could reopen the gate for a while if needed.
+
+- m_iMaximumObjectDefault: Store the "normal" max mobs, because it's set to 0 to prevent respawn. At event end mob nbe is restored using this value.
+
+- DEF_DELAYEVENTTYPE_END_APOCALYPSE: Delay in seconds to close apoc when Abaddon is dead.
+
+- DEF_DELAYEVENTTYPE_KILL_ABADDON: Delay in seconds for AbaDDon's auto Kill, when last map is empty.
+
+
+CODE  
+//**************************************************************************************
+// HBx server introduced only the skeletton off Apocalypse functions, and sometime not so good!
+// I rewrote them, maybe not following the "official" pattern but it works!
+// I also needed to add many new functions.
+//**************************************************************************************
+// SNOOPY: GlobalStartApocalypseMode
+// Called by: by local command or GM command
+// -> Notify all game servers to start apocalypse
+// -> Used to force Open or Closed the initial Gates
+//**************************************************************************************
+void CGame::GlobalStartApocalypseMode(int iClientH, int iMode)
+{ char * cp, cData[120];
+DWORD * dwp, dwApocalypseGUID;
+char cString[200];
+ZeroMemory(cString, sizeof(cString));
+if ((iClientH != 0) && (m_pClientList[iClientH]->m_iAdminUserLevel < 3)) {
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);
+return;
+}
+if ((m_bIsApocalypseMode == TRUE) && (iMode == 0)) return;
+if (m_bIsHeldenianMode == TRUE) return;
+if (m_bIsCrusadeMode == TRUE) return;
+
+switch (iMode){
+case 1: // Force open Gates
+dwApocalypseGUID = 1; 
+if (iClientH !=0)
+{ wsprintf(G_cTxt, "Admin Order(%s): /openapocalypsegate \tAdminIP(%s)"
+, m_pClientList[iClientH]->m_cCharName
+, m_pClientList[iClientH]->m_cIPaddress);
+wsprintf(cString, "Apocalypse gate opening in progress.");
+}else
+{ wsprintf(G_cTxt, "Local command: openapocalypsegate");
+}; 
+break;
+case 2: // Force close gates
+dwApocalypseGUID = 2; 
+if (iClientH !=0)
+{ wsprintf(G_cTxt, "Admin Order(%s): /closeapocalypsegate \tAdminIP(%s)"
+, m_pClientList[iClientH]->m_cCharName
+, m_pClientList[iClientH]->m_cIPaddress);
+wsprintf(cString, "Apocalypse gate closing in progress.");
+}else
+{ wsprintf(G_cTxt, "Local command: closeapocalypsegate");
+}; 
+break;
+case 0: // Start Apocalypse
+dwApocalypseGUID = timeGetTime(); 
+if (dwApocalypseGUID < 10) dwApocalypseGUID += 10;
+if (iClientH !=0)
+{ wsprintf(G_cTxt, "Admin Order(%s): /beginapocalypse \tAdminIP(%s)"
+, m_pClientList[iClientH]->m_cCharName
+, m_pClientList[iClientH]->m_cIPaddress);
+wsprintf(cString, "Apocalypse starting in progress.");
+}else
+{ wsprintf(G_cTxt, "Local command: beginapocalypse");
+}; 
+break;
+}
+PutAdminLogFileList(G_cTxt); 
+PutLogEventFileList(G_cTxt);
+PutLogList(G_cTxt); 
+if (iClientH !=0)
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cString);
+}
+
+ZeroMemory(cData, sizeof(cData));
+cp = (char *)cData;
+*cp = GSM_BEGINAPOCALYPSE;
+cp++;
+dwp = (DWORD *)cp;
+*dwp = dwApocalypseGUID;
+cp += 4;
+bStockMsgToGateServer(cData, 5);
+LocalStartApocalypse(dwApocalypseGUID); // Gate will no return order to this server
+}
+
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// LocalStartApocalypse
+// called by: started by Gate msg
+// -> Notify players
+// -> Opens the gates
+// -> Prevent npc generation on "kill all to go out" maps
+// -> Execute local Openning or closing gates by GM command
+//**************************************************************************************
+void CGame::LocalStartApocalypse(DWORD dwApocalypseGUID)
+{ if (dwApocalypseGUID == 1)// Means want to open Gate
+{ ForceOpen_ApocalypseGate();
+return;
+}
+if (dwApocalypseGUID == 2)// Means want to open Gate
+{ ForceClose_ApocalypseGate();
+return;
+} 
+register int i;
+m_bIsApocalypseMode = TRUE;
+if (dwApocalypseGUID != NULL) 
+{ _CreateApocalypseGUID(dwApocalypseGUID); 
+m_dwApocalypseGUID = dwApocalypseGUID;
+m_dwApocalypseGateOpenTime = dwApocalypseGUID;
+m_dwApocalypseGateCloseTime = dwApocalypseGUID +20*60*1000; // will close in 20 minutes
+}
+for (i = 1; i < DEF_MAXCLIENTS; i++) 
+{ if (m_pClientList[i] != NULL) 
+{ SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL); 
+}
+}
+for (i = 0; i < DEF_MAXMAPS; i++)
+{ if (m_pMapList[i] != NULL) 
+{ if (m_pMapList[i]->m_iApocalypseMobGenType != 0) 
+//1 for no respawn, 2 for Boss spawn when map empty
+{ m_pMapList[i]->m_iMaximumObjectDefault = m_pMapList[i]->m_iMaximumObject;
+m_pMapList[i]->m_iMaximumObject = 0; 
+}
+}
+}
+OpenCloseApocalypseGate();
+wsprintf(G_cTxt,"(!)Apocalypse Mode ON."); 
+PutLogEventFileList(G_cTxt);
+PutLogList(G_cTxt); 
+}
+
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// GlobalEndApocalypseMode: 
+// -> Notify all game servers
+//**************************************************************************************
+void CGame::GlobalEndApocalypseMode(int iClientH)
+{ char * cp, cData[120];
+if (m_bIsApocalypseMode == FALSE) return;
+
+if (iClientH > 0) 
+{ wsprintf(G_cTxt, "Admin Order(%s): /endapocalypse \tAdminIP(%s)"
+, m_pClientList[iClientH]->m_cCharName
+, m_pClientList[iClientH]->m_cIPaddress);
+char cString[200];
+ZeroMemory(cString, sizeof(cString));
+wsprintf(cString, "Apocalypse ending in progress.");
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cString);
+}else
+{ wsprintf(G_cTxt, "Automated: endapocalypse");
+}
+PutAdminLogFileList(G_cTxt); 
+PutLogEventFileList(G_cTxt);
+PutLogList(G_cTxt); 
+
+ZeroMemory(cData, sizeof(cData));
+cp = (char *)cData;
+*cp = GSM_ENDAPOCALYPSE;
+cp++; 
+bStockMsgToGateServer(cData, 5);
+LocalEndApocalypse(); // Gate will not return order to this server
+}
+
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// LocalEndApocalypse: started by Gate msg
+// -> Notify players
+// -> Close the gates
+// -> Enable npc generation on all maps
+//**************************************************************************************
+void CGame::LocalEndApocalypse()
+{ register int i; 
+m_bIsApocalypseMode = FALSE;
+m_bIsApocalypseGateOpen = FALSE; 
+WORD dwTime = timeGetTime();
+m_dwApocalypseGateCloseTime = dwTime -1;
+m_dwApocalypseGateOpenTime = dwTime -100; // alreaddy closed
+
+for (i = 1; i < DEF_MAXCLIENTS; i++) 
+{ if (m_pClientList[i] != NULL)
+{ SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);
+if ( (m_pClientList[i]->m_iAdminUserLevel == 0)
+&& (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_bIsApocalypseMap == TRUE)) 
+{ // forced recall
+SendNotifyMsg(NULL, i, DEF_NOTIFY_TOBERECALLED, NULL, NULL, NULL, NULL);
+RequestTeleportHandler(i, "0 ");
+}
+}
+} 
+// restore normal spawn on apoc maps
+for (i = 0; i < DEF_MAXMAPS; i++)
+{ if (m_pMapList[i] != NULL) 
+{ if (m_pMapList[i]->m_iApocalypseMobGenType != 0) 
+//1 for not respawn, 2 for Boss spawn.
+{ m_pMapList[i]->m_iMaximumObject = m_pMapList[i]->m_iMaximumObjectDefault;
+}
+if (m_pMapList[i]->m_cDynamicGateType == 4 )
+{ m_pMapList[i]->m_cDynamicGateType = 3;
+}
+if (m_pMapList[i]->m_cDynamicGateType == 2)
+{ GenerateSlime(i); // to force the gate to close 
+}
+Open_EmptyMap_Gate(i);
+}
+}
+wsprintf(G_cTxt,"(!)Apocalypse Mode OFF.");
+PutLogEventFileList(G_cTxt);
+PutLogList(G_cTxt);
+}
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// OpenCloseApocalypseGate 
+// Called by ::ForceOpen_ApocalypseGate, ::ForceClose_ApocalypseGate
+// Called by ::LocalStartApocalypse
+// Check if Gates's needs to be openned or closed 
+// then notify any change to all clients.on current server
+// NB: Opens/closes only type 1 Gates
+//**************************************************************************************
+void CGame::OpenCloseApocalypseGate()
+{ DWORD dwTime = timeGetTime();
+BOOL bIsOpen = m_bIsApocalypseGateOpen; 
+if ( (dwTime >= m_dwApocalypseGateOpenTime)
+&& (dwTime < m_dwApocalypseGateCloseTime))
+{ m_bIsApocalypseGateOpen = TRUE;
+}else
+{ m_bIsApocalypseGateOpen = FALSE;
+}
+// If nothing has changed return...
+if (bIsOpen == m_bIsApocalypseGateOpen) return;
+
+if (m_bIsApocalypseGateOpen == TRUE) 
+{ wsprintf(G_cTxt,"(!)Apocalypse Gate opened.");
+}else
+{ wsprintf(G_cTxt,"(!)Apocalypse Gate closed.");
+}
+PutLogList(G_cTxt); 
+PutLogEventFileList(G_cTxt);
+// Then notify all clients of change,
+register int i; 
+for (i = 1; i < DEF_MAXCLIENTS; i++) 
+{ if (m_pClientList[i] != NULL)
+{ Notify_ApocalypseGateState(i);
+} 
+}
+}
+
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// Notify_ApocalypseGateState 
+// Called by ::RequestInitDataHandler (when client log in)
+// Called by ::RequestTeleportHandler (when client changes map on same server)
+// Called by ::OpenCloseApocalypseGate (when Gate is openned or closed)
+// Notify the client of Gate's state, needed to show in player's screen
+//**************************************************************************************
+void CGame::Notify_ApocalypseGateState(int iClientH)
+{ if (iClientH <= 0) return;
+if (m_pClientList[iClientH] <= 0) return;
+if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
+int iMapIndex = m_pClientList[iClientH]->m_cMapIndex;
+
+int gX, gY;
+gX = (m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1 + m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX2)/2;
+gY = (m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY1 + m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY2)/2;
+
+switch (m_pMapList[iMapIndex]->m_cDynamicGateType){
+case 0: // No gate on current map
+if(m_bIsApocalypseGateOpen == TRUE) 
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEOPEN, 0, 0, NULL, m_pClientList[iClientH]->m_cMapName);
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);
+}else
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATECLOSE, 0, 0, NULL, m_pClientList[iClientH]->m_cMapName);
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);
+}
+break;
+
+case 1: // Initial Dynamic gates (toh, IB, D4...)
+if(m_bIsApocalypseGateOpen == TRUE) 
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEOPEN, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);
+}else
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATECLOSE, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);
+}
+break;
+
+case 2: // Empty maps Dynamic gates (inferniaA, inferniaB, procella...)
+if (m_pMapList[iMapIndex]->m_iTotalAliveObject == 0)
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEOPEN, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);
+}else
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATECLOSE, gX, gY , NULL, m_pClientList[iClientH]->m_cMapName);
+}
+break;
+
+case 3: // Hide the n°3 gates ..
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATECLOSE, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);
+break;
+
+case 4: // Show the gate on abaddon map..when Abaddon spawning.
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATEOPEN, gX, gY, NULL, m_pClientList[iClientH]->m_cMapName);
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);
+break;
+}
+}
+
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// Use_ApocalypseGate 
+// Called by ::CheckClientResponseTime()
+// Test if client uses Dynamic Gate, then TP him
+//**************************************************************************************
+void CGame::Use_ApocalypseGate(int iClientH)
+{ if (iClientH <= 0) return;
+if (m_pClientList[iClientH] <= 0) return;
+if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
+if (m_bIsApocalypseMode == FALSE) return;
+int iMapIndex = m_pClientList[iClientH]->m_cMapIndex;
+if (m_pMapList[iMapIndex]->m_cDynamicGateType == 0 ) return; // No Dynamic Gate on this map
+
+if ( (m_pMapList[iMapIndex]->m_cDynamicGateType == 1 )
+&& (m_bIsApocalypseGateOpen == FALSE)) 
+return; // Dynamic Gate is closed
+
+if ( (m_pMapList[iMapIndex]->m_cDynamicGateType == 2 )
+&& (m_pMapList[iMapIndex]->m_iTotalAliveObject != 0)) 
+return; // There are still creatures on the map
+
+if (m_pMapList[iMapIndex]->m_cDynamicGateType == 3 )
+return; // Type 3 will be changed to 4 at Abaddons spawning.
+
+if ( (m_pClientList[iClientH]->m_sX >= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1)
+&& (m_pClientList[iClientH]->m_sX <= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX2)
+&& (m_pClientList[iClientH]->m_sY >= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY1)
+&& (m_pClientList[iClientH]->m_sY <= m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY2))
+{ RequestTeleportHandler(iClientH, "2 "
+, m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap
+, m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtX
+, m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtY); 
+}
+}
+
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// Open_EmptyMap_Gate 
+// Called by ::NpcKilledHandler when last npc killed on map
+// Show just openned gates to the client
+//**************************************************************************************
+void CGame::Open_EmptyMap_Gate(int MapIndex)
+{ if (m_pMapList[MapIndex]->m_cDynamicGateType < 2 ) return; 
+//if (m_pMapList[MapIndex]->m_cDynamicGateType == 3 ) return; 
+register int i;
+for (i = 1; i < DEF_MAXCLIENTS; i++) 
+{ if (m_pClientList[i] == NULL) continue;
+if (m_pClientList[i]->m_cMapIndex != MapIndex) continue;
+Notify_ApocalypseGateState(i); 
+} 
+}
+
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// GenerateApocalypseBoss 
+// Called by ::NpcKilledHandler
+// Creates the appropriate npc depending on map definition file
+// then change the Dynamic Gate type from 3 to 4 (to open it)
+//**************************************************************************************
+void CGame::GenerateApocalypseBoss(int MapIndex)
+{ if (m_pMapList[MapIndex]->m_iTotalAliveObject != 0) return;
+char cName[21], cNpcName[21], cNpcWaypoint[11]; 
+int x, i5;
+int iNamingValue;
+ZeroMemory(cNpcWaypoint, sizeof(cNpcWaypoint));
+
+iNamingValue = m_pMapList[MapIndex]->iGetEmptyNamingValue();
+if (iNamingValue == -1) 
+{}else 
+{ ZeroMemory(cNpcName, sizeof(cNpcName));
+switch (m_pMapList[MapIndex]->m_iApocalypseBossMobNpcID) {
+case 0: return; break;
+case 49: strcpy(cNpcName, "Hellclaw");break;
+case 50: strcpy(cNpcName, "Tigerworm");break; 
+case 66: strcpy(cNpcName, "Wyvern");break; 
+case 73: strcpy(cNpcName, "Fire-Wyvern");break; 
+case 81: strcpy(cNpcName, "Abaddon");break; 
+default: strcpy(cNpcName, "Demon");break; 
+}
+ZeroMemory(cName, sizeof(cName));
+wsprintf(cName, "XX%d", iNamingValue);
+cName[0] = '_';
+cName[1] = MapIndex+65; 
+if (bCreateNewNpc(cNpcName, cName, m_pMapList[MapIndex]->m_cName, 0, 0
+, DEF_MOVETYPE_RANDOMAREA, NULL, NULL, cNpcWaypoint, &m_pMapList[MapIndex]->m_sApocalypseBossMobRect, NULL, -1, FALSE, FALSE, FALSE, TRUE) == FALSE) 
+{ m_pMapList[MapIndex]->SetNamingValueEmpty(iNamingValue);
+} 
+else 
+{ wsprintf(G_cTxt, "(!) %s has spawned in %s"
+, cNpcName
+, m_pMapList[MapIndex]->m_cName);
+PutLogList(G_cTxt); 
+PutLogFileList(G_cTxt); 
+PutLogEventFileList(G_cTxt);
+}
+
+// Search npc ID
+for (i5 = 1; i5 < DEF_MAXNPCS; i5++)
+{ if ((m_pNpcList[i5] != NULL) && (memcmp(m_pNpcList[i5]->m_cName, cName, 5) == 0) ) 
+{ break;
+}
+}
+
+// Show Spawns on minimap, and tell everybody on Apocalypse server.
+for (x = 1; x < DEF_MAXCLIENTS; x++)
+if ( (m_pClientList[x] != NULL) 
+&& (m_pClientList[x]->m_bIsInitComplete == TRUE))
+{ if(memcmp(m_pMapList[MapIndex]->m_cName, m_pMapList[m_pClientList[x]->m_cMapIndex]->m_cName, strlen(m_pMapList[MapIndex]->m_cName)) == 0)
+{ SendNotifyMsg(NULL, x, DEF_NOTIFY_SPAWNEVENT, m_pNpcList[i5]->m_sX, m_pNpcList[i5]->m_sY, m_pMapList[MapIndex]->m_iApocalypseBossMobNpcID, NULL, NULL, NULL);
+}
+// Tell everybody on this server if Abaddon has appeared
+if (m_pMapList[MapIndex]->m_iApocalypseBossMobNpcID == 81) 
+{ char cInfoString[100];
+ZeroMemory(cInfoString, sizeof(cInfoString));
+wsprintf(cInfoString, "Abbadon has appeared ...");
+SendNotifyMsg(NULL, x, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString);
+}
+}
+
+// Prepare Abaddon's death, and Apocalypse end.
+if (m_pMapList[MapIndex]->m_iApocalypseBossMobNpcID == 81)
+{ // Abaddon should die by himself 
+DWORD dwTime = timeGetTime();
+dwTime += 1000*60*5; // 5 minute
+bRegisterDelayEvent(DEF_DELAYEVENTTYPE_KILL_ABADDON, 0, dwTime, i5
+, DEF_OWNERTYPE_NPC, MapIndex, 0, 0, 0, 0, 0);
+dwTime = timeGetTime();
+dwTime += 1000*60*15; // 15 minutes
+bRegisterDelayEvent(DEF_DELAYEVENTTYPE_END_APOCALYPSE, 0, dwTime, 0
+, 0, MapIndex, 0, 0, 0, 0, 0);
+}
+
+// Finally open the Exit Gate if type 3 & not 2 
+if (m_pMapList[MapIndex]->m_cDynamicGateType == 3 )
+{ m_pMapList[MapIndex]->m_cDynamicGateType = 4;
+Open_EmptyMap_Gate(MapIndex);
+}
+}
+}
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// GenerateSlime 
+// Generate a npc now to close the gate
+//**************************************************************************************
+void CGame::GenerateSlime(int MapIndex)
+{ 
+if (m_pMapList[MapIndex]->m_iTotalAliveObject != 0) return;
+char cName[21], cNpcName[21], cNpcWaypoint[11]; 
+int iNamingValue;
+ZeroMemory(cNpcWaypoint, sizeof(cNpcWaypoint));
+
+iNamingValue = m_pMapList[MapIndex]->iGetEmptyNamingValue();
+if (iNamingValue == -1) {
+}
+else {
+strcpy(cNpcName, "Slime");
+ZeroMemory(cName, sizeof(cName));
+wsprintf(cName, "XX%d", iNamingValue);
+cName[0] = '_';
+cName[1] = MapIndex+65; 
+
+if (bCreateNewNpc(cNpcName, cName, m_pMapList[MapIndex]->m_cName, 0, 0
+, DEF_MOVETYPE_RANDOMAREA, NULL, NULL, cNpcWaypoint, &m_pMapList[MapIndex]->m_sApocalypseBossMobRect, NULL, NULL, FALSE, FALSE, FALSE, TRUE) == FALSE) 
+{ m_pMapList[MapIndex]->SetNamingValueEmpty(iNamingValue);
+} 
+}
+}
+
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// ForceOpen_ApocalypseGate 
+// Local execution off a global GM command to force open the gate
+// Beware this will affect only current server
+//**************************************************************************************
+void CGame::ForceOpen_ApocalypseGate()
+{ if (m_bIsApocalypseMode == FALSE) return; 
+DWORD dwTime = timeGetTime();
+m_dwApocalypseGateOpenTime = dwTime;
+m_dwApocalypseGateCloseTime = dwTime +15*60*1000; // will close in 15 minutes
+OpenCloseApocalypseGate();
+}
+//**************************************************************************************
+// SNOOPY: Revamped Apocalypse functions:
+// ForceClose_ApocalypseGate 
+// GM command to force open the gate
+// Beware this will affect only current server
+//**************************************************************************************
+void CGame::ForceClose_ApocalypseGate()
+{ if (m_bIsApocalypseMode == FALSE) return; 
+DWORD dwTime = timeGetTime();
+m_dwApocalypseGateCloseTime = dwTime -1;
+m_dwApocalypseGateOpenTime = dwTime -100; // alreaddy closed
+OpenCloseApocalypseGate();
+}
+//************************************************************************************* 
+
+
+Of course there is some fixed to do in game.h, map.h, GM commands, and reading mapdata
+
+Map loading part:
+
+CODE  
+::__bReadMapInfo(..)
+...
+m_pMapList[iMapIndex]->m_iApocalypseMobGenType = 0;  // 26 ApocalypseMobGenType
+m_pMapList[iMapIndex]->m_iApocalypseBossMobNpcID = 0; // 27 ApocalypseBossMob
+m_pMapList[iMapIndex]->m_sApocalypseBossMobRect.left   =  0;
+m_pMapList[iMapIndex]->m_sApocalypseBossMobRect.top    =  0;
+m_pMapList[iMapIndex]->m_sApocalypseBossMobRect.right  =  0;
+m_pMapList[iMapIndex]->m_sApocalypseBossMobRect.bottom =  0;
+m_pMapList[iMapIndex]->m_cDynamicGateType = 0;   // 28 DynamicGateType
+m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1 =  0; // 29 DynamicGateCoord 
+m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX2 =  0;  
+m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY1 =  0;  
+m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY2 =  0;  
+ZeroMemory(m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap, sizeof(m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap));
+m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtX = 0;
+m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtY = 0;
+m_pMapList[iMapIndex]->m_bIsRecallImpossible = FALSE; // 30 Recal impossible
+m_pMapList[iMapIndex]->m_bIsApocalypseMap = FALSE;  // 31 ApocalypseMap 
+m_pMapList[iMapIndex]->m_bIsCitizenLimit = FALSE;  // 32 CitizenLimit
+...
+...
+...
+  case 26: // ApocalypseMobGenType
+   if (_bGetIsStringIsNumber(token) == FALSE) {
+    PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseMobGenType - Wrong Data format.");
+    delete pContents;
+    delete pStrTok;
+    return FALSE;
+   }
+   m_pMapList[iMapIndex]->m_iApocalypseMobGenType = atoi(token);
+   cReadModeA = 0;
+   cReadModeB = 0;
+   break;
+
+  case 27: // ApocalypseBossMob //SNOOPY replaced coord by RECT structure.
+   switch (cReadModeB) {
+   case 1: // 3CB6Ch m_pMapList[]->m_ApocalypseBossMobNpcID
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    m_pMapList[iMapIndex]->m_iApocalypseBossMobNpcID = atoi(token);
+    cReadModeB = 2;     
+    break;
+   case 2: // 3CB70h m_pMapList[]->ApocalypseBossMobRectX1
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    //m_pMapList[iMapIndex]->m_sApocalypseBossMobRectX1 = atoi(token);
+    m_pMapList[iMapIndex]->m_sApocalypseBossMobRect.left = atoi(token);
+    cReadModeB = 3;     
+    break;
+   case 3: // 3CB74h m_pMapList[]->ApocalypseBossMobRectY1
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    //m_pMapList[iMapIndex]->m_sApocalypseBossMobRectY1 = atoi(token);
+    m_pMapList[iMapIndex]->m_sApocalypseBossMobRect.top = atoi(token);
+    cReadModeB = 4;     
+    break;
+   case 4: // 3CB78h m_pMapList[]->ApocalypseBossMobRectX2
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    //m_pMapList[iMapIndex]->m_sApocalypseBossMobRectX2 = atoi(token);
+    m_pMapList[iMapIndex]->m_sApocalypseBossMobRect.right = atoi(token);
+    cReadModeB = 5;     
+    break;
+   case 5: // 3CB7Ch m_pMapList[]->ApocalypseBossMobRectY2
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    //m_pMapList[iMapIndex]->m_sApocalypseBossMobRectY2 = atoi(token);
+    m_pMapList[iMapIndex]->m_sApocalypseBossMobRect.bottom = atoi(token);
+    cReadModeA = 0;
+    cReadModeB = 0;     
+    break;
+   }
+   break;
+
+  case 28: //DynamicGateType // 28
+   if (_bGetIsStringIsNumber(token) == FALSE) {
+    PutLogList("(!!!) CRITICAL ERROR! Map Info file error DynamicGateType - Wrong Data format.");
+    delete pContents;
+    delete pStrTok;
+    return FALSE;
+   }
+   m_pMapList[iMapIndex]->m_cDynamicGateType = atoi(token);
+   // DynamicGateType = 1: Opens Gate when Apoc begins
+   // DynamicGateType = 2: Open the gate when map is empty
+   // DynamicGateType = 3: Gate stays closed
+   // DynamicGateType = 4: Gate is openned. (set by server when Abaddon is spawning)
+   // DynamicGateType = 5: Gate is used by GM command
+
+   cReadModeA = 0;
+   cReadModeB = 0;
+   break;
+       
+  case 29: //DynamicGateCoord // 29
+   // DynamicGateCoord = 59 196 60 197        abaddon    -1  -1
+   switch (cReadModeB) {
+   case 1: // 3CA20h
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX1 = atoi(token);
+    cReadModeB = 2;
+    break;
+
+   case 2: // 3CA24h
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY1 = atoi(token);
+    cReadModeB = 3;
+    break;
+
+   case 3: // 3CA28h
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    m_pMapList[iMapIndex]->m_sDynamicGateCoordRectX2 = atoi(token);
+    cReadModeB = 4;
+    break;
+
+   case 4: // 3CA2Ch
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    m_pMapList[iMapIndex]->m_sDynamicGateCoordRectY2 = atoi(token);
+    cReadModeB = 5;
+    break;
+
+   case 5: // 3CA30h
+    ZeroMemory(m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap, sizeof(m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap));
+    memcpy(m_pMapList[iMapIndex]->m_cDynamicGateCoordDestMap, token, strlen(token));
+    cReadModeB = 6;
+    break;
+
+   case 6: // 3CA3Ch
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtX = atoi(token);
+    cReadModeB = 7;
+    break;
+
+   case 7: // (ty = 3CB60h) unknown (3CA3Eh)
+    if (_bGetIsStringIsNumber(token) == FALSE) {
+     PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseBossMob - Wrong Data format.");
+     delete pContents;
+     delete pStrTok;
+     return FALSE;
+    }
+    m_pMapList[iMapIndex]->m_sDynamicGateCoordTgtY = atoi(token);
+    cReadModeA = 0;
+    cReadModeB = 0;
+    break;
+   }
+   break;
+  
+  case 30: // RecallImpossible // 30
+   if (_bGetIsStringIsNumber(token) == FALSE) {
+    PutLogList("(!!!) CRITICAL ERROR! Map Info file error RecallImpossible -  Wrong Data format.");
+    delete pContents;
+    delete pStrTok;
+    return FALSE;
+   }
+   m_pMapList[iMapIndex]->m_bIsRecallImpossible = (BOOL) atoi(token);
+   cReadModeA = 0;
+   cReadModeB = 0;
+   break;
+
+  case 31: // ApocalypseMap // 31
+   if (_bGetIsStringIsNumber(token) == FALSE) {
+    PutLogList("(!!!) CRITICAL ERROR! Map Info file error ApocalypseMap -  Wrong Data format.");
+    delete pContents;
+    delete pStrTok;
+    return FALSE;
+   }
+   m_pMapList[iMapIndex]->m_bIsApocalypseMap = (BOOL) atoi(token);
+   cReadModeA = 0;
+   cReadModeB = 0;
+   break;
+  
+  case 32: // CitizenLimit // 32 
+   // (SNOOPY: Added to forbid civ instead of fixed limitation at ML & PL)
+   if (_bGetIsStringIsNumber(token) == FALSE) {
+    PutLogList("(!!!) CRITICAL ERROR! Map Info file error CitizenLimit -  Wrong Data format.");
+    delete pContents;
+    delete pStrTok;
+    return FALSE;
+   }
+   m_pMapList[iMapIndex]->m_bIsCitizenLimit = (BOOL) atoi(token);
+   cReadModeA = 0;
+   cReadModeB = 0;
+   break;
+...
+...
+  if (memcmp(token, "ApocalypseMobGenType", 20) == 0) 
+  { cReadModeA = 26;
+   cReadModeB = 1;
+  }
+  if (memcmp(token, "ApocalypseBossMob", 17) == 0) 
+  { cReadModeA = 27;
+   cReadModeB = 1;
+  }
+  if (memcmp(token, "DynamicGateType", 15) == 0) 
+  { cReadModeA = 28;
+   cReadModeB = 1;
+  }
+  if (memcmp(token, "DynamicGateCoord", 16) == 0) 
+  { cReadModeA = 29;
+   cReadModeB = 1;
+  }
+  if (memcmp(token, "RecallImpossible", 16) == 0) 
+  { cReadModeA = 30;
+   cReadModeB = 1;
+  }   
+  if (memcmp(token, "ApocalypseMap", 13) == 0) 
+  { cReadModeA = 31;
+   cReadModeB = 1;
+  }   
+  if (memcmp(token, "CitizenLimit", 12) == 0) 
+  { cReadModeA = 32;
+   cReadModeB = 1;
+} 

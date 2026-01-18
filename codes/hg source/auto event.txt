@@ -1,0 +1,295 @@
+void CGame::ExpEventMap()
+{
+int i;
+bool bFlag;
+bFlag = TRUE;
+for (i = 0; i < DEF_MAXCLIENTS; i++)
+if (m_pClientList[i] != NULL) { //client is acculy a client
+if(memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cLocationName, "fightzon10", 10) == 0) {
+//if(i <= 0) bFlag = FALSE;
+if(bFlag == FALSE) {
+SummonEvent = TRUE;
+goto GameOver; 
+}
+register int iNamingValue, pX, pY;
+char cNpcName[21], cName[21], cNpcWaypoint[11];	
+for (i = 0; i < DEF_MAXMAPS; i++)
+if(m_pMapList[i] != NULL) {
+if(memcmp(m_pMapList[i]->m_cName, "fightzon10", 10) == 0) {
+if(SummonEvent == TRUE) {
+	if(m_pMapList[i]->m_iTotalActiveObject > 0) goto KillNpc;
+	if(m_pMapList[i]->m_iTotalActiveObject == 0) {
+	iNamingValue = m_pMapList[i]->iGetEmptyNamingValue();
+				if (iNamingValue == -1) { }
+				else {
+
+				ZeroMemory(cNpcName, sizeof(cNpcName));
+				switch(iRound){
+				case 0:
+					switch (iDice(1,4)) { // 1st
+					case 1: strcpy(cNpcName, "Slime"); break; 
+					case 2: strcpy(cNpcName, "Giant-Ant"); break;
+					case 3: strcpy(cNpcName, "Amphis"); break;
+					case 4: strcpy(cNpcName, "Orc"); break;
+					}
+					break;
+				case 1:
+					switch (iDice(1,4)) { // 2nd
+					case 1: strcpy(cNpcName, "Zombie"); break; 
+					case 2: strcpy(cNpcName, "Scorpion"); break;
+					case 3: strcpy(cNpcName, "Skeleton"); break;
+					case 4: strcpy(cNpcName, "Orc-Mage"); break;
+					}
+					break;
+				case 2:
+					switch (iDice(1,5)) { //3rd
+					case 1: strcpy(cNpcName, "Clay-Golem"); break; 
+					case 2: strcpy(cNpcName, "Stone-Golem"); break;
+					case 3: strcpy(cNpcName, "Hellbound"); break;
+					case 4: strcpy(cNpcName, "Giant-Frog"); break;
+					case 5: strcpy(cNpcName, "Rudolph"); break;
+					}
+					break;
+				case 3:
+					switch (iDice(1,3)) { // 4th
+					case 1: strcpy(cNpcName, "Troll"); break; 
+					case 2: strcpy(cNpcName, "Cyclops"); break;
+					case 3: strcpy(cNpcName, "Ice-Golem"); break;
+					//case 4: strcpy(cNpcName, "Orc"); break;
+					}
+					break;
+				case 4:
+					switch (iDice(1,7)) { // 5th
+					case 1: strcpy(cNpcName, "Beholder"); break; 
+					case 2: strcpy(cNpcName, "Cannibal-Plant"); break;
+					case 3: strcpy(cNpcName, "Orge"); break;
+					case 4: strcpy(cNpcName, "Mountain-Giant"); break;
+					case 5: strcpy(cNpcName, "DireBoar"); break;
+					case 6: strcpy(cNpcName, "Tentocle"); break;
+					case 7: strcpy(cNpcName, "Giant-Crayfish"); break;
+					}
+					break;
+				case 5:
+					switch (iDice(1,7)) { // 6th
+					case 1: strcpy(cNpcName, "Giant-Plant"); break; 
+					case 2: strcpy(cNpcName, "Liche"); break;
+					case 3: strcpy(cNpcName, "Stalker"); break;
+					case 4: strcpy(cNpcName, "WereWolf"); break;
+					case 5: strcpy(cNpcName, "Dark-Elf"); break;
+					case 6: strcpy(cNpcName, "Frost"); break;
+					case 7: strcpy(cNpcName, "Claw-Turtle"); break;
+					}
+					break;
+				case 6:
+					switch (iDice(1,9)) { // 7th bad monster name ...
+					case 1: strcpy(cNpcName, "Barlog"); break; 
+					case 2: strcpy(cNpcName, "Ettin"); break;
+					case 3: strcpy(cNpcName, "Demon"); break;
+					case 4: strcpy(cNpcName, "Gagoyle"); break;
+					case 5: strcpy(cNpcName, "Centaurus"); break;
+					case 6: strcpy(cNpcName, "Giant-Lizard"); break;
+					case 7: strcpy(cNpcName, "MasterMage-Orc"); break;
+					case 8: strcpy(cNpcName, "Minotaurs"); break;
+					case 9: strcpy(cNpcName, "Nizie"); break;
+					}
+					break;
+				case 7:
+					switch (iDice(1,2)) { // 8th
+					case 1: strcpy(cNpcName, "Hellclaw"); break; 
+					case 2: strcpy(cNpcName, "Tigerworm"); break;
+					}
+					break;
+				case 8:
+					switch (iDice(1,2)) { // 9th
+					case 1: strcpy(cNpcName, "Wyvern"); break; 
+					case 2: strcpy(cNpcName, "Fire-Wyvern"); break;
+					}
+					break;
+				case 9:
+					switch (iDice(1,1)) { // 10th
+					case 1: strcpy(cNpcName, "Abaddon"); break; 
+					}
+					break;
+				default: strcpy(cNpcName, "Orc"); break;
+				}
+
+		ZeroMemory(cName, sizeof(cName));
+					wsprintf(cName, "XX%d", iNamingValue);
+					cName[0] = 95; // original '_';
+					cName[1] = i + 65;
+
+		ZeroMemory(cNpcWaypoint, sizeof(cNpcWaypoint));
+
+		pX = 51;
+		pY = 56;
+		BOOL bRet;
+//		if(iRound >= 6) {
+					bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[i]->m_cName, 0, 0, DEF_MOVETYPE_RANDOM, &pX, &pY, cNpcWaypoint, NULL, NULL, -1, FALSE, FALSE);
+							if (bRet == FALSE) {
+									m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
+									SummonEvent = TRUE;
+								}
+//		}
+/*		else {
+		for (j = 0; j < DEF_MAXCLIENTS; j++) {
+			if((m_pClientList[i] != NULL)&& (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cLocationName, "fightzon10", 10) == 0))
+					bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[i]->m_cName, 0, 0, DEF_MOVETYPE_RANDOM, &pX, &pY, cNpcWaypoint, NULL, NULL, -1, FALSE, FALSE);
+							if (bRet == FALSE) {
+									m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
+									SummonEvent = TRUE;
+								}
+		}//end loop for summoning for each client
+		}//end else*/
+
+
+		}//end else
+	} //end total objects.
+SummonEvent = FALSE;
+	return;
+} //end summon = true
+if(SummonEvent == FALSE) {
+KillNpc:
+					if(m_pMapList[i]->m_iTotalActiveObject == 0) iRound += 1; // makes round go up
+					if(m_pMapList[i]->m_iTotalActiveObject > 0) iRound -= 1; // makes round go down
+					if(iRound < 0) iRound = 0;
+					if(iRound > 9)
+						{ 
+							iRound = 0;
+							//SurviveOrDieStatus = FALSE;
+							goto GameOver;
+							return;// if 5th round is over game is finished
+						}
+		SummonEvent = TRUE;
+		//This should kill all prev Npc-s on map
+		int b;
+		for(b = 1; b < DEF_MAXNPCS; b++) {
+		if (m_pNpcList[b] != NULL && m_pNpcList[b]->m_bIsSummoned == FALSE && m_pNpcList[b]->m_cMapIndex == i && m_pMapList[i]->m_iTotalActiveObject > 0) {
+			switch(m_pNpcList[b]->m_sType) {
+			case 15:
+			case 19:
+			case 20:
+			case 24:
+			case 25:
+			case 26:
+			case 67:
+			case 68:
+			case 69:
+			case 90:
+			case 91:
+			break;
+
+			default:
+				m_pNpcList[b]->m_bIsUnsummoned = TRUE;
+				NpcKilledHandler(NULL, NULL, b, 0);
+				break;
+			}
+		}
+		}
+}//end summon depletion
+} // end map fightzone1
+}
+}//end of client location
+else {
+if(SummonEvent == FALSE) goto GameOver; 
+}//end else if client not located there
+} // end of client != nulll
+return;
+GameOver:
+iRound = 0;
+SummonEvent = TRUE;
+for (i = 0; i < DEF_MAXMAPS; i++)
+if(m_pMapList[i] != NULL) {
+if(memcmp(m_pMapList[i]->m_cName, "fightzon10", 10) == 0) {
+	if(m_pMapList[i]->m_iTotalActiveObject == 0) return;
+		int b;
+		for(b = 1; b < DEF_MAXNPCS; b++) {
+		if (m_pNpcList[b] != NULL && m_pNpcList[b]->m_bIsSummoned == FALSE && m_pNpcList[b]->m_cMapIndex == i && m_pMapList[i]->m_iTotalActiveObject > 0) {
+			switch(m_pNpcList[b]->m_sType) {
+			case 15:
+			case 19:
+			case 20:
+			case 24:
+			case 25:
+			case 26:
+			case 67:
+			case 68:
+			case 69:
+			case 90:
+			case 91:
+			break;
+
+			default:
+				m_pNpcList[b]->m_bIsUnsummoned = TRUE;
+				NpcKilledHandler(NULL, NULL, b, 0);
+				break;
+			}
+		}
+		}
+}
+}
+return;
+}
+
+  PutLogList("Sending start message...");
+  SendMessage(m_hWnd, WM_USER_STARTGAMESIGNAL, NULL, NULL);
+  m_bIsGameStarted = TRUE;
+ }
+}
+if(iRound >= 7) TempTime2 = 1000*20*4;
+if(iRound >= 5) TempTime2 = 1000*20*2;
+if ((dwTime - dwRoundDelay) > TempTime2) {
+	if(SummonEvent == TRUE) {
+		Eside = 1;
+		ExpEventMap();
+		dwRoundTime = dwTime;
+	}
+	if(SummonEvent == FALSE) {
+for (i = 0; i < DEF_MAXCLIENTS; i++)
+if(m_pClientList[i] != NULL) {
+if(memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cLocationName, "fightzon10", 10) == 0)
+if(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject == 0) {
+	Eside = 0;
+	ExpEventMap();
+	dwRoundTime = dwTime;
+}
+}
+	}
+//if(SummonEvent == FALSE) { dwRoundTime = dwTime; }
+//if(SummonEvent == TRUE) dwRoundTime = dwTime;
+dwRoundDelay = dwTime;
+}
+if((dwTime - dwRoundDelay) > TempTime2 - 1000*10 && Eside == 0) {
+char cBankMessage[100];
+for (i = 0; i < DEF_MAXCLIENTS; i++)
+if (m_pClientList[i] != NULL) {
+	if(memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cLocationName, "fightzon10", 10) == 0) {
+wsprintf(cBankMessage, "Warning 10 Seconds.");
+SendNotifyMsg(NULL, i, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cBankMessage);
+}
+}
+Eside = 1;
+}
+if(iRound >= 7) TempTime = 1000*60*10;
+if(iRound >= 5) TempTime = 1000*60*5;
+if ((dwTime - dwRoundTime) > TempTime - 1000*10 && Eside == 1) {
+char cBankMessage[100];
+for (i = 0; i < DEF_MAXCLIENTS; i++)
+if (m_pClientList[i] != NULL) {
+	if(memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cLocationName, "fightzon10", 10) == 0) {
+wsprintf(cBankMessage, "Warning 10 Seconds.");
+SendNotifyMsg(NULL, i, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cBankMessage);
+}
+}
+Eside = 3;
+}
+if((dwTime - dwRoundTime) > TempTime) {
+	if(SummonEvent == FALSE) {
+	Eside = 0;
+	ExpEventMap();
+dwRoundDelay = dwTime;
+}
+dwRoundTime = dwTime;
+}
+if ((dwTime - m_dwGameTime6) > 1000) {
+		DelayEventProcessor();
+		SendStockMsgToGateServer();

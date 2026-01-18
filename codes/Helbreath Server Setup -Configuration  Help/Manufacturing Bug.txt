@@ -1,0 +1,6 @@
+Hey.. I got bug when i manufacture..
+When i try make manu bbh it makes 0% everytime..
+
+A:cuz u created ur coal and such u must
+ mine them. iron @ coal and all that. thats where the % come from 
+ u can't create item needed 

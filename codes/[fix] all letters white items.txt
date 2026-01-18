@@ -1,0 +1,256 @@
+Ok first of all ill explain how to remove the shit where everything is green. All items should be white unless IsSpecial = TRUE, so this will fix that.
+
+In GlobalDef.h add these:
+
+
+Code: Select all
+#define DEF_SPECIAL_STATUS   // The "Green Font" on the items that are special - Jehovah
+
+
+now Find this Function:
+
+Code: Select all
+void CGame::GetItemName(CItem *pItem, char *pStr1, char *pStr2, char *pStr3)
+
+
+and replace the function with this:
+
+Code: Select all
+void CGame::GetItemName(CItem *pItem, char *pStr1, char *pStr2, char *pStr3)
+{int i;
+char cTxt[256], cTxt2[256], cName[51];
+DWORD dwType1, dwType2, dwValue1, dwValue2, dwValue3;
+
+   m_bIsSpecial = FALSE;
+   ZeroMemory(cName, sizeof(cName));
+   ZeroMemory(pStr1, sizeof(pStr1));
+   ZeroMemory(pStr2, sizeof(pStr2));
+   ZeroMemory(pStr3, sizeof(pStr3));
+
+   strcpy(cName, pItem->m_cName);
+   for (i = 0; i < DEF_MAXITEMNAMES; i++)
+   if ((m_pItemNameList[i] != NULL) && (strcmp(m_pItemNameList[i]->m_cOriginName, pItem->m_cName) == 0)) 
+   {   strcpy(cName, m_pItemNameList[i]->m_cName);
+      break;
+   }
+
+#ifdef DEF_SPECIAL_STATUS
+        if (0 == memcmp(pItem->m_cName,"GiantBattle", 11)) m_bIsSpecial = TRUE;
+   else if (0 == memcmp(pItem->m_cName,"BerserkWand", 11)) m_bIsSpecial= TRUE;
+#endif
+
+   if ((pItem->m_dwAttribute & 0x00000001) != 0)
+   {   m_bIsSpecial = TRUE;
+      strcpy(pStr1, cName);
+      if (pItem->m_cItemType == DEF_ITEMTYPE_MATERIAL)
+         wsprintf(pStr2, GET_ITEM_NAME1, pItem->m_sItemSpecEffectValue2);      //"Purity: %d%%"
+      else 
+      {   // Crafting Magins completion fix
+         if (pItem->m_cEquipPos == DEF_EQUIPPOS_LFINGER)
+         {   wsprintf(pStr2, GET_ITEM_NAME2, pItem->m_sItemSpecEffectValue2);   //"Completion: 
+         }else
+         {   wsprintf(pStr2, GET_ITEM_NAME2, pItem->m_sItemSpecEffectValue2 +100);   //"Completion: +100   
+      }   }
+   }else
+   {   if (pItem->m_dwCount == 1)
+         wsprintf(G_cTxt, "%s", cName);
+      else wsprintf(G_cTxt, DRAW_DIALOGBOX_SELLOR_REPAIR_ITEM1, pItem->m_dwCount, cName);//"%d %s"
+      strcpy(pStr1, G_cTxt);
+   }
+
+   if ((pItem->m_dwAttribute & 0x00F0F000) != 0)
+   {   m_bIsSpecial = TRUE;
+      dwType1  = (pItem->m_dwAttribute & 0x00F00000) >> 20;
+      dwValue1 = (pItem->m_dwAttribute & 0x000F0000) >> 16;
+      dwType2  = (pItem->m_dwAttribute & 0x0000F000) >> 12;
+      dwValue2 = (pItem->m_dwAttribute & 0x00000F00) >> 8;
+      if (dwType1 != 0)
+      {   ZeroMemory(cTxt, sizeof(cTxt));
+         switch (dwType1) {
+         case 1: strcpy(cTxt, GET_ITEM_NAME3);   break;
+         case 2: strcpy(cTxt, GET_ITEM_NAME4);   break; // "Poisoning "
+         case 3: strcpy(cTxt, GET_ITEM_NAME5);   break; // "Righteous "
+         case 4: break;
+         case 5: strcpy(cTxt, GET_ITEM_NAME6);   break; // "Agile "
+         case 6: strcpy(cTxt, GET_ITEM_NAME7);   break;
+         case 7: strcpy(cTxt, GET_ITEM_NAME8);   break;
+         case 8: strcpy(cTxt, GET_ITEM_NAME9);   break;
+         case 9: strcpy(cTxt, GET_ITEM_NAME10);  break;
+         case 10: strcpy(cTxt, GET_ITEM_NAME11); break;
+         case 11: strcpy(cTxt, GET_ITEM_NAME12); break;
+         case 12: strcpy(cTxt, GET_ITEM_NAME13); break;
+         }
+         strcat(cTxt, pStr1);
+         ZeroMemory(pStr1, sizeof(pStr1));
+         strcpy(pStr1, cTxt);
+
+         ZeroMemory(cTxt, sizeof(cTxt));
+         switch (dwType1) {
+         case 1: wsprintf(cTxt, GET_ITEM_NAME14, dwValue1); break; // "Critical Hit Damage+%d"
+         case 2: wsprintf(cTxt, GET_ITEM_NAME15, dwValue1*5); break; // "Poison Damage+%d"
+         case 3: break;
+         case 4: break;
+         case 5: strcpy(cTxt, GET_ITEM_NAME16); break; // "Attack Speed -1"
+         case 6: wsprintf(cTxt, GET_ITEM_NAME17, dwValue1*4); break;
+         case 7: strcpy(cTxt, GET_ITEM_NAME18); break;
+         case 8: wsprintf(cTxt, GET_ITEM_NAME19, dwValue1*7); break;
+         case 9: strcpy(cTxt, GET_ITEM_NAME20); break;
+         case 10: wsprintf(cTxt, GET_ITEM_NAME21, dwValue1*3); break;
+         case 11: wsprintf(cTxt, GET_ITEM_NAME22, dwValue1); break;
+         case 12: wsprintf(cTxt, GET_ITEM_NAME23, dwValue1); break;
+         }
+         strcat(pStr2, cTxt);
+
+         if (dwType2 != 0) {
+            ZeroMemory(cTxt, sizeof(cTxt));
+            switch (dwType2) {
+            case 1:  wsprintf(cTxt, GET_ITEM_NAME24, dwValue2*7); break;
+            case 2:  wsprintf(cTxt, GET_ITEM_NAME25, dwValue2*7); break;
+            case 3:  wsprintf(cTxt, GET_ITEM_NAME26, dwValue2*7); break;
+            case 4:  wsprintf(cTxt, GET_ITEM_NAME27, dwValue2*7); break;
+            case 5:  wsprintf(cTxt, GET_ITEM_NAME28, dwValue2*7); break;//"SPrec
+            case 6:  wsprintf(cTxt, GET_ITEM_NAME29, dwValue2*7); break;//"MPrec
+            case 7:  wsprintf(cTxt, GET_ITEM_NAME30, dwValue2*7); break;
+            case 8:  wsprintf(cTxt, GET_ITEM_NAME31, dwValue2*3); break;
+            case 9:  wsprintf(cTxt, GET_ITEM_NAME32, dwValue2*3); break;
+            case 10: wsprintf(cTxt, GET_ITEM_NAME33, dwValue2);   break;
+            case 11: wsprintf(cTxt, GET_ITEM_NAME34, dwValue2*10); break;
+            case 12: wsprintf(cTxt, GET_ITEM_NAME35, dwValue2*10); break;//"Gold +%
+            }
+            strcpy(pStr3, cTxt);
+   }   }   }
+
+   dwValue3 = (pItem->m_dwAttribute & 0xF0000000) >> 28;
+   if (dwValue3 > 0)
+   {   if (pStr1[strlen(pStr1)-2] == '+')
+      {   dwValue3 = atoi((char *)(pStr1 + strlen(pStr1)-1)) + dwValue3;
+         ZeroMemory(cTxt, sizeof(cTxt));
+         memcpy(cTxt, pStr1, strlen(pStr1)-2);
+         ZeroMemory(cTxt2, sizeof(cTxt2));
+         wsprintf(cTxt2, "%s+%d", cTxt, dwValue3);
+         ZeroMemory(pStr1, sizeof(pStr1));
+         strcpy(pStr1, cTxt2);
+      }else
+      {   ZeroMemory(cTxt, sizeof(cTxt));
+         wsprintf(cTxt, "+%d", dwValue3);
+         strcat(pStr1, cTxt);
+   }   }
+}
+
+
+Now find this function:
+
+Code: Select all
+void CGame::GetItemName(char * cItemName, DWORD dwAttribute, char *pStr1, char *pStr2, char *pStr3)
+
+and replace it with this function:
+
+Code: Select all
+void CGame::GetItemName(char * cItemName, DWORD dwAttribute, char *pStr1, char *pStr2, char *pStr3)
+{
+int i;
+char cTxt[256], cTxt2[256], cName[51];
+DWORD dwType1, dwType2, dwValue1, dwValue2, dwValue3;
+
+               m_bIsSpecial = FALSE;
+   ZeroMemory(cName, sizeof(cName));
+   ZeroMemory(pStr1, sizeof(pStr1));
+   ZeroMemory(pStr2, sizeof(pStr2));
+   ZeroMemory(pStr3, sizeof(pStr3));
+
+   strcpy(cName, cItemName);
+   for (i = 0; i < DEF_MAXITEMNAMES; i++)
+   if ((m_pItemNameList[i] != NULL) && (strcmp(m_pItemNameList[i]->m_cOriginName, cItemName) == 0)) {
+      strcpy(cName, m_pItemNameList[i]->m_cName);
+      break;
+   }
+
+#ifdef DEF_SPECIAL_STATUS
+        if (0 == memcmp(cItemName,"GiantBattle", 11)) m_bIsSpecial= TRUE;
+   else if (0 == memcmp(cItemName,"BerserkWand", 11)) m_bIsSpecial = TRUE;
+#endif
+
+   strcpy(pStr1, cName);
+
+   if ((dwAttribute & 0x00F0F000) != 0)
+   {   m_bIsSpecial = TRUE;
+      dwType1  = (dwAttribute & 0x00F00000) >> 20;
+      dwValue1 = (dwAttribute & 0x000F0000) >> 16;
+      dwType2  = (dwAttribute & 0x0000F000) >> 12;
+      dwValue2 = (dwAttribute & 0x00000F00) >> 8;
+      if (dwType1 != 0)
+      {   ZeroMemory(cTxt, sizeof(cTxt));
+         switch (dwType1) {
+         case 1: strcpy(cTxt, GET_ITEM_NAME3); break;
+         case 2: strcpy(cTxt, GET_ITEM_NAME4); break;
+         case 3: strcpy(cTxt, GET_ITEM_NAME5); break;
+         case 4: break;
+         case 5: strcpy(cTxt, GET_ITEM_NAME6); break;
+         case 6: strcpy(cTxt, GET_ITEM_NAME7); break;
+         case 7: strcpy(cTxt, GET_ITEM_NAME8); break;
+         case 8: strcpy(cTxt, GET_ITEM_NAME9); break;
+         case 9: strcpy(cTxt, GET_ITEM_NAME10); break;
+         case 10: strcpy(cTxt, GET_ITEM_NAME11); break;
+         case 11: strcpy(cTxt, GET_ITEM_NAME12); break;
+         case 12: strcpy(cTxt, GET_ITEM_NAME13); break;
+         }
+         strcat(cTxt, pStr1);
+         ZeroMemory(pStr1, sizeof(pStr1));
+         strcpy(pStr1, cTxt);
+
+         ZeroMemory(cTxt, sizeof(cTxt));
+         switch (dwType1) {
+         case 1: wsprintf(cTxt, GET_ITEM_NAME14, dwValue1); break;
+         case 2: wsprintf(cTxt, GET_ITEM_NAME15, dwValue1*5); break;
+         case 3: break;
+         case 4: break;
+         case 5: strcpy(cTxt, GET_ITEM_NAME16); break;
+         case 6: wsprintf(cTxt, GET_ITEM_NAME17, dwValue1*4); break;
+         case 7: strcpy(cTxt, GET_ITEM_NAME18); break;
+         case 8: wsprintf(cTxt, GET_ITEM_NAME19, dwValue1*7); break;
+         case 9: strcpy(cTxt, GET_ITEM_NAME20); break;
+         case 10: wsprintf(cTxt, GET_ITEM_NAME21, dwValue1*3); break;
+         case 11: wsprintf(cTxt, GET_ITEM_NAME22, dwValue1); break;
+         case 12: wsprintf(cTxt, GET_ITEM_NAME23, dwValue1); break;
+         }
+         strcat(pStr2, cTxt);
+
+         if (dwType2 != 0)
+         {   ZeroMemory(cTxt, sizeof(cTxt));
+            switch (dwType2) {
+            case 1:  wsprintf(cTxt, GET_ITEM_NAME24, dwValue2*7);  break;
+            case 2:  wsprintf(cTxt, GET_ITEM_NAME25, dwValue2*7);  break;
+            case 3:  wsprintf(cTxt, GET_ITEM_NAME26, dwValue2*7);  break;
+            case 4:  wsprintf(cTxt, GET_ITEM_NAME27, dwValue2*7);  break;
+            case 5:  wsprintf(cTxt, GET_ITEM_NAME28, dwValue2*7);  break;
+            case 6:  wsprintf(cTxt, GET_ITEM_NAME29, dwValue2*7);  break;
+            case 7:  wsprintf(cTxt, GET_ITEM_NAME30, dwValue2*7);  break;
+            case 8:  wsprintf(cTxt, GET_ITEM_NAME31, dwValue2*3);  break;
+            case 9:  wsprintf(cTxt, GET_ITEM_NAME32, dwValue2*3);  break;
+            case 10: wsprintf(cTxt, GET_ITEM_NAME33, dwValue2);    break;
+            case 11: wsprintf(cTxt, GET_ITEM_NAME34, dwValue2*10); break;
+            case 12: wsprintf(cTxt, GET_ITEM_NAME35, dwValue2*10); break;
+            }
+            strcpy(pStr3, cTxt);
+   }   }   }
+
+   dwValue3 = (dwAttribute & 0xF0000000) >> 28;
+   if (dwValue3 > 0)
+   {   if (pStr1[strlen(pStr1)-2] == '+')
+      {   dwValue3 = atoi((char *)(pStr1 + strlen(pStr1)-1)) + dwValue3;
+         ZeroMemory(cTxt, sizeof(cTxt));
+         memcpy(cTxt, pStr1, strlen(pStr1)-2);
+         ZeroMemory(cTxt2, sizeof(cTxt2));
+         wsprintf(cTxt2, "%s+%d", cTxt, dwValue3);
+         ZeroMemory(pStr1, sizeof(pStr1));
+         strcpy(pStr1, cTxt2);
+      }else 
+      {   ZeroMemory(cTxt, sizeof(cTxt));
+         wsprintf(cTxt, "+%d", dwValue3);
+         strcat(pStr1, cTxt);
+   }   }
+}
+
+
+Then after that login the game and see if GiantBattleHammer or BerserkWands are green font.
+Anything else SHOULD be white font. (If you have any problems let me know )

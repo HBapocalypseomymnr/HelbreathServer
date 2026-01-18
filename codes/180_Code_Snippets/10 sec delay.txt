@@ -1,0 +1,54 @@
+ok loco, i have the code for the 10 second recall delay for you. i've tested it, it works.
+
+
+search for 
+
+
+QUOTE  
+
+case DEF_MAGICTYPE_TELEPORT:
+    // Ã…ÃšÂ·Â¹Ã� Ã·Ã� Â® Â¸Â¶Â¹Ã½. sValue 4Â¿Â¡ ÂµÃ»Â¶Ã³Â¼Â­ Ã…ÃšÂ·Â¹Ã� Ã·Ã� Â® Â¸Ã±Ã€Ã»ÃÃ¶Â°Â¡ Â°Ã¡ÃÂ¤ÂµÃˆÂ´Ã™.
+    m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+
+    switch (m_pMagicConfigList[sType]->m_sValue4) {
+    case 1:
+    // Ã€ÃšÂ½Ã…Ã€ÃŒ Â¼Ã’Â¼Ã“ÂµÃˆ Â¸Â¶Ã€Â»Â·ÃŽ Ã…ÃšÂ·Â¹Ã� Ã·Ã� Â®. RecallÃ€ÃŒÂ´Ã™.
+    if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) && (sOwnerH == iClientH) ) {
+      // Ã€ÃšÂ½Ã…Â¿ÃœÂ¿Â¡Â´Ã‚ RecallÃ‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+      RequestTeleportHandler(iClientH, "1  ");
+    }
+    break;
+    }
+    break;
+ 
+
+
+
+replace with
+
+
+QUOTE  
+
+case DEF_MAGICTYPE_TELEPORT:
+    // Ã…ÃšÂ·Â¹Ã� Ã·Ã� Â® Â¸Â¶Â¹Ã½. sValue 4Â¿Â¡ ÂµÃ»Â¶Ã³Â¼Â­ Ã…ÃšÂ·Â¹Ã� Ã·Ã� Â® Â¸Ã±Ã€Ã»ÃÃ¶Â°Â¡ Â°Ã¡ÃÂ¤ÂµÃˆÂ´Ã™.
+    m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+
+    switch (m_pMagicConfigList[sType]->m_sValue4) {
+    case 1:
+    // Ã€ÃšÂ½Ã…Ã€ÃŒ Â¼Ã’Â¼Ã“ÂµÃˆ Â¸Â¶Ã€Â»Â·ÃŽ Ã…ÃšÂ·Â¹Ã� Ã·Ã� Â®. RecallÃ€ÃŒÂ´Ã™.
+    if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) && (sOwnerH == iClientH) ) {
+      // Ã€ÃšÂ½Ã…Â¿ÃœÂ¿Â¡Â´Ã‚ RecallÃ‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+DWORD dwTime;
+dwTime = timeGetTime();  
+if(m_pClientList[iClientH]->m_iHP != iGetMaxHP(iClientH)) {
+if (m_pClientList[iClientH]->m_iHP < iGetMaxHP(iClientH)) {
+if ((dwTime - m_pClientList[iClientH]->m_dwRecentAttackTime) < 10000){
+goto MAGIC_NOEFFECT;
+}
+}
+}
+      RequestTeleportHandler(iClientH, "1  ");
+    }
+    break;
+    }
+    break; 

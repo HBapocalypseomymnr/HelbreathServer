@@ -1,0 +1,31 @@
+CGame::UpdateScreen_OnMainMenu
+UpdateScreen_OnLoading
+UpdateScreen_OnLoading_Progress
+InitPlayerCharacteristics
+// CLEROTH
+   m_DInput.UpdateMouseState(&msX, &msY, &msZ, &cLB, &cRB);
+
+   case 88: // 'X' // Snoopy: mimics VK_F12 Logout Window
+      if (m_bCtrlPressed && m_cGameMode == DEF_GAMEMODE_ONMAINGAME && (!m_bInputStatus) )
+      {   
+
+case VK_ESCAPE:
+      m_bEscPressed = TRUE;
+      if (m_cGameMode == DEF_GAMEMODE_ONMAINGAME)
+      {   if ((m_bIsObserverMode == TRUE) && (m_bShiftPressed)) { //ObserverMode Shift+Esc
+            // Log Out
+            if (m_cLogOutCount == -1) m_cLogOutCount = 1;
+            DisableDialogBox(19);
+            PlaySound('E', 14, 5);
+
+   if (m_cLogOutCount > 0)
+   {   if ((dwTime - m_dwLogOutCountTime) > 1000)
+      {   m_cLogOutCount--;
+         m_dwLogOutCountTime = dwTime;
+         wsprintf(G_cTxt, UPDATE_SCREEN_ONGAME13, m_cLogOutCount);
+         AddEventList(G_cTxt, 10);
+
+   if (strlen(G_cCmdLineTokenA) != 0)
+          ChangeGameMode(DEF_GAMEMODE_ONQUIT);
+      else ChangeGameMode(DEF_GAMEMODE_ONMAINMENU);
+      return;

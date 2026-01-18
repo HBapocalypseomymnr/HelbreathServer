@@ -1,0 +1,132 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 [FIX] StormBringer Dash (by Magn0S)\par
+Hola gente, bueno, por estos dias estoy jugando el Nemesis y lo reparo que la gente con StormBringer se da Dash, y nunca lo habia visto... Bueno, asi que hoy, entento algo y lo fixie e dejo a vos ^^, espero que le sea de ayuda... Gracias\par
+\par
+CLIENT SRC:\par
+\par
+Function:\par
+C\'f3digo:\par
+void CGame::CommandProcessor(short msX, short msY, short indexX, short indexY, char cLB, char cRB)\par
+Procura por eso:\par
+C\'f3digo:\par
+case 8: // LS\par
+                            if (   (absX <= 3) && (absY <= 3) && (m_iSuperAttackLeft > 0) && (m_bSuperAttackMode == TRUE)\par
+                                && (_iGetAttackType() != 30)) // Crit without StormBlade\par
+                            \{    wType = _iGetAttackType();\par
+                                m_cCommand = DEF_OBJECTATTACK;\par
+                                m_sCommX = m_sMCX;\par
+                                m_sCommY = m_sMCY;\par
+                            \}else if ( (absX <= 5) && (absY <= 5) && (m_iSuperAttackLeft > 0) && (m_bSuperAttackMode == TRUE)\par
+                                && (_iGetAttackType() == 30))  // Crit with StormBlade (by Snoopy)\par
+                            \{    wType = _iGetAttackType();\par
+                                m_cCommand = DEF_OBJECTATTACK;\par
+                                m_sCommX = m_sMCX;\par
+                                m_sCommY = m_sMCY;\par
+                            \}else if ( (absX <= 3) && (absY <= 3)\par
+                                && (_iGetAttackType() == 5))  // Normal hit with StormBlade (by Snoopy)\par
+                            \{    wType = _iGetAttackType();\par
+                                m_cCommand = DEF_OBJECTATTACK;\par
+                                m_sCommX = m_sMCX;\par
+                                m_sCommY = m_sMCY;\par
+                            \}else // Swing\par
+                            \{    if (((absX == 2) && (absY == 2)) || ((absX == 0) && (absY == 2)) || ((absX == 2) && (absY == 0))\par
+                                    && (_iGetAttackType() != 5)) // no Dash possible with StormBlade\par
+                                \{    if ((m_bShiftPressed || m_bRunningMode) && (m_iSP > 0))\par
+                                    \{    if (m_cSkillMastery[_iGetWeaponSkillType()] == 100)\par
+                                        \{    m_cCommand = DEF_OBJECTATTACKMOVE;\par
+                                            wType = _iGetAttackType();\par
+                                        \}else\par
+                                        \{    m_cCommand = DEF_OBJECTRUN;\par
+                                            GetPlayerTurn();\par
+                                        \}\par
+                                        m_sCommX = m_sMCX;\par
+                                        m_sCommY = m_sMCY;\par
+                                    \}else\par
+                                    \{    m_cCommand = DEF_OBJECTMOVE;\par
+                                        m_sCommX = m_sMCX;\par
+                                        m_sCommY = m_sMCY;\par
+                                        GetPlayerTurn();\par
+                                    \}\par
+                                \}else\par
+                                \{    if (   (m_bShiftPressed || m_bRunningMode) && (m_iSP > 0)\par
+                                        && (m_sPlayerType >= 1) && (m_sPlayerType <= 6))\par
+                                         m_cCommand = DEF_OBJECTRUN;\par
+                                    else m_cCommand = DEF_OBJECTMOVE;\par
+                                    m_sCommX = m_sMCX;\par
+                                    m_sCommY = m_sMCY;\par
+                                    GetPlayerTurn();\par
+                            \}    \}\par
+                            break;\par
+\par
+Y reempleza todo el case 8: por este.\par
+C\'f3digo:\par
+case 8: // LS\par
+                            if (   (absX <= 3) && (absY <= 3) && (m_iSuperAttackLeft > 0) && (m_bSuperAttackMode == TRUE)\par
+                                && (_iGetAttackType() != 30)) // Crit without StormBlade\par
+                            \{    wType = _iGetAttackType();\par
+                                m_cCommand = DEF_OBJECTATTACK;\par
+                                m_sCommX = m_sMCX;\par
+                                m_sCommY = m_sMCY;\par
+                            \}else if ( (absX <= 5) && (absY <= 5) && (m_iSuperAttackLeft > 0) && (m_bSuperAttackMode == TRUE)\par
+                                && (_iGetAttackType() == 30))  // Crit with StormBlade (by Snoopy)\par
+                            \{    wType = _iGetAttackType();\par
+                                m_cCommand = DEF_OBJECTATTACK;\par
+                                m_sCommX = m_sMCX;\par
+                                m_sCommY = m_sMCY;\par
+                            \}else if ( (absX <= 3) && (absY <= 3)\par
+                                && (_iGetAttackType() == 5))  // Normal hit with StormBlade (by Snoopy)\par
+                            \{    wType = _iGetAttackType();\par
+                                m_cCommand = DEF_OBJECTATTACK;\par
+                                m_sCommX = m_sMCX;\par
+                                m_sCommY = m_sMCY;\par
+                            \}else // Swing\par
+                            \{    if (((absX == 2) && (absY == 2)) || ((absX == 0) && (absY == 2)) || ((absX == 2) && (absY == 0))\par
+                                    && (_iGetAttackType() != 5)) // no Dash possible with StormBlade\par
+                                \{    if ((m_bShiftPressed || m_bRunningMode) && (m_iSP > 0))\par
+                                    \{    if (m_cSkillMastery[_iGetWeaponSkillType()] == 100)\par
+                                        \{    m_cCommand = DEF_OBJECTATTACKMOVE;\par
+                                            wType = _iGetAttackType();\par
+                                        \}else\par
+                                        \{    m_cCommand = DEF_OBJECTRUN;\par
+                                            GetPlayerTurn();\par
+                                        \}\par
+                                        m_sCommX = m_sMCX;\par
+                                        m_sCommY = m_sMCY;\par
+                                    \}else\par
+                                    \{    m_cCommand = DEF_OBJECTMOVE;\par
+                                        m_sCommX = m_sMCX;\par
+                                        m_sCommY = m_sMCY;\par
+                                        GetPlayerTurn();\par
+                                    \}\par
+                                \} else if (((absX == 4) && (absY == 4)) || ((absX == 0) && (absY == 4)) || ((absX == 4) && (absY == 0))\par
+                                    && (_iGetAttackType() == 5)) // Mang0S:: Fixed Dash with StormBringer\par
+                                \{    if ((m_bShiftPressed || m_bRunningMode) && (m_iSP > 0))\par
+                                    \{    if (m_cSkillMastery[_iGetWeaponSkillType()] == 100)\par
+                                        \{    m_cCommand = DEF_OBJECTATTACKMOVE;\par
+                                            wType = _iGetAttackType();\par
+                                        \}else\par
+                                        \{    m_cCommand = DEF_OBJECTRUN;\par
+                                            GetPlayerTurn();\par
+                                        \}\par
+                                        m_sCommX = m_sMCX;\par
+                                        m_sCommY = m_sMCY;\par
+                                    \}else\par
+                                    \{    m_cCommand = DEF_OBJECTMOVE;\par
+                                        m_sCommX = m_sMCX;\par
+                                        m_sCommY = m_sMCY;\par
+                                        GetPlayerTurn();\par
+                                    \}\par
+                                \}else\par
+                                \{    if (   (m_bShiftPressed || m_bRunningMode) && (m_iSP > 0)\par
+                                        && (m_sPlayerType >= 1) && (m_sPlayerType <= 6))\par
+                                         m_cCommand = DEF_OBJECTRUN;\par
+                                    else m_cCommand = DEF_OBJECTMOVE;\par
+                                    m_sCommX = m_sMCX;\par
+                                    m_sCommY = m_sMCY;\par
+                                    GetPlayerTurn();\par
+                            \}    \}\par
+\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?734-FIX-StormBringer-Dash-(by-Magn0S)#ixzz2ESt6pj7J\par
+}
+ 

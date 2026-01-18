@@ -1,0 +1,55 @@
+En Game.cpp buscar case MSGID_REQUEST_INITDATA: y pegar el codigo escrito a continuacion:
+
+
+                      case MSGID_REQUEST_INITDATA:
+                // Anti Bump 
+                if (m_pClientList[iClientH]->m_bIsClientConnected == TRUE) {
+                    if (m_pClientList[iClientH] == NULL) break;
+                    wsprintf(G_cTxt, "(!!!) Client (%s) connection closed!. Sniffer suspect!.", m_pClientList[iClientH]->m_cCharName);
+                    PutLogList(G_cTxt);
+                    ZeroMemory(cData, sizeof(cData));
+                    cp  = (char *)cData;
+                    *cp = GSM_DISCONNECT;
+                    cp++;
+                    memcpy(cp, m_pClientList[iClientH]->m_cCharName, 10);
+                    cp += 10;
+                    bStockMsgToGateServer(cData, 11);
+                    m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->ClearOwner(2, iClientH, DEF_OWNERTYPE_PLAYER, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY);
+                    bRemoveFromDelayEventList(iClientH, DEF_OWNERTYPE_PLAYER, NULL);
+
+                    bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, iClientH, FALSE);
+                    if ((dwTime - m_dwGameTime2) > 3000) { // 3 segs
+                        m_pClientList[iClientH]->m_bIsClientConnected = FALSE;
+                        m_iTotalClients--;
+                        delete m_pClientList[iClientH];
+                        m_pClientList[iClientH] = NULL;
+                    }
+                    break;
+                    }
+                else {
+                    m_pClientList[iClientH]->m_bIsClientConnected = TRUE;
+                    RequestInitDataHandler(iClientH, pData, cKey);
+                }
+                break;
+
+
+
+----
+En Client.h agregar:
+
+BOOL m_bIsClientConnected;
+
+---------
+En Client.cpp agregar:
+m_bIsClientConnected = FALSE;
+
+---------------
+En Game.cpp buscar m_iTotalClients y borrarle m_pClientList[iClientH]->
+
+-----------
+Despues buscar en Game.cpp: void CGame::MsgProcess() y abajo de las variables declaradas agregar
+
+char *cp, cData[120];
+DWORD dwTime;
+dwTime = timeGetTime();
+by audioslave

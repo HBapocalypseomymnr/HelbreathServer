@@ -1,0 +1,112 @@
+	if (memcmp(cp, "/event", 5) == 0) {
+			AdminOrder_summonevent(iClientH);
+			return;
+		}
+
+void CGame::AdminOrder_summonevent(int iClientH)
+{
+	char cName_Master[10], cName_Slave[10], cWaypoint[11], cName[21], cNpcName[21], cNpcWaypoint[11], cSA;	
+	register int iNamingValue, tX, tY;
+ int    pX, pY, j, iNum, iNpcID;
+  BOOL   bMaster;
+
+	if (m_pClientList[iClientH] == NULL) return;
+	if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == FALSE) return;
+
+	if (m_pClientList[iClientH]->m_iAdminUserLevel < m_iAdminLevelSummonDeath) {
+		// Admin user levelÀÌ ³·¾Æ¼­ ÀÌ ±â´ÉÀ» »ç¿ëÇÒ ¼ö ¾ø´Ù.
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);
+		return;
+	}
+
+	iNamingValue = m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->iGetEmptyNamingValue();
+	if (iNamingValue == -1) {
+		// ´õÀÌ»ó ÀÌ ¸Ê¿¡ NPC¸¦ ¸¸µé¼ö ¾ø´Ù. ÀÌ¸§À» ÇÒ´çÇÒ ¼ö ¾ø±â ¶§¹®.
+	}
+	else {
+		// NPC¸¦ »ý¼ºÇÑ´Ù.
+		ZeroMemory(cNpcName, sizeof(cNpcName));
+				switch (iDice(1,38)) {
+					case 1: strcpy(cNpcName, "Slime");			iNpcID = 10; break;
+					case 2: strcpy(cNpcName, "Giant-Ant");		iNpcID = 15; break;
+					case 3: strcpy(cNpcName, "Zombie");			iNpcID = 17; break;
+					case 4: strcpy(cNpcName, "Scorpion");		iNpcID = 16; break;
+					case 5: strcpy(cNpcName, "Skeleton");		iNpcID = 11; break;
+					case 6: strcpy(cNpcName, "Orc-Mage");		iNpcID = 14; break;
+					case 7: strcpy(cNpcName, "Clay-Golem");		iNpcID = 23; break;
+					case 8: strcpy(cNpcName, "Stone-Golem");	iNpcID = 12; break;
+					case 9: strcpy(cNpcName, "Hellbound");		iNpcID = 27; break;
+					case 10: strcpy(cNpcName, "Giant-Frog");	iNpcID = 57; break;
+					case 11: strcpy(cNpcName, "Troll");			iNpcID = 28; break;
+					case 12: strcpy(cNpcName, "Cyclops");		iNpcID = 13; break;
+					case 13: strcpy(cNpcName, "Ice-Golem");		iNpcID = 65; break;
+					case 14: strcpy(cNpcName, "Beholder");		iNpcID = 53; break;
+					case 15: strcpy(cNpcName, "Cannibal-Plant");iNpcID = 60; break;
+					case 16: strcpy(cNpcName, "Orge");			iNpcID = 29; break;
+			        case 17: strcpy(cNpcName, "Mountain-Giant");iNpcID = 58; break;
+                    case 18: strcpy(cNpcName, "DireBoar");		iNpcID = 62; break;
+			        case 19: strcpy(cNpcName, "Liche");			iNpcID = 30; break;
+				    case 20: strcpy(cNpcName, "Stalker");		iNpcID = 48; break;
+                    case 21: strcpy(cNpcName, "WereWolf");		iNpcID = 33; break;
+				    case 22: strcpy(cNpcName, "Dark-Elf");		iNpcID = 54; break;
+				    case 23: strcpy(cNpcName, "Frost");			iNpcID = 63; break;
+					case 24: strcpy(cNpcName, "Orc");			iNpcID = 14; break;
+					case 25: strcpy(cNpcName, "Ettin");			iNpcID = 59; break;
+					case 26: strcpy(cNpcName, "Tentocle");		iNpcID = -1; break;
+					case 27: strcpy(cNpcName, "Giant-Crayfish");iNpcID = -1; break;
+					case 28: strcpy(cNpcName, "Giant-Plant");	iNpcID = -1; break;
+					case 29: strcpy(cNpcName, "Rudolph");		iNpcID = -1; break;
+					case 30: strcpy(cNpcName, "Claw-Turtle");	iNpcID = -1; break;
+					case 31: strcpy(cNpcName, "Centaurus");		iNpcID = -1; break;
+					case 32: strcpy(cNpcName, "Barlog");		iNpcID = -1; break;
+					case 33: strcpy(cNpcName, "Giant-Lizard");	iNpcID = -1; break;
+					case 34: strcpy(cNpcName, "MasterMage-Orc");iNpcID = -1; break;
+					case 35: strcpy(cNpcName, "Minotaurs");		iNpcID = -1; break;
+					case 36: strcpy(cNpcName, "Nizie");			iNpcID = -1; break;
+				}
+
+				iNum = 10;
+	cSA = 0;
+	pX = m_pClientList[iClientH]->m_sX;
+	pY = m_pClientList[iClientH]->m_sY;
+			wsprintf(G_cTxt, "Admin Order(%s): WH Event", m_pClientList[iClientH]->m_cCharName);
+			PutAdminLogFileList(G_cTxt);
+
+	iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
+	if (iNamingValue != -1) {
+	
+		ZeroMemory(cName_Master, sizeof(cName_Master));
+		wsprintf(cName_Master, "XX%d", iNamingValue);
+		cName_Master[0] = '_';
+		cName_Master[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
+			
+		if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, NULL, NULL, -1, FALSE, FALSE, FALSE, TRUE)) == FALSE) {
+		m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->SetNamingValueEmpty(iNamingValue);
+		 
+			}
+	}		
+
+	for (j = 0; j < (iNum - 1); j++) {
+		iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
+		if (iNamingValue != -1) {
+			// Slave Mob
+			ZeroMemory(cName_Slave, sizeof(cName_Slave));
+			wsprintf(cName_Slave, "XX%d", iNamingValue);
+			cName_Slave[0] = '_';
+			cName_Slave[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
+			
+		
+				
+			if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, NULL, NULL, -1, FALSE, FALSE, FALSE) == FALSE) {
+		
+				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
+			}
+			else {
+				// Slave
+				bSetNpcFollowMode(cName_Slave, cName_Master, DEF_OWNERTYPE_NPC);
+			}
+		}
+	}
+	}
+	}
+

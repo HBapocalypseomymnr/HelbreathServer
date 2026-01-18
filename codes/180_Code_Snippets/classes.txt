@@ -1,0 +1,607 @@
+void CGame::DrawDialogBox_CityHallMenu(short msX, short msY)
+{
+ short sX, sY, szX;
+ char cTxt[120];
+
+	sX = m_stDialogBoxInfo[13].sX;
+	sY = m_stDialogBoxInfo[13].sY;
+	szX = m_stDialogBoxInfo[13].sSizeX;
+
+	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
+	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 18);//CityHall Menu Text
+
+	switch (m_stDialogBoxInfo[13].cMode) {
+	case 0:
+		// citizenship req
+		if (m_bCitizen == FALSE)
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 70) && (msY < sY + 95))
+				 PutAlignedString(sX, sX + szX, sY + 70, DRAW_DIALOGBOX_CITYHALL_MENU1, 255,255,255);	//"
+			else PutAlignedString(sX, sX + szX, sY + 70, DRAW_DIALOGBOX_CITYHALL_MENU1, 4,0,50);		//"
+		}else    PutAlignedString(sX, sX + szX, sY + 70, DRAW_DIALOGBOX_CITYHALL_MENU1, 65,65,65);			//"
+
+		if (m_iRewardGold > 0)
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 120))
+				 PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU4, 255,255,255);	//"
+			else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU4, 4,0,50);		//"
+		}else    PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU4, 65,65,65);			//"
+
+		// 3.51 Cityhall Menu - Request Hero's Items - Diuuude
+		if ((m_iEnemyKillCount >= 100) && (m_iContribution >= 10))
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))
+				 PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 255,255,255);
+			else PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 4,0,50);
+		}else    PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 65,65,65);
+
+		// Cancel quest
+		if (m_stQuest.sQuestType != NULL)
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 145) && (msY < sY + 170))
+				 PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU11, 255,255,255);//"
+			else PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU11, 4,0,50);//"
+		}else    PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU11, 65,65,65);//"
+
+		// change playmode
+		if ( (m_bIsCrusadeMode==FALSE) && m_bCitizen && (m_iPKCount==0))
+		{	if (m_bHunter==TRUE)
+			{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 170) && (msY < sY + 195))
+					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 255,255,255);
+				else
+					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 4,0,50);
+			}else if(m_iLevel < 100)
+			{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 170) && (msY < sY + 195))
+					 PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 255,255,255);
+				else
+					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 4,0,50);
+			}else // Disable...
+					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 65,65,65);
+		}else       PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 65,65,65);
+
+		// Teleport menu
+		if ( (m_bIsCrusadeMode==FALSE) && m_bCitizen && (m_iPKCount==0))
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 195) && (msY < sY + 220))
+				 PutAlignedString(sX, sX + szX, sY + 195, DRAW_DIALOGBOX_CITYHALL_MENU69, 255,255,255);//"Teleporting to dungeon level 2."
+			else PutAlignedString(sX, sX + szX, sY + 195, DRAW_DIALOGBOX_CITYHALL_MENU69, 4,0,50);
+		}else    PutAlignedString(sX, sX + szX, sY + 195, DRAW_DIALOGBOX_CITYHALL_MENU69, 65,65,65);
+
+		
+		//Change crusade role
+		if ( m_bIsCrusadeMode && m_bCitizen )
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 220) && (msY < sY + 220))
+				 PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 255,255,255);//"Change the crusade assignment."
+			else PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 4,0,50);//"
+		}
+		else    PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 65,65,65);//"
+// juggalo2	classes
+		//if (m_iClass >= 0) {
+		if ( (m_bIsCrusadeMode==FALSE) && m_bCitizen && (m_iPKCount==0))
+		{
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 270))
+				 PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU9, 255,255,255);
+			else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU9, 4,0,50);
+		}
+		else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU9, 65,65,65);
+
+		
+PutAlignedString(sX, sX + szX, sY + 270, DRAW_DIALOGBOX_CITYHALL_MENU17);//"Select an Item you want."
+
+		break;
+
+	case 1: // become citizen warning
+		PutAlignedString(sX, sX + szX, sY + 80, DRAW_DIALOGBOX_CITYHALL_MENU18, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU19, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_CITYHALL_MENU20, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU21, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 140,DRAW_DIALOGBOX_CITYHALL_MENU22, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 155,DRAW_DIALOGBOX_CITYHALL_MENU23, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 170,DRAW_DIALOGBOX_CITYHALL_MENU24, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 200,DRAW_DIALOGBOX_CITYHALL_MENU25, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 215,DRAW_DIALOGBOX_CITYHALL_MENU26, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 230,DRAW_DIALOGBOX_CITYHALL_MENU27, 55,25,25);//"
+
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);
+
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);
+		break;
+
+	case 2: // Offering Citizenship.
+		PutAlignedString(sX, sX + szX, sY + 140, DRAW_DIALOGBOX_CITYHALL_MENU28, 55,25,25);//"
+		break;
+
+	case 3: //Congratulations!! You acquired Citizenship"
+		PutAlignedString(sX, sX + szX, sY + 140, DRAW_DIALOGBOX_CITYHALL_MENU29, 55,25,25);//"
+
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 1);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 0);
+		break;
+
+	case 4: //Failed on acquiring citizenship!"
+		PutAlignedString(sX, sX + szX, sY + 80,  DRAW_DIALOGBOX_CITYHALL_MENU30, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 100, DRAW_DIALOGBOX_CITYHALL_MENU31, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 115, DRAW_DIALOGBOX_CITYHALL_MENU32, 55,25,25);//"
+
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 1);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 0);
+		break;
+
+	case 5: //The prize gold for your"
+		PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU33, 55,25,25);//"
+		wsprintf(cTxt, DRAW_DIALOGBOX_CITYHALL_MENU34, m_iRewardGold);//"
+		PutAlignedString(sX, sX + szX, sY + 140, cTxt, 55,25,25);
+		PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU35, 55,25,25);//"
+
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);
+
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);
+		break;
+
+	case 7:// 3.51 Cityhall Menu - Request Hero's Items - Diuuude
+		PutAlignedString(sX, sX + szX, sY + 60,  DRAW_DIALOGBOX_CITYHALL_MENU46, 255,255,255);// Here are the Hero's Item aivable :
+		// Hero's Cape (EK 300)
+		if (m_iEnemyKillCount >= 300)
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 110))
+				 PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU47, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU47, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU47, 65,65,65);// Disabled Mode
+		// Hero's Helm (EK 150 - Contrib 20)
+		if ((m_iEnemyKillCount >= 150) && (m_iContribution >= 20)) 
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 140))
+				 PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU48, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU48, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU48, 65,65,65);// Disabled Mode
+		// Hero's Cap (EK 100 - Contrib 20)
+		if ((m_iEnemyKillCount >= 100) && (m_iContribution >= 20)) 
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 155) && (msY < sY + 170))
+				 PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU49, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU49, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU49, 65,65,65);// Disabled Mode
+		// Hero's Armor (EK 300 - Contrib 30)
+		if ((m_iEnemyKillCount >= 300) && (m_iContribution >= 30)) 
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 185) && (msY < sY + 200))
+				 PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU50, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU50, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU50, 65,65,65);// Disabled Mode
+		// Hero's Robe (EK 200 - Contrib 20)
+		if ((m_iEnemyKillCount >= 200) && (m_iContribution >= 20)) 
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 215) && (msY < sY + 230))
+				 PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU51, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU51, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU51, 65,65,65);// Disabled Mode
+		// Hero's Hauberk (EK 100 - Contrib 10)
+		if ((m_iEnemyKillCount >= 100) && (m_iContribution >= 10)) 
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 260))
+				 PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU52, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU52, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU52, 65,65,65);// Disabled Mode
+		// Hero's Leggings (EK 150 - Contrib 15)
+		if ((m_iEnemyKillCount >= 150) && (m_iContribution >= 15)) 
+		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 275) && (msY < sY + 290))
+				 PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU53, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU53, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU53, 65,65,65);// Disabled Mode
+		break;
+
+	case 8: // cancel current quest?
+		PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU54, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 140, DRAW_DIALOGBOX_CITYHALL_MENU55, 55,25,25);//"
+
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);
+
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);
+		break;
+
+	case 9: // You are civilian/ combatant now
+		if( m_bHunter )
+		{	PutAlignedString(sX, sX + szX, sY +  53, DRAW_DIALOGBOX_CITYHALL_MENU57, 200,200,25);//"
+		}else
+		{	PutAlignedString(sX, sX + szX, sY +  53, DRAW_DIALOGBOX_CITYHALL_MENU58, 200,200,25);//"
+		}
+		PutAlignedString(sX, sX + szX, sY +  78, DRAW_DIALOGBOX_CITYHALL_MENU59, 55,25,25);//"
+
+		PutString(sX + 35, sY + 108, DRAW_DIALOGBOX_CITYHALL_MENU60, RGB(220,130,45));//"
+		PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU61, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 140, DRAW_DIALOGBOX_CITYHALL_MENU62, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU63, 55,25,25);//"
+		PutString(sX + 35, sY +  177, DRAW_DIALOGBOX_CITYHALL_MENU64, RGB(220,130,45));//"
+		PutAlignedString(sX, sX + szX, sY + 194, DRAW_DIALOGBOX_CITYHALL_MENU65, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 209, DRAW_DIALOGBOX_CITYHALL_MENU66, 55,25,25);//"
+		PutAlignedString(sX, sX + szX, sY + 224, DRAW_DIALOGBOX_CITYHALL_MENU67, 55,25,25);//"
+
+		PutAlignedString(sX, sX + szX, sY + 252, DRAW_DIALOGBOX_CITYHALL_MENU68, 55,25,25);//"
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);
+
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+			 DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);
+		break;
+
+	case 10: // TP 2nd screen
+		if( m_iTeleportMapCount > 0 )
+		{	PutAlignedString(sX, sX + szX, sY + 50, DRAW_DIALOGBOX_CITYHALL_MENU69, 55,25,25);//"Teleporting to dungeon level 2."
+			PutAlignedString(sX, sX + szX, sY + 80, DRAW_DIALOGBOX_CITYHALL_MENU70, 55,25,25);//"5000Gold is required"
+			PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU71, 55,25,25);//"to teleport to dungeon level 2."
+			PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_CITYHALL_MENU72, 55,25,25);//"Would you like to teleport?"
+			PutString2(sX + 35, sY + 250, DRAW_DIALOGBOX_CITYHALL_MENU72_1, 55,25,25);//"Civilians cannot go some area."
+			for( int i=0 ; i<m_iTeleportMapCount ; i++ )
+			{	ZeroMemory( cTxt, sizeof(cTxt) );
+				GetOfficialMapName( m_stTeleportList[i].mapname, cTxt );
+				wsprintf( G_cTxt, DRAW_DIALOGBOX_CITYHALL_MENU77, cTxt, m_stTeleportList[i].iCost );
+				if( (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 130 + i*15) && (msY <= sY + 144 + i*15) )
+					 PutAlignedString(sX, sX + szX, sY + 130 + i*15, G_cTxt, 255, 255, 255);
+				else PutAlignedString(sX, sX + szX, sY + 130 + i*15, G_cTxt,  250,  250,  0);
+			}
+		}else if( m_iTeleportMapCount == -1 )
+		{	PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU73, 55,25,25);//"Now it's searching for possible area"
+			PutAlignedString(sX, sX + szX, sY + 150, DRAW_DIALOGBOX_CITYHALL_MENU74, 55,25,25);//"to teleport."
+			PutAlignedString(sX, sX + szX, sY + 175, DRAW_DIALOGBOX_CITYHALL_MENU75, 55,25,25);//"Please wait for a moment."
+		}else
+		{	PutAlignedString(sX, sX + szX, sY + 175, DRAW_DIALOGBOX_CITYHALL_MENU76, 55,25,25);//"There is no area that you can teleport."
+		}
+		break;
+
+	case 11: //drajwer - ask for tooking hero mantle
+		PutAlignedString(sX,sX+szX-1,sY+125,m_cTakeHeroItemName, 55,25,25);
+		PutAlignedString(sX+1,sX+szX,sY+125,m_cTakeHeroItemName, 55,25,25);
+		PutAlignedString(sX,sX+szX,sY+260,DRAW_DIALOGBOX_CITYHALL_MENU46A, 55,25,25); // would you like..
+		if (   (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX)
+			&& (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+		   DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);
+		if (   (msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX)
+			&& (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+		   DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);
+		else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);
+ 	break;
+case 12:
+	if ((m_iStr >= 50) && (m_iDex >= 50)) {
+				if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 110))
+				PutAlignedString(sX, sX + szX, sY + 95, DRAWDIALOGBOX_CLASSTYPE5, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 95, DRAWDIALOGBOX_CLASSTYPE5, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 95, DRAWDIALOGBOX_CLASSTYPE5, 65,65,65);// Disabled Mode
+		
+					
+				if ((m_iDex >= 50) && (m_iVit >= 50)) {
+					if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 140))
+				 PutAlignedString(sX, sX + szX, sY + 125, DRAWDIALOGBOX_CLASSTYPE6, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 125, DRAWDIALOGBOX_CLASSTYPE6, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 125, DRAWDIALOGBOX_CLASSTYPE6, 65,65,65);// Disabled Mode
+		
+if ((m_iMag >= 50) && (m_iInt >= 50)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 155) && (msY < sY + 170))
+				PutAlignedString(sX, sX + szX, sY + 155, DRAWDIALOGBOX_CLASSTYPE7, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 155, DRAWDIALOGBOX_CLASSTYPE7, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 155, DRAWDIALOGBOX_CLASSTYPE7, 65,65,65);// Disabled Mode
+		
+ 
+		if (m_iCharisma >= 50){
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 185) && (msY < sY + 200))
+				 PutAlignedString(sX, sX + szX, sY + 185, DRAWDIALOGBOX_CLASSTYPE8, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 185, DRAWDIALOGBOX_CLASSTYPE8, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 185, DRAWDIALOGBOX_CLASSTYPE8, 65,65,65);// Disabled Mode
+		
+		if ((m_iInt >= 50) && (m_iDex >= 50)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 215) && (msY < sY + 230))
+				PutAlignedString(sX, sX + szX, sY + 215, DRAWDIALOGBOX_CLASSTYPE9, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 215, DRAWDIALOGBOX_CLASSTYPE9, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 215, DRAWDIALOGBOX_CLASSTYPE9, 65,65,65);// Disabled Mode
+		
+
+if ((m_iCharisma >= 50) && (m_iInt >= 50)) {
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 260))
+			PutAlignedString(sX, sX + szX, sY + 245, DRAWDIALOGBOX_CLASSTYPE10, 255,255,255);// On mouse over Mode
+			else PutAlignedString(sX, sX + szX, sY + 245, DRAWDIALOGBOX_CLASSTYPE10, 4,0,50);// Normal Mode
+		}
+		else PutAlignedString(sX, sX + szX, sY + 245, DRAWDIALOGBOX_CLASSTYPE10, 65,65,65);// Disabled Mode
+		break;	
+
+
+
+			
+	}
+}
+
+~~~~
+void CGame::DlgBoxClick_CityhallMenu(short msX, short msY)
+{short sX, sY;
+	sX = m_stDialogBoxInfo[13].sX;
+	sY = m_stDialogBoxInfo[13].sY;
+	switch (m_stDialogBoxInfo[13].cMode) {
+	case 0:
+		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 70) && (msY < sY + 95))
+		{	if (m_bCitizen == TRUE) return;
+			m_stDialogBoxInfo[13].cMode = 1; // citizenship rq
+			PlaySound('E', 14, 5);
+		}
+		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 120))
+		{	if (m_iRewardGold <= 0) return;
+			m_stDialogBoxInfo[13].cMode = 5; // rq reward gold
+			PlaySound('E', 14, 5);
+		}
+		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))
+		{	if (m_iEnemyKillCount < 100) return;
+			m_stDialogBoxInfo[13].cMode = 7;
+			PlaySound('E', 14, 5);
+		}
+		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 145) && (msY < sY + 170))
+		{	if (m_stQuest.sQuestType == NULL) return;
+			m_stDialogBoxInfo[13].cMode = 8;
+			PlaySound('E', 14, 5);
+		}
+		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 170) && (msY < sY + 195))
+		{	if (m_bIsCrusadeMode) return;
+			if (m_iPKCount != 0) return;
+			if (m_bCitizen == FALSE) return;
+			if ((m_iLevel > 100) && (m_bHunter==FALSE)) return;
+			m_stDialogBoxInfo[13].cMode = 9;
+			PlaySound('E', 14, 5);
+		}
+		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 195) && (msY < sY + 220))
+		{	m_stDialogBoxInfo[13].cMode = 10;
+			m_iTeleportMapCount = -1;
+			bSendCommand(MSGID_REQUEST_TELEPORT_LIST, NULL, NULL, NULL, NULL, NULL, NULL);
+			PlaySound('E', 14, 5);
+		}
+		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 220) && (msY < sY + 245)) {
+			if (m_bIsCrusadeMode == FALSE) return;
+			EnableDialogBox(33, 1, NULL, NULL);
+			PlaySound('E', 14, 5);
+		}
+		
+		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 270))
+		{	if (m_iClass < 0) return;
+			m_stDialogBoxInfo[13].cMode = 12;
+			PlaySound('E', 14, 5);
+		}
+		break;
+
+	case 1:
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+		{	// Yes Click
+			bSendCommand(MSGID_REQUEST_CIVILRIGHT, DEF_MSGTYPE_CONFIRM, NULL, NULL, NULL, NULL, NULL);
+			m_stDialogBoxInfo[13].cMode = 2;
+			PlaySound('E', 14, 5);
+		}
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+		{	// No Click
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+		}
+		break;
+
+	case 3:	//
+	case 4:	// OK°
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// No Click
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+		}
+		break;
+
+	case 5:
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// Yes
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETREWARDMONEY, NULL, NULL, NULL, NULL, NULL);
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+
+		}
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// No
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+		}
+		break;
+
+	// 3.51 Cityhall Menu - Request Hero's Items - Diuuude - fix by Drajwer
+	case 7:
+ 		int iReqHeroItemID;
+ 		// Hero's Cape
+ 		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 95) && (msY <= sY + 110))
+ 		{	if(m_bAresden == TRUE) iReqHeroItemID = 400;
+  			else iReqHeroItemID = 401;
+			ZeroMemory(m_cTakeHeroItemName,sizeof(m_cTakeHeroItemName));
+			memcpy(m_cTakeHeroItemName,DRAW_DIALOGBOX_CITYHALL_MENU47,strlen(DRAW_DIALOGBOX_CITYHALL_MENU47));
+  			m_stDialogBoxInfo[13].cMode = 11;
+  			m_stDialogBoxInfo[13].sV1=iReqHeroItemID;
+  			PlaySound('E', 14, 5);
+ 		}
+ 		// Hero's Helm
+ 		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 125) && (msY <= sY + 140))
+ 		{	if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 403;
+  			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 404;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 405;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 406;
+ 	 		ZeroMemory(m_cTakeHeroItemName,sizeof(m_cTakeHeroItemName));
+ 	 		memcpy(m_cTakeHeroItemName,DRAW_DIALOGBOX_CITYHALL_MENU48,strlen(DRAW_DIALOGBOX_CITYHALL_MENU48));
+ 	 		m_stDialogBoxInfo[13].cMode = 11;
+ 	 		m_stDialogBoxInfo[13].sV1=iReqHeroItemID;
+ 	 		PlaySound('E', 14, 5);
+ 		}
+ 		// Hero's Cap
+ 		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 155) && (msY <= sY + 170))
+ 		{	if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 407;
+  			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 408;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 409;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 410;
+  			ZeroMemory(m_cTakeHeroItemName,sizeof(m_cTakeHeroItemName));
+  			memcpy(m_cTakeHeroItemName,DRAW_DIALOGBOX_CITYHALL_MENU49,strlen(DRAW_DIALOGBOX_CITYHALL_MENU49));
+  			m_stDialogBoxInfo[13].cMode = 11;
+  			m_stDialogBoxInfo[13].sV1=iReqHeroItemID;
+  			PlaySound('E', 14, 5);
+ 		}
+ 		// Hero's Armor
+ 		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 185) && (msY <= sY + 200))
+ 		{  	if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 411;
+  			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 412;
+ 	 		if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 413;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 414;
+  			ZeroMemory(m_cTakeHeroItemName,sizeof(m_cTakeHeroItemName));
+  			memcpy(m_cTakeHeroItemName,DRAW_DIALOGBOX_CITYHALL_MENU50,strlen(DRAW_DIALOGBOX_CITYHALL_MENU50));
+  			m_stDialogBoxInfo[13].cMode = 11;
+  			m_stDialogBoxInfo[13].sV1=iReqHeroItemID;
+  			PlaySound('E', 14, 5);
+ 		}
+ 		// Hero's Robe
+ 		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 215) && (msY <= sY + 230))
+ 		{	if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 415;
+  			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 416;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 417;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 418;
+  			ZeroMemory(m_cTakeHeroItemName,sizeof(m_cTakeHeroItemName));
+  			memcpy(m_cTakeHeroItemName,DRAW_DIALOGBOX_CITYHALL_MENU51,strlen(DRAW_DIALOGBOX_CITYHALL_MENU51));
+  			m_stDialogBoxInfo[13].cMode = 11;
+  			m_stDialogBoxInfo[13].sV1=iReqHeroItemID;
+  			PlaySound('E', 14, 5);
+ 		}
+ 		// Hero's Hauberk
+ 		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 245) && (msY <= sY + 260))
+  		{	if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 419;
+	  		if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 420;
+	  		if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 421;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 422;
+  			ZeroMemory(m_cTakeHeroItemName,sizeof(m_cTakeHeroItemName));
+  			memcpy(m_cTakeHeroItemName,DRAW_DIALOGBOX_CITYHALL_MENU52,strlen(DRAW_DIALOGBOX_CITYHALL_MENU52));
+  			m_stDialogBoxInfo[13].cMode = 11;
+  			m_stDialogBoxInfo[13].sV1=iReqHeroItemID;
+  			PlaySound('E', 14, 5);
+ 		}
+ 		// Hero's Leggings
+ 		if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 275) && (msY <= sY + 290))
+ 		{  	if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 423;
+  			if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 424;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqHeroItemID = 425;
+  			if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqHeroItemID = 426;
+  			ZeroMemory(m_cTakeHeroItemName,sizeof(m_cTakeHeroItemName));
+  			memcpy(m_cTakeHeroItemName,DRAW_DIALOGBOX_CITYHALL_MENU53,strlen(DRAW_DIALOGBOX_CITYHALL_MENU53));
+  			m_stDialogBoxInfo[13].cMode = 11;
+  			m_stDialogBoxInfo[13].sV1=iReqHeroItemID;
+  			PlaySound('E', 14, 5);
+ 		}
+ 		break;
+
+	case 8:
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// Yes
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_CANCELQUEST, NULL, NULL, NULL, NULL, NULL);
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+		}
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// No
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+		}
+		break;
+
+	case 9:
+		if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// Yes
+			bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_HUNTMODE, NULL, NULL, NULL, NULL, NULL);
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+		}
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY)) {
+			// No
+			m_stDialogBoxInfo[13].cMode = 0;
+			PlaySound('E', 14, 5);
+		}
+		break;
+
+	case 10:
+		if( m_iTeleportMapCount > 0 )
+		{	for( int i=0 ; i<m_iTeleportMapCount ; i++ )
+			{	if( (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 130 + i*15) && (msY <= sY + 144 + i*15) )
+				{	bSendCommand(MSGID_REQUEST_CHARGED_TELEPORT, NULL, NULL, m_stTeleportList[i].iIndex, NULL, NULL, NULL);
+					DisableDialogBox(13);
+					return;
+		}	}	}
+		break;
+
+	case 11: // Fix Drawjer
+		 if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+		{	bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, m_stDialogBoxInfo[13].sV1, NULL, NULL, NULL);
+		  	m_stDialogBoxInfo[13].cMode = 0;
+		  	PlaySound('E', 14, 5);
+		}
+		if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+		{	m_stDialogBoxInfo[13].cMode = 7;
+		  	PlaySound('E', 14, 5);
+		}
+ 		break;
+
+case 12:
+	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 110))
+				{	if(m_bAresden == TRUE) m_iClass == 1;
+  			
+					bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_SELECTCLASS, NULL, 1, NULL, NULL, NULL);
+					DisableDialogBox(52);
+					PlaySound('E', 14, 5);
+				}
+ 			
+			if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 140))
+				 {	bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_SELECTCLASS, NULL, 2, NULL, NULL, NULL);
+					DisableDialogBox(52);
+					PlaySound('E', 14, 5);
+				}
+			
+				if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 155) && (msY < sY + 170))
+				 {	bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_SELECTCLASS, NULL, 3, NULL, NULL, NULL);
+					DisableDialogBox(52);
+					PlaySound('E', 14, 5);
+				}
+			
+				if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 185) && (msY < sY + 200))
+				 {	bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_SELECTCLASS, NULL, 4, NULL, NULL, NULL);
+					DisableDialogBox(52);
+					PlaySound('E', 14, 5);
+				}
+			
+				if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 215) && (msY < sY + 230))
+				 {	bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_SELECTCLASS, NULL, 5, NULL, NULL, NULL);
+					DisableDialogBox(52);
+					PlaySound('E', 14, 5);
+				}
+			
+				if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 260))
+				 {	bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_SELECTCLASS, NULL, 6, NULL, NULL, NULL);
+					DisableDialogBox(52);
+					PlaySound('E', 14, 5);
+				}
+
+ 		break; 
+
+
+
+	}
+}
+
+
+#define DEF_COMMONTYPE_REQUEST_SELECTCLASS		0x0A62
+
+

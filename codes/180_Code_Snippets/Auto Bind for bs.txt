@@ -1,0 +1,33 @@
+It was requested first by Tafka who sells his majestic upgradable items in BlackSmith. It will bind weapon / armors to the player who buy it and then item will be allowed to upgraded using MJ points.
+
+Of course you must add the items in the ItemUpgradeHandler
+
+Open game.cpp and go to function CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
+
+Find 
+
+CODE  
+if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+   if (m_pClientList[iClientH]->m_iCurWeightLoad < 0) m_pClientList[iClientH]->m_iCurWeightLoad = 0; 
+
+
+
+Right before, add :
+
+CODE  
+// AutoBind Weapon And Armour To Player Who Buy It
+  switch(pItem->m_sIDnum){
+   case xxx: // item 1
+   case xxx:  // item2
+   case xxx: // item 3...
+    pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
+    pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
+    pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
+    break;
+   default:
+    break;
+  } 
+
+
+
+Add as much items as you want... but they must be purchasable at blacksmith / shop 

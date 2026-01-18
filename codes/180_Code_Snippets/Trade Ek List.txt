@@ -1,0 +1,694 @@
+    Coder : ZeroEoYnPk
+    Brought To You By Kokodriloz
+
+
+Image
+
+Go to Client Src in Game.cpp Find;
+
+Code: Select all
+    if (memcmp(cBuff, "/showframe", 10)==0)
+
+
+
+In the end of this;
+
+Code: Select all
+    if (memcmp(cBuff, "/showframe", 10)==0)
+        {    if(m_bShowFPS) m_bShowFPS = FALSE;
+            else m_bShowFPS = TRUE;
+            return TRUE;
+        }
+
+
+
+Add this;
+
+Code: Select all
+    if (memcmp(cBuff, "/tradeeklist", 12)==0)
+        {    //ZeroEoyPnk - TradeEkList
+            if(m_bIsDialogEnabled[52] == FALSE){
+                EnableDialogBox(52, NULL, NULL, NULL);
+            }
+            else{
+                DisableDialogBox(52);
+            }
+            return TRUE;
+        }
+
+
+
+in Game.cpp Add (client);
+
+Code: Select all
+    void CGame::DrawDialogBox_TradeEk(short msX, short msY)
+    {//ZeroEoyPnk - TradeEkList
+    short sX, sY, szX;
+
+        sX = m_stDialogBoxInfo[52].sX;
+        sY = m_stDialogBoxInfo[52].sY;
+        szX = m_stDialogBoxInfo[52].sSizeX;
+        DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
+        PutString_SprFont(sX+75,sY+35,"Trade Ek List",1,1,8);
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 80) && (msY < sY + 95))
+        PutAlignedString(sX, sX + szX, sY + 80, DRAW_DIALOGBOX_TRADEEKLIST1, 255,255,255);
+        if (m_iEnemyKillCount >= 1000){
+            PutAlignedString(sX, sX + szX, sY + 80, DRAW_DIALOGBOX_TRADEEKLIST1, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 80, DRAW_DIALOGBOX_TRADEEKLIST1, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 110))
+        PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_TRADEEKLIST2, 255,255,255);
+        if (m_iEnemyKillCount >= 1500){
+            PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_TRADEEKLIST2, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_TRADEEKLIST2, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 110) && (msY < sY + 125))
+        PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_TRADEEKLIST3, 255,255,255);
+        if (m_iEnemyKillCount >= 2000){
+            PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_TRADEEKLIST3, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_TRADEEKLIST3, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 140))
+        PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_TRADEEKLIST4, 255,255,255);
+        if (m_iEnemyKillCount >= 2500){
+            PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_TRADEEKLIST4, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_TRADEEKLIST4, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 140) && (msY < sY + 155))
+        PutAlignedString(sX, sX + szX, sY + 140, DRAW_DIALOGBOX_TRADEEKLIST5, 255,255,255);
+        if (m_iEnemyKillCount >= 3000){
+            PutAlignedString(sX, sX + szX, sY + 140, DRAW_DIALOGBOX_TRADEEKLIST5, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 140, DRAW_DIALOGBOX_TRADEEKLIST5, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 155) && (msY < sY + 170))
+        PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_TRADEEKLIST6, 255,255,255);
+        if (m_iEnemyKillCount >= 2500){
+            PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_TRADEEKLIST6, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_TRADEEKLIST6, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 170) && (msY < sY + 185))
+        PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_TRADEEKLIST7, 255,255,255);
+        if (m_iEnemyKillCount >= 2000){
+            PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_TRADEEKLIST7, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_TRADEEKLIST7, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 185) && (msY < sY + 200))
+        PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_TRADEEKLIST8, 255,255,255);
+        if (m_iEnemyKillCount >= 1500){
+            PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_TRADEEKLIST8, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_TRADEEKLIST8, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 200) && (msY < sY + 215))
+        PutAlignedString(sX, sX + szX, sY + 200, DRAW_DIALOGBOX_TRADEEKLIST9, 255,255,255);
+        if (m_iEnemyKillCount >= 1000){
+            PutAlignedString(sX, sX + szX, sY + 200, DRAW_DIALOGBOX_TRADEEKLIST9, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 200, DRAW_DIALOGBOX_TRADEEKLIST9, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 215) && (msY < sY + 230))
+        PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_TRADEEKLIST10, 255,255,255);
+        if (m_iEnemyKillCount >= 1500){
+            PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_TRADEEKLIST10, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_TRADEEKLIST10, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 230) && (msY < sY + 245))
+        PutAlignedString(sX, sX + szX, sY + 230, DRAW_DIALOGBOX_TRADEEKLIST11, 255,255,255);
+        if (m_iEnemyKillCount >= 2000){
+            PutAlignedString(sX, sX + szX, sY + 230, DRAW_DIALOGBOX_TRADEEKLIST11, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 230, DRAW_DIALOGBOX_TRADEEKLIST11, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 260))
+        PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_TRADEEKLIST12, 255,255,255);
+        if (m_iEnemyKillCount >= 2500){
+            PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_TRADEEKLIST12, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_TRADEEKLIST12, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 260) && (msY < sY + 275))
+        PutAlignedString(sX, sX + szX, sY + 260, DRAW_DIALOGBOX_TRADEEKLIST13, 255,255,255);
+        if (m_iEnemyKillCount >= 3000){
+            PutAlignedString(sX, sX + szX, sY + 260, DRAW_DIALOGBOX_TRADEEKLIST13, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 260, DRAW_DIALOGBOX_TRADEEKLIST13, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 275) && (msY < sY + 290))
+        PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_TRADEEKLIST14, 255,255,255);
+        if (m_iEnemyKillCount >= 2500){
+            PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_TRADEEKLIST14, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_TRADEEKLIST14, 0,0,0);
+        }
+
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 290) && (msY < sY + 305))
+        PutAlignedString(sX, sX + szX, sY + 290, DRAW_DIALOGBOX_TRADEEKLIST15, 255,255,255);
+        if (m_iEnemyKillCount >= 3000){
+            PutAlignedString(sX, sX + szX, sY + 290, DRAW_DIALOGBOX_TRADEEKLIST15, 255,0,0);
+        }
+        else{
+            PutAlignedString(sX, sX + szX, sY + 290, DRAW_DIALOGBOX_TRADEEKLIST15, 0,0,0);
+        }
+    }
+
+
+
+Find;
+
+Code: Select all
+    //Guild Hall Menu Dialog
+
+
+
+And Below;
+
+Code: Select all
+    //Guild Hall Menu Dialog
+        m_stDialogBoxInfo[51].sX = 337;
+        m_stDialogBoxInfo[51].sY = 57;
+        m_stDialogBoxInfo[51].sSizeX = 258;
+        m_stDialogBoxInfo[51].sSizeY = 339;
+
+
+
+Add;
+
+Code: Select all
+    //ZeroEoyPnk - TradeEkList
+        m_stDialogBoxInfo[52].sX = 358;
+        m_stDialogBoxInfo[52].sY = 65;
+        m_stDialogBoxInfo[52].sSizeX = 258;
+        m_stDialogBoxInfo[52].sSizeY = 339;
+
+
+
+In Lan_eng.h in the end add;
+
+Code: Select all
+    //ZeroEoyPnk - TradeEkList
+    #define DRAW_DIALOGBOX_TRADEEKLIST1 "Xelima Blade: 1000 Eks - /get_xblade"
+    #define DRAW_DIALOGBOX_TRADEEKLIST2 "Xelima Sterk: 1500 Eks - /get_xsterk"
+    #define DRAW_DIALOGBOX_TRADEEKLIST3 "Xelima Axe: 2000 Eks - /get_xaxe"
+    #define DRAW_DIALOGBOX_TRADEEKLIST4 "Medusa Sword: 2500 Eks - /get_msword"
+    #define DRAW_DIALOGBOX_TRADEEKLIST5 "Merien Shield: 3000 Eks - /get_mshield"
+    #define DRAW_DIALOGBOX_TRADEEKLIST6 "Medusa Neck: 2500 Eks - /get_mneck"
+    #define DRAW_DIALOGBOX_TRADEEKLIST7 "BerserkWand Ms20: 2000 Eks - /get_zwand"
+    #define DRAW_DIALOGBOX_TRADEEKLIST8 "Kloness Axe: 1500 Eks - /get_kaxe"
+    #define DRAW_DIALOGBOX_TRADEEKLIST9 "Kloness Blade: 1000 Eks - /get_kblade"
+    #define DRAW_DIALOGBOX_TRADEEKLIST10 "Kloness Sterk: 1500 Eks - /get_ksterk"
+    #define DRAW_DIALOGBOX_TRADEEKLIST11 "Medusa Neck: 2000 Eks - /get_mneck"
+    #define DRAW_DIALOGBOX_TRADEEKLIST12 "Demon Slayer: 2500 Eks - /get_dslayer"
+    #define DRAW_DIALOGBOX_TRADEEKLIST13 "GiantBattleHammer: 3000 Eks - /get_gbh"
+    #define DRAW_DIALOGBOX_TRADEEKLIST14 "ResuWand Ms20: 2500 Eks - /get_resuwand"
+    #define DRAW_DIALOGBOX_TRADEEKLIST15 "Ring of Xelima: 3000 Eks - /get_rxelima"
+
+
+
+in Game.h in the and add;
+
+Code: Select all
+    //ZeroEoyPnk - TradeEkList
+        void DrawDialogBox_TradeEk(short msX, short msY);
+
+
+
+Like this one;
+
+Code: Select all
+    };
+
+    #endif // !defined(AFX_GAME_H__0089D9E3_74E6_11D2_A8E6_00001C7030A6__INCLUDED_)
+
+
+
+If you want to change trade eks
+
+Code: Select all
+    if (m_iEnemyKillCount >= 2500){
+
+
+
+lang_eng change;
+
+Code: Select all
+    #define DRAW_DIALOGBOX_TRADEEKLIST11 "Medusa Neck: 2000 Eks - /get_mneck"
+
+
+
+Find;
+
+Code: Select all
+    void CGame::DrawDialogBoxs(short msX, short msY, short msZ, char cLB)
+
+
+
+and find;
+
+Code: Select all
+    case 51: // Gail
+
+
+
+below;
+
+Code: Select all
+    case 51: // Gail
+                DrawDialogBox_CMDHallMenu(msX, msY);
+                break;
+
+
+
+add this;
+
+Code: Select all
+    case 52:
+                DrawDialogBox_TradeEk(msX, msY);
+                break;
+
+
+
+Client, game.cpp find;
+
+Code: Select all
+    case MSGID_REQUEST_CHANGEPASSWORD:
+
+
+
+After "break;" add;
+
+Code: Select all
+    case DEF_REQUEST_TRADEEK: // Agregado el mensaje del tradeek - ZeroEoyPnk
+            dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);
+            *dwp = dwMsgID;
+            wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);
+            *wp = NULL;
+            cp = (char*)(cMsg + 6);
+            memset( cp, 0, 20 );
+            memcpy((char *)cp, pString, strlen(pString) + 1);
+            cp += 20;
+            ip = (int *)cp;
+            *ip = iV1;
+            iRet = m_pGSock->iSendMsg(cMsg, 30, cKey);
+            break;
+
+
+
+Add netmessage.h
+
+Code: Select all
+    #define DEF_REQUEST_TRADEEK                        0x0F21
+
+
+
+Game.cpp find;
+
+Code: Select all
+    DlgBoxClick_Resurect(msX, msY);
+
+
+
+After "break;" add;
+
+Code: Select all
+    case 52:
+                    DlgBoxClick_TradeEk(msX, msY);
+                    break;
+                }
+
+
+
+in the End of Game.cpp add;
+
+Code: Select all
+    void CGame::DlgBoxClick_TradeEk(short msX, short msY)
+    {//Al hacer clic en los items - ZeroEoyPnk
+        short sX, sY;
+        sX = m_stDialogBoxInfo[52].sX;
+        sY = m_stDialogBoxInfo[52].sY;
+
+        iif (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 80) && (msY < sY + 95)
+            && (m_iEnemyKillCount >= 1000)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 1, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 95) && (msY < sY + 110)
+            && (m_iEnemyKillCount >= 1500)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 2, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 110) && (msY < sY + 125)
+            && (m_iEnemyKillCount >= 2000)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 3, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 125) && (msY < sY + 140)
+            && (m_iEnemyKillCount >= 2500)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 4, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 140) && (msY < sY + 155)
+            && (m_iEnemyKillCount >= 3000)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 5, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 155) && (msY < sY + 170)
+            && (m_iEnemyKillCount >= 2500)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 6, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 170) && (msY < sY + 185)
+            && (m_iEnemyKillCount >= 2000)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 7, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 185) && (msY < sY + 200)
+            && (m_iEnemyKillCount >= 1500)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 8, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 200) && (msY < sY + 215)
+            && (m_iEnemyKillCount >= 1000)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 9, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 215) && (msY < sY + 230)
+            && (m_iEnemyKillCount >= 1500)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 10, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 230) && (msY < sY + 245)
+            && (m_iEnemyKillCount >= 2000)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 11, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 245) && (msY < sY + 260)
+            && (m_iEnemyKillCount >= 2500)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 12, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 260) && (msY < sY + 275)
+            && (m_iEnemyKillCount >= 3000)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 13, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 275) && (msY < sY + 290)
+            && (m_iEnemyKillCount >= 2500)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 14, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+
+        if (   (msX >= sX + 35) && (msX <= sX + 220) && (msY > sY + 290) && (msY < sY + 305)
+            && (m_iEnemyKillCount >= 3500)){
+            bSendCommand(DEF_REQUEST_TRADEEK, NULL, NULL, 15, NULL, NULL, NULL, NULL);
+            PlaySound('E', 14, 5);
+        }
+    }
+
+
+
+in Game.h add;
+
+Code: Select all
+    void DlgBoxClick_TradeEk(short msX, short msY);
+
+
+
+
+HG Part
+
+In game.cpp Find;
+
+Code: Select all
+    case MSGID_COMMAND_CHATMSG:
+
+
+
+After "break;" add;
+
+Code: Select all
+    case DEF_REQUEST_TRADEEK: // Agregado el mensaje del tradeek - ZeroEoyPnk
+                    GetTradeEk(iClientH, pData, dwMsgSize);
+                    break;
+
+
+
+In Game.cpp .. end add;
+
+Code: Select all
+    void CGame::GetTradeEk(int iClientH, char * pData, DWORD dwMsgSize)
+    { // Agregada la obtencion de item - ZeroEoyPnk
+    char  *cp, cData[256], cTmpName[21];
+    int   iTradeEk;
+    class CItem * pItem;
+    int   iRet, iEraseReq, iEks;
+    char  cItemName[21];
+    short * sp;
+    WORD  * wp;
+    int   * ip;
+    DWORD * dwp;
+        if (m_pClientList[iClientH] == NULL) return;
+        if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
+        if (_iGetItemSpaceLeft(iClientH) == 0)
+        {   
+            SendItemNotifyMsg(iClientH,    DEF_NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL);
+            return;
+        }
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+        ZeroMemory(cTmpName, sizeof(cTmpName));
+        strcpy(cTmpName, cp);
+        cp += 20;
+        ip = (int *)cp;
+        iTradeEk = (int) *ip;
+        cp += 2;
+        wsprintf(G_cTxt, "PC(%s) Obtuvo: (%d).   %s(%d %d)", m_pClientList[iClientH]->m_cCharName, iTradeEk, m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY);   
+        PutLogList(G_cTxt);   
+        switch (iTradeEk) {
+        case 1:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 2:
+            wsprintf(cItemName, "ITEM NAME!");
+            iEks = 5;
+            break;
+        case 3:
+            wsprintf(cItemName, "ITEM NAME!");
+            iEks = 5;
+            break;
+        case 4:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 5:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 6:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 7:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 8:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 9:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 10:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 11:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 12:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 13:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 14:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+        case 15:
+            wsprintf(cItemName, "ITEM NAME");
+            iEks = 5;
+            break;
+
+        default:
+            PutLogList("Gail asked to create a wrong item!");   
+            break;
+        }
+        pItem = NULL;
+        pItem = new class CItem;
+        if (pItem == NULL) return;
+        if ((_bInitItemAttr(pItem, cItemName) == TRUE))
+        {   
+            pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+            pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
+            pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
+            pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
+            if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE)
+            {   
+                ZeroMemory(cData, sizeof(cData));
+                dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+                *dwp = MSGID_NOTIFY;
+                wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+                *wp  = DEF_NOTIFY_ITEMOBTAINED;               
+                cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);               
+                *cp = 1;
+                cp++;               
+                memcpy(cp, pItem->m_cName, 20);
+                cp += 20;               
+                dwp  = (DWORD *)cp;
+                *dwp = pItem->m_dwCount;
+                cp += 4;               
+                *cp = pItem->m_cItemType;
+                cp++;               
+                *cp = pItem->m_cEquipPos;
+                cp++;               
+                *cp = (char)0;
+                cp++;               
+                sp  = (short *)cp;
+                *sp = pItem->m_sLevelLimit;
+                cp += 2;               
+                *cp = pItem->m_cGenderLimit;
+                cp++;               
+                wp = (WORD *)cp;
+                *wp = pItem->m_wCurLifeSpan;
+                cp += 2;               
+                wp = (WORD *)cp;
+                *wp = pItem->m_wWeight;
+                cp += 2;               
+                sp  = (short *)cp;
+                *sp = pItem->m_sSprite;
+                cp += 2;               
+                sp  = (short *)cp;
+                *sp = pItem->m_sSpriteFrame;
+                cp += 2;
+                *cp = pItem->m_cItemColor;
+                cp++;
+                *cp = (char)pItem->m_sItemSpecEffectValue2;
+                cp++;               
+                dwp = (DWORD *)cp;
+                *dwp = pItem->m_dwAttribute;
+                cp += 4;
+                if (iEraseReq == 1) delete pItem;               
+                iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53);
+                switch (iRet)
+                {
+                    case DEF_XSOCKEVENT_QUENEFULL:
+                    case DEF_XSOCKEVENT_SOCKETERROR:
+                    case DEF_XSOCKEVENT_CRITICALERROR:
+                    case DEF_XSOCKEVENT_SOCKETCLOSED:
+                    DeleteClient(iClientH, TRUE, TRUE);
+                    break;
+                }
+                m_pClientList[iClientH]->m_iEnemyKillCount -= iEks;
+                SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL);
+            }
+            else
+            {   
+                m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem);           
+                SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);       
+                dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+                *dwp = MSGID_NOTIFY;
+                wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+                *wp  = DEF_NOTIFY_CANNOTCARRYMOREITEM;               
+                iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6);
+                switch (iRet)
+                {
+                    case DEF_XSOCKEVENT_QUENEFULL:
+                    case DEF_XSOCKEVENT_SOCKETERROR:
+                    case DEF_XSOCKEVENT_CRITICALERROR:
+                    case DEF_XSOCKEVENT_SOCKETCLOSED:
+                    DeleteClient(iClientH, TRUE, TRUE);
+                    break;
+                }   
+            }
+        }
+        else
+        {   
+            delete pItem;
+            pItem = NULL;
+        }
+    }
+
+
+
+Game.h Add;
+
+Code: Select all
+    void GetTradeEk(int iClientH, char * pData, DWORD dwMsgSize);
+
+
+
+In netmessage.h add;
+
+Code: Select all
+    #define DEF_REQUEST_TRADEEK                        0x0F21
+
+
+
+iEks = 5; = eks
+m_iEnemyKillCount >= 1000 item price
+
+C ya =P

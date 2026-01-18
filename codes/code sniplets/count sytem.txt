@@ -1,0 +1,104 @@
+
+--------------------------------------------------------------------------------
+ 
+I test this and is working )) code by omar_omiez 
+
+open: 
+
+Quote: 
+game.cpp 
+
+
+under: 
+
+Quote: 
+void CGame::NpcKilledHandler 
+
+
+search for: 
+Quote: 
+
+if (cAttackerType == DEF_OWNERTYPE_PLAYER) { 
+switch (m_pNpcList[iNpcH]->m_sType) { 
+case 32: 
+// À¯´�?ÄÜÀÌ �?×¾ú´Ù. �?×ÀÎ ÀÚ¿¡°Ô Æä³ÎÆ¼¸¦ ¹°¸°´Ù. 
+m_pClientList[sAttackerH]->m_iRating -= 5; 
+if (m_pClientList[sAttackerH]->m_iRating < -10000) m_pClientList[sAttackerH]->m_iRating = 0; 
+if (m_pClientList[sAttackerH]->m_iRating > 10000) m_pClientList[sAttackerH]->m_iRating = 0; 
+break; 
+
+case 33: 
+break; 
+} 
+} 
+ 
+
+replace this for: 
+Quote: 
+
+if (cAttackerType == DEF_OWNERTYPE_PLAYER) { 
+switch (m_pNpcList[iNpcH]->m_sType) { 
+case 32: 
+// À¯´�?ÄÜÀÌ �?×¾ú´Ù. �?×ÀÎ ÀÚ¿¡°Ô Æä³ÎÆ¼¸¦ ¹°¸°´Ù. 
+m_pClientList[sAttackerH]->m_iRating -= 5; 
+if (m_pClientList[sAttackerH]->m_iRating < -10000) m_pClientList[sAttackerH]->m_iRating = 0; 
+if (m_pClientList[sAttackerH]->m_iRating > 10000) m_pClientList[sAttackerH]->m_iRating = 0; 
+if (m_pClientList[sAttackerH]->m_iInt > 180){ 
+m_pClientList[sAttackerH]->m_iLuck += 3;} 
+break; 
+
+case 33: 
+break; 
+
+case 49: 
+if (m_pClientList[sAttackerH]->m_iInt > 180){ 
+m_pClientList[sAttackerH]->m_iLuck += 10;} 
+if (m_pClientList[sAttackerH]->m_iStr > 180){ 
+m_pClientList[sAttackerH]->m_iLuck += 3;} 
+break; 
+
+
+case 50: 
+if (m_pClientList[sAttackerH]->m_iStr > 180){ 
+m_pClientList[sAttackerH]->m_iLuck += 7;} 
+break; 
+
+} 
+} 
+ 
+
+
+now go to: 
+
+Quote: 
+int CGame::iCalculateAttackEffect 
+
+
+search for: 
+
+Quote: 
+
+if (m_pClientList[sAttackerH]->m_cHeroArmourBonus == 1) { 
+iAttackerHitRatio += 100; 
+iAP_SM += 5; 
+iAP_L += 5; 
+} 
+ 
+
+replace this for: 
+
+Quote: 
+if (m_pClientList[sAttackerH]->m_cHeroArmourBonus == 1) { 
+
+if(m_pClientList[sAttackerH]->m_iLuck >= 10) 
+{ 
+m_pClientList[sAttackerH]->m_iLuck/10; 
+iAP_SM += m_pClientList[sAttackerH]->m_iLuck/10; 
+iAP_L += m_pClientList[sAttackerH]->m_iLuck/10; 
+} 
+iAttackerHitRatio += 100; 
+iAP_SM += 5; 
+iAP_L += 5; 
+} 
+ 
+ 

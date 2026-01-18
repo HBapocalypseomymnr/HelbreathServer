@@ -1,0 +1,246 @@
+void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
+{
+ class CItem * pItem;
+ char  * cp, cItemName[21], cData[100];
+ short * sp;
+ DWORD * dwp, dwGoldCount, dwItemCount;
+ WORD  * wp, wTempPrice;
+ int   i, iRet, iEraseReq, iGoldWeight;
+ int   iCost, iCost2, iDiscountRatio, iDiscountCost;
+ double dTmp1, dTmp2, dTmp3;
+ 
+	if (m_pClientList[iClientH] == NULL) return;
+	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
+	// ¸¸¾à ¾ÆÀÌÅÛÀ» ±¸ÀÔÇÏ°íÀÚ ÇÏ´Â °÷ÀÌ ÀÚ½ÅÀÇ ¸¶À»ÀÌ ¾Æ´Ï¶ó¸é ±¸ÀÔÇÒ ¼ö ¾ø´Ù. 
+	//if ( (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) != 0) &&
+	//	 (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, m_pClientList[iClientH]->m_cLocation, 10) != 0) ) return;
+
+	if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) != 0) {
+		if (memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) {
+			if ((memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, "aresden", 7) == 0) ||
+				(memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, "arefarm", 7) == 0)) {
+
+			}
+			else return;
+		}
+
+		if (memcmp(m_pClientList[iClientH]->m_cLocation, "elv", 3) == 0) {
+			if ((memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0) ||
+				(memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, "elvfarm", 7) == 0)) {
+
+			}
+			else return;
+		}
+	}
+	
+	
+	// ¾ÆÀÌÅÛÀ» ±¸ÀÔÇÑ´Ù. 
+	ZeroMemory(cData, sizeof(cData));	
+	ZeroMemory(cItemName, sizeof(cItemName));
+	
+
+	// ÀÓ½ÃÄÚµå´Ù. 
+	if (memcmp(pItemName, "10Arrows", 8) == 0) {
+		strcpy(cItemName, "Arrow");
+		dwItemCount = 10;
+	}
+	else if (memcmp(pItemName, "100Arrows", 9) == 0) {
+		strcpy(cItemName, "Arrow");
+		dwItemCount = 100;
+	}
+	else {
+		memcpy(cItemName, pItemName, 20);
+		dwItemCount = 1;
+	}
+	
+	for (i = 1; i <= iNum; i++) {
+
+		pItem = new class CItem;
+		if (_bInitItemAttr(pItem, cItemName) == FALSE) {
+			// ±¸ÀÔÇÏ°íÀÚ ÇÏ´Â ¾ÆÀÌÅÛÀÌ ¾ÆÀÌÅÛ ¸®½ºÆ®»ó¿¡ ¾ø´Ù. ±¸ÀÔÀÌ ºÒ°¡´ÉÇÏ´Ù.
+			delete pItem;
+		}
+		else {
+			
+			if (pItem->m_bIsForSale == FALSE) {
+				// ÆÇ¸ÅµÇ´Â ¾ÆÀÌÅÛÀÌ ¾Æ´Ï´Ù. »ì ¼ö ¾ø´Ù.
+				delete pItem;
+				return;
+			}
+
+			pItem->m_dwCount = dwItemCount;
+
+			//iCost = pItem->m_wPrice * pItem->m_dwCount;
+
+                        //Heldenian Price Fix Thing
+                        if (m_pClientList[iClientH]->m_cSide == m_sLastHeldenianWinner) {
+				iCost = (int)((float)(pItem->m_wPrice) * 0.9f + 0.5f);
+				iCost = iCost * pItem->m_dwCount;
+				iCost2 = pItem->m_wPrice * pItem->m_dwCount;
+			}
+                        else {
+				iCost2 = iCost = ((pItem->m_wPrice * pItem->m_dwCount)*2);
+                        }
+
+			// ÇÃ·¹ÀÌ¾î°¡ ¼ÒÁöÇÑ Gold°¡ ¾ÆÀÌÅÛÀ» »ç±â¿¡ ÃæºÐÇÑÁö °Ë»çÇÑ´Ù.
+			dwGoldCount = dwGetItemCount(iClientH, "Gold");
+			
+			// Charisma¿¡ µû¸¥ ÇÒÀÎ·üÀ» °è»êÇÑ´Ù. 
+			// v2.14 Ä«¸®½º¸¶°¡ 10ÀÎ°æ¿ì ¾ÆÀÌÅÛÀ» ÇÒÀÎ ÇÏÁö ¾ÊÀ½ 
+			iDiscountRatio = ((m_pClientList[iClientH]->m_iCharisma -10)/ 4) ;
+			
+			// 2.03 Discount Method
+			// Charisma¿¡ µû¸¥ ÇÒÀÎ·üÀ» °è»êÇÑ´Ù. 
+			// iDiscountRatio = (m_pClientList[iClientH]->m_iCharisma / 4) -1;
+			// if (iDiscountRatio == 0) iDiscountRatio = 1;
+			
+			dTmp1 = (double)(iDiscountRatio);
+			dTmp2 = dTmp1 / 100.0f;
+			dTmp1 = (double)iCost;
+			dTmp3 = dTmp1 * dTmp2;
+			iDiscountCost = (int)dTmp3;
+			
+                        //Fix For Heldenian Price =x	
+			if ((iCost - iDiscountCost) <= (iCost2/2)) {
+				iDiscountCost = iCost - (iCost2/2) + 1; 
+			}
+
+                        //if (iDiscountCost >= (iCost/2)) iDiscountCost = (iCost/2)-1;
+
+			if ( dwGoldCount < (DWORD)(iCost - iDiscountCost) ) {
+				// ÇÃ·¹ÀÌ¾î°¡ °®°íÀÖ´Â Gold°¡ ¾ÆÀÌÅÛ °¡°Ý¿¡ ºñÇØ Àû´Ù. »ì¼ö ¾øÀ½.
+				delete pItem;
+				
+				dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+				*dwp = MSGID_NOTIFY;
+				wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+				*wp  = DEF_NOTIFY_NOTENOUGHGOLD;
+				cp   = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);
+				*cp  = -1; // -1ÀÌ¸é ÀÇ¹Ì¾ø´Ù.
+				cp++;
+				
+				iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 7);
+				switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+					// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
+					DeleteClient(iClientH, TRUE, TRUE);
+					return;
+				}
+				return;
+			}
+			
+			if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+				// ¿¡·¯ ¹æÁö¿ë ÄÚµå
+				if (m_pClientList[iClientH]->m_iCurWeightLoad < 0) m_pClientList[iClientH]->m_iCurWeightLoad = 0;
+				
+				// ¾ÆÀÌÅÛ »ò´Ù´Â ¸Þ½ÃÁö¸¦ Àü¼ÛÇÑ´Ù.
+				dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+				*dwp = MSGID_NOTIFY;
+				wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+				*wp  = DEF_NOTIFY_ITEMPURCHASED;
+				
+				cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);
+				// 1°³ È¹µæÇß´Ù.
+				*cp = 1;
+				cp++;
+				
+				memcpy(cp, pItem->m_cName, 20);
+				cp += 20;
+				
+				dwp  = (DWORD *)cp;
+				*dwp = pItem->m_dwCount;
+				cp += 4;
+				
+				*cp = pItem->m_cItemType;
+				cp++;
+				
+				*cp = pItem->m_cEquipPos;
+				cp++;
+				
+				*cp = (char)0; // ¾òÀº ¾ÆÀÌÅÛÀÌ¹Ç·Î ÀåÂøµÇÁö ¾Ê¾Ò´Ù.
+				cp++;
+				
+				sp  = (short *)cp;
+				*sp = pItem->m_sLevelLimit;
+				cp += 2;
+				
+				*cp = pItem->m_cGenderLimit;
+				cp++;
+				
+				wp = (WORD *)cp;
+				*wp = pItem->m_wCurLifeSpan;
+				cp += 2;
+				
+				wp = (WORD *)cp;
+				*wp = pItem->m_wWeight;
+				cp += 2;
+				
+				sp  = (short *)cp;
+				*sp = pItem->m_sSprite;
+				cp += 2;
+				
+				sp  = (short *)cp;
+				*sp = pItem->m_sSpriteFrame;
+				cp += 2;
+
+				*cp = pItem->m_cItemColor;
+				cp++;
+				
+				wp  = (WORD *)cp;
+				*wp = (iCost - iDiscountCost);
+				wTempPrice = (iCost - iDiscountCost);
+				cp += 2;
+				
+				if (iEraseReq == 1) delete pItem;
+				
+				// ¾ÆÀÌÅÛ Á¤º¸ Àü¼Û 
+				iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 48);
+				
+				// GoldÀÇ ¼ö·®À» °¨¼Ò½ÃÅ²´Ù. ¹Ýµå½Ã ¿©±â¼­ ¼¼ÆÃÇØ¾ß ¼ø¼­°¡ ¹Ù²îÁö ¾Ê´Â´Ù.
+				iGoldWeight = SetItemCount(iClientH, "Gold", dwGoldCount - wTempPrice);
+				// ¼ÒÁöÇ° ÃÑ Áß·® Àç °è»ê 
+				iCalcTotalWeight(iClientH);
+
+				//v1.4 ¸¶À»ÀÇ ÀÚ±Ý¿¡ ´õÇÑ´Ù. 
+				m_stCityStatus[m_pClientList[iClientH]->m_cSide].iFunds += wTempPrice;
+					
+				switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+					// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
+					DeleteClient(iClientH, TRUE, TRUE);
+					return;
+				}
+			}
+			else 
+			{
+				// °ø°£ÀÌ ºÎÁ·ÇØ ¾ÆÀÌÅÛÀ» ¾òÀ» ¼ö ¾ø´Ù.
+				delete pItem;
+
+				// ¼ÒÁöÇ° ÃÑ Áß·® Àç °è»ê 
+				iCalcTotalWeight(iClientH);
+
+				dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+				*dwp = MSGID_NOTIFY;
+				wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+				*wp  = DEF_NOTIFY_CANNOTCARRYMOREITEM;
+				
+				iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6);
+				switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+					// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
+					DeleteClient(iClientH, TRUE, TRUE);
+					return;
+				}
+			}
+		}
+ 	}
+}

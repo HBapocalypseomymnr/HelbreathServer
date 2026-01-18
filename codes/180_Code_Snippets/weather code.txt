@@ -1,0 +1,109 @@
+		//ArchAngel Addition
+		if (memcmp(cp, "/weather", 8) == 0) { 
+			AdminOrder_Weather(iClientH, cp, dwMsgSize - 21); 
+			return; 
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//ArchAngel Function
+void CGame::AdminOrder_Weather(int iClientH, char * pData, DWORD dwMsgSize) 
+{ 
+char   seps[] = "= \t\n"; 
+char   * token, cBuff[256]; 
+class  CStrTok * pStrTok; 
+char cPrevMode; 
+int i, j, sType, sTime; 
+DWORD dwTime; 
+
+  dwTime = timeGetTime(); 
+
+  if (m_pClientList[iClientH] == NULL) return; 
+  if ((dwMsgSize)   <= 0) return; 
+
+  if (m_pClientList[iClientH]->m_iAdminUserLevel < m_iAdminLevelWeather) { 
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL); 
+     return; 
+  } 
+   
+  ZeroMemory(cBuff, sizeof(cBuff)); 
+  memcpy(cBuff, pData, dwMsgSize); 
+
+  pStrTok = new class CStrTok(cBuff, seps); 
+  token = pStrTok->pGet(); 
+  token = pStrTok->pGet(); 
+   
+  if (token == NULL) { 
+     delete pStrTok; 
+     return; 
+  } 
+
+     sType = atoi(token); 
+
+  token = pStrTok->pGet(); 
+
+  if (token == NULL) { 
+     delete pStrTok; 
+     return; 
+  } 
+
+  sTime = atoi(token); 
+
+  delete pStrTok; 
+   
+  for (i = 0; i < DEF_MAXMAPS; i++) { 
+     if ((m_pMapList[i] != NULL) && (m_pMapList[i]->m_bIsFixedDayMode == FALSE)) { 
+        cPrevMode = m_pMapList[i]->m_cWhetherStatus; 
+        if (m_pMapList[i]->m_cWhetherStatus != NULL) { 
+           if ((dwTime - m_pMapList[i]->m_dwWhetherStartTime) > m_pMapList[i]->m_dwWhetherLastTime) 
+              m_pMapList[i]->m_cWhetherStatus = NULL; 
+        } 
+        else { 
+           sTime *= 1000; 
+           m_pMapList[i]->m_cWhetherStatus = sType; 
+           m_pMapList[i]->m_dwWhetherStartTime = dwTime; 
+           m_pMapList[i]->m_dwWhetherLastTime  = sTime; 
+        } 
+        if (cPrevMode != m_pMapList[i]->m_cWhetherStatus) { 
+           for (j = 1; j < DEF_MAXCLIENTS; j++) 
+           if ((m_pClientList[j] != NULL) && (m_pClientList[j]->m_bIsInitComplete == TRUE) && (m_pClientList[j]->m_cMapIndex == i)) 
+              SendNotifyMsg(NULL, j, DEF_NOTIFY_WHETHERCHANGE, m_pMapList[i]->m_cWhetherStatus, NULL, NULL, NULL);    
+        } 
+     } 
+  } 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+void AdminOrder_Weather(int iClientH, char * pData, DWORD dwMsgSize);
+
+
+
+
+
+
+
+
+
+if (memcmp(token, "Admin-Level-/weather", 20) == 0)						cReadMode = 32;
+

@@ -1,0 +1,266 @@
+    Coder : Snoopy
+    Brought To You By Kokodriloz
+
+
+Nice Code to add in ur server, will add a ZZZ image over ppl afk/idle...
+
+In the end Game.cpp (HG)
+Add this;
+
+Code: Select all
+    void CGame::AFKChecker()
+    {   register int i;
+       int sX, sY;
+       DWORD dwTimeNow = timeGetTime();
+       for (i = 1; i < DEF_MAXCLIENTS; i++)
+       {   if (m_pClientList[i] != NULL)
+          {   if (   (m_pClientList[i]->m_bIsInitComplete == TRUE)
+                && ((dwTimeNow - m_pClientList[i]->m_dwAFKCheckTime) > DEF_AFKTIME)
+                && (m_pClientList[i]->m_iHP > 0)
+                && ((m_pClientList[i]->m_iStatus & 0x00000010) == 0)
+                && (iDice(1,5) == 3))
+             {   sX = m_pClientList[i]->m_sX;
+                if (m_pClientList[i]->m_bSkillUsingStatus[19] == TRUE)
+                    sY = m_pClientList[i]->m_sY +1;               
+                else sY = m_pClientList[i]->m_sY;      
+                SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[i]->m_cMapIndex
+                   , sX, sY, sX, sY, 247, m_pClientList[i]->m_sType);
+       }   }   }
+    }
+
+
+
+in Game.h Add This;
+
+Code: Select all
+    void AFKChecker();
+
+
+
+Search in Game.h;
+
+Code: Select all
+    #define DEF_AUTOSAVETIME         600000
+
+
+
+Add below;
+
+Code: Select all
+    #define DEF_AFKTIME               150000 // 2 1/2 Minutes
+
+
+
+in Client.cpp
+Find ;
+
+Code: Select all
+    m_bIsPoisoned    = FALSE;
+
+
+
+Add Below;
+
+Code: Select all
+    m_dwAFKCheckTime   = NULL;
+
+
+
+Find ;
+
+Code: Select all
+    m_dwLogoutHackCheck = 0;
+
+
+
+Add below;
+
+Code: Select all
+    m_dwAFKCheckTime = 0;
+
+
+
+Find;
+
+Code: Select all
+    m_dwFishTime = dwTime;
+
+
+
+Add below;
+
+Code: Select all
+    AFKChecker();
+
+
+
+So, after Find ;
+
+Code: Select all
+    void CGame::ClientMotionHandler(
+
+
+
+in the function add;
+
+Code: Select all
+    m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+
+
+Find;
+
+Code: Select all
+    if (m_iTotalClients > DEF_MAXONESERVERUSERS) {
+          switch (iDice(1,2)) {
+          case 1:
+             RequestTeleportHandler(iClientH, "2   ", "bisle", -1, -1);
+             break;
+             case 2:
+                switch (m_pClientList[iClientH]->m_cSide) {
+                   case 0: RequestTeleportHandler(iClientH, "2   ", "resurr1", -1, -1); break;
+                   case 1: RequestTeleportHandler(iClientH, "2   ", "resurr1", -1, -1); break;
+                   case 2: RequestTeleportHandler(iClientH, "2   ", "resurr2", -1, -1); break;
+                }
+                break;
+
+
+
+add this up;
+
+Code: Select all
+    m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+
+
+Find;
+
+Code: Select all
+    void CGame::ChatMsgHandler(
+
+
+
+Add;
+
+Code: Select all
+    m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+
+
+Find;
+
+Code: Select all
+    void CGame::PlayerMagicHandler(
+
+
+
+Add in Function;
+
+Code: Select all
+    m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+
+
+Find ;
+
+Code: Select all
+    void CGame::RequestTeleportHandler(
+
+
+
+Add in Function;
+
+Code: Select all
+    m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+
+
+Go to Client.h
+Find;
+
+Code: Select all
+    BOOL bCreateNewParty();
+
+
+
+Add below;
+
+Code: Select all
+    DWORD m_dwAFKCheckTime;
+
+
+
+Go to Client Src open Game.cpp
+Find;
+
+Code: Select all
+    case 206: //
+             m_pEffectList[i]->m_mX     = sX;
+             m_pEffectList[i]->m_mY     = sY;
+             m_pEffectList[i]->m_cMaxFrame   = 3;
+             m_pEffectList[i]->m_dwFrameTime = 70;
+             break;
+
+
+
+after break; add this
+
+Code: Select all
+    case 247: // AFKChecker
+             m_pEffectList[i]->m_mX     = sX*32;
+             m_pEffectList[i]->m_mY     = sY*32;
+             m_pEffectList[i]->m_cMaxFrame   = 17;
+             m_pEffectList[i]->m_dwFrameTime = 200;
+             m_pEffectList[i]->m_mX3    = sDist;
+             m_pEffectList[i]->m_mY3    = -(((m_sViewPointX / 32) + 10) - dX)*1000;
+             m_pEffectList[i]->m_iV1    = rand()%35;
+             m_pEffectList[i]->m_cFrame = - rand() %12;
+             break;
+
+
+
+Find;
+
+Code: Select all
+    case 206: // steams
+             dX  = m_pEffectList[i]->m_mX;
+             dY  = m_pEffectList[i]->m_mY;
+             m_pEffectSpr[139]->PutTransSprite_NoColorKey(dX, dY, (rand() %20), dwTime);
+             break;
+
+
+
+Add below;
+
+Code: Select all
+    case 247: // AFKChecker
+             dX = (m_pEffectList[i]->m_mX) - m_sViewPointX;
+             dY = (m_pEffectList[i]->m_mY) - m_sViewPointY;
+             m_pEffectSpr[85]->PutTransSprite_NoColorKey(dX+50, dY+30, m_pEffectList[i]->m_cFrame, dwTime);
+                            break;
+
+
+
+And Find;
+
+Code: Select all
+    case 183: // Inhibition-Casting
+             cTempFrame = m_pEffectList[i]->m_cFrame;
+             dX  = (m_pEffectList[i]->m_dX*32)  - m_sViewPointX;
+             dY  = (m_pEffectList[i]->m_dY*32)  - m_sViewPointY;
+             m_pEffectSpr[95]->PutTransSprite_NoColorKey(dX, dY+40, cTempFrame, dwTime);
+             break;
+
+
+
+Add this after break;
+
+Code: Select all
+    case 247: // AFKChecker
+                if (m_pEffectList[i]->m_cFrame >= m_pEffectList[i]->m_cMaxFrame)
+                {   delete m_pEffectList[i];
+                   m_pEffectList[i] = NULL;
+                }else if (m_pEffectList[i]->m_iV1 == m_pEffectList[i]->m_cFrame)
+                {   PlaySound('M', 45, m_pEffectList[i]->m_mX3, m_pEffectList[i]->m_mY3 );
+                }
+                break;

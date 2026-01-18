@@ -1,0 +1,16 @@
+case DEF_NOTIFY_SERVERCHANGE:
+ memcpy(cp, m_pClientList[iToH]->m_cMapName, 10);
+ cp += 10;
+ if (m_iGameServerMode == 1)
+ if (memcmp(m_cLogServerAddr, m_cGameServerAddr, 15) == 0)
+ memcpy(cp, m_cGameServerAddrExternal, 15);
+ else
+ memcpy(cp, m_cLogServerAddr, 15);
+ else
+ memcpy(cp, m_cLogServerAddr, 15);
+ cp += 15;
+ ip = (int *)cp;
+ *ip = m_iLogServerPort;
+ cp += 4;
+ iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 16 +19);
+ break;

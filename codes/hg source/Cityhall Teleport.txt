@@ -1,0 +1,439 @@
+The TP system is already present in v2.20 server/client sources. 
+The version here was fixed to suit my needs, and the TPs for Heldenian winner side. As always functions need to be declared, and triggered by receiving the proper msg.
+
+
+CODE  
+/*
+#define MSGID_REQUEST_TELEPORT_LIST   0x0EA03202
+#define MSGID_RESPONSE_TELEPORT_LIST  0x0EA03203
+#define MSGID_REQUEST_CHARGED_TELEPORT  0x0EA03204
+#define MSGID_RESPONSE_CHARGED_TELEPORT  0x0EA03205
+#define MSGID_REQUEST_HELDENIAN_TP_LIST  0x0EA03206
+#define MSGID_RESPONSE_HELDENIAN_TP_LIST 0x0EA03207
+#define MSGID_REQUEST_HELDENIAN_TP   0x0EA03208*/
+// RequestTeleportListHandler
+void CGame::RequestTeleportListHandler(int iClientH, char * pData, DWORD dwMsgSize)
+{ if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
+if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
+if (m_pClientList[iClientH]->m_bIsOnWaitingProcess == TRUE) return;
+if (m_pClientList[iClientH]->m_iLockedMapTime != NULL) 
+{ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_LOCKEDMAP, m_pClientList[iClientH]->m_iLockedMapTime, NULL, NULL, m_pClientList[iClientH]->m_cLockedMapName);
+ return;
+}
+char *cp, cData[512];
+int  iRet;
+DWORD *dwp;
+WORD *wp;
+int  *listCount;
+char cNpcName[21];
+int  *ip;
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+ZeroMemory(cNpcName, sizeof(cNpcName));
+strncpy(cNpcName, cp, 20);
+cp += 20;
+ZeroMemory(cData, sizeof(cData));
+dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+*dwp = MSGID_RESPONSE_TELEPORT_LIST;
+wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+*wp  = DEF_MSGTYPE_CONFIRM;
+cp = cData + 6;
+listCount = (int*) cp; 
+*listCount = 0;
+cp += 4; // sizeof(int)
+int  index;
+for(index = 0; index < DEF_MAXTELEPORTLIST; index++)
+{ if( m_pTeleportConfigList[index] == NULL )
+  continue;
+ if( strncmp( m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, m_pTeleportConfigList[index]->m_cSourceMap, 10) != 0 )
+  continue;
+ if( strncmp( m_pTeleportConfigList[index]->m_cTeleportNpcName, cNpcName, 20) != 0 )
+  continue;
+ if(    (m_pTeleportConfigList[index]->m_sMinLevel > m_pClientList[iClientH]->m_iLevel)
+  || (m_pTeleportConfigList[index]->m_sMaxLevel <= m_pClientList[iClientH]->m_iLevel))
+  continue;
+ if (   (m_pTeleportConfigList[index]->m_bHunter == FALSE)
+  && (m_pClientList[iClientH]->m_bIsPlayerCivil == TRUE))
+  continue;
+ if (   (m_pTeleportConfigList[index]->m_bNetural == FALSE)
+  && (m_pClientList[iClientH]->m_cSide == 0))
+  continue;
+ if (   (m_pTeleportConfigList[index]->m_bCriminal == FALSE) 
+  && (m_pClientList[iClientH]->m_iPKCount > 0 ))
+  continue;
+ // Side
+ switch (m_pTeleportConfigList[index]->m_iSide) {
+ default:
+  break;
+ case 1:
+  if (m_pClientList[iClientH]->m_cSide == 1) goto LabelCorrrectTP;
+  break;
+ case 2:
+  if (m_pClientList[iClientH]->m_cSide == 2) goto LabelCorrrectTP;
+  break;
+ case 4:
+  if (m_pClientList[iClientH]->m_cSide == 4) goto LabelCorrrectTP;
+  break;
+ case 66: // For Heldenian winner...
+  if (   (m_sLastHeldenianWinner ==  m_pClientList[iClientH]->m_cSide)
+   && (m_pClientList[iClientH]->m_bIsPlayerCivil != TRUE) 
+   && (m_bIsHeldenianMode == FALSE) )    goto LabelCorrrectTP;
+  break;
+ case 12:
+  if (m_pClientList[iClientH]->m_cSide == 1) goto LabelCorrrectTP;
+  if (m_pClientList[iClientH]->m_cSide == 2) goto LabelCorrrectTP;
+  break;
+ case 124:
+  if (m_pClientList[iClientH]->m_cSide == 1) goto LabelCorrrectTP;
+  if (m_pClientList[iClientH]->m_cSide == 2) goto LabelCorrrectTP;
+  if (m_pClientList[iClientH]->m_cSide == 4) goto LabelCorrrectTP;
+  break;
+LabelCorrrectTP:; 
+  ip = (int*) cp;
+  *ip = index;
+  cp += 4;
+  memcpy(cp, m_pTeleportConfigList[index]->m_cTargetMap, 10);
+  cp += 10;
+  ip = (int*) cp;
+  *ip = m_pTeleportConfigList[index]->m_iDestinationX;
+  cp += 4;
+  ip = (int*) cp;
+  *ip = m_pTeleportConfigList[index]->m_iDestinationY;
+  cp += 4;
+  ip = (int*) cp;
+  *ip = m_pTeleportConfigList[index]->m_iCost;
+  cp += 4;
+  (*listCount) ++;
+ }
+} // for
+if ( (*listCount) == 0 )*wp  = DEF_MSGTYPE_REJECT;
+// Teleport List
+iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 10 + (*listCount) * 26 );
+switch (iRet) {
+case DEF_XSOCKEVENT_QUENEFULL:
+case DEF_XSOCKEVENT_SOCKETERROR:
+case DEF_XSOCKEVENT_CRITICALERROR:
+case DEF_XSOCKEVENT_SOCKETCLOSED:
+ DeleteClient(iClientH, TRUE, TRUE);
+ return;
+}
+} // RequestTeleportListHandler
+
+// RequestChargedTeleportHandler
+void CGame::RequestChargedTeleportHandler(int iClientH, char *pData, DWORD dwMsgSize)
+{ if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
+if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
+if (m_pClientList[iClientH]->m_bIsOnWaitingProcess == TRUE) return;
+char *cp, cData[64];
+int  iRet;
+DWORD *dwp;
+WORD *wp;
+int  index;
+WORD wConfirm = DEF_MSGTYPE_CONFIRM;
+short sError = 0;
+// CHARGED_TELEPORT index
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+index = (int) (*cp);
+cp += 4;
+if ((index < 0) || (index >= DEF_MAXTELEPORTLIST)) return;
+if (m_pTeleportConfigList[index] == NULL )  return;
+if (strncmp( m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, m_pTeleportConfigList[index]->m_cSourceMap, 10) != 0 )
+ return;
+if (   (m_pTeleportConfigList[index]->m_sMinLevel > m_pClientList[iClientH]->m_iLevel)
+ || (m_pTeleportConfigList[index]->m_sMaxLevel <= m_pClientList[iClientH]->m_iLevel))
+{ wConfirm = DEF_MSGTYPE_REJECT;
+ sError = 1;
+}
+if (   (wConfirm == DEF_MSGTYPE_CONFIRM)
+ && (m_pTeleportConfigList[index]->m_bHunter == FALSE)
+ && (m_pClientList[iClientH]->m_bIsPlayerCivil == TRUE))
+{ wConfirm = DEF_MSGTYPE_REJECT;
+ sError = 2;
+}
+if (   (wConfirm == DEF_MSGTYPE_CONFIRM)
+ && (m_pTeleportConfigList[index]->m_bNetural == FALSE)
+ && (m_pClientList[iClientH]->m_cSide == 0))
+{ wConfirm = DEF_MSGTYPE_REJECT;
+ sError = 3;
+}
+if (   (wConfirm == DEF_MSGTYPE_CONFIRM)
+ && (m_pTeleportConfigList[index]->m_bCriminal == FALSE)
+ && (m_pClientList[iClientH]->m_iPKCount > 0 ))
+{  wConfirm = DEF_MSGTYPE_REJECT;
+ sError = 4;
+}
+if (wConfirm == DEF_MSGTYPE_CONFIRM )
+{ switch (m_pTeleportConfigList[index]->m_iSide) {
+ default:
+  break;
+ case 1:
+ case 2:
+ case 4:
+  if (m_pClientList[iClientH]->m_cSide != m_pTeleportConfigList[index]->m_iSide)
+  { wConfirm = DEF_MSGTYPE_REJECT;
+   sError = 5;
+  }
+  break;
+ case 12:
+  if (m_pClientList[iClientH]->m_cSide > 2)
+  { wConfirm = DEF_MSGTYPE_REJECT;
+   sError = 5;
+  }
+  break;
+ case 66: // For Heldenian winners only...
+  if (   (m_sLastHeldenianWinner !=  m_pClientList[iClientH]->m_cSide)
+   || (m_pClientList[iClientH]->m_bIsPlayerCivil == TRUE) 
+   || (m_bIsHeldenianMode == TRUE) )
+  { wConfirm = DEF_MSGTYPE_REJECT;
+   sError = 7;
+  }
+  break;
+ case 124:// Everybody
+  break;
+ }
+}
+if (wConfirm == DEF_MSGTYPE_CONFIRM )
+{ DWORD dwGoldCount = dwGetItemCount(iClientH, "Gold");
+ if( dwGoldCount >= m_pTeleportConfigList[index]->m_iCost )
+ { int iGoldWeight = SetItemCount(iClientH, "Gold", dwGoldCount - m_pTeleportConfigList[index]->m_iCost);
+  iCalcTotalWeight(iClientH);
+  m_stCityStatus[m_pClientList[iClientH]->m_cSide].iFunds += m_pTeleportConfigList[index]->m_iCost;
+ }else
+ { wConfirm = DEF_MSGTYPE_REJECT;
+  sError = 6;
+ }
+}
+// Invalid Charged-teleport
+if ( wConfirm == DEF_MSGTYPE_REJECT )
+{ ZeroMemory(cData, sizeof(cData));
+ dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+ *dwp = MSGID_RESPONSE_CHARGED_TELEPORT;
+ wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+ *wp  = wConfirm;
+ cp = cData + DEF_INDEX2_MSGTYPE + 2;
+ short *sp;
+ sp = (short*) cp;
+ *sp = sError;
+ cp += 2;
+ // Teleport List
+ iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6 + 2 );
+ switch (iRet) {
+ case DEF_XSOCKEVENT_QUENEFULL:
+ case DEF_XSOCKEVENT_SOCKETERROR:
+ case DEF_XSOCKEVENT_CRITICALERROR:
+ case DEF_XSOCKEVENT_SOCKETCLOSED:
+  DeleteClient(iClientH, TRUE, TRUE);
+  return;
+ }
+ return;
+}
+// teleport
+RequestTeleportHandler(iClientH, "2   ",
+ m_pTeleportConfigList[index]->m_cTargetMap,
+ m_pTeleportConfigList[index]->m_iDestinationX,
+ m_pTeleportConfigList[index]->m_iDestinationY);
+
+} // RequestChargedTeleportHandler
+// Snoopy: Teleport List
+BOOL CGame::bDecodeTeleportList(char *pFn)
+{FILE * pFile;
+HANDLE hFile;
+DWORD  dwFileSize;
+char * cp, * token, cReadModeA, cReadModeB;
+char seps[] = "= \t\n";
+class CStrTok * pStrTok;
+int   iIndex;
+int iTeleportConfigListIndex; 
+for (int i = 0; i <  DEF_MAXTELEPORTLIST; i++)
+if (m_pTeleportConfigList[i] != NULL) 
+{ delete m_pTeleportConfigList[i];
+ m_pTeleportConfigList[i] = NULL;
+}
+cReadModeA = 0;
+cReadModeB = 0;
+iIndex = 0;
+hFile = CreateFile(pFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
+dwFileSize = GetFileSize(hFile, NULL);
+if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);
+pFile = fopen(pFn, "rt");
+if (pFile == NULL)
+{ PutLogList("(!) Cannot open Teleport.cfg file.");
+ return FALSE;
+}else
+{ PutLogList("(!) Reading TeleportList.cfg...");
+ cp = new char[dwFileSize+2];
+ ZeroMemory(cp, dwFileSize+2);
+ fread(cp, dwFileSize, 1, pFile);
+ pStrTok = new class CStrTok(cp, seps);
+ token = pStrTok->pGet();
+ while( token != NULL ) 
+ { if (cReadModeA != 0) 
+  { switch (cReadModeA) {
+   case 1:
+    switch (cReadModeB) {
+    case 1: // Teleport n°
+     if (_bGetIsStringIsNumber(token) == FALSE)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Wrong Data format.");
+      delete pStrTok; delete cp; return FALSE;
+     }
+     iTeleportConfigListIndex = atoi(token);
+     if ((iTeleportConfigListIndex < 0) || (iTeleportConfigListIndex >= DEF_MAXTELEPORTLIST))
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Wrong TeleportList number.");
+      return FALSE;
+     }
+     if (m_pTeleportConfigList[iTeleportConfigListIndex] != NULL)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Duplicate TeleportList number.");
+      return FALSE;
+     }
+     m_pTeleportConfigList[iTeleportConfigListIndex] = new class CTeleport;
+     cReadModeB = 2;
+     break;
+    case 2: // NPC name
+     memcpy(m_pTeleportConfigList[iTeleportConfigListIndex]->m_cTeleportNpcName, token, strlen(token));
+     cReadModeB = 3;
+     break;
+    case 3: // SOURCE MAP
+     memcpy(m_pTeleportConfigList[iTeleportConfigListIndex]->m_cSourceMap, token, strlen(token));
+     cReadModeB = 4;
+     break;
+    case 4: // TARGET MAP
+     memcpy(m_pTeleportConfigList[iTeleportConfigListIndex]->m_cTargetMap, token, strlen(token));
+     cReadModeB = 5;
+      break;
+    case 5: // TARGET MAP X
+     if (_bGetIsStringIsNumber(token) == FALSE)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - X - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     m_pTeleportConfigList[iTeleportConfigListIndex]->m_iDestinationX = atoi(token);
+     cReadModeB = 6;
+     break;
+    case 6: // TARGET MAP Y
+     if (_bGetIsStringIsNumber(token) == FALSE)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Y - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     m_pTeleportConfigList[iTeleportConfigListIndex]->m_iDestinationY = atoi(token);
+     cReadModeB = 7;
+     break;
+    case 7: // COST
+     if (_bGetIsStringIsNumber(token) == FALSE)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Cost - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     m_pTeleportConfigList[iTeleportConfigListIndex]->m_iCost = atoi(token);
+     cReadModeB = 8;
+     break;
+    case 8: // Minimum Level
+     if (_bGetIsStringIsNumber(token) == FALSE)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - MinLvl - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     m_pTeleportConfigList[iTeleportConfigListIndex]->m_sMinLevel = atoi(token);
+     cReadModeB = 9;
+     break;
+    case 9: // Maximum Level
+     if (_bGetIsStringIsNumber(token) == FALSE)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - MaxLvl- Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     m_pTeleportConfigList[iTeleportConfigListIndex]->m_sMaxLevel = atoi(token);
+     cReadModeB = 10;
+     break;
+    case 10: // Side (aresden, elvein)
+     if( memcmp(token, "aresden", 7) == 0 )
+     { m_pTeleportConfigList[iTeleportConfigListIndex]->m_iSide = 1;
+     }else if( memcmp(token, "elvine", 6) == 0 )
+     { m_pTeleportConfigList[iTeleportConfigListIndex]->m_iSide = 2;
+     }else if( memcmp(token, "both", 4) == 0 )
+     { m_pTeleportConfigList[iTeleportConfigListIndex]->m_iSide = 12;
+     }else if( memcmp(token, "evil", 4) == 0 )
+     { m_pTeleportConfigList[iTeleportConfigListIndex]->m_iSide = 4;
+     }else if( memcmp(token, "all", 3) == 0 )
+     { m_pTeleportConfigList[iTeleportConfigListIndex]->m_iSide = 124;
+     }else if( memcmp(token, "heldenian", 9) == 0 )
+     { m_pTeleportConfigList[iTeleportConfigListIndex]->m_iSide = 66;
+     }else
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Side - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     cReadModeB = 11;
+     break;
+    case 11: // HuntMode (0,1)
+     if (_bGetIsStringIsNumber(token) == FALSE) {
+      PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Hunter - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     if( memcmp(token,"0",1) == 0 )
+      m_pTeleportConfigList[iTeleportConfigListIndex]->m_bHunter = FALSE;
+     else if( memcmp(token,"1",1) == 0 )
+      m_pTeleportConfigList[iTeleportConfigListIndex]->m_bHunter = TRUE;
+     else
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Hunter - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     cReadModeB = 12;
+     break;
+    case 12: // Netural (0,1)
+     if (_bGetIsStringIsNumber(token) == FALSE)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Neutral - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     if( memcmp(token,"0",1) == 0 )
+      m_pTeleportConfigList[iTeleportConfigListIndex]->m_bNetural = FALSE;
+     else if( memcmp(token,"1",1) == 0 )
+      m_pTeleportConfigList[iTeleportConfigListIndex]->m_bNetural = TRUE;
+     else
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Neutral - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     cReadModeB = 13;
+     break;
+    case 13: // Criminal (0,1)
+     if (_bGetIsStringIsNumber(token) == FALSE)
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Crim - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     if ( memcmp(token,"0",1) == 0 )
+      m_pTeleportConfigList[iTeleportConfigListIndex]->m_bCriminal = FALSE;
+     else if( memcmp(token,"1",1) == 0 )
+      m_pTeleportConfigList[iTeleportConfigListIndex]->m_bCriminal = TRUE;
+     else
+     { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file error - Crim - Wrong Data format.");
+      delete cp; delete pStrTok; return FALSE;
+     }
+     cReadModeA = 0;
+     cReadModeB = 0;
+     break;
+    }
+    break;
+   default:
+    break;
+   }
+  }else
+  { if (memcmp(token, "teleport", 8) == 0)
+   { cReadModeA = 1;
+    cReadModeB = 1;
+   }else if (memcmp(token, "[END]", 5) == 0)
+   { cReadModeA = 0;
+    cReadModeB = 0;
+    break; // Stop While Loop
+   }
+  }
+  token = pStrTok->pGet();
+ } // while
+ delete pStrTok; delete cp;
+ if ((cReadModeA != 0) || (cReadModeB != 0)||(iTeleportConfigListIndex < 0)||(iTeleportConfigListIndex >= DEF_MAXTELEPORTLIST))
+ { PutLogList("(!!!) CRITICAL ERROR! TELEPORT-LIST configuration file contents error!");
+  return FALSE;
+ }
+ if (pFile != NULL) fclose(pFile);
+ wsprintf(G_cTxt, "(!) TELEPORT-LIST(Total:%d) configuration - success!", iTeleportConfigListIndex);
+ PutLogList(G_cTxt);
+ return TRUE;
+}
+} 
+
+
+As for all evoluted codes given here, it's not just a matter of clip'n paste. If you don't know C++, learn first! 

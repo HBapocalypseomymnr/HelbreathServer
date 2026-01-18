@@ -1,0 +1,585 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Capture The Flag Event (50Cent)\par
+Esta prohibido el post de esta informaci\'f3n\par
+cualquier otra comunidad/foro\par
+\par
+No me acuerdo bien si esta 100% terminado y andando, pero capaz a alguien le sirva:\par
+\par
+ClientSRC:\par
+Game.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+m_iIlusionOwnerH = NULL;\par
+    m_cIlusionOwnerType = NULL;\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    m_bIsCTFMode = false;\par
+    m_sElvineFlagCount = 0;\par
+    m_sAresdenFlagCount = 0;\par
+    m_bIsElvineFlagStatus = true;\par
+    m_bIsAresdenFlagStatus = true;\par
+Buscar:\par
+C\'f3digo:\par
+case DEF_NOTIFY_APOCFORCERECALLPLAYERS: // Snoopy ;  Case BD7 of switch 00454077\par
+        AddEventList( "You are recalled by force, because the Apocalypse is started.", 10 );\par
+        break;\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    case DEF_NOTIFY_CAPTURETHEFLAGSTART:\par
+        m_bIsCTFMode = true;\par
+        SetTopMsg("Capture The Flag Event has started!", 10);\par
+        break;\par
+    case DEF_NOTIFY_ARESDENCAPTUREDELVINEFLAG:\par
+        m_bIsElvineFlagStatus = false;\par
+        SetTopMsg("Aresden Captured Elvine Flag!", 10);\par
+        break;\par
+    case DEF_NOTIFY_ELVINECAPTUREDARESDENFLAG:\par
+        m_bIsAresdenFlagStatus = false;\par
+        SetTopMsg("Elvine Captured Aresden Flag!", 10);\par
+        break;\par
+    case DEF_NOTIFY_ELVINEFLAGBACKTOCH:\par
+        m_bIsElvineFlagStatus = true;\par
+        SetTopMsg("Elvine Flag Back to Base!", 10);\par
+        break;\par
+    case DEF_NOTIFY_ARESDENFLAGBACKTOCH:\par
+        m_bIsAresdenFlagStatus = true;\par
+        SetTopMsg("Aresden Flag Back to Base!", 10);\par
+        break;\par
+    case DEF_NOTIFY_ELVINEWINSROUND:\par
+        m_sElvineFlagCount++;\par
+        m_bIsAresdenFlagStatus = true;\par
+        SetTopMsg("Elvine wins this Round!", 10);\par
+        break;\par
+    case DEF_NOTIFY_ARESDENWINSROUND:\par
+        m_sAresdenFlagCount++;\par
+        m_bIsElvineFlagStatus = true;\par
+        SetTopMsg("Aresden wins this Round!", 10);\par
+        break;\par
+    case DEF_NOTIFY_ELVINEWINCTF:\par
+        m_bIsCTFMode = false;\par
+        m_sElvineFlagCount = 0;\par
+        m_sAresdenFlagCount = 0;\par
+        m_bIsElvineFlagStatus = true;\par
+        m_bIsAresdenFlagStatus = true;\par
+        SetTopMsg("Elvine wins Capture The Flag Event!", 10);\par
+        break;\par
+    case DEF_NOTIFY_ARESDENWINCTF:\par
+        m_bIsCTFMode = false;\par
+        m_sElvineFlagCount = 0;\par
+        m_sAresdenFlagCount = 0;\par
+        m_bIsElvineFlagStatus = true;\par
+        m_bIsAresdenFlagStatus = true;\par
+        SetTopMsg("Aresden wins Capture The Flag Event!", 10);\par
+        break;\par
+    case DEF_NOTIFY_TIECTF:\par
+        m_bIsCTFMode = false;\par
+        m_sElvineFlagCount = 0;\par
+        m_sAresdenFlagCount = 0;\par
+        m_bIsElvineFlagStatus = true;\par
+        m_bIsAresdenFlagStatus = true;\par
+        SetTopMsg("Capture The Flag Event ended in a tie.", 10);\par
+        break;\par
+Buscar:\par
+C\'f3digo:\par
+if (   (iUpdateRet != 0 ) && (m_iHeldenianAresdenLeftTower != -1)\par
+        && (memcmp(m_cCurLocation, "BtField", 7) == 0))\par
+    \{    wsprintf( G_cTxt, "Aresden Flags : %d",  m_iHeldenianAresdenFlags);\par
+        PutString( 10, 140, G_cTxt, RGB(255,255,255) );\par
+        wsprintf( G_cTxt, "Aresden Flags : %d",  m_iHeldenianElvineFlags);\par
+        PutString( 10, 160, G_cTxt, RGB(255,255,255) );\par
+        wsprintf( G_cTxt, "Aresden's rest building number : %d",  m_iHeldenianAresdenLeftTower);\par
+        PutString( 10, 180, G_cTxt, RGB(255,255,255) );\par
+        wsprintf( G_cTxt, "Elvine's rest building number : %d",  m_iHeldenianElvineLeftTower);\par
+        PutString( 10, 200, G_cTxt, RGB(255,255,255) );\par
+    \}\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    if(m_bIsCTFMode)\par
+    \{\par
+        wsprintf(G_cTxt, "Elvine Flags: %d",  m_sElvineFlagCount);\par
+        PutString(10, 140, G_cTxt, RGB(255,255,255));\par
+        if(m_bIsElvineFlagStatus) PutString(10, 160, "Elvine Flag Protected", RGB(0,255,0));\par
+        else PutString(10, 160, "Elvine Flag Captured!", RGB(255,0,0));\par
+\par
+        wsprintf(G_cTxt, "Aresden Flags: %d",  m_sAresdenFlagCount);\par
+        PutString(10, 180, G_cTxt, RGB(255,255,255));\par
+        if(m_bIsAresdenFlagStatus) PutString(10, 200, "Aresden Flag Protected", RGB(0,255,0));\par
+        else PutString(10, 200, "Aresden Flag Captured!", RGB(255,0,0));\par
+\par
+        if(m_bIsElvineFlagStatus) if(memcmp(m_cCurLocation, "elvine", 6) == 0) m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 2]->PutSpriteFast(151*32 - m_sViewPointX - 96, 132*32 - m_sViewPointY - 69, 5, dwTime); //elvine flag\par
+        else if(memcmp(m_cCurLocation, "elvine", 6) == 0) m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 2]->PutTransSprite2(151*32 - m_sViewPointX - 96, 132*32 - m_sViewPointY - 69, 5, dwTime); //elvine flag\par
+        \par
+        if(m_bIsAresdenFlagStatus) if(memcmp(m_cCurLocation, "aresden", 7) == 0) m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 2]->PutSpriteFast(151*32 - m_sViewPointX - 96, 132*32 - m_sViewPointY - 69, 1, dwTime); //aresden flag\par
+        else if(memcmp(m_cCurLocation, "aresden", 7) == 0) m_pSprite[DEF_SPRID_ITEMDYNAMIC_PIVOTPOINT + 2]->PutTransSprite2(151*32 - m_sViewPointX - 96, 132*32 - m_sViewPointY - 69, 1, dwTime); //aresden flag\par
+    \}\par
+Buscar en todos los metodos DrawObject_On...:\par
+C\'f3digo:\par
+DrawAngel(40+(_tmp_cDir - 1), sX+20, sY-20, _tmp_cFrame%4, dwTime);\par
+        CheckActiveAura2(sX, sY, dwTime,  _tmp_sOwnerType);\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+        DrawFlagCarrier(sX, sY, _tmp_cFrame, dwTime);\par
+alfinal del game.cpp agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+void CGame::DrawFlagCarrier(short sX, short sY, char cFrame, DWORD dwTime)\par
+\{    \par
+    if((_tmp_iStatus & 0x80000) != 0) m_pSprite[DEF_SPRID_ITEMGROUND_PIVOTPOINT + 6]->PutSpriteFast(sX, sY - 80, 57, dwTime); //elvine flag\par
+    else if((_tmp_iStatus & 0x40000) != 0) m_pSprite[DEF_SPRID_ITEMGROUND_PIVOTPOINT + 6]->PutSpriteFast(sX, sY - 80, 56, dwTime); //aresden flag\par
+\}\par
+Game.h:\par
+Declarar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    void DrawFlagCarrier(short sX, short sY, char cFrame, DWORD dwTime);\par
+\par
+//50Cent - Capture The Flag\par
+    BOOL m_bIsCTFMode;\par
+    short m_sElvineFlagCount;\par
+    short m_sAresdenFlagCount;\par
+    BOOL m_bIsElvineFlagStatus;\par
+    BOOL m_bIsAresdenFlagStatus;\par
+Netmessage.h:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+#define DEF_NOTIFY_CAPTURETHEFLAGSTART                0x1F19\par
+#define DEF_NOTIFY_ARESDENCAPTUREDELVINEFLAG        0x1F21\par
+#define DEF_NOTIFY_ELVINECAPTUREDARESDENFLAG        0x1F22\par
+#define DEF_NOTIFY_ELVINEFLAGBACKTOCH                0x1F23\par
+#define DEF_NOTIFY_ARESDENFLAGBACKTOCH                0x1F24\par
+#define DEF_NOTIFY_ELVINEWINSROUND                    0x1F25\par
+#define DEF_NOTIFY_ARESDENWINSROUND                    0x1F26\par
+#define DEF_NOTIFY_ELVINEWINCTF                        0x1F27\par
+#define DEF_NOTIFY_ARESDENWINCTF                    0x1F28\par
+#define DEF_NOTIFY_TIECTF                            0x1F29\par
+HGSRC:\par
+Game.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+ZeroMemory(m_cHeldenianMapName, sizeof(m_cHeldenianMapName));\par
+justo despues agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    m_sFlagCountWin = 0;\par
+    m_bIsCTFMode = false;\par
+    m_bIsElvineFlagCaptured = false;\par
+    m_bIsAresdenFlagCaptured = false;\par
+    m_iFlagCarrierIndex = -1;\par
+Buscar:\par
+C\'f3digo:\par
+delete m_pClientList[iClientH];\par
+    m_pClientList[iClientH] = NULL;\par
+\par
+    RemoveClientShortCut(iClientH);\par
+y justo antes agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    if(bCheckIfIsFlagCarrier(iClientH))\par
+    \{\par
+        SetFlagCarrierFlag(iClientH, false);\par
+        SetIceFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);\par
+    \}\par
+Buscar:\par
+C\'f3digo:\par
+if (m_bIsApocalypseMode == TRUE) \{\par
+                    if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "abaddon", 7) == 0) \{\par
+                        SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 167, 169, NULL, m_pClientList[i]->m_cMapName);\par
+                    \}\par
+                    else if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "icebound", 8) == 0) \{\par
+                        SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 89, 31, NULL, m_pClientList[i]->m_cMapName);\par
+                    \}\par
+                \}\par
+justo despues agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+                if(m_bIsCTFMode)\par
+                \{\par
+                    RequestCheckFlag(i);\par
+                    if(bCheckIfIsFlagCarrier(i))\par
+                    \{\par
+                        if(m_pClientList[i]->m_iHP >= 1)\par
+                        \{\par
+                            SetInvisibilityFlag(i, DEF_OWNERTYPE_PLAYER, false);\par
+                            SetIceFlag(i, DEF_OWNERTYPE_PLAYER, true);\par
+                        \}\par
+                    \}\par
+                \}\par
+Buscar:\par
+C\'f3digo:\par
+if (memcmp(cp, "/who", 4) == 0) \{\par
+            // New 08/05/2003\par
+            if (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelWho) \{\par
+                // \'c3\'80\'c3\'bc\'c3\'83\'c2\'bc \'c2\'bb\'c3\'a7\'c2\'bf\'c3\'ab\'c3\'80\'c3\'9a \'c2\'bc\'c3\'b6\'c2\'b8\'c2\'a6 \'c2\'b9\'c2\'af\'c2\'b4\'c3\'82 \'c2\'b0\'c3\'8d\'c3\'80\'c3\'8c\'c2\'b4\'c3\'99.\par
+                SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOTALUSERS, NULL, NULL, NULL, NULL);\par
+            \}\par
+            return;\par
+        \}\par
+justo despues agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+        if (memcmp(cp, "/startctf", 9) == 0) \{\par
+            if (m_pClientList[iClientH]->m_iAdminUserLevel >= 4) StartCaptureTheFlag();\par
+            return;\par
+        \}\par
+        if (memcmp(cp, "/endctf", 7) == 0) \{\par
+            if (m_pClientList[iClientH]->m_iAdminUserLevel >= 4) EndCaptureTheFlag(0);\par
+            return;\par
+        \}\par
+buscar:\par
+C\'f3digo:\par
+case DEF_NOTIFY_NORECALL:\par
+justo despues agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    case DEF_NOTIFY_CAPTURETHEFLAGSTART:\par
+    case DEF_NOTIFY_ARESDENCAPTUREDELVINEFLAG:\par
+    case DEF_NOTIFY_ELVINECAPTUREDARESDENFLAG:\par
+    case DEF_NOTIFY_ELVINEFLAGBACKTOCH:\par
+    case DEF_NOTIFY_ARESDENFLAGBACKTOCH:\par
+    case DEF_NOTIFY_ELVINEWINSROUND:\par
+    case DEF_NOTIFY_ARESDENWINSROUND:\par
+    case DEF_NOTIFY_ELVINEWINCTF:\par
+    case DEF_NOTIFY_ARESDENWINCTF:\par
+    case DEF_NOTIFY_TIECTF:\par
+Buscar:\par
+C\'f3digo:\par
+    case DEF_MAGICTYPE_TELEPORT:\par
+                    // \'c3\'83\'e2\'80\'a6\'c3\'83\'c5\'a1\'c3\'82\'c2\'b7\'c3\'82\'c2\'b9\'c3\'83\'e2\'80*\'c3\'83\'c2\'b7\'c3\'83\'e2\'80*\'c3\'82\'c2\'ae \'c3\'82\'c2\'b8\'c3\'82\'c2\'b6\'c3\'82\'c2\'b9\'c3\'83\'c2\'bd. sValue 4\'c3\'82\'c2\'bf\'c3\'82\'c2\'a1 \'c3\'82\'c2\'b5\'c3\'83\'c2\'bb\'c3\'82\'c2\'b6\'c3\'83\'c2\'b3\'c3\'82\'c2\'bc\'c3\'82\'c2* \'c3\'83\'e2\'80\'a6\'c3\'83\'c5\'a1\'c3\'82\'c2\'b7\'c3\'82\'c2\'b9\'c3\'83\'e2\'80*\'c3\'83\'c2\'b7\'c3\'83\'e2\'80*\'c3\'82\'c2\'ae \'c3\'82\'c2\'b8\'c3\'83\'c2\'b1\'c3\'83\'e2\'82\'ac\'c3\'83\'c2\'bb\'c3\'83\'c2\'81\'c3\'83\'c2\'b6\'c3\'82\'c2\'b0\'c3\'82\'c2\'a1 \'c3\'82\'c2\'b0\'c3\'83\'c2\'a1\'c3\'83\'c2\'81\'c3\'82\'c2\'a4\'c3\'82\'c2\'b5\'c3\'83\'cb\'86\'c3\'82\'c2\'b4\'c3\'83\'e2\'84\'a2.\par
+                    m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);\par
+y justo despues del //comentario agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+                    if(bCheckIfIsFlagCarrier(iClientH))\par
+                    \{\par
+                        ShowClientMsg(iClientH, "You can not use that magic being a flag carrier.");\par
+                        goto MAGIC_NOEFFECT;\par
+                    \}\par
+Buscar:\par
+C\'f3digo:\par
+    case DEF_MAGICTYPE_INVISIBILITY:\par
+                    switch (m_pMagicConfigList[sType]->m_sValue4) \{\par
+y justo antes del comienzo del switch, agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The flag\par
+                    if(bCheckIfIsFlagCarrier(iClientH))\par
+                    \{\par
+                        ShowClientMsg(iClientH, "You can not use that magic being a flag carrier.");\par
+                        goto MAGIC_NOEFFECT;\par
+                    \}\par
+Buscar:\par
+C\'f3digo:\par
+if (cAttackerType == DEF_OWNERTYPE_PLAYER) \{\par
+        // v1.432\par
+        // \'c6\'af\'bc\'f6 \'b4\'c9\'b7\'c2\'c0\'cc \'c0\'d6\'b4\'c2 \'b9\'ab\'b1\'e2\'b7\'ce \'b0\'f8\'b0\'dd\'c0\'bb \'b4\'e7\'c7\'df\'b4\'d9.\par
+        switch (m_pClientList[iAttackerH]->m_iSpecialAbilityType) \{\par
+        case 1:\par
+        case 2:\par
+        case 3:\par
+        case 4:\par
+        case 5:\par
+            bIsSAattacked = TRUE;\par
+            break;\par
+        \}\par
+y justo arriba agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    if(bCheckIfIsFlagCarrier(iClientH))\par
+    \{\par
+        SetIceFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);\par
+        SetFlagCarrierFlag(iClientH, false);\par
+    \}\par
+Buscar:\par
+C\'f3digo:\par
+switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1) \{\par
+            case 1:\par
+                // Recall \'c2\'b8\'c2\'b6\'c2\'b9\'c3\'bd \'c3\'88\'c2\'bf\'c2\'b0\'c3\'ba\'c2\'b0\'c2\'a1 \'c3\'80\'c3\endash\'c2\'b4\'c3\'82 \'c2\'be\'c3\'86\'c3\'80\'c3\'8c\'c3\'85\'c3\'9b. \par
+                // testcode\par
+                RequestTeleportHandler(iClientH, "1   ");\par
+y remplazar "RequestTeleportHandler(iClientH, "1 ");" por:\par
+C\'f3digo:\par
+if(bCheckIfIsFlagCarrier(iClientH)) ShowClientMsg(iClientH, "You can not use that item being a flag carrier.");\par
+                else RequestTeleportHandler(iClientH, "1   ");\par
+Buscar:\par
+C\'f3digo:\par
+case 2:\par
+                // \'c3\'85\'c3\'b5\'c2\'b8\'c3* \'c2\'b8\'c2\'b6\'c2\'b9\'c3\'bd\'c3\'88\'c2\'bf\'c2\'b0\'c3\'ba\'c2\'b0\'c2\'a1 \'c3\'80\'c3\endash\'c2\'b4\'c3\'82 \'c2\'be\'c3\'86\'c3\'80\'c3\'8c\'c3\'85\'c3\'9b. \par
+                PlayerMagicHandler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, 32, TRUE);\par
+\par
+y remplzar "PlayerMagicHandler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, 32, TRUE);" por:\par
+if(bCheckIfIsFlagCarrier(iClientH)) ShowClientMsg(iClientH, "You can not use that item being a flag carrier.");\par
+                else PlayerMagicHandler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, 32, TRUE);\par
+Buscar:\par
+C\'f3digo:\par
+case 4:\par
+                // fixed location teleportation: \'c3\'80\'c3\rdblquote\'c3\'80\'c3\'a5\'c2\'b1\'c3\'87 \'c2\'b5\'c3\'ae\'c2\'b5\'c3\'ae\par
+                switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2) \{\par
+                case 1:\par
+                    // \'c2\'ba\'c3*\'c2\'b8\'c2\'ae\'c2\'b5\'c3\'b9 \'c2\'be\'c3\'86\'c3\'80\'c3\'8f\'c2\'b7\'c3\'8e \'c2\'b0\'c2\'a3\'c2\'b4\'c3\'99 \par
+                    if (memcmp(m_pClientList[iClientH]->m_cMapName, "bisle", 5) != 0) \{\par
+                        //v1.42\par
+                        ItemDepleteHandler(iClientH, sItemIndex, TRUE, TRUE);\par
+                        RequestTeleportHandler(iClientH, "2   ", "bisle", -1, -1);\par
+                    \}\par
+y remplazar:\par
+C\'f3digo:\par
+if (memcmp(m_pClientList[iClientH]->m_cMapName, "bisle", 5) != 0) \{\par
+                        //v1.42\par
+                        ItemDepleteHandler(iClientH, sItemIndex, TRUE, TRUE);\par
+                        RequestTeleportHandler(iClientH, "2   ", "bisle", -1, -1);\par
+                    \}\par
+por:\par
+C\'f3digo:\par
+if(bCheckIfIsFlagCarrier(iClientH)) ShowClientMsg(iClientH, "You can not use that item being a flag carrier.");\par
+                    else\par
+                    \{\par
+                        if (memcmp(m_pClientList[iClientH]->m_cMapName, "bisle", 5) != 0)\par
+                        \{\par
+                            ItemDepleteHandler(iClientH, sItemIndex, TRUE, TRUE);\par
+                            RequestTeleportHandler(iClientH, "2   ", "bisle", -1, -1);\par
+                        \}\par
+                    \}\par
+alfinal del game.cpp agregar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+void CGame::StartCaptureTheFlag()\par
+\{\par
+    if(m_bIsCTFMode) return;\par
+    \par
+    m_sFlagCountWin = 5;\par
+    \par
+    wsprintf(G_cTxt,"Capture The Flag: Win Flag Count(%d)", m_sFlagCountWin);\par
+    PutLogList(G_cTxt);\par
+\par
+    m_bIsCTFMode = true;\par
+\par
+    for(int i = 0; i < DEF_MAXCLIENTS; i++)\par
+    \{\par
+        if(m_pClientList[i] != NULL)\par
+        \{\par
+            SendNotifyMsg(NULL, i, DEF_NOTIFY_CAPTURETHEFLAGSTART, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);        \par
+        \}\par
+    \}\par
+    PutLogList("(*) Capture The Flag Started!");\par
+\}\par
+void CGame::RequestCheckFlag(int iClientH)\par
+\{\par
+    if(!m_bIsCTFMode) return;\par
+    if(m_pClientList[iClientH] == NULL) return;\par
+\par
+    if(m_pClientList[iClientH]->m_cSide == 0) RequestTeleportHandler(iClientH, "2   ", "default", -1, -1);\par
+\par
+    if((m_pClientList[iClientH]->m_sX == 151) && (m_pClientList[iClientH]->m_sY == 132))//Elvine Flag Cords\par
+    \{\par
+        if(m_pClientList[iClientH]->m_iLevel >= 120)\par
+        \{\par
+            if(m_pClientList[iClientH]->m_cSide == 1) //Aresden Side\par
+            \{\par
+                if((!m_bIsAresdenFlagCaptured) && (!m_bIsElvineFlagCaptured)) //Aresden Capture Elvine Flag\par
+                \{\par
+                    PutLogList("Capture The Flag: Aresden Captured Elvine Flag!");\par
+                    SetFlagCarrierFlag(iClientH, true);\par
+                    \par
+                \}\par
+            \}\par
+            else //Elvine Side\par
+            \{\par
+                if((m_bIsAresdenFlagCaptured) && (!m_bIsElvineFlagCaptured))\par
+                \{\par
+                    PutLogList("Capture The Flag: Elvine wins this round!");\par
+                    m_sElvineFlagCount++;\par
+                    m_bIsAresdenFlagCaptured = false;\par
+                    for(int i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_ELVINEWINSROUND, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+                    if(m_sElvineFlagCount == 5)\par
+                    \{\par
+                        EndCaptureTheFlag(2);\par
+                    \}\par
+                \}\par
+            \}\par
+\par
+        \}\par
+        else RequestTeleportHandler(iClientH, "2   ", "elvine", -1, -1);\par
+    \}\par
+    else if((m_pClientList[iClientH]->m_sX == 151) && (m_pClientList[iClientH]->m_sY == 128))//Aresden Flag Cords\par
+    \{\par
+        if(m_pClientList[iClientH]->m_iLevel >= 120)\par
+        \{\par
+            if(m_pClientList[iClientH]->m_cSide == 2) //Elvine Side\par
+            \{\par
+                if((!m_bIsElvineFlagCaptured) && (!m_bIsAresdenFlagCaptured)) //Elvine Capture Aresden Flag\par
+                \{\par
+                    PutLogList("Capture The Flag: Elvine Captured Aresden Flag!");\par
+                    SetFlagCarrierFlag(iClientH, true);\par
+                \}\par
+            \}\par
+            else //Aresden Side\par
+            \{\par
+                if((m_bIsElvineFlagCaptured) && (!m_bIsAresdenFlagCaptured))\par
+                \{\par
+                    PutLogList("Capture The Flag: Aresden wins this round!");\par
+                    m_sAresdenFlagCount++;\par
+                    m_bIsElvineFlagCaptured = false;\par
+                    for(int i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_ARESDENWINSROUND, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+                    if(m_sAresdenFlagCount == 5)\par
+                    \{\par
+                        EndCaptureTheFlag(1);\par
+                    \}\par
+                \}\par
+            \}\par
+        \}\par
+        else RequestTeleportHandler(iClientH, "2   ", "aresden", -1, -1);\par
+    \}\par
+\}\par
+BOOL CGame::bCheckIfIsFlagCarrier(int iClientH)\par
+\{\par
+    if(!m_bIsCTFMode) return false;\par
+    if(m_iFlagCarrierIndex == -1) return false;\par
+    if(m_pClientList[iClientH] == NULL) return false;\par
+\par
+    if(iClientH == m_iFlagCarrierIndex) return true;\par
+    else return false;\par
+\}\par
+void CGame::SetFlagCarrierFlag(int iClientH, BOOL bFlagMode) \par
+\{      \par
+    if(!m_bIsCTFMode) return;\par
+    if(m_pClientList[iClientH] == NULL) return;\par
+\par
+    if(bFlagMode)\par
+    \{\par
+        PutLogList("Capture The Flag: New Flag Carrier!");\par
+        m_iFlagCarrierIndex = iClientH;\par
+        if(m_pClientList[iClientH]->m_cSide == 1)\par
+        \{\par
+            m_bIsElvineFlagCaptured = true;\par
+            for(int i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_ARESDENCAPTUREDELVINEFLAG, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+        \}\par
+        else\par
+        \{\par
+            m_bIsAresdenFlagCaptured = true;\par
+            for(int i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_ELVINEFLAGBACKTOCH, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+        \}\par
+        m_pClientList[iClientH]->m_iEnemyKillCount += 20;\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ENEMYKILLREWARD, iClientH, NULL, NULL, NULL);\par
+        if(m_pClientList[iClientH]->m_cSide == 1) m_pClientList[iClientH]->m_iStatus = m_pClientList[iClientH]->m_iStatus | 0x80000; //Aresden Flag\par
+        else if(m_pClientList[iClientH]->m_cSide == 2) m_pClientList[iClientH]->m_iStatus = m_pClientList[iClientH]->m_iStatus | 0x40000; //Elvine Flag\par
+    \}\par
+    else \par
+    \{\par
+        PutLogList("Capture The Flag: Flag Carrier Reset.");\par
+        m_iFlagCarrierIndex = -1;\par
+        if(m_pClientList[iClientH]->m_cSide == 1)\par
+        \{\par
+            m_bIsElvineFlagCaptured = false;\par
+            for(int i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_ELVINECAPTUREDARESDENFLAG, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+        \}\par
+        else\par
+        \{\par
+            m_bIsAresdenFlagCaptured = false;\par
+            for(int i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_ARESDENFLAGBACKTOCH, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+        \}\par
+        m_pClientList[iClientH]->m_iStatus = m_pClientList[iClientH]->m_iStatus | 0x00001000;\par
+    \}\par
+\}\par
+void CGame::EndCaptureTheFlag(int iOption)\par
+\{\par
+    if(!m_bIsCTFMode) return;\par
+    int i;\par
+    switch(iOption)\par
+    \{\par
+        case 0://Finished by GM\par
+            for(i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_TIECTF, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+            _CreateCTFGUID(0);\par
+            break;\par
+        case 1://Aresden Win\par
+            for(i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_ARESDENWINCTF, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+            _CreateCTFGUID(1);\par
+            break;\par
+        case 2://Elvine Win\par
+            for(i = 0; i < DEF_MAXCLIENTS; i++) if(m_pClientList[i] != NULL) SendNotifyMsg(NULL, i, DEF_NOTIFY_ELVINEWINCTF, NULL, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL, NULL);\par
+            _CreateCTFGUID(2);\par
+            break;\par
+    \}\par
+\}\par
+void CGame::_CreateCTFGUID(int iWinnerSide)\par
+\{\par
+ char * cp, cTxt[256], cFn[256], cTemp[1024];    \par
+ FILE * pFile;\par
+        \par
+    _mkdir("GameData");\par
+    ZeroMemory(cFn, sizeof(cFn));\par
+    \par
+    strcat(cFn,"GameData");\par
+    strcat(cFn,"\\\\");\par
+    strcat(cFn,"\\\\");                      \par
+    strcat(cFn,"CTFGUID.Txt");\par
+        \par
+    pFile = fopen(cFn, "wt");\par
+    if (pFile == NULL) \{\par
+        PutLogList("(!) Cannot create CTFGUID(%d) file");\par
+    \}\par
+    else \{\par
+        ZeroMemory(cTemp, sizeof(cTemp));\par
+        \par
+        ZeroMemory(cTxt, sizeof(cTxt));\par
+        wsprintf(cTxt, "winner-side = %d\\n", iWinnerSide);\par
+        strcat(cTemp, cTxt);\par
+        \par
+        cp = (char *)cTemp;\par
+        fwrite(cp, strlen(cp), 1, pFile);\par
+        \par
+        PutLogList("(O) CTFGUID(%d) file created");\par
+    \}\par
+    if (pFile != NULL) fclose(pFile);\par
+\}\par
+Game.h:\par
+Declarar:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+    void StartCaptureTheFlag();\par
+    void RequestCheckFlag(int iClientH);\par
+    BOOL bCheckIfIsFlagCarrier(int iClientH);\par
+    void SetFlagCarrierFlag(int iClientH, BOOL bFlagMode);\par
+    void EndCaptureTheFlag(int iOption);\par
+    void _CreateCTFGUID(int iWinnerSide);\par
+\par
+//50Cent - Capture The Flag\par
+    BOOL m_bIsCTFMode;\par
+    short m_sFlagCountWin;\par
+    short m_sElvineFlagCount;\par
+    short m_sAresdenFlagCount;\par
+    BOOL m_bIsElvineFlagCaptured;\par
+    BOOL m_bIsAresdenFlagCaptured;\par
+    int m_iFlagCarrierIndex;\par
+Netmessage.h:\par
+C\'f3digo:\par
+//50Cent - Capture The Flag\par
+#define DEF_NOTIFY_CAPTURETHEFLAGSTART                0x1F19\par
+#define MSGID_REQUEST_CHECKFLAG                        0x1F20\par
+#define DEF_NOTIFY_ARESDENCAPTUREDELVINEFLAG        0x1F21\par
+#define DEF_NOTIFY_ELVINECAPTUREDARESDENFLAG        0x1F22\par
+#define DEF_NOTIFY_ELVINEFLAGBACKTOCH                0x1F23\par
+#define DEF_NOTIFY_ARESDENFLAGBACKTOCH                0x1F24\par
+#define DEF_NOTIFY_ELVINEWINSROUND                    0x1F25\par
+#define DEF_NOTIFY_ARESDENWINSROUND                    0x1F26\par
+#define DEF_NOTIFY_ELVINEWINCTF                        0x1F27\par
+#define DEF_NOTIFY_ARESDENWINCTF                    0x1F28\par
+#define DEF_NOTIFY_TIECTF                            0x1F29\par
+\par
+---\par
+\par
+\par
+Re: Capture The Flag Event (50Cent)\par
+He estado testeandolo y la verdad me esperaba m\'e1s problemas (No lo digo para mal 50cent).\par
+\par
+Tiene bugs sencillos que resolver como las coordenadas en las que se posa el flag respecto al Sprite de la bandera clavada en el suelo.\par
+Cuando vas corriendo y eres el "Flag Carrier" (Quien lleva la bandera) no se ve el icono del flag encima de tu cabeza.\par
+Cuando coges una bandera tu PJ entra en un estado de Fronzen continuo.\par
+Tras puntuar con la bandera sigues teniendo ese estado de fronzen continuo.\par
+Tras terminar el evento sigue ese estado de fronzen continuo y aunque relogues sigue estando jajajaja.\par
+\par
+Dejo unas fotos:\par
+}
+ 

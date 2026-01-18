@@ -1,0 +1,229 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Nuevo Staff Titles (by Tomasarg)\par
+buenas\par
+\par
+en base a este code de 50:\par
+http://mundohelbreath.com/showthread.php?842-Staff-Titles-(By-50Cent)\par
+\par
+hice este, que cumple la misma funcion, pero ahora para cambiar el "titulo", no hace falta editar los sources ni nada, porque funciona en base al profile de los GMs, asique para cambiar lo que dice abajo solo hay q modificar el /setpf\par
+\par
+Esta prohibido el post del code en \par
+cualquier otra comunidad/foro.\par
+\par
+aca va el code:\par
+\par
+CLIENT\par
+en NetMessages.h\par
+C\'f3digo:\par
+//Estado GMs\par
+#define DEF_NOTIFY_ESTADO_GMS                            0x0A92\par
+#define DEF_COMMONTYPE_REQ_ESTADO_GMS                    0x0A93\par
+en Game.h\par
+C\'f3digo:\par
+    //Estado GMs\par
+    char m_cEstadoGM1[100];\par
+    char m_cEstadoGM2[100];\par
+    char m_cEstadoGM3[100];\par
+    char m_cEstadoGM4[100];\par
+    char m_cEstadoGM5[100];\par
+y tambien en game.h\par
+\par
+C\'f3digo:\par
+    //Estado GMs\par
+    void NotifyMsg_Estado_GMs(char * pData);\par
+ahora en game.cpp agregar esta funcion:\par
+C\'f3digo:\par
+//Estado GMs\par
+void CGame::NotifyMsg_Estado_GMs(char * pData)\par
+\{char * cp;\par
+ char cTemp[100];\par
+ int i;\par
+    ZeroMemory(cTemp, sizeof(cTemp));\par
+    cp = (char *)(pData    + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+    strcpy(m_cEstadoGM1, cp);\par
+\par
+    for (i = 0; i < 100; i++)\par
+    if (cTemp[i] == '_') cTemp[i] = ' ';\par
+\}\par
+ahora buscar en la funcion NotifyMsgHandler buscar:\par
+C\'f3digo:\par
+    case DEF_NOTIFY_PLAYERPROFILE:\par
+        NotifyMsg_PlayerProfile(pData);\par
+        break;\par
+abajo agregar:\par
+C\'f3digo:\par
+    //Estado GMs\par
+    case DEF_NOTIFY_ESTADO_GMS:\par
+        NotifyMsg_Estado_GMs(pData);\par
+        break;\par
+en la funcion DrawObjetName buscar:\par
+C\'f3digo:\par
+        if( m_iPKCount != 0 )\par
+        \{    bPK = TRUE;\par
+            sR = 255; sG = 0; sB = 0;\par
+        \}\par
+        else    \par
+        \{    bPK = FALSE;\par
+            sR = 30; sG = 200; sB = 30;\par
+        \}\par
+abajo agregar:\par
+\par
+C\'f3digo:\par
+        //Estado GMs\par
+        if((strcmp(pName, "GM1") == 0) || (strcmp(pName, "GM2") == 0)|| (strcmp(pName, "GM3") == 0) \par
+            || (strcmp(pName, "GM4") == 0) || (strcmp(pName, "GM5") == 0))\par
+        \{    sR = 255; sG = 0; sB = 0;\par
+        \}\par
+despues en la misma funcion buscar:\par
+C\'f3digo:\par
+\}else bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQGUILDNAME, NULL, _tmp_wObjectID, iGuildIndex, NULL, NULL);\par
+abajo de los \} reemplazar todo el resto de la funcion por:\par
+C\'f3digo:\par
+//Estado GMs\par
+    if(strcmp(pName, "GM1") == 0)\par
+    \{    bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_ESTADO_GMS, NULL, 1, NULL, NULL, pName);\par
+        PutString2(sX, sY+28 +iAddY, m_cEstadoGM1, 9,223,223);\par
+        strcpy(cTxt, DEF_MSG_GAMEMASTER);//GameMaster\par
+    \}\par
+    else if(strcmp(pName, "GM2") == 0)\par
+    \{    bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_ESTADO_GMS, NULL, 2, NULL, NULL, pName);\par
+        PutString2(sX, sY+28 +iAddY, m_cEstadoGM2, 9,223,223);\par
+        strcpy(cTxt, DEF_MSG_GAMEMASTER);//GameMaster\par
+    \}\par
+    else if(strcmp(pName, "GM3") == 0)\par
+    \{    bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_ESTADO_GMS, NULL, 3, NULL, NULL, pName);\par
+        PutString2(sX, sY+28 +iAddY, m_cEstadoGM3, 9,223,223);\par
+        strcpy(cTxt, DEF_MSG_GAMEMASTER);//GameMaster\par
+    \}\par
+    else if(strcmp(pName, "GM4") == 0)\par
+    \{    bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_ESTADO_GMS, NULL, 4, NULL, NULL, pName);\par
+        PutString2(sX, sY+28 +iAddY, m_cEstadoGM4, 9,223,223);\par
+        strcpy(cTxt, DEF_MSG_GAMEMASTER);//GameMaster\par
+    \}\par
+    else if(strcmp(pName, "GM5") == 0)\par
+    \{    bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_ESTADO_GMS, NULL, 5, NULL, NULL, pName);\par
+        PutString2(sX, sY+28 +iAddY, m_cEstadoGM5, 9,223,223);\par
+        strcpy(cTxt, DEF_MSG_GAMEMASTER);//GameMaster\par
+    \}\par
+    else\par
+    \{\par
+        if(bCitizen == FALSE ) strcpy(cTxt, DRAW_OBJECT_NAME60);// "Traveller"\par
+        else\par
+        \{    if( bAresden )\par
+            \{    if( bHunter == TRUE ) strcpy(cTxt, DEF_MSG_ARECIVIL); // "Aresden Civilian"\par
+                else strcpy(cTxt, DEF_MSG_ARESOLDIER); // "Aresden Combatant"\par
+            \}else\par
+            \{    if( bHunter == TRUE ) strcpy(cTxt, DEF_MSG_ELVCIVIL);// "Elvine Civilian"\par
+                else strcpy(cTxt, DEF_MSG_ELVSOLDIER);    // "Elvine Combatant"\par
+            \}\par
+        \}\par
+        if( bPK == TRUE )\par
+        \{    if( bCitizen == FALSE ) strcpy( cTxt, DEF_MSG_PK );    //"Criminal"\par
+            else\par
+            \{    if( bAresden ) strcpy( cTxt, DEF_MSG_AREPK );// "Aresden Criminal"\par
+                else strcpy( cTxt, DEF_MSG_ELVPK );  // "Elvine Criminal"\par
+            \}\par
+        \}\par
+    \}\par
+\par
+    PutString2(sX, sY+14 +iAddY, cTxt, sR, sG, sB);\par
+\par
+#ifdef _DEBUG\par
+    wsprintf(cTxt2,"Status: 0x%.8X ",iStatus);\par
+    PutString2(sX, sY+42, cTxt2, 30,255,30);\par
+    ZeroMemory(cTxt2, sizeof(cTxt2));\par
+#endif\par
+\}\par
+listo el client\par
+\par
+HG\par
+\par
+en NetMessages.h agregar:\par
+C\'f3digo:\par
+ //Estado GMs\par
+ #define DEF_NOTIFY_ESTADO_GMS                            0x0A92\par
+ #define DEF_COMMONTYPE_REQ_ESTADO_GMS                    0x0A93\par
+en game.h agregar:\par
+C\'f3digo:\par
+    //Estado GMS\par
+    void GetEstadoGMs(int iClientH, char * pSting, int X);\par
+ahora pasamos a game.cpp, agregar esta funcion:\par
+C\'f3digo:\par
+//Estado GMs\par
+void CGame::GetEstadoGMs(int iClientH, char * pString, int iGM)\par
+\{\par
+ char   seps[] = "= \\t\\n";\par
+ char   * token, cName[11], cBuff[256], cBuff2[500];\par
+ class  CStrTok * pStrTok;\par
+ register int i;\par
+\par
+    if (m_pClientList[iClientH] == NULL) return;\par
+    if ((pString)    <= 0) return;\par
+\par
+    switch (iGM)\{\par
+    case 1: strcpy(cName, "GM1"); break;\par
+    case 2: strcpy(cName, "GM2"); break;\par
+    case 3: strcpy(cName, "GM3"); break;\par
+    case 4: strcpy(cName, "GM4"); break;\par
+    case 5: strcpy(cName, "GM5"); break;\par
+    \}\par
+\par
+    for (i = 1; i < DEF_MAXCLIENTS; i++) \par
+        if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cName, 10) == 0)) \{\par
+        \{\par
+            ZeroMemory(cBuff2, sizeof(cBuff2));\par
+            wsprintf(cBuff2, "%s", m_pClientList[i]->m_cProfile);\par
+\par
+            SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ESTADO_GMS, NULL, NULL, NULL, cBuff2);\par
+            return;\par
+        \}\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_PLAYERNOTONGAME, NULL, NULL, NULL, cName);\par
+    \}\par
+    return;\par
+\}\par
+en la funcion ClientCommonHandler buscar:\par
+C\'f3digo:\par
+    case DEF_COMMONTYPE_REQ_PURCHASEITEM:\par
+        RequestPurchaseItemHandler(iClientH, pString, iV1);\par
+        break;\par
+abajo agregar:\par
+C\'f3digo:\par
+    //Estado GMs\par
+    case DEF_COMMONTYPE_REQ_ESTADO_GMS:\par
+        GetEstadoGMs(iClientH, pString, iV1);\par
+        break;\par
+en la funcion SendNotifyMsg buscar:\par
+C\'f3digo:\par
+case DEF_NOTIFY_PLAYERPROFILE:\par
+y arriba agregar:\par
+C\'f3digo:\par
+    //Estado GMs\par
+    case DEF_NOTIFY_ESTADO_GMS:\par
+LISTO\par
+\par
+a mi me funciona perfecto, espero les guste, y cualquier problema avisen\par
+\par
+saludos\par
+\par
+PD: No lo agrege a los files q subi recien porque hasta hace un ratito no funcionaba, tenia un error tonto jaja\par
+\par
+\par
+----\par
+\par
+\par
+\par
+sisi, el unico problemita, es que los otros chars ven el color del "GameMaster" segun si es friend, enemy o neutral en vez de verlo rojo como se ve el GM a si mismo..\par
+\par
+y ahora q lo veo me falto este detalle:\par
+\par
+en Client, en LAN_ENG.h buscar:\par
+#define DEF_MSG_ARECIVIL\tab "Aresden Civilian"\par
+arriba agregar:\par
+#define DEF_MSG_GAMEMASTER\tab "GameMaster"\par
+(esto es lo q se le ve mal el color)\par
+\par
+\par
+el resto a mi me funciono perfecto visto desde otros PJ tmabien\par
+}
+ 

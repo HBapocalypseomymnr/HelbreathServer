@@ -1,0 +1,21 @@
+ClientSRC:
+Game.cpp:
+Buscar:
+
+if ( m_bIsDialogEnabled[11] && (m_bIsDialogEnabled[23] == FALSE) && (m_bIsDialogEnabled[23] == FALSE) && (m_stDialogBoxInfo[39].sV3 == 24) )
+{ if (m_pItemList[cItemID]->m_cEquipPos != DEF_EQUIPPOS_NONE)
+{ bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_REPAIRITEM, NULL, cItemID, m_stDialogBoxInfo[39].sV3, NULL, m_pItemList[cItemID]->m_cName, m_stDialogBoxInfo[39].sV4); // v1.4
+return;
+} }
+y justo abajo agregar:
+
+//50Cent - Double Click Warehouse
+if(m_bIsDialogEnabled[14])
+{
+bItemDrop_Bank(msX, msY);
+return;
+}
+Cuando te metes al wh, y abrís el panel para meter items, no hace falta que los arrastres, les vas dando doble clik y se te van metiendo solos. Eso hace el code, solo cuando estas dentro del wh y abrís el panel del mismo.
+
+By
+50Cent

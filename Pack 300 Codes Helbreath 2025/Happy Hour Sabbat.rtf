@@ -1,0 +1,680 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 bueno... la cosa es asi... viendo mi happy hour... lo vi muy pelado :P ... \par
+\par
+\par
+por eso decidi que los aspecto del servidor cambien en etapas.\par
+\par
+\par
+haciendo que el nivel de dificultad, se complique ;) ...\par
+\par
+\par
+lo modes son 3 ... \par
+1 = duplica\par
+2 = triplica\par
+3 = normalisa\par
+\par
+\par
+...\par
+se duplican, triplican y por ultimo normalisan, el evento es cada 1 ora.\par
+\par
+\par
+osea empiesa a las 12 del medio dia..si no lo cambian como qieran....y tienen 2 oritas para sufrir :P jajaja.\par
+\par
+\par
+las variantes q se afectan en el servidor son:\par
+\par
+\par
+Drop primario\par
+Drop secundario\par
+Rep Dro Modifier\par
+Vida de los NPC\par
+Defensa Ratio de los NPC\par
+Hit Ratio de los NPC\par
+Exp Minima de los NPC\par
+Exp Max de los NPC\par
+Gold Minimo de los NPC\par
+Gold Maximo de los NPC\par
+Ataque Fisico de los NPC\par
+Rango de ataque de los NPC\par
+Magic Resistance de los NPC\par
+Ataque magico de los NPC\par
+Modificacion de los ItemCL Values 1 al 6\par
+Modificacion de los MagicConfigList Values del 4 al 9.\par
+las magias q duran tiempo se alteran tbm..el da\'f1o etc.\par
+\par
+\par
+lo bueno de alterar las listas madres es q cuando semos un cambio... las hijas cuando las ejecutan tbm los sufren.\par
+\par
+\par
+desp de alterado esto se informa a todos los pj.. y por ultimo se eliminan todos\par
+\par
+\par
+los npc antiguos y se empiesan a crear nuevo con la nueva info cargada....\par
+\par
+\par
+me fije todo y las restricciones que use lo hicieron bien funcional no detecte ningun bug q me descajete nada asiq...\par
+\par
+\par
+esto esta lindo para los servidores con un alto nivel de balance.\par
+\par
+\par
+no tengo ganas de postear foto asi... :P ... bueno...\par
+\par
+\par
+en el src del hg\par
+\par
+\par
+en game.cpp agregamos abajo de todo una nueva funcion:\par
+C\'f3digo:\par
+void CGame::HappyHour(char pAction)\par
+\{ int i, iNpcConfigListIndex, iItemConfigListIndex, iMagicConfigListIndex;\par
+\tab if (pAction == NULL) return;\par
+\tab switch(pAction)\par
+\tab\{\tab case 1:\par
+\tab\tab\tab HappyHourStatus = 2;\par
+\tab\tab\tab //m_bHappyHour = TRUE;\par
+\tab\tab\tab m_iEnemyKillAdjust = m_iEnemyKillAdjust*2;\par
+\tab\tab\tab if ((m_iPrimaryDropRate > 0) && (m_iPrimaryDropRate <= 10000) && (m_iPrimaryDropRate*2 <= 10000))\par
+\tab\tab\tab\tab m_iPrimaryDropRate = m_iPrimaryDropRate*2;\par
+\tab\tab\tab if ((m_iSecondaryDropRate > 0) && (m_iSecondaryDropRate <= 10000) && (m_iSecondaryDropRate*2 <= 10000))\par
+\tab\tab\tab\tab m_iSecondaryDropRate = m_iSecondaryDropRate*2;\par
+\tab\tab\tab if ((m_cRepDropModifier > 0))\par
+\tab\tab\tab\tab m_cRepDropModifier = m_cRepDropModifier*2;\par
+\tab\tab\tab for (iNpcConfigListIndex = 0; iNpcConfigListIndex < DEF_MAXNPCTYPES; iNpcConfigListIndex++)\par
+\tab\tab\tab\{\tab if ((m_pNpcConfigList[iNpcConfigListIndex] != NULL))\par
+\tab\tab\tab\tab\{\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iHitDice         = m_pNpcConfigList[iNpcConfigListIndex]->m_iHitDice*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iDefenseRatio    = m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iDefenseRatio*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iHitRatio        = m_pNpcConfigList[iNpcConfigListIndex]->m_iHitRatio*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMin      = m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMin*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMax      = m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMax*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMin     = m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMin*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMax     = m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMax*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceThrow = m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_cAttackDiceThrow*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceRange = m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_cAttackDiceRange*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cResistMagic     = m_pNpcConfigList[iNpcConfigListIndex]->m_cResistMagic*2;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iMagicHitRatio   = m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iMagicHitRatio*2;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (iItemConfigListIndex = 0; iItemConfigListIndex < DEF_MAXITEMTYPES; iItemConfigListIndex++)\par
+\tab\tab\tab\{\tab if (m_pItemConfigList[iItemConfigListIndex] != NULL)\par
+\tab\tab\tab\tab\{\tab switch (m_pItemConfigList[iItemConfigListIndex]->m_cEquipPos)\par
+\tab\tab\tab\tab\tab\{\tab case DEF_EQUIPPOS_BODY:case DEF_EQUIPPOS_HEAD:case DEF_EQUIPPOS_LEGGINGS:case DEF_EQUIPPOS_ARMS:\par
+\tab\tab\tab\tab\tab\tab case DEF_EQUIPPOS_LHAND:case DEF_EQUIPPOS_RHAND:case DEF_EQUIPPOS_TWOHAND:\par
+\tab\tab\tab\tab\tab\tab case DEF_EQUIPPOS_RFINGER:case DEF_EQUIPPOS_LFINGER:\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue1 = m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue1*2;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue2 = m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue2*2;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue3 = m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue3*2;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue4 = m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue4*2;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue5 = m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue5*2;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue6 = m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue6*2;\par
+\tab\tab\tab\tab\tab\tab break;default:break;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (iMagicConfigListIndex = 0; iMagicConfigListIndex < DEF_MAXMAGICTYPE; iMagicConfigListIndex++)\par
+\tab\tab\tab\{\tab if (m_pMagicConfigList[iMagicConfigListIndex] != NULL)\par
+\tab\tab\tab\tab\{\tab switch (m_pMagicConfigList[iMagicConfigListIndex]->m_sType)\par
+\tab\tab\tab\tab\tab\{\tab case DEF_MAGICTYPE_PROTECT:case DEF_MAGICTYPE_HOLDOBJECT:case DEF_MAGICTYPE_BERSERK:\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_INVISIBILITY:case DEF_MAGICTYPE_INHIBITION:\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_CONFUSE:\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_dwLastTime = m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_dwLastTime*2;\par
+\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_DAMAGE_AREA:case DEF_MAGICTYPE_ICE_LINEAR:case DEF_MAGICTYPE_DAMAGE_AREA_NOSPOT_SPDOWN:\par
+\tab\tab\tab\tab\tab\tab /*case DEF_MAGICTYPE_THUNDERSHOCKS:*/case DEF_MAGICTYPE_DAMAGE_SPOT:\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue4  = m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue4*2;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue5  = m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue5*2;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue6  = m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue6*2;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue7  = m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue7*2;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue8  = m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue8*2;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue9  = m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue9*2;\par
+\tab\tab\tab\tab\tab\tab break;default:break;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (i = 0 ; i < DEF_MAXNPCS; i++)\par
+\tab\tab\tab\{\tab if (m_pNpcList[i] != NULL)\par
+\tab\tab\tab\tab\{\tab DeleteNpc(i);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (i = 0; i < DEF_MAXCLIENTS; i++)\par
+\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL))\par
+\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_HAPPYHOURSTAR, HappyHourStatus, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab break;\par
+\tab\tab case 2:\par
+\tab\tab\tab HappyHourStatus = 3;\par
+\tab\tab\tab //m_bHappyHour = TRUE;\par
+\tab\tab\tab m_iEnemyKillAdjust = (m_iEnemyKillAdjust/2)*3;\par
+\tab\tab\tab if (((m_iPrimaryDropRate/2) > 0) && ((m_iPrimaryDropRate/2) <= 10000) && ((m_iPrimaryDropRate/2)*3 <= 10000))\par
+\tab\tab\tab\tab m_iPrimaryDropRate = (m_iPrimaryDropRate/2)*3;\par
+\tab\tab\tab if (((m_iSecondaryDropRate/2) > 0) && ((m_iSecondaryDropRate/2) <= 10000) && ((m_iSecondaryDropRate/2)*3 <= 10000))\par
+\tab\tab\tab\tab m_iSecondaryDropRate = (m_iSecondaryDropRate/2)*3;\par
+\tab\tab\tab if (((m_cRepDropModifier/2) > 0))\par
+\tab\tab\tab\tab m_cRepDropModifier = (m_cRepDropModifier/2)*3;\par
+\tab\tab\tab for (iNpcConfigListIndex = 0; iNpcConfigListIndex < DEF_MAXNPCTYPES; iNpcConfigListIndex++)\par
+\tab\tab\tab\{\tab if ((m_pNpcConfigList[iNpcConfigListIndex] != NULL))\par
+\tab\tab\tab\tab\{\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iHitDice         = (m_pNpcConfigList[iNpcConfigListIndex]->m_iHitDice/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iDefenseRatio    = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iDefenseRatio/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iHitRatio        = (m_pNpcConfigList[iNpcConfigListIndex]->m_iHitRatio/2)\par
+\par
+\par
+*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMin      = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iExpDiceMin/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMax      = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iExpDiceMax/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMin     = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iGoldDiceMin/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMax     = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iGoldDiceMax/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceThrow = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_cAttackDiceThrow/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceRange = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_cAttackDiceRange/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cResistMagic     = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_cResistMagic/2)*3;\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iMagicHitRatio   = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iMagicHitRatio/2)*3;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (iItemConfigListIndex = 0; iItemConfigListIndex < DEF_MAXITEMTYPES; iItemConfigListIndex++)\par
+\tab\tab\tab\{\tab if (m_pItemConfigList[iItemConfigListIndex] != NULL)\par
+\tab\tab\tab\tab\{\tab switch (m_pItemConfigList[iItemConfigListIndex]->m_cEquipPos)\par
+\tab\tab\tab\tab\tab\{\tab case DEF_EQUIPPOS_BODY:case DEF_EQUIPPOS_HEAD:case DEF_EQUIPPOS_LEGGINGS:case DEF_EQUIPPOS_ARMS:\par
+\tab\tab\tab\tab\tab\tab case DEF_EQUIPPOS_LHAND:case DEF_EQUIPPOS_RHAND:case DEF_EQUIPPOS_TWOHAND:\par
+\tab\tab\tab\tab\tab\tab case DEF_EQUIPPOS_RFINGER:case DEF_EQUIPPOS_LFINGER:\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue1 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue1/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue2 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue2/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue3 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue3/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue4 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue4/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue5 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue5/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue6 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue6/2)*3;\par
+\tab\tab\tab\tab\tab\tab break;default:break;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (iMagicConfigListIndex = 0; iMagicConfigListIndex < DEF_MAXMAGICTYPE; iMagicConfigListIndex++)\par
+\tab\tab\tab\{\tab if (m_pMagicConfigList[iMagicConfigListIndex] != NULL)\par
+\tab\tab\tab\tab\{\tab switch (m_pMagicConfigList[iMagicConfigListIndex]->m_sType)\par
+\tab\tab\tab\tab\tab\{\tab case DEF_MAGICTYPE_PROTECT:case DEF_MAGICTYPE_HOLDOBJECT:case DEF_MAGICTYPE_BERSERK:\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_INVISIBILITY:case DEF_MAGICTYPE_INHIBITION:\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_CONFUSE:\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_dwLastTime = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_dwLastTime/2)*3;\par
+\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_DAMAGE_AREA:case DEF_MAGICTYPE_ICE_LINEAR:case DEF_MAGICTYPE_DAMAGE_AREA_NOSPOT_SPDOWN:\par
+\tab\tab\tab\tab\tab\tab /*case DEF_MAGICTYPE_THUNDERSHOCKS:*/case DEF_MAGICTYPE_DAMAGE_SPOT:\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue4  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue4/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue5  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue5/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue6  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue6/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue7  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue7/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue8  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue8/2)*3;\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue9  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue9/2)*3;\par
+\tab\tab\tab\tab\tab\tab break;default:break;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (i = 0 ; i < DEF_MAXNPCS; i++)\par
+\tab\tab\tab\{\tab if (m_pNpcList[i] != NULL)\par
+\tab\tab\tab\tab\{\tab DeleteNpc(i);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (i = 0; i < DEF_MAXCLIENTS; i++)\par
+\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL))\par
+\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_HAPPYHOURSTAR, HappyHourStatus, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab break;\par
+\tab\tab case 3:\par
+\tab\tab\tab HappyHourStatus = 0;\par
+\tab\tab\tab //m_bHappyHour = FALSE;\par
+\tab\tab\tab m_iEnemyKillAdjust = (m_iEnemyKillAdjust/3);\par
+\tab\tab\tab if (((m_iPrimaryDropRate/3) > 0) && ((m_iPrimaryDropRate/3) <= 10000) && ((m_iPrimaryDropRate/3) <= 10000))\par
+\tab\tab\tab\tab m_iPrimaryDropRate = (m_iPrimaryDropRate/3);\par
+\tab\tab\tab if (((m_iSecondaryDropRate/3) > 0) && ((m_iSecondaryDropRate/3) <= 10000) && ((m_iSecondaryDropRate/3) <= 10000))\par
+\tab\tab\tab\tab m_iSecondaryDropRate = (m_iSecondaryDropRate/3);\par
+\tab\tab\tab if (((m_cRepDropModifier/3) > 0))\par
+\tab\tab\tab\tab m_cRepDropModifier = (m_cRepDropModifier/3);\par
+\tab\tab\tab for (iNpcConfigListIndex = 0; iNpcConfigListIndex < DEF_MAXNPCTYPES; iNpcConfigListIndex++)\par
+\tab\tab\tab\{\tab if ((m_pNpcConfigList[iNpcConfigListIndex] != NULL))\par
+\tab\tab\tab\tab\{\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iHitDice         = (m_pNpcConfigList[iNpcConfigListIndex]->m_iHitDice/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iDefenseRatio    = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iDefenseRatio/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iHitRatio        = (m_pNpcConfigList[iNpcConfigListIndex]->m_iHitRatio/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMin      = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iExpDiceMin/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMax      = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iExpDiceMax/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMin     = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iGoldDiceMin/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMax     = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iGoldDiceMax/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceThrow = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_cAttackDiceThrow/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceRange = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_cAttackDiceRange/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_cResistMagic     = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_cResistMagic/3);\par
+\tab\tab\tab\tab\tab m_pNpcConfigList[iNpcConfigListIndex]->m_iMagicHitRatio   = (m_pNpcConfigList[iNpcConfigListIndex]-\par
+\par
+\par
+>m_iMagicHitRatio/3);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (iItemConfigListIndex = 0; iItemConfigListIndex < DEF_MAXITEMTYPES; iItemConfigListIndex++)\par
+\tab\tab\tab\{\tab if (m_pItemConfigList[iItemConfigListIndex] != NULL)\par
+\tab\tab\tab\tab\{\tab switch (m_pItemConfigList[iItemConfigListIndex]->m_cEquipPos)\par
+\tab\tab\tab\tab\tab\{\tab case DEF_EQUIPPOS_BODY:case DEF_EQUIPPOS_HEAD:case DEF_EQUIPPOS_LEGGINGS:case DEF_EQUIPPOS_ARMS:\par
+\tab\tab\tab\tab\tab\tab case DEF_EQUIPPOS_LHAND:case DEF_EQUIPPOS_RHAND:case DEF_EQUIPPOS_TWOHAND:\par
+\tab\tab\tab\tab\tab\tab case DEF_EQUIPPOS_RFINGER:case DEF_EQUIPPOS_LFINGER:\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue1 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue1/3);\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue2 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue2/3);\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue3 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue3/3);\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue4 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue4/3);\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue5 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue5/3);\par
+\tab\tab\tab\tab\tab\tab m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectValue6 = (m_pItemConfigList[iItemConfigListIndex]-\par
+\par
+\par
+>m_sItemEffectValue6/3);\par
+\tab\tab\tab\tab\tab\tab break;default:break;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (iMagicConfigListIndex = 0; iMagicConfigListIndex < DEF_MAXMAGICTYPE; iMagicConfigListIndex++)\par
+\tab\tab\tab\{\tab if (m_pMagicConfigList[iMagicConfigListIndex] != NULL)\par
+\tab\tab\tab\tab\{\tab switch (m_pMagicConfigList[iMagicConfigListIndex]->m_sType)\par
+\tab\tab\tab\tab\tab\{\tab case DEF_MAGICTYPE_PROTECT:case DEF_MAGICTYPE_HOLDOBJECT:case DEF_MAGICTYPE_BERSERK:\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_INVISIBILITY:case DEF_MAGICTYPE_INHIBITION:\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_CONFUSE:\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_dwLastTime = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_dwLastTime/3);\par
+\tab\tab\tab\tab\tab\tab break;\par
+\tab\tab\tab\tab\tab\tab case DEF_MAGICTYPE_DAMAGE_AREA:case DEF_MAGICTYPE_ICE_LINEAR:case DEF_MAGICTYPE_DAMAGE_AREA_NOSPOT_SPDOWN:\par
+\tab\tab\tab\tab\tab\tab /*case DEF_MAGICTYPE_THUNDERSHOCKS:*/case DEF_MAGICTYPE_DAMAGE_SPOT:\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue4  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue4/3);\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue5  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue5/3);\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue6  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue6/3);\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue7  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue7/3);\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue8  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue8/3);\par
+\tab\tab\tab\tab\tab\tab m_pMagicConfigList[iMagicConfigListIndex]->m_sValue9  = (m_pMagicConfigList[iMagicConfigListIndex]-\par
+\par
+\par
+>m_sValue9/3);\par
+\tab\tab\tab\tab\tab\tab break;default:break;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (i = 0 ; i < DEF_MAXNPCS; i++)\par
+\tab\tab\tab\{\tab if (m_pNpcList[i] != NULL)\par
+\tab\tab\tab\tab\{\tab DeleteNpc(i);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\tab for (i = 0; i < DEF_MAXCLIENTS; i++)\par
+\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL))\par
+\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_HAPPYHOUREND, HappyHourStatus, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab break;\tab\par
+\tab\}\par
+\}\par
+\par
+ahora en game.h declaramos:\par
+abajo de :\par
+C\'f3digo:\par
+class CGame  \par
+\{\par
+public:\par
+\par
+agregamos\par
+C\'f3digo:\par
+void HappyHour(char pAction);\par
+\par
+bueno ahora viene la parte automatisada de todo esto.\par
+\par
+\par
+vamos a Ontimer\par
+\par
+\par
+declaramos arriba de todo.\par
+C\'f3digo:\par
+char HP[100];\par
+\par
+seguimos en la misma funcion, abajo de:\par
+C\'f3digo:\par
+if ((dwTime - m_dwGameTime2) > 3000)\par
+\tab\{\tab CheckClientResponseTime();\par
+\tab\tab SendMsgToGateServer(MSGID_GAMESERVERALIVE, NULL);\par
+\tab\tab CheckDayOrNightMode();\par
+\tab\tab InvalidateRect(G_hWnd, NULL, TRUE);\par
+\tab\tab m_dwGameTime2 = dwTime;\par
+\tab\tab _CheckGateSockConnection(); \par
+\tab\tab  if ((m_bIsGameStarted == FALSE)     && (m_bIsItemAvailable == TRUE)      && \par
+\tab\tab\tab   (m_bIsNpcAvailable == TRUE)     && (m_bIsGateSockAvailable == TRUE)  &&\par
+\tab\tab\tab   (m_bIsLogSockAvailable == TRUE) && (m_bIsMagicAvailable == TRUE)     &&\par
+\tab\tab\tab   (m_bIsSkillAvailable == TRUE)   && (m_bIsPortionAvailable == TRUE)   &&\par
+\tab\tab\tab   (m_bIsQuestAvailable == TRUE)   && (m_bIsBuildItemAvailable == TRUE) && \par
+\tab\tab\tab   (m_iSubLogSockActiveCount == DEF_MAXSUBLOGSOCK)) \{\par
+\tab\tab\tab   PutLogList("Sending start message...");\par
+\tab\tab\tab   SendMessage(m_hWnd, WM_USER_STARTGAMESIGNAL, NULL, NULL);\par
+\tab\tab\tab   m_bIsGameStarted = TRUE;\par
+\tab\tab\}\par
+\tab\}\par
+\par
+agregamos:\par
+C\'f3digo:\par
+if ((dwTime - m_dwGameTime11) > 1000)\par
+\tab  \{\tab if ((SysTime.wHour == 12) && (SysTime.wMinute == 0) && (SysTime.wSecond == 0))\par
+\tab\tab\{\tab HappyHour(1);\par
+\tab\tab\tab wsprintf(HP, "Auto Start Happy Hour DUPLICADO!");\par
+\tab\tab\tab PutLogList(HP);\par
+\tab\tab\}else\{\tab if ((SysTime.wHour == 13) && (SysTime.wMinute == 0) && (SysTime.wSecond == 0))\par
+\tab\tab\tab\tab\{\tab HappyHour(2);\par
+\tab\tab\tab\tab\tab wsprintf(HP, "Auto Start Happy Hour TRIPLICADO!");\par
+\tab\tab\tab\tab\tab PutLogList(HP);\par
+\tab\tab\tab\tab\}else \{\tab if ((SysTime.wHour == 14) && (SysTime.wMinute == 0) && (SysTime.wSecond == 0))\par
+\tab\tab\tab\tab\tab\tab\{\tab HappyHour(3);\par
+\tab\tab\tab\tab\tab\tab\tab wsprintf(HP, "Auto Start Happy Hour NORMAL!");\par
+\tab\tab\tab\tab\tab\tab\tab PutLogList(HP);\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab m_dwGameTime11 = dwTime;\par
+\tab   \}\par
+\par
+vamos a bInit en game.cpp...\par
+\par
+\par
+preferentemente abajo de:\par
+[code]DWORD dwTime = timeGetTime();[code]\par
+\par
+\par
+agregamos\par
+C\'f3digo:\par
+m_dwGameTime11 = dwTime;\par
+\par
+SI O SI ABAJO O MAS ABAJO O DONDE QUIERAN MAS ABAJO PERO NUNK ARRIBA.\par
+\par
+\par
+ahora bamos a game.h y declaramos abajo de\par
+C\'f3digo:\par
+class CGame  \par
+\{\par
+public:\par
+\par
+agregamos:\par
+C\'f3digo:\par
+DWORD  m_dwGameTime11;\par
+\par
+bolbemos a bInit y agregamos \par
+C\'f3digo:\par
+HappyHourStatus = 0;\par
+\par
+en game.h\par
+abajo de la\par
+C\'f3digo:\par
+class CGame  \par
+\{\par
+public:\par
+\par
+agregamos:\par
+C\'f3digo:\par
+char HappyHourStatus;\par
+\par
+ahora en RequestInitDataHandler\par
+\par
+\par
+abajo de toda esta mierda:\par
+C\'f3digo:\par
+switch (iRet) \{\par
+\tab case DEF_XSOCKEVENT_QUENEFULL:\par
+\tab case DEF_XSOCKEVENT_SOCKETERROR:\par
+\tab case DEF_XSOCKEVENT_CRITICALERROR:\par
+\tab case DEF_XSOCKEVENT_SOCKETCLOSED:\par
+\tab\tab DeleteClient(iClientH, TRUE, TRUE);\par
+\tab\tab if(pBuffer != NULL) delete pBuffer;\par
+\tab\tab return;\par
+\tab\}\par
+\tab if(pBuffer != NULL) delete pBuffer;\par
+\tab SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, NULL, NULL, NULL);\par
+\par
+agregamos:\par
+C\'f3digo:\par
+if (HappyHourStatus == 2) SendNotifyMsg(NULL, i, DEF_NOTIFY_HAPPYHOURSTAR, HappyHourStatus, NULL, NULL, NULL);\par
+else if (HappyHourStatus == 3) SendNotifyMsg(NULL, i, DEF_NOTIFY_HAPPYHOURSTAR, HappyHourStatus, NULL, NULL, NULL);\par
+\par
+ahora los mensajerios hg > cliente\par
+\par
+\par
+vamos a SendNotifyMsg y abajo de \par
+C\'f3digo:\par
+switch (wMsgType) \{\par
+\par
+agregamos\par
+C\'f3digo:\par
+\tab case DEF_NOTIFY_HAPPYHOUREND:\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6);\par
+\tab\tab break;\par
+\tab case DEF_NOTIFY_HAPPYHOURSTAR:\par
+\tab\tab cp  = (char *)cp;\par
+\tab\tab *cp = sV1;\par
+\tab\tab cp++;\par
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 7);\par
+\tab\tab break;\par
+\par
+en netmessg.h\par
+agreguen\par
+C\'f3digo:\par
+ #define DEF_NOTIFY_HAPPYHOURSTAR                    0x0F74\par
+ #define DEF_NOTIFY_HAPPYHOUREND                     0x0F75\par
+\par
+ahora al cliente.\par
+en netmessg del cliente tbm\par
+C\'f3digo:\par
+ #define DEF_NOTIFY_HAPPYHOURSTAR                    0x0F74\par
+ #define DEF_NOTIFY_HAPPYHOUREND                     0x0F75\par
+\par
+en NotifyMsgHandler\par
+abajo de \par
+C\'f3digo:\par
+switch (wEventType) \{\par
+\par
+agregamos:\par
+C\'f3digo:\par
+\tab case DEF_NOTIFY_HAPPYHOURSTAR:\par
+        cp = (char *)(pData\tab + DEF_INDEX2_MSGTYPE + 2);\par
+\tab\tab cp  = (char *)cp;\par
+\tab\tab sV1 = *cp;\par
+\tab\tab cp++;\par
+\tab\tab ZeroMemory(cTxt, sizeof(cTxt));\par
+\tab\tab wsprintf(cTxt, "Intens*%d Mode Activado!..Mode Will Change In 1 Hour", sV1);\par
+\tab\tab SetTopMsg(cTxt, 10);\par
+        break;\par
+\par
+\par
+    case DEF_NOTIFY_HAPPYHOUREND: \par
+        SetTopMsg("Intens Normal Mode Activado!..Mode Will Change 12 Hours of Tomorrow", 10);\par
+        break;\par
+cualquier error me avisan.\par
+\par
+foto\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?1154-New-Happy-Hour-Sistem-By-SabbaT-GM#ixzz2EQOIOETN\par
+\par
+\par
+--\par
+por si alguien no le funciona el autoactivacion igual que ami jeje \par
+\par
+C\'f3digo:\par
+if (memcmp(cp, "/happyhour 0", 12) == 0) \{ //Comando Happy Hour Desactivar\par
+HappyHour(3);return;\par
+\}\par
+C\'f3digo:\par
+if (memcmp(cp, "/happyhour 1", 12) == 0) \{ //Comando Happy Hour Modo 1\par
+HappyHour(1);return;\par
+\}\par
+C\'f3digo:\par
+if (memcmp(cp, "/happyhour 2", 12) == 0) \{ //Comando Happy Hour Modo 2\par
+HappyHour(2);return;\par
+\}\par
+\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?1154-New-Happy-Hour-Sistem-By-SabbaT-GM#ixzz2EQOOeLLa\par
+}
+ 

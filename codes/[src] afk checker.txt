@@ -1,0 +1,241 @@
+Hola les presento este código que hiso Snoopy y su función es la siguiente:
+
+Este code checkea si un jugador no se mueve después de un determinado tiempo en este caso 5 minutos (Puede ser cambiado) y arriba del personaje aparecera unas letras ZzZzZ que siempre existieron en el mundo de Helbreath pero nunca fueron usadas. Espero que les ggste el code:
+
+-----------------------
+-------HGSERVER--------
+--------------------------------------------------------------------------------------
+
+Abrimos el Game.cpp y agregamos al final este codigo:
+
+
+
+Código:
+void CGame::AFKChecker()
+{	register int i;
+	int sX, sY;
+	DWORD dwTimeNow = timeGetTime();
+	for (i = 1; i < DEF_MAXCLIENTS; i++)
+	{	if (m_pClientList[i] != NULL)
+		{	if (   (m_pClientList[i]->m_bIsInitComplete == TRUE) 
+				&& ((dwTimeNow - m_pClientList[i]->m_dwAFKCheckTime) > DEF_AFKTIME)
+				&& (m_pClientList[i]->m_iHP > 0)
+				&& ((m_pClientList[i]->m_iStatus & 0x00000010) == 0)
+				&& (iDice(1,5) == 3))
+			{	sX = m_pClientList[i]->m_sX;
+				if (m_pClientList[i]->m_bSkillUsingStatus[19] == TRUE)
+					 sY = m_pClientList[i]->m_sY +1;					
+				else sY = m_pClientList[i]->m_sY;		
+				SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[i]->m_cMapIndex
+					, sX, sY, sX, sY, 247, m_pClientList[i]->m_sType);
+	}	}	}
+}
+
+En el Game.h buscamos "public:" sin las barritas y abajo agregamos:
+
+
+Código:
+	void AFKChecker();
+
+En el Game.h buscamos lo siguiente:
+
+
+Código:
+#define DEF_AUTOSAVETIME			600000
+
+Abajo de lo que hemos buscando agregamos:
+
+
+Código:
+#define DEF_AFKTIME					300000 // Five MinutesEn el Client.cpp
+
+Buscamos:
+
+
+Código:
+m_bIsPoisoned    = FALSE;
+
+Y arriba agregamos:
+
+
+Código:
+	m_dwAFKCheckTime	= NULL;
+
+Después buscamos:
+
+
+Código:
+m_dwLogoutHackCheck = 0;
+
+y abajo agregamos:
+
+
+Código:
+	m_dwAFKCheckTime = 0;
+
+buscamos:
+
+
+Código:
+m_dwFishTime = dwTime;
+
+y abajo agregamos:
+
+
+Código:
+AFKChecker();
+
+despues buscamos:
+
+
+Código:
+void CGame::ClientMotionHandler(
+
+en la funcion agregamos:
+
+
+Código:
+m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();buscamos:
+
+
+Código:
+if (m_iTotalClients > DEF_MAXONESERVERUSERS) {
+		switch (iDice(1,2)) {
+		case 1: 
+			RequestTeleportHandler(iClientH, "2   ", "bisle", -1, -1);
+			break;
+			case 2: 
+				switch (m_pClientList[iClientH]->m_cSide) {
+					case 0: RequestTeleportHandler(iClientH, "2   ", "resurr1", -1, -1); break;
+					case 1: RequestTeleportHandler(iClientH, "2   ", "resurr1", -1, -1); break;
+					case 2: RequestTeleportHandler(iClientH, "2   ", "resurr2", -1, -1); break;
+				}
+				break;
+
+arriba de eso agregamos:
+
+
+Código:
+m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+buscamos:
+
+
+Código:
+void CGame::ChatMsgHandler(
+
+en la funcion agregamos:
+
+
+Código:
+m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+buscamos:
+
+
+Código:
+void CGame::PlayerMagicHandler(
+
+en la funcion agregamos:
+
+
+Código:
+m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+buscamos:
+
+
+Código:
+void CGame::RequestTeleportHandler(
+
+y en la funcion agregamos:
+
+
+Código:
+m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
+
+Vamos al Client.H
+
+Buscamos este pequeño código BOOL:
+
+
+Código:
+BOOL bCreateNewParty();
+
+Y abajo agregamos:
+
+
+Código:
+DWORD m_dwAFKCheckTime;
+
+
+
+
+
+
+---------------------
+------CLIENTE--------
+------------------------------------------------------------------------------
+
+Abrimos el Game.cpp y buscamos:
+
+
+Código:
+		case 206: //
+			m_pEffectList[i]->m_mX     = sX;
+			m_pEffectList[i]->m_mY     = sY;
+			m_pEffectList[i]->m_cMaxFrame   = 3;
+			m_pEffectList[i]->m_dwFrameTime = 70;
+			break;Abajo del break; agregamos
+
+
+Código:
+		case 247: // AFKChecker
+			m_pEffectList[i]->m_mX     = sX*32;
+			m_pEffectList[i]->m_mY     = sY*32;
+			m_pEffectList[i]->m_cMaxFrame   = 17;
+			m_pEffectList[i]->m_dwFrameTime = 200;
+			m_pEffectList[i]->m_mX3    = sDist;
+			m_pEffectList[i]->m_mY3    = -(((m_sViewPointX / 32) + 10) - dX)*1000;
+			m_pEffectList[i]->m_iV1    = rand()%35;
+			m_pEffectList[i]->m_cFrame = - rand() %12;
+			break;Buscamos:
+
+
+Código:
+		case 206: // steams
+			dX  = m_pEffectList[i]->m_mX;
+			dY  = m_pEffectList[i]->m_mY;
+			m_pEffectSpr[139]->PutTransSprite_NoColorKey(dX, dY, (rand() %20), dwTime);
+			break;Y abajo agregamos:
+
+
+Código:
+	   	case 247: // AFKChecker
+			dX = (m_pEffectList[i]->m_mX) - m_sViewPointX;
+			dY = (m_pEffectList[i]->m_mY) - m_sViewPointY;
+			m_pEffectSpr[85]->PutTransSprite_NoColorKey(dX+50, dY+30, m_pEffectList[i]->m_cFrame, dwTime);
+                        break;
+
+
+Como paso final buscamos esto:
+
+
+Código:
+		case 183: // Inhibition-Casting
+			cTempFrame = m_pEffectList[i]->m_cFrame;
+			dX  = (m_pEffectList[i]->m_dX*32)  - m_sViewPointX;
+			dY  = (m_pEffectList[i]->m_dY*32)  - m_sViewPointY;
+			m_pEffectSpr[95]->PutTransSprite_NoColorKey(dX, dY+40, cTempFrame, dwTime);
+			break;Y abajo del break agregamos:
+
+
+Código:
+		case 247: // AFKChecker
+				if (m_pEffectList[i]->m_cFrame >= m_pEffectList[i]->m_cMaxFrame)
+				{	delete m_pEffectList[i];
+					m_pEffectList[i] = NULL;
+				}else if (m_pEffectList[i]->m_iV1 == m_pEffectList[i]->m_cFrame)
+				{	PlaySound('M', 45, m_pEffectList[i]->m_mX3, m_pEffectList[i]->m_mY3 );
+				}
+				break;

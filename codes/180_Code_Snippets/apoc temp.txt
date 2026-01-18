@@ -1,0 +1,34 @@
+if (m_bIsApocalypseMode == TRUE) {
+					if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "abaddon", 7) == 0) 
+						SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 167, 169, NULL, m_pClientList[i]->m_cMapName);
+					else if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "icebound", 8) == 0)
+						SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 89, 31, NULL, m_pClientList[i]->m_cMapName);
+				}
+
+				if (m_pClientList[i] == NULL) break;
+				if ((m_bIsApocalypseMode == TRUE) &&
+					(memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "icebound", 8) == 0) &&
+					((m_pClientList[i]->m_sX == 89 && m_pClientList[i]->m_sY == 31) ||
+					(m_pClientList[i]->m_sX == 89 && m_pClientList[i]->m_sY == 32) ||
+					(m_pClientList[i]->m_sX == 90 && m_pClientList[i]->m_sY == 31) ||
+					(m_pClientList[i]->m_sX == 90 && m_pClientList[i]->m_sY == 32))) {
+					  RequestTeleportHandler(i, "2   ", "druncncity", -1, -1);
+				}
+
+
+~~~~~~~~~~`
+if (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_iTotalAliveObject == 0) && (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_iApocalypseMobGenType  == 2) {
+		//sub_428CD0
+	}
+
+	if (m_pNpcList[]->m_bIsApocalypseBoss == TRUE) {
+		for (i = 1; i < DEF_MAXCLIENTS; i++)
+		var_BC = m_pNpcList[iNpcH]->m_cMapIndex;
+		if (m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE) && (var_BC >= 0) && (var_BC < DEF_MAXMAPS) {
+			if ((m_pMapList[var_BC] != NULL) && (m_pMapList[var_BC]->m_bRecallImpossible == TRUE)) {
+				m_pClientList[]->m_iTimeLeft_ForceRecall = 200;
+				m_pClientList[i]->m_bIsImpossibleZone = TRUE;
+				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_FORCERECALLTIME,  m_pClientList[iClientH]->m_iTimeLeft_ForceRecall , NULL, NULL, NULL);
+			}
+		}
+	}

@@ -1,0 +1,378 @@
+aresden : 255, 0, 0
+elvine : 55,154,255
+rare : 246, 255, 0
+gmitems : 255, 120, 0
+majestic items : 0, 18, 255
+-----------------
+
+Lets start with opening Game.cpp, go all the way to the top, were gonna do it in order, now find this:
+
+Code: Select all
+m_bIsSpecial = FALSE;
+
+
+Under it add:
+
+Code: Select all
+m_bIsUnadvised= FALSE;
+
+
+Next find:
+
+Code: Select all
+if(m_bIsSpecial)
+   {   PutString(sX + 35, sY + 20, cTxt, RGB(0,255,50));
+      PutString(sX + 36, sY + 20, cTxt, RGB(0,255,50));
+
+
+Under that add:
+
+Code: Select all
+}else if(m_bIsUnadvised)
+   {   PutString(sX + 35, sY + 20, cTxt, RGB(0, 0, 255));
+      PutString(sX + 36, sY + 20, cTxt, RGB(0, 0, 255));
+
+
+Next Find:
+
+Code: Select all
+m_bIsSpecial = FALSE;
+
+
+Under that add:
+
+Code: Select all
+m_bIsUnadvised = FALSE;
+
+
+Find this again:
+
+Code: Select all
+m_bIsSpecial = FALSE;
+
+
+And under it add:
+
+Code: Select all
+m_bIsUnadvised= FALSE;
+
+
+Now find:
+
+Code: Select all
+{   if(m_bIsSpecial)
+            PutString(msX, msY +25, cStr1, RGB(0,255,50), FALSE, 1);
+
+And under add:
+
+Code: Select all
+else if(m_bIsUnadvised)
+            PutString(msX, msY +25, cStr1, RGB(0, 0, 255), FALSE, 1);
+
+
+Now find:
+
+Code: Select all
+if(m_bIsSpecial)
+               PutAlignedString(sX + 70, sX + szX, sY + iLoc, cStr1, 0, 255, 50 );
+
+
+And under that add:
+Code: Select all
+else if(m_bIsUnadvised)
+               PutAlignedString(sX + 70, sX + szX, sY + iLoc, cStr1, 0, 0, 255);
+
+
+Now find:
+
+Code: Select all
+{   if (m_bIsSpecial)
+               PutAlignedString(sX, sX+szX, sY + 110 + i*15, cStr1, 0, 255, 50 );
+
+
+And under add:
+Code: Select all
+else if(m_bIsUnadvised)
+               PutAlignedString(sX, sX+szX, sY + 110 + i*15, cStr1, 0, 0, 255);
+
+
+Now find:
+
+Code: Select all
+if (m_bIsSpecial)
+               {   PutAlignedString(sX + 15, sX + 155, sY + 215, cTxt, 0,255,50);
+                  PutAlignedString(sX + 16, sX + 156, sY + 215, cTxt, 0,255,50);
+
+
+And under add:
+
+Code: Select all
+}else if(m_bIsUnadvised)
+               {   PutAlignedString(sX + 15, sX + 155, sY + 215, cTxt, 0, 0, 255);
+                  PutAlignedString(sX + 16, sX + 156, sY + 215, cTxt, 0, 0, 255);
+
+
+Now find:
+
+Code: Select all
+if (m_bIsSpecial)
+               {   PutAlignedString(sX + 15, sX + 155, sY + 215, cTxt, 0,255,50);
+                  PutAlignedString(sX + 16, sX + 156, sY + 215, cTxt, 0,255,50);
+
+
+And under add:
+
+Code: Select all
+}else if(m_bIsUnadvised)
+               {   PutAlignedString(sX + 15, sX + 155, sY + 215, cTxt, 0, 0, 255);
+                  PutAlignedString(sX + 16, sX + 156, sY + 215, cTxt, 0, 0, 255);
+
+
+Now find:
+
+Code: Select all
+if(m_bIsSpecial)
+               PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 0,255,50);
+
+
+and under add:
+
+Code: Select all
+else if(m_bIsUnadvised)
+               PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 0, 0, 255);
+
+
+Now find this function:
+
+Code: Select all
+void CGame::DrawDialogBox_SellList(short msX, short msY)
+
+
+And replace that whole function with:
+
+Code: Select all
+void CGame::DrawDialogBox_SellList(short msX, short msY)
+{
+short sX, sY, szX;
+int  i, iItem;
+char cTemp[255], cStr1[64], cStr2[64], cStr3[64];
+
+   sX = m_stDialogBoxInfo[31].sX;
+   sY = m_stDialogBoxInfo[31].sY;
+   szX = m_stDialogBoxInfo[31].sSizeX;
+
+   DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
+   DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 11);
+
+   iItem = 0;
+   for (i = 0; i < DEF_MAXSELLLIST; i++)
+   if (m_stSellItemList[i].iIndex != -1)
+   {
+      ZeroMemory(cTemp, sizeof(cTemp));
+      GetItemName(m_pItemList[m_stSellItemList[i].iIndex]->m_cName, m_pItemList[m_stSellItemList[i].iIndex]->m_dwAttribute, cStr1, cStr2, cStr3);
+      if (m_stSellItemList[i].iAmount > 1 )
+      {   wsprintf(cTemp, DRAW_DIALOGBOX_SELL_LIST1, m_stSellItemList[i].iAmount, cStr1);
+         if ((msX > sX + 25) && (msX < sX + 250) && (msY >= sY + 55 + i*15) && (msY <= sY + 55 + 14 + i*15))
+             PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 255,255,255);
+         else
+         {
+            if(m_bIsSpecial)
+               PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 0,255,50);
+            else if(m_bIsUnadvised)
+               PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 0, 0, 255);
+            else
+               PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 45,25,25);
+         }
+      }
+      else
+      {
+         if ((msX > sX + 25) && (msX < sX + 250) && (msY >= sY + 55 + i*15) && (msY <= sY + 55 + 14 + i*15))
+         {
+            if( (strlen(cStr2)==0) && (strlen(cStr3)==0) ) PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 255,255,255);
+            else
+            {
+               ZeroMemory( G_cTxt, sizeof(G_cTxt) );
+               if( (strlen(cStr1)+strlen(cStr2)+strlen(cStr3)) < 36 )
+               {
+                  if( (strlen(cStr2)>0) && (strlen(cStr3)>0) ) wsprintf( G_cTxt, "%s(%s, %s)", cStr1, cStr2, cStr3 );
+                  else wsprintf( G_cTxt, "%s(%s%s)", cStr1, cStr2, cStr3 );
+                  PutAlignedString(sX, sX+szX, sY + 55 + i*15, G_cTxt, 255,255,255);
+
+               }
+               else
+               {
+                  if( (strlen(cStr2)>0) && (strlen(cStr3)>0) ) wsprintf( G_cTxt, "(%s, %s)", cStr2, cStr3 );
+                  else wsprintf( G_cTxt, "(%s%s)", cStr2, cStr3 );
+                  PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 255,255,255);
+                  PutAlignedString(sX, sX+szX, sY + 55 + i*15 + 15, G_cTxt, 200,200,200);
+                  i++;
+               }
+            }
+         }else
+         {   if( (strlen(cStr2)==0) && (strlen(cStr3)==0) )
+            {   if(m_bIsSpecial)
+                  PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 0,255,50);
+               else if(m_bIsUnadvised)
+                  PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 0, 0, 255);
+               else
+                  PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 45,25,25);
+            }else
+            {   ZeroMemory( G_cTxt, sizeof(G_cTxt) );
+               if( (strlen(cStr1)+strlen(cStr2)+strlen(cStr3)) < 36 )
+               {
+                  if( (strlen(cStr2)>0) && (strlen(cStr3)>0) ) wsprintf( G_cTxt, "%s(%s, %s)", cStr1, cStr2, cStr3 );
+                  else wsprintf( G_cTxt, "%s(%s%s)", cStr1, cStr2, cStr3 );
+
+                  if(m_bIsSpecial)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, G_cTxt, 0,255,50);
+                  else if(m_bIsUnadvised)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, G_cTxt, 0, 0, 255);
+                  else
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, G_cTxt, 45,25,25);
+
+               }
+               else
+               {   if(m_bIsSpecial)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 0,255,50);
+                  else if(m_bIsAresHero)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 255,0,0);
+                  else if(m_bIsElvHero)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 7,142,241);
+                  else if(m_bIsRare)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 240,240,0);
+                  else if(m_bIsVeryRare)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 169,169,14);
+                  else if(m_bIsUltraRare)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 135, 104, 30);
+                  else if(m_bIsUnadvised)
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 0, 0, 255);
+                  else
+                     PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 45,25,25);
+               }
+            }
+         }
+      }
+   }
+   else iItem++;
+
+   if (iItem == DEF_MAXSELLLIST) {
+      PutAlignedString(sX, sX+szX, sY + 55 + 30 + 282 -117 -170, DRAW_DIALOGBOX_SELL_LIST2);//"
+      PutAlignedString(sX, sX+szX, sY + 55 + 45 + 282 -117 -170, DRAW_DIALOGBOX_SELL_LIST3);//"
+      PutAlignedString(sX, sX+szX, sY + 55 + 60 + 282 -117 -170, DRAW_DIALOGBOX_SELL_LIST4);//"
+      PutAlignedString(sX, sX+szX, sY + 55 + 75 + 282 -117 -170, DRAW_DIALOGBOX_SELL_LIST5);//"
+      PutAlignedString(sX, sX+szX, sY + 55 + 95 + 282 -117 -170, DRAW_DIALOGBOX_SELL_LIST6);//"
+      PutAlignedString(sX, sX+szX, sY + 55 + 110 + 282 -117 -170,DRAW_DIALOGBOX_SELL_LIST7);//"
+      PutAlignedString(sX, sX+szX, sY + 55 + 125 + 282 -117 -170,DRAW_DIALOGBOX_SELL_LIST8);//"
+      PutAlignedString(sX, sX+szX, sY + 55 + 155 + 282 -117 -170,DRAW_DIALOGBOX_SELL_LIST9);//"
+
+   }
+
+   if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY) && (iItem < DEF_MAXSELLLIST) )
+       DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 39);
+   else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 38);
+
+   if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))
+       DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 17);
+   else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 16);
+}
+
+
+Now find:
+
+Code: Select all
+if(m_bIsSpecial)
+      {
+         PutAlignedString(sX + 25, sX + 240, sY + 60, cTxt, 0,255,50);
+         PutAlignedString(sX + 25 +1, sX + 240 +1, sY + 60, cTxt, 0,255,50);
+      }
+
+
+And under that add:
+
+Code: Select all
+else if(m_bIsUnadvised)
+      {
+         PutAlignedString(sX + 25, sX + 240, sY + 60, cTxt, 0, 0, 255);
+         PutAlignedString(sX + 25 +1, sX + 240 +1, sY + 60, cTxt, 0, 0, 255);
+      }
+
+
+Now find:
+
+Code: Select all
+if(m_bIsSpecial)
+      {   PutAlignedString(sX + 25, sX + 240, sY + 60, cTxt, 0,255,50);
+         PutAlignedString(sX + 25 +1, sX + 240 +1, sY + 60, cTxt, 0,255,50);
+
+And under add:
+
+Code: Select all
+}else if(m_bIsUnadvised)
+      {   PutAlignedString(sX + 25, sX + 240, sY + 60, cTxt, 0, 0, 255);
+         PutAlignedString(sX + 25 +1, sX + 240 +1, sY + 60, cTxt, 0, 0, 255);
+
+
+Now find this function:
+
+Code: Select all
+void CGame::GetItemName(CItem *pItem, char *pStr1, char *pStr2, char *pStr3)
+
+
+In that function add:
+
+Code: Select all
+#ifdef DEF_UNADVISED_STATUS
+        if (0 == memcmp(pItem->m_cName,"Dagger", 6)) m_bIsUnadvised= TRUE;
+   else if (0 == memcmp(pItem->m_cName,"ShortSword", 10)) m_bIsUnadvised= TRUE;
+#endif
+
+
+Now find this function:
+
+Code: Select all
+void CGame::GetItemName(char * cItemName, DWORD dwAttribute, char *pStr1, char *pStr2, char *pStr3)
+
+
+In that function add:
+
+Code: Select all
+#ifdef DEF_UNADVISED_STATUS
+        if (0 == memcmp(cItemName,"Dagger", 6)) m_bIsUnadvised = TRUE;
+   else if (0 == memcmp(cItemName,"ShortSword", 10)) m_bIsUnadvised= TRUE;
+#endif
+
+
+
+Now for Game.h
+
+Add this:
+
+Code: Select all
+   BOOL m_bIsUnadvised;
+
+
+
+Now for GlobalDef.h:
+
+Add this:
+
+Code: Select all
+#define DEF_UNADVISED_STATUS
+
+
+( Now go in game and create a dagger, and see if its font is Dark Blue, if so it worked )
+"If you have any questions add my msn hbchronicle@hotmail.com, and ill help best i can.)
+
+
+
+
+
+
+
+----------------
+Your code should now look like:
+
+#ifdef DEF_SPECIAL_STATUS
+if (0 == memcmp(cItemName,"Eldiniel", 8)) m_bIsSpecial = TRUE;
+else if (0 == memcmp(cItemName,"Aresien", 7)) m_bIsSpecial = TRUE;
+#endif

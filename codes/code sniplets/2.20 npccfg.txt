@@ -1,0 +1,565 @@
+On:
+int CGame::bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, BOOL bHideGenMode, BOOL bIsSummoned, BOOL bFirmBerserk, BOOL bIsMaster, int iGuildGUID)
+
+Search For:
+
+		// °íÁ¤ Berserk »óÅÂ Ãß°¡.
+		if (bFirmBerserk == TRUE) {
+			m_pNpcList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] = 1;
+			m_pNpcList[i]->m_iStatus = m_pNpcList[i]->m_iStatus | 0x20;
+
+Under It Add:
+                        m_pNpcList[i]->m_iExpDice *= 2;
+
+So It Will Be Like This:
+
+		// °íÁ¤ Berserk »óÅÂ Ãß°¡.
+		if (bFirmBerserk == TRUE) {
+			m_pNpcList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] = 1;
+			m_pNpcList[i]->m_iStatus = m_pNpcList[i]->m_iStatus | 0x20;
+                        m_pNpcList[i]->m_iExpDice *= 2;
+		}
+
+Change Your Entire BOOL CGame::_bDecodeNpcConfigFileContents(char * pData, DWORD dwMsgSize) Function To This:
+
+BOOL CGame::_bDecodeNpcConfigFileContents(char * pData, DWORD dwMsgSize)
+{
+ char * pContents, * token, cTxt[120];
+ char seps[] = "= \t\n";
+ char cReadModeA = 0;
+ char cReadModeB = 0;
+ int  iNpcConfigListIndex = 0;
+ class CStrTok * pStrTok;
+
+	pContents = new char[dwMsgSize+1];
+	ZeroMemory(pContents, dwMsgSize+1);
+	memcpy(pContents, pData, dwMsgSize);
+
+	pStrTok = new class CStrTok(pContents, seps);
+	token = pStrTok->pGet();
+	//token = strtok(pContents, seps);
+	while( token != NULL ) {
+		if (cReadModeA != 0) {
+			switch (cReadModeA) {
+			case 1:
+				switch (cReadModeB) {
+				case 1:
+					// NPC �̸�
+					if (strlen(token) > 20)	{
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Too long Npc name.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					ZeroMemory(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName, sizeof(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName));
+					memcpy(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName, token, strlen(token));
+					cReadModeB = 2;
+					break;
+				case 2:
+					// m_sType
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_sType = atoi(token);
+					cReadModeB = 3;
+					break;
+				case 3:
+					// m_iHitDice
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iHitDice = atoi(token);
+					cReadModeB = 4;
+					break;
+				case 4:
+					// m_iDefenseRatio
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iDefenseRatio = atoi(token);
+					cReadModeB = 5;
+					break;
+				case 5:
+					// m_iHitRatio
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iHitRatio = atoi(token);
+					cReadModeB = 6;
+					break;
+				case 6:
+					// m_iMinBravery
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iMinBravery = atoi(token);
+					cReadModeB = 7;
+					break;
+				case 7:
+					// m_iExpDice
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDice = atoi(token);
+					cReadModeB = 8;
+					break;
+
+				case 8:
+					// m_cAttackDiceThrow
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceThrow = atoi(token);
+					cReadModeB = 9;
+					break;
+
+				case 9:
+					// m_cAttackDiceRange
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceRange = atoi(token);
+					cReadModeB = 10;
+					break;
+
+				case 10:
+					// m_cSize
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cSize = atoi(token);
+					cReadModeB = 11;
+					break;
+
+				case 11:
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cSide = atoi(token);
+					cReadModeB = 12;
+					break;
+				
+				case 12:
+					// ActionLimit 
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cActionLimit = atoi(token);
+					cReadModeB = 13;
+					break;
+
+				case 13:
+					// Action Time
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_dwActionTime = atoi(token);
+					cReadModeB = 14;
+					break;
+
+				case 14:
+					// ResistMagic
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cResistMagic = atoi(token);
+					cReadModeB = 15;
+					break;
+
+				case 15:
+					// cMagicLevel
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cMagicLevel = atoi(token);
+					cReadModeB = 16;
+					break;
+
+				case 16:
+					// cGenDayWeekLimit  // Ư�� ���Ͽ��� �����Ǵ� ���Ϳ��� 
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cDayOfWeekLimit = atoi(token);
+					cReadModeB = 17;
+					break;
+
+				case 17:
+					// cChatMsgPresence
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cChatMsgPresence = atoi(token);
+					
+					if (m_pNpcConfigList[iNpcConfigListIndex]->m_cChatMsgPresence == 1) {
+						// ����� ä�� �޽����� �����Ѵ�. ������ �о� �����Ѵ�. 
+
+
+					}
+					cReadModeB = 18;
+					break;
+
+				case 18:
+					// m_cTargetSearchRange
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cTargetSearchRange = atoi(token);
+										
+					cReadModeB = 19;
+					break;		
+
+				case 19:
+					// Npc �� ���������� �ð�
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_dwRegenTime = atoi(token);
+										
+					cReadModeB = 20;
+					break;
+
+				case 20:
+					// Attribute
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_cAttribute = atoi(token);
+										
+					cReadModeB = 21;
+					break;
+
+				case 21:
+					// Absorb Magic Damage
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iAbsDamage = atoi(token);
+					
+					cReadModeB = 22;
+					break;
+
+				case 22:
+					// Maximum Mana Point
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iMaxMana = atoi(token);
+					
+					cReadModeB = 23;
+					break;
+
+				case 23:
+					// MagicHitRatio
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iMagicHitRatio = atoi(token);
+									
+					cReadModeB = 24;
+					break;
+
+				case 24:
+					// AttackRange
+					if (_bGetIsStringIsNumber(token) == FALSE) {
+						PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
+						delete pContents;
+						delete pStrTok;
+						return FALSE;
+					}
+					m_pNpcConfigList[iNpcConfigListIndex]->m_iAttackRange = atoi(token);
+					
+					cReadModeA = 0;
+					cReadModeB = 0;
+					iNpcConfigListIndex++;
+					break;
+				}
+				break;
+
+			case 2:
+				m_iPlayerMaxLevel = atoi(token);
+				cReadModeA = 0;
+				cReadModeB = 0;
+				break;
+
+			default: 
+				break;
+			}
+		}
+		else {
+			if (memcmp(token, "Npc", 3) == 0) {
+				cReadModeA = 1;
+				cReadModeB = 1;
+				m_pNpcConfigList[iNpcConfigListIndex] = new class CNpc(" ");
+			}
+
+			if (memcmp(token, "world-server-max-level", 22) == 0) {
+				cReadModeA = 2;
+				cReadModeB = 1;
+			}
+		}
+		token = pStrTok->pGet();
+		//token = strtok(NULL, seps);
+	}	
+
+	delete pStrTok;
+	delete pContents;
+
+	if ((cReadModeA != 0) || (cReadModeB != 0)) {
+		PutLogList("(!!!) CRITICAL ERROR! NPC configuration file contents error!");
+		return FALSE;
+	}
+
+	wsprintf(cTxt, "(!) NPC(Total:%d) configuration - success!", iNpcConfigListIndex);
+	PutLogList(cTxt);
+
+	return TRUE;
+}
+
+Change Your Entire Function BOOL CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char cSA) To This:
+
+BOOL CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char cSA)
+{
+ register int i, iTemp;
+ char cTmpName[21];
+ int sTemp;
+ double dV1, dV2, dV3;
+
+	ZeroMemory(cTmpName, sizeof(cTmpName));
+	strcpy(cTmpName, pNpcName);
+
+	for (i = 0; i < DEF_MAXNPCTYPES; i++) 
+	if (m_pNpcConfigList[i] != NULL) {
+		if (memcmp(cTmpName, m_pNpcConfigList[i]->m_cNpcName, 20) == 0) {
+			// °°Àº ÀÌ¸§À» °¡Áø NPC ¼³Á¤À» Ã£¾Ò´Ù. ¼³Á¤°ªÀ¸·Î ÃÊ±âÈ­ÇÑ´Ù.
+			ZeroMemory(pNpc->m_cNpcName, sizeof(pNpc->m_cNpcName));
+			memcpy(pNpc->m_cNpcName, m_pNpcConfigList[i]->m_cNpcName, 20);
+			
+			pNpc->m_sType  = m_pNpcConfigList[i]->m_sType;
+			
+			// HitDice¿¡ µû¶ó °ø½ÄÀÌ ´Ù¸£´Ù. ¸÷°£ÀÇ Â÷º°À» µÎ±â À§ÇÔ.
+			if (m_pNpcConfigList[i]->m_iHitDice <= 5)
+				 pNpc->m_iHP  = abs(iDice(m_pNpcConfigList[i]->m_iHitDice, 4) + m_pNpcConfigList[i]->m_iHitDice);
+			else pNpc->m_iHP  = abs((m_pNpcConfigList[i]->m_iHitDice * 4) + m_pNpcConfigList[i]->m_iHitDice + iDice(1, m_pNpcConfigList[i]->m_iHitDice));
+			// v1.4 È®ÀÎÄÚµå
+			if (pNpc->m_iHP == 0) pNpc->m_iHP = 1; 
+
+			pNpc->m_iExp             = iDice(m_pNpcConfigList[i]->m_iExpDice, 4) + m_pNpcConfigList[i]->m_iExpDice;
+			pNpc->m_iHitDice         = m_pNpcConfigList[i]->m_iHitDice;
+                        pNpc->m_iExpDice           = m_pNpcConfigList[i]->m_iExpDice; 
+			pNpc->m_iDefenseRatio    = m_pNpcConfigList[i]->m_iDefenseRatio;
+			pNpc->m_iHitRatio        = m_pNpcConfigList[i]->m_iHitRatio;
+			pNpc->m_iMinBravery      = m_pNpcConfigList[i]->m_iMinBravery;
+			pNpc->m_cAttackDiceThrow = m_pNpcConfigList[i]->m_cAttackDiceThrow;
+			pNpc->m_cAttackDiceRange = m_pNpcConfigList[i]->m_cAttackDiceRange;
+			pNpc->m_cSize            = m_pNpcConfigList[i]->m_cSize;
+			pNpc->m_cSide            = m_pNpcConfigList[i]->m_cSide;
+			pNpc->m_cActionLimit     = m_pNpcConfigList[i]->m_cActionLimit;
+			pNpc->m_dwActionTime     = m_pNpcConfigList[i]->m_dwActionTime;
+			pNpc->m_dwRegenTime      = m_pNpcConfigList[i]->m_dwRegenTime;
+			pNpc->m_cResistMagic     = m_pNpcConfigList[i]->m_cResistMagic;
+			pNpc->m_cMagicLevel      = m_pNpcConfigList[i]->m_cMagicLevel;
+			pNpc->m_iMaxMana         = m_pNpcConfigList[i]->m_iMaxMana; // v1.4
+			pNpc->m_iMana            = m_pNpcConfigList[i]->m_iMaxMana;
+			pNpc->m_cChatMsgPresence = m_pNpcConfigList[i]->m_cChatMsgPresence;
+			pNpc->m_cDayOfWeekLimit  = m_pNpcConfigList[i]->m_cDayOfWeekLimit;
+			pNpc->m_cTargetSearchRange = m_pNpcConfigList[i]->m_cTargetSearchRange;
+			
+			switch (sClass) {
+			case 43:
+			case 44:
+			case 45:
+			case 46:
+			case 47: // ÀüÀï¿ë À¯´ÖÀÇ °æ¿ì ¹«Á¶°Ç °ø°Ý¸¸ ÇÏ´Â Àü·«À» ±¸»ç.
+				pNpc->m_iAttackStrategy = DEF_ATTACKAI_NORMAL;
+				break;
+
+			default: 
+				pNpc->m_iAttackStrategy = iDice(1,10); 
+				break;
+			}
+	
+			pNpc->m_iAILevel		   = iDice(1,3);
+			pNpc->m_iAbsDamage         = m_pNpcConfigList[i]->m_iAbsDamage;
+			pNpc->m_iMagicHitRatio     = m_pNpcConfigList[i]->m_iMagicHitRatio;
+			pNpc->m_iAttackRange       = m_pNpcConfigList[i]->m_iAttackRange;
+			pNpc->m_cSpecialAbility    = cSA;
+			pNpc->m_iBuildCount		   = m_pNpcConfigList[i]->m_iMinBravery;
+
+			// v1.411 NPCÀÇ Æ¯¼ö È¿°ú °è»ê. °æÇèÄ¡ °¡Áß 
+			switch (pNpc->m_cSpecialAbility) {
+			case 1:
+				dV2 = (double)pNpc->m_iExp;
+				dV3 = 25.0f/100.0f;
+				dV1 = dV2 * dV3;
+				pNpc->m_iExp += (int)dV1;
+				break;
+
+			case 2:
+				dV2 = (double)pNpc->m_iExp;
+				dV3 = 30.0f/100.0f;
+				dV1 = dV2 * dV3;
+				pNpc->m_iExp += (int)dV1;
+				break;
+			
+			case 3: // Absorbing Physical Damage
+				if (pNpc->m_iAbsDamage > 0) {
+					// ±âº»ÀûÀ¸·Î ¸¶¹ý ´ë¹ÌÁö Àý°¨ ´É·ÂÀÌ ÀÖ´Â °æ¿ì ¹°¸® ´ë¹ÌÁö Àý°¨Àº Àû¿ëµÇÁö ¾Ê´Â´Ù. 
+					pNpc->m_cSpecialAbility = NULL;
+					cSA = NULL;
+				}
+				else {
+					iTemp = 20 + iDice(1, 60);
+					pNpc->m_iAbsDamage -= iTemp;
+					if (pNpc->m_iAbsDamage < -90) pNpc->m_iAbsDamage = -90;
+				}
+
+				dV2 = (double)pNpc->m_iExp;
+				dV3 = (double)abs(pNpc->m_iAbsDamage)/100.0f;
+				dV1 = dV2 * dV3;
+				pNpc->m_iExp += (int)dV1;
+				break;
+
+			case 4: // Absorbing Magical Damage
+				if (pNpc->m_iAbsDamage < 0) {
+					// ±âº»ÀûÀ¸·Î ¹°¸® ´ë¹ÌÁö Àý°¨ ´É·ÂÀÌ ÀÖ´Â °æ¿ì ¸¶¹ý ´ë¹ÌÁö Àý°¨Àº Àû¿ëµÇÁö ¾Ê´Â´Ù. 
+					pNpc->m_cSpecialAbility = NULL;
+					cSA = NULL;
+				}
+				else {
+					iTemp = 20 + iDice(1, 60);
+					pNpc->m_iAbsDamage += iTemp;
+					if (pNpc->m_iAbsDamage > 90) pNpc->m_iAbsDamage = 90;
+				}
+
+				dV2 = (double)pNpc->m_iExp;
+				dV3 = (double)(pNpc->m_iAbsDamage)/100.0f;
+				dV1 = dV2 * dV3;
+				pNpc->m_iExp += (int)dV1;
+				break;
+
+			case 5:
+				dV2 = (double)pNpc->m_iExp;
+				dV3 = 15.0f/100.0f;
+				dV1 = dV2 * dV3;
+				pNpc->m_iExp += (int)dV1;
+				break;
+
+			case 6:
+			case 7:
+				dV2 = (double)pNpc->m_iExp;
+				dV3 = 20.0f/100.0f;
+				dV1 = dV2 * dV3;
+				pNpc->m_iExp += (int)dV1;
+				break;
+
+			case 8:
+				dV2 = (double)pNpc->m_iExp;
+				dV3 = 25.0f/100.0f;
+				dV1 = dV2 * dV3;
+				pNpc->m_iExp += (int)dV1;
+				break;
+			}
+
+			// v1.411 À§Ä¡ ¿Å±è 
+			pNpc->m_iNoDieRemainExp  = (pNpc->m_iExp) - (pNpc->m_iExp/3);
+
+			// v1.411 NPCÀÇ Æ¯¼ö ´É·Â »ðÀÔ 
+			pNpc->m_iStatus	= pNpc->m_iStatus & 0xFFFFF0FF;
+			sTemp           = cSA;
+			sTemp           = sTemp << 8;
+			pNpc->m_iStatus = pNpc->m_iStatus | sTemp;
+	
+			// v1.41 NPCÀÇ Class»ðÀÔ.
+			pNpc->m_iStatus			   = pNpc->m_iStatus & 0xFFFFFFF0;
+			pNpc->m_iStatus            = pNpc->m_iStatus | (sClass);
+	
+			return TRUE;
+		}
+	}
+
+	// NPC¸®½ºÆ®¸¦ ¸ðµÎ °Ë»öÇßÀ½¿¡µµ ¹ß°ßµÇÁö ¾Ê¾Ò´Ù. 
+	return FALSE;
+}
+
+Now On void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType)
+
+Search For:
+
+pItem->m_dwCount
+
+And change To:
+
+pItem->m_dwCount = (DWORD)(iDice(1, m_pNpcList[iNpcH]->m_iExpDice*2));
+
+The Gold Formula Its The ExpDice x2 so check it out on npc.cfg
+
+Npc.h
+
+Erase ExpDiceMin,Max GoldDiceMin,Max and put Only ExpDice

@@ -1,0 +1,227 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Max Stats Fix (By 50cent)\par
+Tipico bug del clon client, en que los stats se pasan del max stats.\par
+\par
+Abrir ClientSRC:\par
+GlobalDef.h:\par
+Agregar:\par
+C\'f3digo:\par
+#define DEF_MAXSTATS\tab\tab\tab 200//50Cent - Max Stats Fix\par
+Game.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+void CGame::DlgBoxClick_LevelUpSettings(short msX, short msY)\par
+y remplazar todo el metodo por:\par
+C\'f3digo:\par
+//50Cent - Max Stats Fix\par
+void CGame::DlgBoxClick_LevelUpSettings(short msX, short msY)\par
+\{\par
+ short sX, sY;\par
+\par
+\tab sX = m_stDialogBoxInfo[12].sX;\par
+\tab sY = m_stDialogBoxInfo[12].sY;\par
+\tab // Strength UP - Diuuude\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 127) && (msY <= sY + 133) && (m_iStr <= 200) && (m_iLU_Point > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_iLU_Point >= 5) && (m_bIsDialogEnabled[42] == FALSE) && ((m_iStr + m_cLU_Str) <= (DEF_MAXSTATS - 5)))\par
+\tab\tab\tab\{\tab m_iLU_Point -= 5;\par
+\tab\tab\tab\tab m_cLU_Str += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iStr + m_cLU_Str) <= (DEF_MAXSTATS - 1)))\par
+\tab\tab\tab\{\tab m_iLU_Point--;\par
+\tab\tab\tab\tab m_cLU_Str++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Vitality UP - Diuuude\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 146) && (msY <= sY + 152) && (m_iVit <= 200) && (m_iLU_Point > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iVit + m_cLU_Vit) <= (DEF_MAXSTATS - 5)))\par
+\tab\tab\tab\{\tab m_iLU_Point -= 5;\par
+\tab\tab\tab\tab m_cLU_Vit += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iVit + m_cLU_Vit) <= (DEF_MAXSTATS - 1)))\par
+\tab\tab\tab\{\tab m_iLU_Point--;\par
+\tab\tab\tab\tab m_cLU_Vit++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Dexterity UP - Diuuude\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 165) && (msY <= sY + 171) && (m_iDex <= 200) && (m_iLU_Point > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iDex + m_cLU_Dex) <= (DEF_MAXSTATS - 5)))\par
+\tab\tab\tab\{\tab m_iLU_Point -= 5;\par
+\tab\tab\tab\tab m_cLU_Dex += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iDex + m_cLU_Dex) <= (DEF_MAXSTATS - 1)))\par
+\tab\tab\tab\{\tab m_iLU_Point--;\par
+\tab\tab\tab\tab m_cLU_Dex++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Intelligence UP - Diuuude\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 184) && (msY <= sY + 190) && (m_iInt <= 200) && (m_iLU_Point > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iInt + m_cLU_Int) <= (DEF_MAXSTATS - 5)))\par
+\tab\tab\tab\{\tab m_iLU_Point -= 5;\par
+\tab\tab\tab\tab m_cLU_Int += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iInt + m_cLU_Int) <= (DEF_MAXSTATS - 1)))\par
+\tab\tab\tab\{\tab m_iLU_Point--;\par
+\tab\tab\tab\tab m_cLU_Int++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Magic UP - Diuuude\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 203) && (msY <= sY + 209) && (m_iMag <= 200) && (m_iLU_Point > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iMag + m_cLU_Mag) <= (DEF_MAXSTATS - 5)))\par
+\tab\tab\tab\{\tab m_iLU_Point -= 5;\par
+\tab\tab\tab\tab m_cLU_Mag += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iMag + m_cLU_Mag) <= (DEF_MAXSTATS - 1)))\par
+\tab\tab\tab\{\tab m_iLU_Point--;\par
+\tab\tab\tab\tab m_cLU_Mag++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Charisma UP - Diuuude\par
+\tab if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 222) && (msY <= sY + 228) && (m_iCharisma <= 200) && (m_iLU_Point > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iCharisma + m_cLU_Char) <= (DEF_MAXSTATS - 5)))\par
+\tab\tab\tab\{\tab m_iLU_Point -= 5;\par
+\tab\tab\tab\tab m_cLU_Char += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == FALSE) && ((m_iCharisma + m_cLU_Char) <= (DEF_MAXSTATS - 1)))\par
+\tab\tab\tab\{\tab m_iLU_Point--;\par
+\tab\tab\tab\tab m_cLU_Char++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Strength DOWN - Diuuude\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 127) && (msY <= sY + 133) && (m_cLU_Str > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_cLU_Str >= 5)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Str -= 5;\par
+\tab\tab\tab\tab m_iLU_Point += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_cLU_Str > 0)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Str--;\par
+\tab\tab\tab\tab m_iLU_Point++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Vitality DOWN - Diuuude\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 146) && (msY <= sY + 152) && (m_cLU_Vit > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_cLU_Vit >= 5)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Vit -= 5;\par
+\tab\tab\tab\tab m_iLU_Point += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_cLU_Vit > 0)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Vit--;\par
+\tab\tab\tab\tab m_iLU_Point++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Dexterity DOWN - Diuuude\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 165) && (msY <= sY + 171) && (m_cLU_Dex > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_cLU_Dex >= 5)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Dex -= 5;\par
+\tab\tab\tab\tab m_iLU_Point += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_cLU_Dex > 0)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Dex--;\par
+\tab\tab\tab\tab m_iLU_Point++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Intelligence DOWN - Diuuude\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 184) && (msY <= sY + 190) && (m_cLU_Int > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_cLU_Int >= 5)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Int -= 5;\par
+\tab\tab\tab\tab m_iLU_Point += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_cLU_Int > 0)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Int--;\par
+\tab\tab\tab\tab m_iLU_Point++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Magic DOWN - Diuuude\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 203) && (msY <= sY + 209) && (m_cLU_Mag > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_cLU_Mag >= 5)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Mag -= 5;\par
+\tab\tab\tab\tab m_iLU_Point += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_cLU_Mag > 0)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Mag--;\par
+\tab\tab\tab\tab m_iLU_Point++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab // Charisma DOWN - Diuuude\par
+\tab if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 222) && (msY <= sY + 228) && (m_cLU_Char > 0))\par
+\tab\{\tab if (m_bCtrlPressed == TRUE)\par
+\tab\tab\{\tab if ((m_cLU_Char >= 5)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Char -= 5;\par
+\tab\tab\tab\tab m_iLU_Point += 5;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\}else\par
+\tab\tab\{\tab if ((m_cLU_Char > 0)&&(m_bIsDialogEnabled[42] == FALSE))\par
+\tab\tab\tab\{\tab m_cLU_Char--;\par
+\tab\tab\tab\tab m_iLU_Point++;\par
+\tab\tab\tab\}\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+\par
+\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\{\tab if (m_stDialogBoxInfo[12].sV1 != m_iLU_Point)\par
+\tab\tab // Send command to HG - Diuuude, Only if changed - Snoopy\par
+\tab\tab bSendCommand(MSGID_LEVELUPSETTINGS, NULL, NULL, NULL, NULL, NULL, NULL);\par
+\tab\tab //m_cLU_Str = m_cLU_Vit = m_cLU_Dex = m_cLU_Int = m_cLU_Mag = m_cLU_Char = 0;\par
+\tab\tab DisableDialogBox(12);\par
+\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\par
+\tab if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+\tab\{\tab // Change stats with Majestic\par
+\tab\tab if (   (m_iGizonItemUpgra\par
+}
+ 

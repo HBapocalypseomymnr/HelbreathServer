@@ -1,0 +1,466 @@
+IN GAME.CPP
+UpdateScreen_OnLoading --> case 12
+
+add :
+
+
+
+Code: Select all
+m_pSprite[DEF_SPRID_ITEMPACK_PIVOTPOINT+22] = new class CSprite(m_hPakFile, &m_DDraw, "item-pack", 19, FALSE); 
+
+
+
+
+add :
+
+
+
+Code: Select all
+m_pSprite[DEF_SPRID_ITEMGROUND_PIVOTPOINT+22] = new class CSprite(m_hPakFile, &m_DDraw, "item-ground", 19, FALSE); 
+
+
+
+add :
+
+
+Code: Select all
+  MakeSprite( "TutelarAngel1", DEF_SPRID_TUTELARYANGELS_PIVOTPOINT + 50*0, 48, FALSE);//(STR)
+  MakeSprite( "TutelarAngel2", DEF_SPRID_TUTELARYANGELS_PIVOTPOINT + 50*1, 48, FALSE);//(DEX)
+  MakeSprite( "TutelarAngel3", DEF_SPRID_TUTELARYANGELS_PIVOTPOINT + 50*2, 48, FALSE);//(INT)
+  MakeSprite( "TutelarAngel4", DEF_SPRID_TUTELARYANGELS_PIVOTPOINT + 50*3, 48, FALSE);//(MAG) 
+
+
+All the following codes goes right after the check for the berserk flag, in the DrawObject_On........ functions.
+
+In function DrawObject_OnAttack
+
+add :
+
+
+
+Code: Select all
+DrawAngel((_tmp_cDir - 1), sX+20, sY-20, _tmp_cFrame%8, dwTime); 
+
+
+
+In function DrawObject_OnAttackMove
+
+add :
+
+
+
+Code: Select all
+DrawAngel(8+(_tmp_cDir - 1), sX+dx+20, sY+dy-20, _tmp_cFrame%8, dwTime); 
+
+
+
+In function DrawObject_OnMagic
+
+add :
+
+
+
+Code: Select all
+DrawAngel(32+(_tmp_cDir - 1), sX+20, sY-20, _tmp_cFrame%16, dwTime); 
+
+
+In function DrawObject_OnGetItem
+
+add :
+
+
+
+Code: Select all
+DrawAngel(40+(_tmp_cDir - 1), sX+20, sY-20, _tmp_cFrame%4, dwTime); 
+
+
+
+In function DrawObject_OnDamage (2 berserk checks in this function, you have to add this code twice)
+
+add :
+
+
+
+Code: Select all
+DrawAngel(16+(_tmp_cDir - 1), sX+20, sY-20, cFrame%4, dwTime); 
+
+
+
+In function DrawObject_OnDying
+
+add :
+
+
+
+Code: Select all
+DrawAngel(24+(_tmp_cDir - 1), sX+20, sY-20, cFrame%8, dwTime); 
+
+
+
+In function DrawObject_OnMove
+
+add :
+
+
+
+Code: Select all
+DrawAngel(40+(_tmp_cDir - 1), sX+dx+20, sY+dy-20, _tmp_cFrame%4, dwTime); 
+
+
+In function DrawObject_OnDamageMove
+
+add :
+
+
+
+Code: Select all
+DrawAngel(16+(_tmp_cDir - 1), sX+dx+20, sY+dy-20, cFrame%4, dwTime); 
+
+
+
+In function DrawObject_OnStop
+
+add :
+
+
+
+Code: Select all
+DrawAngel(40+(_tmp_cDir - 1), sX+20, sY-20, _tmp_cFrame%4, dwTime); 
+
+
+
+In function DrawObject_OnRun
+
+add :
+
+
+
+Code: Select all
+DrawAngel(40+(_tmp_cDir - 1), sX+dx+20, sY+dy-20, _tmp_cFrame%4, dwTime); 
+
+
+
+
+In function bDlgPress_Character --> if ((m_sPlayerType >= 1) && (m_sPlayerType <= 3))
+
+Find :
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_RFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSpriteFrame;
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 32, sY + 193, sFrame, msX, msY ) )
+  {
+   m_stMCursor.cSelectedObjectType = DEF_SELECTEDOBJTYPE_ITEM;
+   m_stMCursor.sSelectedObjectID   = m_sItemEquipmentStatus[DEF_EQUIPPOS_RFINGER];
+   m_stMCursor.sDistX = 0;
+   m_stMCursor.sDistY = 0;
+   return TRUE;
+  }
+} 
+
+
+Right before, add :
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_LFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSpriteFrame;
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 90, sY + 175, sFrame, msX, msY ) )
+  {
+   m_stMCursor.cSelectedObjectType = DEF_SELECTEDOBJTYPE_ITEM;
+   m_stMCursor.sSelectedObjectID   = m_sItemEquipmentStatus[DEF_EQUIPPOS_LFINGER];
+   m_stMCursor.sDistX = 0;
+   m_stMCursor.sDistY = 0;
+   return TRUE;
+  }
+} 
+
+
+
+In function bDlgPress_Character --> if ((m_sPlayerType >= 4) && (m_sPlayerType <= 6))
+
+Find :
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_RFINGER] != -1) {
+  sSprH  = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSprite;
+  sFrame = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSpriteFrame;
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH +40]->_bCheckCollison(sX + 32, sY + 193, sFrame, msX, msY ) )
+  {
+   m_stMCursor.cSelectedObjectType = DEF_SELECTEDOBJTYPE_ITEM;
+   m_stMCursor.sSelectedObjectID   = m_sItemEquipmentStatus[DEF_EQUIPPOS_RFINGER];
+   m_stMCursor.sDistX = 0;
+   m_stMCursor.sDistY = 0;
+   return TRUE;
+  }
+} 
+
+
+
+Right before, add :
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_LFINGER] != -1) {
+  sSprH  = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSprite;
+  sFrame = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSpriteFrame;
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH +40]->_bCheckCollison(sX + 90, sY + 175, sFrame, msX, msY ) )
+  {
+   m_stMCursor.cSelectedObjectType = DEF_SELECTEDOBJTYPE_ITEM;
+   m_stMCursor.sSelectedObjectID   = m_sItemEquipmentStatus[DEF_EQUIPPOS_LFINGER];
+   m_stMCursor.sDistX = 0;
+   m_stMCursor.sDistY = 0;
+   return TRUE;
+  }
+} 
+
+
+
+In function NotifyMsgHandler --> case DEF_NOTIFY_SPECIALABILITYSTATUS
+
+Find :
+
+
+
+
+Code: Select all
+else if (sV1 == 4) {
+  AddEventList(NOTIFY_MSG_HANDLER31, 10);//"
+  m_iSpecialAbilityType = 0;
+}
+break; 
+
+
+
+
+Replace it with :
+
+
+
+Code: Select all
+else if (sV1 == 4) {
+  AddEventList(NOTIFY_MSG_HANDLER31, 10);//"
+  m_iSpecialAbilityType = 0;
+}
+else if (sV1 == 5) {
+  PlaySound('E', 34, 0);
+}
+break; 
+
+
+
+In function DlgBoxDoubleClick_Character --> if ((m_sPlayerType >= 1) && (m_sPlayerType <= 3))
+
+Find :
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_RFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSpriteFrame;
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 32, sY + 193, sFrame, msX, msY ) )
+   cItemID = cEquipPoiStatus[DEF_EQUIPPOS_RFINGER];
+} 
+
+
+
+Right before, add:
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_LFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSpriteFrame;
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 90, sY + 175, sFrame, msX, msY ) )
+   cItemID = cEquipPoiStatus[DEF_EQUIPPOS_LFINGER];
+} 
+
+
+
+In function DlgBoxDoubleClick_Character --> if ((m_sPlayerType >= 4) && (m_sPlayerType <= 6))
+
+Find :
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_RFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSpriteFrame;
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 32, sY + 193, sFrame, msX, msY ) )
+   cItemID = cEquipPoiStatus[DEF_EQUIPPOS_RFINGER];
+} 
+
+
+
+Right before, add:
+
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_LFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSpriteFrame;
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 90, sY + 175, sFrame, msX, msY ) )
+   cItemID = cEquipPoiStatus[DEF_EQUIPPOS_LFINGER];
+} 
+
+
+
+
+In function DrawDialogbox_Character --> if ((m_sPlayerType >= 1) && (m_sPlayerType <= 3))
+
+Find :
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_RFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSpriteFrame;
+  cItemColor = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_cItemColor;
+
+  if (m_bIsItemDisabled[ cEquipPoiStatus[DEF_EQUIPPOS_RFINGER] ] == FALSE) {
+   if (cItemColor == 0)
+     m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutSpriteFast(sX + 32, sY + 193, sFrame, m_dwCurTime);
+   else m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutSpriteRGB(sX + 32, sY + 193, sFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], m_dwCurTime);
+  }
+  else {
+   if (cItemColor == 0)
+     m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSprite2(sX + 32, sY + 193, sFrame, m_dwCurTime);
+   else m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSpriteRGB(sX + 32, sY + 193, sFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], m_dwCurTime);
+  }
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 32, sY + 193, sFrame, msX, msY ) )
+   cCollison = DEF_EQUIPPOS_RFINGER;
+} 
+
+
+Right before, add:
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_LFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSpriteFrame;
+  cItemColor = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_cItemColor;
+  
+  if (m_bIsItemDisabled[ cEquipPoiStatus[DEF_EQUIPPOS_LFINGER] ] == FALSE) {
+   if (cItemColor == 0)
+     m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutSpriteFast(sX + 90, sY + 175, sFrame, m_dwCurTime);
+   else m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutSpriteRGB(sX + 90, sY + 175, sFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], m_dwCurTime);
+  }
+  else {
+   if (cItemColor == 0)
+     m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSprite2(sX + 90, sY + 175, sFrame, m_dwCurTime);
+   else m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSpriteRGB(sX + 90, sY + 175, sFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], m_dwCurTime);
+  }
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 90, sY + 175, sFrame, msX, msY ) )
+   cCollison = DEF_EQUIPPOS_LFINGER;
+} 
+
+
+
+Few lines below, in if( cCollison != -1 ), add :
+
+
+
+Code: Select all
+else if( cCollison == DEF_EQUIPPOS_LFINGER )
+   m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSprite(sX + 90, sY + 175, sFrame, m_dwCurTime); 
+
+
+
+
+In function DrawDialogbox_Character --> if ((m_sPlayerType >= 4) && (m_sPlayerType <= 6))
+
+Find :
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_RFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_sSpriteFrame;
+  cItemColor = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_RFINGER]]->m_cItemColor;
+
+  if (m_bIsItemDisabled[ cEquipPoiStatus[DEF_EQUIPPOS_RFINGER] ] == FALSE) {
+   if (cItemColor == 0)
+     m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutSpriteFast(sX + 32, sY + 193, sFrame, m_dwCurTime);
+   else m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutSpriteRGB(sX + 32, sY + 193, sFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], m_dwCurTime);
+  }
+  else {
+   if (cItemColor == 0)
+     m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSprite2(sX + 32, sY + 193, sFrame, m_dwCurTime);
+   else m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSpriteRGB(sX + 32, sY + 193, sFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], m_dwCurTime);
+  }
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 32, sY + 193, sFrame, msX, msY ) )
+   cCollison = DEF_EQUIPPOS_RFINGER;
+} 
+
+
+
+Right before, add:
+
+
+Code: Select all
+if (cEquipPoiStatus[DEF_EQUIPPOS_LFINGER] != -1) {
+  sSprH      = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSprite;
+  sFrame     = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_sSpriteFrame;
+  cItemColor = m_pItemList[cEquipPoiStatus[DEF_EQUIPPOS_LFINGER]]->m_cItemColor;
+  
+  if (m_bIsItemDisabled[ cEquipPoiStatus[DEF_EQUIPPOS_LFINGER] ] == FALSE) {
+   if (cItemColor == 0)
+     m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutSpriteFast(sX + 90, sY + 175, sFrame, m_dwCurTime);
+   else m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutSpriteRGB(sX + 90, sY + 175, sFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], m_dwCurTime);
+  }
+  else {
+   if (cItemColor == 0)
+     m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSprite2(sX + 90, sY + 175, sFrame, m_dwCurTime);
+   else m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSpriteRGB(sX + 90, sY + 175, sFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], m_dwCurTime);
+  }
+  if( m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->_bCheckCollison(sX + 90, sY + 175, sFrame, msX, msY ) )
+   cCollison = DEF_EQUIPPOS_LFINGER;
+} 
+
+
+Few lines below, in if( cCollison != -1 ), add :
+
+
+
+Code: Select all
+else if( cCollison == DEF_EQUIPPOS_LFINGER )
+   m_pSprite[DEF_SPRID_ITEMEQUIP_PIVOTPOINT + sSprH]->PutTransSprite(sX + 90, sY + 175, sFrame, m_dwCurTime); 
+
+
+
+Add this func in Game.cpp and declare it in Game.h
+
+
+
+
+Code: Select all
+/*********************************************************************************************************************
+**  void DrawAngel(int iSprite, short sX, short sY, char cFrame, DWORD dwTime)              **
+**  description   : Draws the angel next to your character               **
+**********************************************************************************************************************/
+void CGame::DrawAngel(int iSprite, short sX, short sY, char cFrame, DWORD dwTime)
+{
+
+if  ((_tmp_iStatus & 0x1000) != 0) m_pSprite[DEF_SPRID_TUTELARYANGELS_PIVOTPOINT+iSprite]->PutSpriteFast(sX, sY, cFrame, dwTime);   //AngelicPendant(STR)
+else if ((_tmp_iStatus & 0x2000) != 0) m_pSprite[DEF_SPRID_TUTELARYANGELS_PIVOTPOINT+(50*1)+iSprite]->PutSpriteFast(sX, sY, cFrame, dwTime); //AngelicPendant(DEX)
+else if ((_tmp_iStatus & 0x4000) != 0) m_pSprite[DEF_SPRID_TUTELARYANGELS_PIVOTPOINT+(50*2)+iSprite]->PutSpriteFast(sX, sY-20, cFrame, dwTime);//AngelicPendant(INT)
+else if ((_tmp_iStatus & 0x8000) != 0) m_pSprite[DEF_SPRID_TUTELARYANGELS_PIVOTPOINT+(50*3)+iSprite]->PutSpriteFast(sX, sY-20, cFrame, dwTime);//AngelicPendant(MAG)
+
+} 
+
+
+
+in SpriteID.h
+
+add :
+
+
+Code: Select all
+
+#define DEF_SPRID_TUTELARYANGELS_PIVOTPOINT 10800 

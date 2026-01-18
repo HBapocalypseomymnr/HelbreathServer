@@ -1,0 +1,38 @@
+1. Ok First get a hex editor, I recommend Hex Workshop As its very nice and tidy, And easy to use. 
+
+2. Open the client up in the hex editor 
+
+3. Click on Edit And then "Find" Now once in the search Criteria, Type = Text String
+Value = elvine.wav And in options Select ASCII String.
+
+4. once you have located elvine.wav Look at all the other waves Below it. This is where you Edit. Some people dont need to Hex there client at all. but for others who want music in every map This is the place you add new lines.
+
+5. if you Have a normal Mp3 and you renamed it to Aresden.wav it wouldnt work within the client, Why?.. Because the client can only accept a certain Range in Frequency. and im Talking about sound Frequency. So this is what you do.
+
+6. Downlaod Goldwave and install. for all you people who have no idea what this programme is, Goldwave is Basicly a Sound editor. that can be used for practicly anything to do with Music/sounds. 
+
+7. Once installed Load up Goldwave And then Click on "Open" Now Select the music you want for example "YMCA" and click open. Now once its opened it will start to Decompress the music. wait till its finnished. Once done Click on "File" then "Save as" Save the filename as elvine.wav And as for the format Save that as "PCM unsigned 8 Bit Stereo" < This is what helbreath's Client use's> 
+
+8. ok Now once done put the music you have just saved into your Helbreath/MUSIC folder. Load up the game and hey Presto your music is in game. Do the rest for all the others and your in buisness For people that need Goldwave link is below.
+
+
+
+
+
+
+http://www.goldwell i can play from the server, anything on the lan with server, and people outside of the lan.
+
+how, set client ip to router's external ip as shown either by the router management, or whatismyip.com type of site
+
+*note about this router and one of the later versions*
+(i use a Linksys wrt45gv2 [dont use the v5, they changed the basic firmware and heard it sucks, unless you get the L version])
+
+set set every ip in the server configs to a LAN ip, ex: 192.168.1.50 (something outside of the router DHCP address ranged, and staticed. EXCEPT the External Address in the GameServerConfig [GServer.cfg].
+
+and set the server mode to LAN not internet.
+
+now when you run on anything outside the lan, it is aimed at the router which forwards the ports to server and the server talks back, that works fine.
+
+now for the lan computers the connection still goes to the external ip, which is the router, and when it gets to the router it realizes that its ports to forward are its destination so its sent back to the server under the IP 192.168.1.1 as the same thing happens with all of the clients in the lan
+
+basically thats everything i got going for it wave.com/ 

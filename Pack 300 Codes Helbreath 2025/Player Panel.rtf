@@ -1,0 +1,2908 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 PlayerPanel (by Tomasarg)\par
+buenas\par
+\par
+antes que nada quiero aclarar que algunas partes de este code pertenecen al code el panel del HBCordoba\par
+\par
+todavia hay partes del panel que no tienen efecto ademas pero bueno.\par
+\par
+aca va...\par
+\par
+Esta prohibido el post del code en \par
+cualquier otra comunidad/foro.\par
+\par
+en el CLIENT:\par
+\par
+buscar en game.cpp:\par
+C\'f3digo:\par
+    //Guild Hall Menu Dialog\par
+    m_stDialogBoxInfo[51].sX = 337;\par
+    m_stDialogBoxInfo[51].sY = 57;\par
+    m_stDialogBoxInfo[51].sSizeX = 258;\par
+    m_stDialogBoxInfo[51].sSizeY = 339;\par
+abajo agregar:\par
+C\'f3digo:\par
+    //PlayerPanel\par
+    m_stDialogBoxInfo[52].sX = 358;\par
+    m_stDialogBoxInfo[52].sY = 65;\par
+    m_stDialogBoxInfo[52].sSizeX = 258;\par
+    m_stDialogBoxInfo[52].sSizeY = 339;\par
+en la funcion _bCheckDlgBoxClick buscar:\par
+C\'f3digo:\par
+            case 51:\par
+                DlgBoxClick_CMDHallMenu(msX, msY);\par
+                break;\par
+y abajo agregar:\par
+C\'f3digo:\par
+            //PlayerPanel\par
+            case 52:\par
+                DlgBoxClick_PlayerPanel(msX, msY);\par
+                break;\par
+buscar en la funcion _iCheckDlgBoxFocus\par
+C\'f3digo:\par
+case 40:// resur\par
+abajo agregar:\par
+C\'f3digo:\par
+case 52://PlayerPanel\par
+en la funcion DrawDialogBoxs buscar:\par
+C\'f3digo:\par
+        case 51: // Gail\par
+            DrawDialogBox_CMDHallMenu(msX, msY);\par
+            break;\par
+abajo agregar:\par
+C\'f3digo:\par
+        case 52: //PlayerPanel\par
+            DrawDialogBox_PlayerPanel(msX, msY);\par
+            break;\par
+en la funcion DisableDialogBox buscar:\par
+C\'f3digo:\par
+    case 11:\par
+        for (i = 0; i < DEF_MAXMENUITEMS; i++)\par
+        if (m_pItemForSaleList[i] != NULL) \{\par
+            delete m_pItemForSaleList[i];\par
+            m_pItemForSaleList[i] = NULL;\par
+        \}\par
+        m_stDialogBoxInfo[39].sV3 = 0;\par
+        m_stDialogBoxInfo[39].sV4 = 0; // v1.4\par
+        m_stDialogBoxInfo[39].sV5 = 0;\par
+        m_stDialogBoxInfo[39].sV6 = 0;\par
+        break;\par
+abajo agregar:\par
+C\'f3digo:\par
+    //PlayerPanel\par
+    case 52:\par
+        m_bIsItemDisabled[m_stDialogBoxInfo[52].sView] = FALSE;\par
+        break;\par
+agregar esta funcion:\par
+C\'f3digo:\par
+//PlayerPanel\par
+void CGame::DlgBoxClick_PlayerPanel(int msX, int msY)\par
+\{ short sX, sY;\par
+  char cTemp[21];\par
+  char cMsg[256];\par
+  BOOL bFlagString = FALSE;\par
+\par
+    sX = m_stDialogBoxInfo[52].sX;\par
+    sY = m_stDialogBoxInfo[52].sY;\par
+\par
+    /*if ((msX >= sX+25) && (msX <= sX+DEF_RBTNPOSX-10) && (msY >= sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY+ DEF_BTNSZY)) \par
+    \{\par
+        if((m_iLevel == 377) &&  (m_stDialogBoxInfo[52].cMode = 0)) m_stDialogBoxInfo[52].cMode = 10;\par
+        else m_stDialogBoxInfo[52].cMode = 0;\par
+    \}*/\par
+\par
+    if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY)) \{\par
+        PlaySound('E', 14, 5);\par
+        DisableDialogBox(52);\par
+    \}\par
+\par
+    switch (m_stDialogBoxInfo[52].cMode) \{\par
+    case 0:\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +50+15*0) && (msY < sY +50+15*1)) \{\par
+            DisableDialogBox(18);\par
+            EnableDialogBox(18, 1000, NULL, NULL);\par
+        \}\par
+    \par
+        //Lista de Amigos - Cargando\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*1) && (msY < sY +80+15*2)) \{\par
+            m_stDialogBoxInfo[52].cMode = 1;\par
+        \}\par
+\par
+        //Lista de Guild - Cargando\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*2) && (msY < sY +80+15*3)) \{\par
+            m_stDialogBoxInfo[52].cMode = 2;\par
+        \}\par
+\par
+        //Estadisticas\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*3) && (msY < sY +80+15*4)) \{\par
+            m_stDialogBoxInfo[52].cMode = 3;\par
+        \}\par
+\par
+        //TradeEK\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*4) && (msY < sY +80+15*5)) \{\par
+            EnableDialogBox(53, 3, NULL, NULL);\par
+        \}\par
+\par
+        //Eventos\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*5) && (msY < sY +80+15*6)) \{\par
+            m_stDialogBoxInfo[52].cMode = 5;\par
+        \}\par
+        \par
+        //RaidTime\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*6) && (msY < sY +80+15*7)) \{\par
+            m_stDialogBoxInfo[52].cMode = 6;\par
+        \}\par
+\par
+        //Comandos\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*7) && (msY < sY +80+15*8)) \{\par
+            m_stDialogBoxInfo[52].cMode = 7;\par
+        \}\par
+\par
+        //Staff\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*8) && (msY < sY +80+15*9)) \{\par
+            m_stDialogBoxInfo[52].cMode = 8;\par
+        \}\par
+        break;\par
+\par
+    case 7://Comandos\par
+        if ((msY >= 75+14*1) && (msY <= sY+75+14*12))\par
+        \{    if ((msX >= sX+25) && (msX < sX+139))\par
+            \{    if ((msY >= sY+75+14*1) && (msY <= sY+75+14*2))\par
+                \{    if (msX <= sX+72)\par
+                    \{    strcpy(m_cChatMsg, "/rep+ ");\par
+                        bFlagString = TRUE;\par
+                    \}\par
+                    else\par
+                    \{    strcpy(m_cChatMsg, "/rep- ");\par
+                        bFlagString = TRUE;\par
+                    \}\par
+                \}\par
+                if ((msY >= sY+75+14*2) && (msY <= sY+75+14*3))\par
+                \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                    strcpy(cTemp, "/checkrep");\par
+                    bFlagString = FALSE;\par
+                \}\par
+                if ((msY >= sY+75+14*3) && (msY <= sY+75+14*4))\par
+                \{    strcpy(m_cChatMsg, "/to ");\par
+                    bFlagString = TRUE;\par
+                \}\par
+                if ((msY >= sY+75+14*4) && (msY <= sY+75+14*5))\par
+                \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                    strcpy(cTemp, "/who");\par
+                    bFlagString = FALSE;\par
+                \}\par
+                if ((msY >= sY+75+14*5) && (msY <= sY+75+14*6))\par
+                \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                    strcpy(cTemp, "/admins");\par
+                    bFlagString = FALSE;\par
+                \}\par
+                if ((msY >= sY+75+14*6) && (msY <= sY+75+14*7))\par
+                \{    strcpy(m_cChatMsg, "/fi ");\par
+                    bFlagString = TRUE;\par
+                \}\par
+                if ((msY >= sY+75+14*7) && (msY <= sY+75+14*8))\par
+                \{    strcpy(m_cChatMsg, "/setpf ");\par
+                    bFlagString = TRUE;\par
+                \}\par
+                if ((msY >= sY+75+14*8) && (msY <= sY+75+14*9))\par
+                \{    strcpy(m_cChatMsg, "/pf ");\par
+                    bFlagString = TRUE;\par
+                \}\par
+                if ((msY >= sY+75+14*9) && (msY <= sY+75+14*10))\par
+                \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                    strcpy(cTemp, "/hold");\par
+                    bFlagString = FALSE;\par
+                \}\par
+                if ((msY >= sY+75+14*10) && (msY <= sY+75+14*11))\par
+                \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                    strcpy(cTemp, "/free");\par
+                    bFlagString = FALSE;\par
+                \}\par
+                if ((msY >= sY+75+14*11) && (msY <= sY+75+14*12))\par
+                \{    strcpy(m_cChatMsg, "/tgt ");\par
+                    bFlagString = TRUE;\par
+                \}\par
+                if (bFlagString == TRUE)\par
+                \{    StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                    PlaySound('E', 14, 5);\par
+                    bFlagString = FALSE;\par
+                \}\par
+                else \par
+                \{    bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, cTemp);            \par
+                \}\par
+            \}            \par
+        \}\par
+\par
+//        if ((msY >= sY+75*14*1) && (msY <= sY+75*14*7))\par
+//        \{    if ((msX >= sX+140) && (msX <= sX+220))\par
+            else\par
+            \{    if ((msY >= sY+75*14*1) && (msY <= sY+75*14*2))\par
+                \{    strcpy(m_cChatMsg, "!");\par
+                \}\par
+                if ((msY >= sY+75*14*2) && (msY <= sY+75*14*3))\par
+                \{    strcpy(m_cChatMsg, "/to ");\par
+                \}\par
+                if ((msY >= sY+75*14*3) && (msY <= sY+75*14*4))\par
+                \{    strcpy(m_cChatMsg, "@");\par
+                \}\par
+                if ((msY >= sY+75*14*4) && (msY <= sY+75*14*5))\par
+                \{    strcpy(m_cChatMsg, "^");\par
+                \}\par
+                if ((msY >= sY+75*14*5) && (msY <= sY+75*14*6))\par
+                \{    strcpy(m_cChatMsg, "$");\par
+                \}\par
+                if ((msY >= sY+75*14*6) && (msY <= sY+75*14*7))\par
+                \{    strcpy(m_cChatMsg, "#");\par
+                \}\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+//        \}\par
+\par
+        break;\par
+\par
+    case 10://GMPanel (1)\par
+            /********GM Status & Tools********/\par
+            //Enable\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 85) && (msY < sY + 100))\par
+            \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                strcpy(cTemp, "/enableadmincommand 99");\par
+                bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, cTemp);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+                \par
+            //Obs. Mode On\par
+            if ((msX > sX + 30) && (msX < sX + 107) && (msY > sY + 100) && (msY < sY + 115))\par
+            \{    strcpy(m_cChatMsg, "/setobservermode 1 ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Obs. Mode Off\par
+            if ((msX > sX + 107) && (msX < sX + 125) && (msY > sY + 100) && (msY < sY + 115))\par
+            \{    strcpy(m_cChatMsg, "/setobservermode 0 ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Teleport\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 115) && (msY < sY + 130))\par
+            \{    m_stDialogBoxInfo[52].cMode = 11;\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Admin Attack\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 130) && (msY < sY + 145))\par
+            \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                strcpy(cTemp, "/adminattack");\par
+                bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, cTemp);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Invi On\par
+            if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 145) && (msY < sY + 160))\par
+            \{    strcpy(m_cChatMsg, "/setinvi 1 ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Invi Off\par
+            if ((msX > sX + 75) && (msX < sX + 125) && (msY > sY + 145) && (msY < sY + 160))\par
+            \{    strcpy(m_cChatMsg, "/setinvi 0 ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Event On\par
+            if ((msX > sX + 30) && (msX < sX + 80) && (msY > sY + 160) && (msY < sY + 175))\par
+            \{    strcpy(m_cChatMsg, "/eventon ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Event Off\par
+            if ((msX > sX + 80) && (msX < sX + 125) && (msY > sY + 160) && (msY < sY + 175))\par
+            \{    strcpy(m_cChatMsg, "/eventoff");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Summon\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 175) && (msY < sY + 190))\par
+            \{    m_stDialogBoxInfo[52].cMode = 12;\par
+                PlaySound('E', 14, 5);\par
+            \}    \par
+            //CreateItem\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 190) && (msY < sY + 205))\par
+            \{    strcpy(m_cChatMsg, "/createitem ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Event Tp\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 205) && (msY < sY + 220))\par
+            \{    strcpy(m_cChatMsg, "/tpeventoff");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            /********GM Status & Tools********/\par
+            /********Server Manipulation********/\par
+            //Shut Down\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 243) && (msY < sY + 258))\par
+            \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                strcpy(cTemp, "/shutdownthisserverrightnow");\par
+                bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, cTemp);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Reserve FZ\par
+            if ((msX > sX + 30) && (msX < sX + 80) && (msY > sY + 258) && (msY < sY + 273))\par
+            \{    strcpy(m_cChatMsg, "/reservefightzone ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Attack Mode On\par
+            if ((msX > sX + 30) && (msX < sX + 120) && (msY > sY + 273) && (msY < sY + 288))\par
+            \{    strcpy(m_cChatMsg, "/setattackmode 1 ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Attack Mode Off\par
+            if ((msX > sX + 120) && (msX < sX + 135) && (msY > sY + 273) && (msY < sY + 288))\par
+            \{    strcpy(m_cChatMsg, "/setattackmode 0 ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Disconnect All\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 288) && (msY < sY + 303))\par
+            \{ZeroMemory(cTemp, sizeof(cTemp));\par
+                strcpy(cTemp, "/disconectall");\par
+                bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, cTemp);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Clear Npc\par
+            if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 303) && (msY < sY + 318))\par
+            \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                strcpy(cTemp, "/clearnpc");\par
+                bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, cTemp);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            /********Server Manipulation********/\par
+            /********Player Manipulation********/\par
+            //Kill\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 85) && (msY < sY + 100))\par
+            \{    strcpy(m_cChatMsg, "/kill ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Revive\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 100) && (msY < sY + 115))\par
+            \{    strcpy(m_cChatMsg, "/revive ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Closecon\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 115) && (msY < sY + 130))\par
+            \{    strcpy(m_cChatMsg, "/closecon ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Send\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 130) && (msY < sY + 145))\par
+            \{    strcpy(m_cChatMsg, "/send ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Goto\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 145) && (msY < sY + 160))\par
+            \{    strcpy(m_cChatMsg, "/goto ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Summon All\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 160) && (msY < sY + 175))\par
+            \{    ZeroMemory(cTemp, sizeof(cTemp));\par
+                strcpy(cTemp, "/summonall");\par
+                bSendCommand(MSGID_COMMAND_CHATMSG, NULL, NULL, NULL, NULL, NULL, cTemp);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Summon Player\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 175) && (msY < sY + 190))\par
+            \{    strcpy(m_cChatMsg, "/summonplayer ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Shutup\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 190) && (msY < sY + 205))\par
+            \{    strcpy(m_cChatMsg, "/shutup ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            //Guard Attack\par
+            if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 205) && (msY < sY + 220))\par
+            \{    strcpy(m_cChatMsg, "/attack ");\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+            /********Player Manipulation********/\par
+\par
+        break;\par
+\par
+    case 11://Lista de Teleport\par
+        /********Ares********/\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/tp arefarm ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/tp arebrk11 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/tp arebrk12 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/tp arebrk21 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/tp arebrk22 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/tp aresdend1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 147) && (msY < sY + 158))\par
+        \{    strcpy(m_cChatMsg, "/tp aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 158) && (msY < sY + 169))\par
+        \{    strcpy(m_cChatMsg, "/tp bsmith_1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 169) && (msY < sY + 180))\par
+        \{    strcpy(m_cChatMsg, "/tp cityhall_1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 180) && (msY < sY + 191))\par
+        \{    strcpy(m_cChatMsg, "/tp gldhall_1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 191) && (msY < sY + 202))\par
+        \{    strcpy(m_cChatMsg, "/tp gshop_1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 202) && (msY < sY + 213))\par
+        \{    strcpy(m_cChatMsg, "/tp wzdtwr_1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 213) && (msY < sY + 224))\par
+        \{    strcpy(m_cChatMsg, "/tp wrhus_1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 224) && (msY < sY + 235))\par
+        \{    strcpy(m_cChatMsg, "/tp arewrhus ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 235) && (msY < sY + 246))\par
+        \{    strcpy(m_cChatMsg, "/tp cath_1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 246) && (msY < sY + 257))\par
+        \{    strcpy(m_cChatMsg, "/tp resurr1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/tp areuni ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 268) && (msY < sY + 279))\par
+        \{    strcpy(m_cChatMsg, "/tp arejail ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 279) && (msY < sY + 290))\par
+        \{    strcpy(m_cChatMsg, "/tp CmdHall_1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        /********Ares********/\par
+        /********Elv********/\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/tp elvfarm ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/tp elvbrk11 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/tp elvbrk12 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/tp elvbrk21 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/tp elvbrk22 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/tp elvined1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 147) && (msY < sY + 158))\par
+        \{    strcpy(m_cChatMsg, "/tp elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 158) && (msY < sY + 169))\par
+        \{    strcpy(m_cChatMsg, "/tp bsmith_2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 169) && (msY < sY + 180))\par
+        \{    strcpy(m_cChatMsg, "/tp cityhall_2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 180) && (msY < sY + 191))\par
+        \{    strcpy(m_cChatMsg, "/tp gldhall_2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 191) && (msY < sY + 202))\par
+        \{    strcpy(m_cChatMsg, "/tp gshop_2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 202) && (msY < sY + 213))\par
+        \{    strcpy(m_cChatMsg, "/tp wzdtwr_2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 213) && (msY < sY + 224))\par
+        \{    strcpy(m_cChatMsg, "/tp wrhus_2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 224) && (msY < sY + 235))\par
+        \{    strcpy(m_cChatMsg, "/tp elvwrhus ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 235) && (msY < sY + 246))\par
+        \{    strcpy(m_cChatMsg, "/tp cath_2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 246) && (msY < sY + 257))\par
+        \{    strcpy(m_cChatMsg, "/tp resurr2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/tp elvuni ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 268) && (msY < sY + 279))\par
+        \{    strcpy(m_cChatMsg, "/tp elvjail ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 279) && (msY < sY + 290))\par
+        \{    strcpy(m_cChatMsg, "/tp CmdHall_2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        /********Elv********/\par
+        /********Dungeon********/\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/tp dglv2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/tp dglv3 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/tp dglv4 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/tp middled1x ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/tp midddlen ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/tp druncncity ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 147) && (msY < sY + 158))\par
+        \{    strcpy(m_cChatMsg, "/tp inferniaA ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 158) && (msY < sY + 169))\par
+        \{    strcpy(m_cChatMsg, "/tp inferniaB ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 169) && (msY < sY + 180))\par
+        \{    strcpy(m_cChatMsg, "/tp maze ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 180) && (msY < sY + 191))\par
+        \{    strcpy(m_cChatMsg, "/tp abaddon ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        /********Dungeon********/\par
+        /********Others********/\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 202) && (msY < sY + 213))\par
+        \{    strcpy(m_cChatMsg, "/tp default ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 213) && (msY < sY + 224))\par
+        \{    strcpy(m_cChatMsg, "/tp huntzone1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 224) && (msY < sY + 235))\par
+        \{    strcpy(m_cChatMsg, "/tp huntzone2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 235) && (msY < sY + 246))\par
+        \{    strcpy(m_cChatMsg, "/tp huntzone3 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 246) && (msY < sY + 257))\par
+        \{    strcpy(m_cChatMsg, "/tp huntzone4 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/tp toh1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 268) && (msY < sY + 279))\par
+        \{    strcpy(m_cChatMsg, "/tp toh2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 279) && (msY < sY + 290))\par
+        \{    strcpy(m_cChatMsg, "/tp toh3 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 290) && (msY < sY + 301))\par
+        \{    strcpy(m_cChatMsg, "/tp 2ndmiddle ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 301) && (msY < sY + 312))\par
+        \{    strcpy(m_cChatMsg, "/tp icebound ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 301) && (msY < sY + 312))\par
+        \{    strcpy(m_cChatMsg, "/tp procella ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        /********Others********/\par
+        /********Event********/\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone1 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone2 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone3 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone4 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone5 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone6 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 147) && (msY < sY + 158))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone7 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 158) && (msY < sY + 169))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone8 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 169) && (msY < sY + 180))\par
+        \{    strcpy(m_cChatMsg, "/tp fightzone9 ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 180) && (msY < sY + 191))\par
+        \{    strcpy(m_cChatMsg, "/tp bisle ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 191) && (msY < sY + 202))\par
+        \{    strcpy(m_cChatMsg, "/tp BtField ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 202) && (msY < sY + 213))\par
+        \{    strcpy(m_cChatMsg, "/tp GodH ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 213) && (msY < sY + 224))\par
+        \{    strcpy(m_cChatMsg, "/tp HRampart ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 224) && (msY < sY + 235))\par
+        \{    strcpy(m_cChatMsg, "/tp middleland ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 235) && (msY < sY + 246))\par
+        \{    strcpy(m_cChatMsg, "/tp icebound ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        /********Event********/\par
+        break;\par
+\par
+    case 12://Lista de Summon\par
+        //Lista de Summon - Common\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/summon Dummy ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/summon Slime ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/summon Skeleton ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/summon Orc ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/summon Giant-Ant ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/summon Scorpion ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 147) && (msY < sY + 158))\par
+        \{    strcpy(m_cChatMsg, "/summon Amphis ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 158) && (msY < sY + 169))\par
+        \{    strcpy(m_cChatMsg, "/summon Zombie ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 169) && (msY < sY + 180))\par
+        \{    strcpy(m_cChatMsg, "/summon Stone-Golem ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 180) && (msY < sY + 191))\par
+        \{    strcpy(m_cChatMsg, "/summon Clay-Golem ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 191) && (msY < sY + 202))\par
+        \{    strcpy(m_cChatMsg, "/summon Cyclops ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 202) && (msY < sY + 213))\par
+        \{    strcpy(m_cChatMsg, "/summon Hellbound ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 213) && (msY < sY + 224))\par
+        \{    strcpy(m_cChatMsg, "/summon Troll ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 224) && (msY < sY + 235))\par
+        \{    strcpy(m_cChatMsg, "/summon Giant-Frog ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 235) && (msY < sY + 246))\par
+        \{    strcpy(m_cChatMsg, "/summon Rudolph ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+\par
+        //Lista de Summon - Misc.\par
+        if ((msX > sX + 30) && (msX < sX + 54) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/summon Guard-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 54) && (msX < sX + 68) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/summon Guard-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 68) && (msX < sX + 75) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/summon Guard-Neutral ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 268) && (msY < sY + 279))\par
+        \{    strcpy(m_cChatMsg, "/summon Unicorn ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 279) && (msY < sY + 290))\par
+        \{    strcpy(m_cChatMsg, "/summon Rabbit ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 290) && (msY < sY + 301))\par
+        \{    strcpy(m_cChatMsg, "/summon Cat ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 301) && (msY < sY + 312))\par
+        \{    strcpy(m_cChatMsg, "/summon Crops ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+\par
+        //Lista de Summon - Master\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/summon Orge ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/summon WereWolf ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/summon Cannibal-Plant ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/summon Mountain-Giant ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/summon DireBoar ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/summon Frost ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 147) && (msY < sY + 158))\par
+        \{    strcpy(m_cChatMsg, "/summon Ice-Golem ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 158) && (msY < sY + 169))\par
+        \{    strcpy(m_cChatMsg, "/summon Claw-Turtle ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 169) && (msY < sY + 180))\par
+        \{    strcpy(m_cChatMsg, "/summon Giant-Crayfish ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 180) && (msY < sY + 191))\par
+        \{    strcpy(m_cChatMsg, "/summon Giant-Plant ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 191) && (msY < sY + 202))\par
+        \{    strcpy(m_cChatMsg, "/summon Tentocle ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        \par
+        //Lista de Summon - Helde\par
+        if ((msX > sX + 85) && (msX < sX + 115) && (msY > sY + 213) && (msY < sY + 224))\par
+        \{    strcpy(m_cChatMsg, "/summon CP-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 115) && (msX < sX + 120) && (msY > sY + 213) && (msY < sY + 224))\par
+        \{    strcpy(m_cChatMsg, "/summon CP-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 85) && (msX < sX + 120) && (msY > sY + 224) && (msY < sY + 235))\par
+        \{    strcpy(m_cChatMsg, "/summon Sor-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 125) && (msY > sY + 224) && (msY < sY + 235))\par
+        \{    strcpy(m_cChatMsg, "/summon Sor-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 85) && (msX < sX + 125) && (msY > sY + 235) && (msY < sY + 246))\par
+        \{    strcpy(m_cChatMsg, "/summon ATK-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 125) && (msX < sX + 130) && (msY > sY + 235) && (msY < sY + 246))\par
+        \{    strcpy(m_cChatMsg, "/summon ATK-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 85) && (msX < sX + 128) && (msY > sY + 246) && (msY < sY + 257))\par
+        \{    strcpy(m_cChatMsg, "/summon Elf-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 128) && (msX < sX + 133) && (msY > sY + 246) && (msY < sY + 257))\par
+        \{    strcpy(m_cChatMsg, "/summon Elf-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 85) && (msX < sX + 125) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/summon DSK-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 125) && (msX < sX + 130) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/summon DSK-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 85) && (msX < sX + 124) && (msY > sY + 268) && (msY < sY + 279))\par
+        \{    strcpy(m_cChatMsg, "/summon HBT-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 124) && (msX < sX + 129) && (msY > sY + 268) && (msY < sY + 279))\par
+        \{    strcpy(m_cChatMsg, "/summon HBT-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 85) && (msX < sX + 115) && (msY > sY + 279) && (msY < sY + 290))\par
+        \{    strcpy(m_cChatMsg, "/summon CT-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 115) && (msX < sX + 120) && (msY > sY + 279) && (msY < sY + 290))\par
+        \{    strcpy(m_cChatMsg, "/summon CT-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 85) && (msX < sX + 120) && (msY > sY + 290) && (msY < sY + 301))\par
+        \{    strcpy(m_cChatMsg, "/summon Bar-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 125) && (msY > sY + 290) && (msY < sY + 301))\par
+        \{    strcpy(m_cChatMsg, "/summon Bar-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 85) && (msX < sX + 125) && (msY > sY + 301) && (msY < sY + 312))\par
+        \{    strcpy(m_cChatMsg, "/summon AGC-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 125) && (msX < sX + 130) && (msY > sY + 301) && (msY < sY + 312))\par
+        \{    strcpy(m_cChatMsg, "/summon AGC-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        \par
+        //Lista de Summon - Sade\par
+        if ((msX > sX + 120) && (msX < sX + 150) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/summon AGT-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 150) && (msX < sX + 165) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/summon AGT-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 150) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/summon CGT-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 150) && (msX < sX + 165) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/summon CGT-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 155) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/summon MS-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 155) && (msX < sX + 165) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/summon MS-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 150) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/summon DT-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 150) && (msX < sX + 165) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/summon DT-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 150) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/summon XY-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 150) && (msX < sX + 165) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/summon XY-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 160) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/summon LWB-Aresden ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 160) && (msX < sX + 165) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/summon LWB-Elvine ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 147) && (msY < sY + 158))\par
+        \{    strcpy(m_cChatMsg, "/summon ManaStone ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 158) && (msY < sY + 169))\par
+        \{    strcpy(m_cChatMsg, "/summon GHK ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 169) && (msY < sY + 180))\par
+        \{    strcpy(m_cChatMsg, "/summon TK ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 180) && (msY < sY + 191))\par
+        \{    strcpy(m_cChatMsg, "/summon BG ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        \par
+        //Lista de Summon - Elite\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 81) && (msY < sY + 92))\par
+        \{    strcpy(m_cChatMsg, "/summon Liche ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 92) && (msY < sY + 103))\par
+        \{    strcpy(m_cChatMsg, "/summon Demon ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 103) && (msY < sY + 114))\par
+        \{    strcpy(m_cChatMsg, "/summon Ettin ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 114) && (msY < sY + 125))\par
+        \{    strcpy(m_cChatMsg, "/summon Stalker ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 125) && (msY < sY + 136))\par
+        \{    strcpy(m_cChatMsg, "/summon Gagoyle ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 136) && (msY < sY + 147))\par
+        \{    strcpy(m_cChatMsg, "/summon Beholder ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 147) && (msY < sY + 158))\par
+        \{    strcpy(m_cChatMsg, "/summon Dark-Elf ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 158) && (msY < sY + 169))\par
+        \{    strcpy(m_cChatMsg, "/summon Barlog ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 169) && (msY < sY + 180))\par
+        \{    strcpy(m_cChatMsg, "/summon Centaurus ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 180) && (msY < sY + 191))\par
+        \{    strcpy(m_cChatMsg, "/summon Giant-Lizard ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 191) && (msY < sY + 202))\par
+        \{    strcpy(m_cChatMsg, "/summon MasterMage-Orc ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 202) && (msY < sY + 213))\par
+        \{    strcpy(m_cChatMsg, "/summon Minotaurs ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 213) && (msY < sY + 224))\par
+        \{    strcpy(m_cChatMsg, "/summon Nizie ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        \par
+        //Lista de Summon - Boss\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 235) && (msY < sY + 246))\par
+        \{    strcpy(m_cChatMsg, "/summon Abaddon ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 246) && (msY < sY + 257))\par
+        \{    strcpy(m_cChatMsg, "/summon Fire-Wyvern ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 257) && (msY < sY + 268))\par
+        \{    strcpy(m_cChatMsg, "/summon Wyvern ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 268) && (msY < sY + 279))\par
+        \{    strcpy(m_cChatMsg, "/summon Tigerworm ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 279) && (msY < sY + 290))\par
+        \{    strcpy(m_cChatMsg, "/summon Hellclaw ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+\par
+         break;\par
+\par
+    case 13://Lista de Amigos\par
+        for(int i = 0; i < iTotalFriends; i++)\par
+        \{    if((msX > sX + 35) && (msX < sX + 220) && (msY > sY + (i * 12) + 70) && (msY < sY + (i * 12) + 82))\par
+            \{    if(iIndexSelected == -1) iIndexSelected = i;\par
+                else iIndexSelected = -1;\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+        \}\par
+\par
+        if((msX > sX + 25) && (msX < sX + 80) && (msY > sY + 305) && (msY < sY + 315))\par
+        \{    ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg) );\par
+            strcpy(m_cChatMsg, "/addfriend ");\par
+            StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+\par
+        if((msX > sX + 80) && (msX < sX + 135) && (msY > sY + 305) && (msY < sY + 315))\par
+        \{    if(iIndexSelected != -1)\par
+            \{    ZeroMemory(m_cChatMsg, sizeof(m_cChatMsg));\par
+                wsprintf(cMsg, "/deletefriend %s", m_stFriendList[iIndexSelected].cPlayerName);\par
+                strcpy(m_cChatMsg, cMsg);\par
+                StartInputString(10, 414, sizeof(m_cChatMsg), m_cChatMsg);\par
+            \}\par
+            else\par
+            \{    AddEventList("Selecciona un amigo primero", 10);\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+        \}\par
+\par
+        if((msX > sX + 135) && (msX < sX + 190) && (msY > sY + 305) && (msY < sY + 315))\par
+        \{    m_stDialogBoxInfo[52].cMode = 17;\par
+        \}\par
+\par
+        if((msX > sX + 190) && (msX < sX + 245) && (msY > sY + 305) && (msY < sY + 315))\par
+        \{    AddEventList("Recargando lista...", 10);\par
+            bSendCommand(MSGID_REQUEST_FRIENDLIST, NULL, NULL, NULL, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        \par
+        break;\par
+    \}\par
+\}\par
+en la funcion OnKeyUp buscar:\par
+C\'f3digo:\par
+    case 72: // 'H' // Snoopy: Mimics VK_F1\par
+        if (m_bCtrlPressed && m_cGameMode == DEF_GAMEMODE_ONMAINGAME && (!m_bInputStatus) )\par
+        \{    if (m_bIsDialogEnabled[35] == FALSE)\par
+                EnableDialogBox(35, NULL, NULL, NULL);\par
+            else\par
+            \{    DisableDialogBox(35);\par
+                DisableDialogBox(18);\par
+        \}    \}\par
+        break;\par
+abajo agregar:\par
+C\'f3digo:\par
+case 88://PlayerPanel 'X' mimics VK_F10\par
+        if (m_bCtrlPressed && m_cGameMode == DEF_GAMEMODE_ONMAINGAME && (!m_bInputStatus) )\par
+        \{    if (m_bIsDialogEnabled[52] == FALSE)\par
+            \{    EnableDialogBox(52, NULL, NULL, NULL);\par
+                if (m_iLevel ==377) m_stDialogBoxInfo[52].cMode = 10;\par
+            \}\par
+            else\par
+            \{    switch (m_stDialogBoxInfo[52].cMode)\par
+                \{\par
+                case 0: \par
+                    if (m_iLevel ==377) m_stDialogBoxInfo[52].cMode = 10;\par
+                    else DisableDialogBox(52); \par
+                    break;\par
+                case 10: \par
+                    m_stDialogBoxInfo[52].cMode = 0;\par
+                    break;\par
+                case 11: \par
+                    m_stDialogBoxInfo[52].cMode = 10;\par
+                    break;\par
+                case 12:\par
+                    m_stDialogBoxInfo[52].cMode = 10;\par
+                    break;\par
+                default: \par
+                    m_stDialogBoxInfo[52].cMode = 0;\par
+                    break;\par
+                \}\par
+            \}\par
+        \}\par
+        break;\par
+agregar esta funcion:\par
+C\'f3digo:\par
+//PlayerPanel\par
+void CGame::DrawDialogBox_PlayerPanel(int msX, int msY)\par
+\{ short sX, sY, szX;\par
+\par
+\par
+    sX = m_stDialogBoxInfo[52].sX;\par
+    sY = m_stDialogBoxInfo[52].sY;\par
+    szX = m_stDialogBoxInfo[52].sSizeX;\par
+    \par
+    DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2, FALSE, m_bDialogTrans);\par
+\par
+    /*if ((m_stDialogBoxInfo[52].cMode = 10) || (m_stDialogBoxInfo[52].cMode = 11)) \par
+    \{    if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +50+15*0) && (msY < sY +50+15*1)) \par
+            PutAlignedString(sX, sX+szX, sY + 50 +15*0, DRAW_DIALOGBOX_GMPanel1, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 50 +15*0, DRAW_DIALOGBOX_GMPanel1, 255, 0, 0);\par
+    \}\par
+    else    \par
+    \{    if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +50+15*0) && (msY < sY +50+15*1)) \par
+            PutAlignedString(sX, sX+szX, sY + 50 +15*0, DRAW_DIALOGBOX_PlayerPanel0, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 50 +15*0, DRAW_DIALOGBOX_PlayerPanel0, 255, 0, 0);    \par
+    \}*/\par
+\par
+    /*if ((msX >= sX+25) && (msX <= sX+DEF_RBTNPOSX-10) && (msY >= sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY+ DEF_BTNSZY))\par
+    \{    if(m_iLevel ==377) PutAlignedString(sX+25, sX+DEF_RBTNPOSX-10, sY + DEF_BTNPOSY, DRAW_DIALOGBOX_GMPanel2, 255, 255, 255);\par
+        else  PutAlignedString(sX+25, sX+DEF_RBTNPOSX-10, sY + DEF_BTNPOSY, DRAW_DIALOGBOX_PlayerPanel9, 255, 255, 255);\par
+    \}\par
+    else PutAlignedString(sX+25, sX+DEF_RBTNPOSX-10, sY + DEF_BTNPOSY, DRAW_DIALOGBOX_PlayerPanel9, 4, 0, 50);\par
+    */    \par
+    if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+         DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 1);\par
+    else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 0);\par
+    \par
+    switch (m_stDialogBoxInfo[52].cMode) \{\par
+    case 0:\par
+        PutString_SprFont(sX + (szX / 2)-(8*6),sY+35,"Player Panel",1,1,8);//"Player Panel"\par
+\par
+/*        ZeroMemory(cText, sizeof(cText));\par
+        wsprintf(cText, DRAW_DIALOGBOX_PlayerPanel1, m_iContribution);\par
+        strcat(G_cTxt, cText);\par
+        PutAlignedString(sX+25, sX + szX, sY + 80 + 15*0, G_cTxt);\par
+*/\par
+\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*1) && (msY < sY +80+15*2)) \par
+             PutAlignedString(sX, sX+szX, sY + 80 +15*1, DRAW_DIALOGBOX_PlayerPanel1, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 80 +15*1, DRAW_DIALOGBOX_PlayerPanel1, 4, 0, 50);\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*2) && (msY < sY +80+15*3))\par
+            PutAlignedString(sX, sX+szX, sY + 80 +15*2, DRAW_DIALOGBOX_PlayerPanel2, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 80 +15*2, DRAW_DIALOGBOX_PlayerPanel2, 4, 0, 50);\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*3) && (msY < sY +80+15*4))\par
+            PutAlignedString(sX, sX+szX, sY + 80 +15*3, DRAW_DIALOGBOX_PlayerPanel3, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 80 +15*3, DRAW_DIALOGBOX_PlayerPanel3, 4, 0, 50);\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*4) && (msY < sY +80+15*5))\par
+            PutAlignedString(sX, sX+szX, sY + 80 +15*4, DRAW_DIALOGBOX_PlayerPanel4, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 80 +15*4, DRAW_DIALOGBOX_PlayerPanel4, 4, 0, 50);\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*5) && (msY < sY +80+15*6))\par
+            PutAlignedString(sX, sX+szX, sY + 80 +15*5, DRAW_DIALOGBOX_PlayerPanel5, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 80 +15*5, DRAW_DIALOGBOX_PlayerPanel5, 4, 0, 50);\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*6) && (msY < sY +80+15*7))\par
+            PutAlignedString(sX, sX+szX, sY + 80 +15*6, DRAW_DIALOGBOX_PlayerPanel6, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 80 +15*6, DRAW_DIALOGBOX_PlayerPanel6, 4, 0, 50);\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*7) && (msY < sY +80+15*8))\par
+            PutAlignedString(sX, sX+szX, sY + 80 +15*7, DRAW_DIALOGBOX_PlayerPanel7, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 80 +15*7, DRAW_DIALOGBOX_PlayerPanel7, 4, 0, 50);\par
+        if ((msX >= sX+25) && (msX <= sX+248) && (msY >= sY +80+15*8) && (msY < sY +80+15*9))\par
+            PutAlignedString(sX, sX+szX, sY + 80 +15*8, DRAW_DIALOGBOX_PlayerPanel8, 255, 255, 255);\par
+        else PutAlignedString(sX, sX+szX, sY + 80 +15*8, DRAW_DIALOGBOX_PlayerPanel8, 4, 0, 50);\par
+    \par
+        break;\par
+\par
+    case 1://Lista de Amigos - Cargando\par
+            bSendCommand(MSGID_REQUEST_FRIENDLIST, NULL, NULL, NULL, NULL, NULL, NULL);\par
+            PutAlignedString(sX, sX + szX, sY + 70, "Cargando lista de amigos", 0,0,0);\par
+        break;\par
+\par
+    case 2://Lista de Guild - Cargando\par
+            bSendCommand(MSGID_REQUEST_GUILDLIST, NULL, NULL, NULL, NULL, NULL, NULL);\par
+            PutAlignedString(sX, sX + szX, sY + 70, "Cargando lista de guild", 0,0,0);\par
+        break;\par
+\par
+    case 3://Estadisticas\par
+        PutString_SprFont(sX + (szX / 2)-(8*6),sY+35,"Estadisticas",1,1,8);//"Estadisticas"\par
+        break;\par
+\par
+    case 5://Eventos\par
+        PutString_SprFont(sX + (szX / 2)-(8*3.5),sY+35,"Eventos",1,1,8);//"Eventos"\par
+        break;\par
+\par
+    case 6://Raid Time\par
+        PutString_SprFont(sX + (szX / 2)-(8*4.5),sY+35,"Raid Time",1,1,8);//"Raid Time"\par
+        break;\par
+\par
+    case 7://Comandos\par
+        PutString_SprFont(sX + (szX / 2)-(8*4),sY+35,"Comandos",1,1,8);//"Comandos"\par
+\par
+        PutString2(sX+35, sY+75+14*0, "Commands", 0,255,0);\par
+        PutString2(sX+140, sY+75+14*0, "Chat-Commands", 0,255,0);\par
+    \par
+        if ((msX >= sX+30) && (msX <= sX+30+9*5) && (msY >= sY+75+14*1) && (msY < sY+74+14*2))\par
+            PutString2(sX+30, sY+75+14*1, "Rep (+) /", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*1, "Rep (+) /", 170,170,170);\par
+        if ((msX >= sX+31+9*5) && (msX <= sX+130) && (msY >= sY+75+14*1) && (msY < sY+74+14*2))\par
+            PutString2(sX+30+9*5, sY+75+14*1, " (-)", 255,255,255);\par
+        else PutString2(sX+30+9*5, sY+75+14*1, " (-)", 170,170,170);\par
+\par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*2) && (msY < sY+74+14*3))\par
+            PutString2(sX+30, sY+75+14*2, "Check Rep", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*2, "Check Rep", 170,170,170);\par
+\par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*3) && (msY < sY+74+14*4))\par
+            PutString2(sX+30, sY+75+14*3, "Whisp Player", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*3, "Whisp Player", 170,170,170);\par
+\par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*4) && (msY < sY+74+14*5))\par
+            PutString2(sX+30, sY+75+14*4, "How Many Online?", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*4, "How Many Online?", 170,170,170);\par
+        \par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*5) && (msY < sY+74+14*6))\par
+            PutString2(sX+30, sY+75+14*5, "Admins Online", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*5, "Admins Online", 170,170,170);\par
+        \par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*6) && (msY < sY+74+14*7))\par
+            PutString2(sX+30, sY+75+14*6, "Player Connection", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*6, "Player Connection", 170,170,170);\par
+\par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*7) && (msY < sY+74+14*8))\par
+            PutString2(sX+30, sY+75+14*7, "Set Profile", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*7, "Set Profile", 170,170,170);\par
+\par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*8) && (msY < sY+74+14*9))\par
+            PutString2(sX+30, sY+75+14*8, "Get Profile", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*8, "Get Profile", 170,170,170);\par
+\par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*9) && (msY < sY+74+14*10))\par
+            PutString2(sX+30, sY+75+14*9, "Hold NPC", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*9, "Hold NPC", 170,170,170);\par
+\par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*10) && (msY < sY+74+14*11))\par
+            PutString2(sX+30, sY+75+14*10, "Free NPC", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*10, "Free NPC", 170,170,170);\par
+\par
+        if ((msX >= sX+30) && (msX <= sX+130) && (msY >= sY+75+14*11) && (msY < sY+74+14*12))\par
+            PutString2(sX+30, sY+75+14*11, "TGT NPC", 255,255,255);\par
+        else PutString2(sX+30, sY+75+14*11, "TGT NPC", 170,170,170);\par
+\par
+        PutString2(sX+145, sY+75+14*1, "Global", 255,130,130);\par
+        PutString2(sX+145, sY+75+14*2, "Ally", 130,130,255);\par
+        PutString2(sX+145, sY+75+14*3, "Guild", 130,255,130);\par
+        PutString2(sX+145, sY+75+14*4, "Global Guild", 130,255,130);\par
+        PutString2(sX+145, sY+75+14*5, "Party", 230,230,130);\par
+        PutString2(sX+145, sY+75+14*6, "Out Whisp", 255,255,255);\par
+        break;\par
+\par
+    case 8://Staff\par
+        PutString_SprFont(sX + (szX / 2)-(8*2.5),sY+35,"Staff",1,1,8);//"Staff"\par
+        break;\par
+\par
+    case 10://GMPanel (1)\par
+        PutString_SprFont(sX + (szX / 2)-(8*8),sY+35,"GameMaster Panel",1,1,8);//"GameMaster Panel"\par
+        PutString2(sX+30, sY+70, DEF_CATEG_STATUSTOOLS, 255,200,0);//"GM Status & Tools"\par
+        PutString2(sX+30, sY+228, DEF_CATEG_SERVERMANIP, 255,200,0);//"Server Manipulation"\par
+        PutString2(sX+135, sY+70, DEF_CATEG_PLAYERMANIP, 255,200,0);//"Player Manipulation"\par
+\par
+        /********GM Status & Tools********/\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 85) && (msY < sY + 100))\par
+             PutString2(sX+30, sY+85, DEF_ENABLE, 255,255,255);//"Enable Admin Cmd"\par
+            else PutString2(sX+30, sY+85, DEF_ENABLE, 170,170,170);//"Enable Admin Cmd"\par
+        if ((msX > sX + 30) && (msX < sX + 107) && (msY > sY + 100) && (msY < sY + 115))\par
+             PutString2(sX+30, sY+100, DEF_OBSERVERMODE_ON, 255,255,255);//"Obs. Mode On/"\par
+            else PutString2(sX+30, sY+100, DEF_OBSERVERMODE_ON, 170,170,170);//"Obs. Mode On/"\par
+        if ((msX > sX + 108) && (msX < sX + 125) && (msY > sY + 100) && (msY < sY + 115))\par
+             PutString2(sX+108, sY+100, DEF_OBSERVERMODE_OFF, 255,255,255);//"Off"\par
+            else PutString2(sX+108, sY+100, DEF_OBSERVERMODE_OFF, 170,170,170);//"Off"\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 115) && (msY < sY + 130))\par
+             PutString2(sX+30, sY+115, DEF_TELEPORT, 255,255,255);//"Teleport"\par
+            else PutString2(sX+30, sY+115, DEF_TELEPORT, 170,170,170);//"Teleport"\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 130) && (msY < sY + 145))\par
+             PutString2(sX+30, sY+130, DEF_GMATTACK, 255,255,255);//"Admin Attack Cmd"\par
+            else PutString2(sX+30, sY+130, DEF_GMATTACK, 170,170,170);//"Admin Attack Cmd"\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 145) && (msY < sY + 160))\par
+             PutString2(sX+30, sY+145, DEF_INVI_ON, 255,255,255);//"Invi On/"\par
+            else PutString2(sX+30, sY+145, DEF_INVI_ON, 170,170,170);//"Invi On/"\par
+        if ((msX > sX + 75) && (msX < sX + 125) && (msY > sY + 145) && (msY < sY + 160))\par
+             PutString2(sX+75, sY+145, DEF_INVI_OFF, 255,255,255);//"Off"\par
+            else PutString2(sX+75, sY+145, DEF_INVI_OFF, 170,170,170);//"Off"\par
+        if ((msX > sX + 30) && (msX < sX + 80) && (msY > sY + 160) && (msY < sY + 175))\par
+             PutString2(sX+30, sY+160, DEF_EVENT_ON, 255,255,255);//"Event On/"\par
+            else PutString2(sX+30, sY+160, DEF_EVENT_ON, 170,170,170);//"Event On/"\par
+        if ((msX > sX + 80) && (msX < sX + 125) && (msY > sY + 160) && (msY < sY + 175))\par
+             PutString2(sX+78, sY+160, DEF_EVENT_OFF, 255,255,255);//"Off"\par
+            else PutString2(sX+78, sY+160, DEF_EVENT_OFF, 170,170,170);//"Off"\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 175) && (msY < sY + 190))\par
+             PutString2(sX+30, sY+175, DEF_SUMMON, 255,255,255);//"Summon Cmd"\par
+            else PutString2(sX+30, sY+175, DEF_SUMMON, 170,170,170);//"Summon Cmd"\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 190) && (msY < sY + 205))\par
+             PutString2(sX+30, sY+190, DEF_CREATEITEM, 255,255,255);//"Create Item Cmd"\par
+            else PutString2(sX+30, sY+190, DEF_CREATEITEM, 170,170,170);//"Create Item Cmd"\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 205) && (msY < sY + 220))\par
+             PutString2(sX+30, sY+205, DEF_EVENTTP_OFF, 255,255,255);//"Event Tp Cmd"\par
+            else PutString2(sX+30, sY+205, DEF_EVENTTP_OFF, 170,170,170);//"Event Tp Cmd"\par
+        /********GM Status & Tools********/\par
+        /********Server Manipulation********/\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 243) && (msY < sY + 258))\par
+             PutString2(sX+30, sY+243, DEF_SHUTDOWN, 255,255,255);//"Shut Down Server Cmd"\par
+            else PutString2(sX+30, sY+243, DEF_SHUTDOWN, 170,170,170);//"Shut Down Server Cmd"\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 258) && (msY < sY + 273))\par
+             PutString2(sX+30, sY+258, DEF_RESERVEFZ, 255,255,255);//"Reserve Arena Cmd"\par
+            else PutString2(sX+30, sY+258, DEF_RESERVEFZ, 170,170,170);//"Reserve Arena Cmd"\par
+        if ((msX > sX + 30) && (msX < sX + 120) && (msY > sY + 273) && (msY < sY + 288))\par
+             PutString2(sX+30, sY+273, DEF_SETATTACKMODE_ON, 255,255,255);//"Attack Mode On/"\par
+            else PutString2(sX+30, sY+273, DEF_SETATTACKMODE_ON, 170,170,170);//"Attack Mode On/"\par
+        if ((msX > sX + 120) && (msX < sX + 125) && (msY > sY + 273) && (msY < sY + 288))\par
+             PutString2(sX+120, sY+273, DEF_SETATTACKMODE_OFF, 255,255,255);//"Off"\par
+            else PutString2(sX+120, sY+273, DEF_SETATTACKMODE_OFF, 170,170,170);//"Off"\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 288) && (msY < sY + 303))\par
+             PutString2(sX+30, sY+288, DEF_DISCONNECTALL, 255,255,255);//"Disconnect All Cmd"\par
+            else PutString2(sX+30, sY+288, DEF_DISCONNECTALL, 170,170,170);//"Disconnect All Cmd"\par
+        if ((msX > sX + 30) && (msX < sX + 125) && (msY > sY + 303) && (msY < sY + 318))\par
+             PutString2(sX+30, sY+303, DEF_CLEARNPC, 255,255,255);//"Clear Npc Cmd"\par
+            else PutString2(sX+30, sY+303, DEF_CLEARNPC, 170,170,170);//"Clear Npc Cmd"\par
+        /********Server Manipulation********/\par
+        /********Player Manipulation********/\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 85) && (msY < sY + 100))\par
+             PutString2(sX+135, sY+85, DEF_KILL, 255,255,255);//"Kill Cmd"\par
+            else PutString2(sX+135, sY+85, DEF_KILL, 170,170,170);//"Kill Cmd"\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 100) && (msY < sY + 115))\par
+             PutString2(sX+135, sY+100, DEF_REVIVE, 255,255,255);//"Revive Cmd"\par
+            else PutString2(sX+135, sY+100, DEF_REVIVE, 170,170,170);//"Revive Cmd"\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 115) && (msY < sY + 130))\par
+             PutString2(sX+135, sY+115, DEF_CLOSECON, 255,255,255);//"Close Con. Cmd"\par
+            else PutString2(sX+135, sY+115, DEF_CLOSECON, 170,170,170);//"Close Con. Cmd"\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 130) && (msY < sY + 145))\par
+             PutString2(sX+135, sY+130, DEF_SEND, 255,255,255);//"Send Cmd"\par
+            else PutString2(sX+135, sY+130, DEF_SEND, 170,170,170);//"Send Cmd"\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 145) && (msY < sY + 160))\par
+             PutString2(sX+135, sY+145, DEF_GOTO, 255,255,255);//"Goto Cmd"\par
+            else PutString2(sX+135, sY+145, DEF_GOTO, 170,170,170);//"Goto Cmd"\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 160) && (msY < sY + 175))\par
+             PutString2(sX+135, sY+160, DEF_SUMMONALL, 255,255,255);//"Summon All Cmd"\par
+            else PutString2(sX+135, sY+160, DEF_SUMMONALL, 170,170,170);//"Summon All Cmd"\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 175) && (msY < sY + 190))\par
+             PutString2(sX+135, sY+175, DEF_SUMMONPLAYER, 255,255,255);//"Summon Player Cmd"\par
+            else PutString2(sX+135, sY+175, DEF_SUMMONPLAYER, 170,170,170);//"Summon Player Cmd"\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 190) && (msY < sY + 205))\par
+             PutString2(sX+135, sY+190, DEF_SHUTUP, 255,255,255);//"Shutup Cmd"\par
+            else PutString2(sX+135, sY+190, DEF_SHUTUP, 170,170,170);//"Shutup Cmd"\par
+        if ((msX > sX + 135) && (msX < sX + 225) && (msY > sY + 205) && (msY < sY + 220))\par
+             PutString2(sX+135, sY+205, DEF_ATTACK, 255,255,255);//"Guard Attack Cmd"\par
+            else PutString2(sX+135, sY+205, DEF_ATTACK, 170,170,170);//"Guard Attack Cmd"\par
+        /********Player Manipulation********/\par
+        break;\par
+\par
+    case 11://Lista de Teleport\par
+        PutString_SprFont(sX + (szX / 2)-(8*8),sY+35,"GameMaster Panel",1,1,8);//"GameMaster Panel"\par
+        PutString_SprFont(sX + (szX / 2)-(8*6.5),sY+50,"Teleport List",1,1,8);//"Summon List"\par
+        PutString2(sX+30, sY+70, DEF_SUBTP_CATE_ARE, 255,200,0);//"Ares"\par
+        PutString2(sX+75, sY+70, DEF_SUBTP_CATE_ELV, 255,200,0);//"Elv"\par
+        PutString2(sX+120, sY+70, DEF_SUBTP_CATE_DUN, 255,200,0);//"Dungeon"\par
+        PutString2(sX+120, sY+191, DEF_SUBTP_CATE_OTH, 255,200,0);//"Others"\par
+        PutString2(sX+175, sY+70, DEF_SUBTP_CATE_EVE, 255,200,0);//"Event"\par
+        /********Ares********/\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 81) && (msY < sY + 92))\par
+              PutString2(sX+30, sY+81, DEF_SUBTP1, 255,255,255);//\par
+         else PutString2(sX+30, sY+81, DEF_SUBTP1, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 92) && (msY < sY + 103))\par
+              PutString2(sX+30, sY+92, DEF_SUBTP2, 255,255,255);//\par
+         else PutString2(sX+30, sY+92, DEF_SUBTP2, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 103) && (msY < sY + 114))\par
+              PutString2(sX+30, sY+103, DEF_SUBTP3, 255,255,255);//\par
+         else PutString2(sX+30, sY+103, DEF_SUBTP3, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 114) && (msY < sY + 125))\par
+              PutString2(sX+30, sY+114, DEF_SUBTP4, 255,255,255);//\par
+         else PutString2(sX+30, sY+114, DEF_SUBTP4, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 125) && (msY < sY + 136))\par
+              PutString2(sX+30, sY+125, DEF_SUBTP5, 255,255,255);//\par
+         else PutString2(sX+30, sY+125, DEF_SUBTP5, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 136) && (msY < sY + 147))\par
+              PutString2(sX+30, sY+136, DEF_SUBTP6, 255,255,255);//\par
+         else PutString2(sX+30, sY+136, DEF_SUBTP6, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 147) && (msY < sY + 158))\par
+              PutString2(sX+30, sY+147, DEF_SUBTP7, 255,255,255);//\par
+         else PutString2(sX+30, sY+147, DEF_SUBTP7, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 158) && (msY < sY + 169))\par
+              PutString2(sX+30, sY+158, DEF_SUBTP8, 255,255,255);//\par
+         else PutString2(sX+30, sY+158, DEF_SUBTP8, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 169) && (msY < sY + 180))\par
+              PutString2(sX+30, sY+169, DEF_SUBTP9, 255,255,255);//\par
+         else PutString2(sX+30, sY+169, DEF_SUBTP9, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 180) && (msY < sY + 191))\par
+              PutString2(sX+30, sY+180, DEF_SUBTP10, 255,255,255);//\par
+         else PutString2(sX+30, sY+180, DEF_SUBTP10, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 191) && (msY < sY + 202))\par
+              PutString2(sX+30, sY+191, DEF_SUBTP11, 255,255,255);//\par
+         else PutString2(sX+30, sY+191, DEF_SUBTP11, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 202) && (msY < sY + 213))\par
+              PutString2(sX+30, sY+202, DEF_SUBTP12, 255,255,255);//\par
+         else PutString2(sX+30, sY+202, DEF_SUBTP12, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 213) && (msY < sY + 224))\par
+              PutString2(sX+30, sY+213, DEF_SUBTP13, 255,255,255);//\par
+         else PutString2(sX+30, sY+213, DEF_SUBTP13, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 224) && (msY < sY + 235))\par
+              PutString2(sX+30, sY+224, DEF_SUBTP14, 255,255,255);//\par
+         else PutString2(sX+30, sY+224, DEF_SUBTP14, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 235) && (msY < sY + 246))\par
+              PutString2(sX+30, sY+235, DEF_SUBTP15, 255,255,255);//\par
+         else PutString2(sX+30, sY+235, DEF_SUBTP15, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 246) && (msY < sY + 257))\par
+              PutString2(sX+30, sY+246, DEF_SUBTP18, 255,255,255);//\par
+         else PutString2(sX+30, sY+246, DEF_SUBTP18, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 257) && (msY < sY + 268))\par
+              PutString2(sX+30, sY+257, DEF_SUBTP19, 255,255,255);//\par
+         else PutString2(sX+30, sY+257, DEF_SUBTP19, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 268) && (msY < sY + 279))\par
+              PutString2(sX+30, sY+268, DEF_SUBTP20, 255,255,255);//\par
+         else PutString2(sX+30, sY+268, DEF_SUBTP20, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 279) && (msY < sY + 290))\par
+              PutString2(sX+30, sY+279, DEF_SUBTP21, 255,255,255);//\par
+         else PutString2(sX+30, sY+279, DEF_SUBTP21, 170,170,170);//\par
+        /********Ares********/\par
+        /********Elv********/\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 81) && (msY < sY + 92))\par
+              PutString2(sX+75, sY+81, DEF_SUBTP1, 255,255,255);//\par
+         else PutString2(sX+75, sY+81, DEF_SUBTP1, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 92) && (msY < sY + 103))\par
+              PutString2(sX+75, sY+92, DEF_SUBTP2, 255,255,255);//\par
+         else PutString2(sX+75, sY+92, DEF_SUBTP2, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 103) && (msY < sY + 114))\par
+              PutString2(sX+75, sY+103, DEF_SUBTP3, 255,255,255);//\par
+         else PutString2(sX+75, sY+103, DEF_SUBTP3, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 114) && (msY < sY + 125))\par
+              PutString2(sX+75, sY+114, DEF_SUBTP4, 255,255,255);//\par
+         else PutString2(sX+75, sY+114, DEF_SUBTP4, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 125) && (msY < sY + 136))\par
+              PutString2(sX+75, sY+125, DEF_SUBTP5, 255,255,255);//\par
+         else PutString2(sX+75, sY+125, DEF_SUBTP5, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 136) && (msY < sY + 147))\par
+              PutString2(sX+75, sY+136, DEF_SUBTP6, 255,255,255);//\par
+         else PutString2(sX+75, sY+136, DEF_SUBTP6, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 147) && (msY < sY + 158))\par
+              PutString2(sX+75, sY+147, DEF_SUBTP7, 255,255,255);//\par
+         else PutString2(sX+75, sY+147, DEF_SUBTP7, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 158) && (msY < sY + 169))\par
+              PutString2(sX+75, sY+158, DEF_SUBTP8, 255,255,255);//\par
+         else PutString2(sX+75, sY+158, DEF_SUBTP8, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 169) && (msY < sY + 180))\par
+              PutString2(sX+75, sY+169, DEF_SUBTP9, 255,255,255);//\par
+         else PutString2(sX+75, sY+169, DEF_SUBTP9, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 180) && (msY < sY + 191))\par
+              PutString2(sX+75, sY+180, DEF_SUBTP10, 255,255,255);//\par
+         else PutString2(sX+75, sY+180, DEF_SUBTP10, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 191) && (msY < sY + 202))\par
+              PutString2(sX+75, sY+191, DEF_SUBTP11, 255,255,255);//\par
+         else PutString2(sX+75, sY+191, DEF_SUBTP11, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 202) && (msY < sY + 213))\par
+              PutString2(sX+75, sY+202, DEF_SUBTP12, 255,255,255);//\par
+         else PutString2(sX+75, sY+202, DEF_SUBTP12, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 213) && (msY < sY + 224))\par
+              PutString2(sX+75, sY+213, DEF_SUBTP13, 255,255,255);//\par
+         else PutString2(sX+75, sY+213, DEF_SUBTP13, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 224) && (msY < sY + 235))\par
+              PutString2(sX+75, sY+224, DEF_SUBTP14, 255,255,255);//\par
+         else PutString2(sX+75, sY+224, DEF_SUBTP14, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 235) && (msY < sY + 246))\par
+              PutString2(sX+75, sY+235, DEF_SUBTP15, 255,255,255);//\par
+         else PutString2(sX+75, sY+235, DEF_SUBTP15, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 246) && (msY < sY + 257))\par
+              PutString2(sX+75, sY+246, DEF_SUBTP18, 255,255,255);//\par
+         else PutString2(sX+75, sY+246, DEF_SUBTP18, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 257) && (msY < sY + 268))\par
+              PutString2(sX+75, sY+257, DEF_SUBTP19, 255,255,255);//\par
+         else PutString2(sX+75, sY+257, DEF_SUBTP19, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 268) && (msY < sY + 279))\par
+              PutString2(sX+75, sY+268, DEF_SUBTP20, 255,255,255);//\par
+         else PutString2(sX+75, sY+268, DEF_SUBTP20, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 279) && (msY < sY + 290))\par
+              PutString2(sX+75, sY+279, DEF_SUBTP21, 255,255,255);//\par
+         else PutString2(sX+75, sY+279, DEF_SUBTP21, 170,170,170);//\par
+        /********Elv********/\par
+        /********Dungeon********/\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 81) && (msY < sY + 92))\par
+              PutString2(sX+120, sY+81, DEF_SUBTP22, 255,255,255);//\par
+         else PutString2(sX+120, sY+81, DEF_SUBTP22, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 92) && (msY < sY + 103))\par
+              PutString2(sX+120, sY+92, DEF_SUBTP23, 255,255,255);//\par
+         else PutString2(sX+120, sY+92, DEF_SUBTP23, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 103) && (msY < sY + 114))\par
+              PutString2(sX+120, sY+103, DEF_SUBTP24, 255,255,255);//\par
+         else PutString2(sX+120, sY+103, DEF_SUBTP24, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 114) && (msY < sY + 125))\par
+              PutString2(sX+120, sY+114, DEF_SUBTP25, 255,255,255);//\par
+         else PutString2(sX+120, sY+114, DEF_SUBTP25, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 125) && (msY < sY + 136))\par
+              PutString2(sX+120, sY+125, DEF_SUBTP26, 255,255,255);//\par
+         else PutString2(sX+120, sY+125, DEF_SUBTP26, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 136) && (msY < sY + 147))\par
+              PutString2(sX+120, sY+136, DEF_SUBTP27, 255,255,255);//\par
+         else PutString2(sX+120, sY+136, DEF_SUBTP27, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 147) && (msY < sY + 158))\par
+              PutString2(sX+120, sY+147, DEF_SUBTP28, 255,255,255);//\par
+         else PutString2(sX+120, sY+147, DEF_SUBTP28, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 158) && (msY < sY + 169))\par
+              PutString2(sX+120, sY+158, DEF_SUBTP29, 255,255,255);//\par
+         else PutString2(sX+120, sY+158, DEF_SUBTP29, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 169) && (msY < sY + 180))\par
+              PutString2(sX+120, sY+169, DEF_SUBTP30, 255,255,255);//\par
+         else PutString2(sX+120, sY+169, DEF_SUBTP30, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 180) && (msY < sY + 191))\par
+              PutString2(sX+120, sY+180, DEF_SUBTP31, 255,255,255);//\par
+         else PutString2(sX+120, sY+180, DEF_SUBTP31, 170,170,170);//\par
+        /********Dungeon********/\par
+        /********Others********/\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 202) && (msY < sY + 213))\par
+              PutString2(sX+120, sY+202, DEF_SUBTP47, 255,255,255);//\par
+         else PutString2(sX+120, sY+202, DEF_SUBTP47, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 213) && (msY < sY + 224))\par
+              PutString2(sX+120, sY+213, DEF_SUBTP48, 255,255,255);//\par
+         else PutString2(sX+120, sY+213, DEF_SUBTP48, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 224) && (msY < sY + 235))\par
+              PutString2(sX+120, sY+224, DEF_SUBTP49, 255,255,255);//\par
+         else PutString2(sX+120, sY+224, DEF_SUBTP49, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 235) && (msY < sY + 246))\par
+              PutString2(sX+120, sY+235, DEF_SUBTP50, 255,255,255);//\par
+         else PutString2(sX+120, sY+235, DEF_SUBTP50, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 246) && (msY < sY + 257))\par
+              PutString2(sX+120, sY+246, DEF_SUBTP51, 255,255,255);//\par
+         else PutString2(sX+120, sY+246, DEF_SUBTP51, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 257) && (msY < sY + 268))\par
+              PutString2(sX+120, sY+257, DEF_SUBTP52, 255,255,255);//\par
+         else PutString2(sX+120, sY+257, DEF_SUBTP52, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 268) && (msY < sY + 279))\par
+              PutString2(sX+120, sY+268, DEF_SUBTP53, 255,255,255);//\par
+         else PutString2(sX+120, sY+268, DEF_SUBTP53, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 279) && (msY < sY + 290))\par
+              PutString2(sX+120, sY+279, DEF_SUBTP54, 255,255,255);//\par
+         else PutString2(sX+120, sY+279, DEF_SUBTP54, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 290) && (msY < sY + 301))\par
+              PutString2(sX+120, sY+290, DEF_SUBTP55, 255,255,255);//\par
+         else PutString2(sX+120, sY+290, DEF_SUBTP55, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 301) && (msY < sY + 312))\par
+              PutString2(sX+120, sY+301, DEF_SUBTP56, 255,255,255);//\par
+         else PutString2(sX+120, sY+301, DEF_SUBTP56, 170,170,170);//\par
+        /********Others********/\par
+        /********Event********/\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 81) && (msY < sY + 92))\par
+              PutString2(sX+175, sY+81, DEF_SUBTP32, 255,255,255);//\par
+         else PutString2(sX+175, sY+81, DEF_SUBTP32, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 92) && (msY < sY + 103))\par
+              PutString2(sX+175, sY+92, DEF_SUBTP33, 255,255,255);//\par
+         else PutString2(sX+175, sY+92, DEF_SUBTP33, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 103) && (msY < sY + 114))\par
+              PutString2(sX+175, sY+103, DEF_SUBTP34, 255,255,255);//\par
+         else PutString2(sX+175, sY+103, DEF_SUBTP34, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 114) && (msY < sY + 125))\par
+              PutString2(sX+175, sY+114, DEF_SUBTP35, 255,255,255);//\par
+         else PutString2(sX+175, sY+114, DEF_SUBTP35, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 136))\par
+              PutString2(sX+175, sY+125, DEF_SUBTP36, 255,255,255);//\par
+         else PutString2(sX+175, sY+125, DEF_SUBTP36, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 136) && (msY < sY + 147))\par
+              PutString2(sX+175, sY+136, DEF_SUBTP37, 255,255,255);//\par
+         else PutString2(sX+175, sY+136, DEF_SUBTP37, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 147) && (msY < sY + 158))\par
+              PutString2(sX+175, sY+147, DEF_SUBTP38, 255,255,255);//\par
+         else PutString2(sX+175, sY+147, DEF_SUBTP38, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 158) && (msY < sY + 169))\par
+              PutString2(sX+175, sY+158, DEF_SUBTP39, 255,255,255);//\par
+         else PutString2(sX+175, sY+158, DEF_SUBTP39, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 169) && (msY < sY + 180))\par
+              PutString2(sX+175, sY+169, DEF_SUBTP40, 255,255,255);//\par
+         else PutString2(sX+175, sY+169, DEF_SUBTP40, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 180) && (msY < sY + 191))\par
+              PutString2(sX+175, sY+180, DEF_SUBTP41, 255,255,255);//\par
+         else PutString2(sX+175, sY+180, DEF_SUBTP41, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 191) && (msY < sY + 202))\par
+              PutString2(sX+175, sY+191, DEF_SUBTP42, 255,255,255);//\par
+         else PutString2(sX+175, sY+191, DEF_SUBTP42, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 202) && (msY < sY + 213))\par
+              PutString2(sX+175, sY+202, DEF_SUBTP43, 255,255,255);//\par
+         else PutString2(sX+175, sY+202, DEF_SUBTP43, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 213) && (msY < sY + 224))\par
+              PutString2(sX+175, sY+213, DEF_SUBTP44, 255,255,255);//\par
+         else PutString2(sX+175, sY+213, DEF_SUBTP44, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 224) && (msY < sY + 235))\par
+              PutString2(sX+175, sY+224, DEF_SUBTP45, 255,255,255);//\par
+         else PutString2(sX+175, sY+224, DEF_SUBTP45, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 220) && (msY > sY + 235) && (msY < sY + 246))\par
+              PutString2(sX+175, sY+235, DEF_SUBTP46, 255,255,255);//\par
+         else PutString2(sX+175, sY+235, DEF_SUBTP46, 170,170,170);//\par
+        /********Event********/\par
+\par
+        break;\par
+\par
+    case 12://Lista de Summon\par
+        PutString_SprFont(sX + (szX / 2)-(8*8),sY+35,"GameMaster Panel",1,1,8);//"GameMaster Panel"\par
+        PutString_SprFont(sX + (szX / 2)-(8*5.5),sY+50,"Summon List",1,1,8);//"Summon List"\par
+        PutString2(sX+30, sY+70, DRAW_DIALOGBOX_SummonPanel4, 255,200,0);//"Common"\par
+        PutString2(sX+30, sY+246, DRAW_DIALOGBOX_SummonPanel5, 255,200,0);//"Misc"\par
+        PutString2(sX+75, sY+70, DRAW_DIALOGBOX_SummonPanel3, 255,200,0);//"Master"\par
+        PutString2(sX+85, sY+202, DRAW_DIALOGBOX_SummonPanel6, 255,200,0);//"Helde"\par
+        PutString2(sX+120, sY+70, DRAW_DIALOGBOX_SummonPanel7, 255,200,0);//"Sade"\par
+        PutString2(sX+175, sY+70, DRAW_DIALOGBOX_SummonPanel2, 255,200,0);//"Elite"\par
+        PutString2(sX+175, sY+224, DRAW_DIALOGBOX_SummonPanel1, 255,200,0);//"Boss"\par
+\par
+        /********Common********/\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 81) && (msY < sY + 92))\par
+            PutString2(sX+30, sY+81, DRAW_DIALOGBOX_SummonPanel8, 255,255,255);//\par
+        else PutString2(sX+30, sY+81, DRAW_DIALOGBOX_SummonPanel8, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 92) && (msY < sY + 103))\par
+            PutString2(sX+30, sY+92, DRAW_DIALOGBOX_SummonPanel9, 255,255,255);//\par
+        else PutString2(sX+30, sY+92, DRAW_DIALOGBOX_SummonPanel9, 170,170,170);//\par
+\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 103) && (msY < sY + 114))\par
+            PutString2(sX+30, sY+103, DRAW_DIALOGBOX_SummonPanel10, 255,255,255);//\par
+        else PutString2(sX+30, sY+103, DRAW_DIALOGBOX_SummonPanel10, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 114) && (msY < sY + 125))\par
+            PutString2(sX+30, sY+114, DRAW_DIALOGBOX_SummonPanel11, 255,255,255);//\par
+        else PutString2(sX+30, sY+114, DRAW_DIALOGBOX_SummonPanel11, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 125) && (msY < sY + 136))\par
+            PutString2(sX+30, sY+125, DRAW_DIALOGBOX_SummonPanel12, 255,255,255);//\par
+        else PutString2(sX+30, sY+125, DRAW_DIALOGBOX_SummonPanel12, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 75) && (msY > sY + 136) && (msY < sY + 147))\par
+            PutString2(sX+30, sY+136, DRAW_DIALOGBOX_SummonPanel13, 255,255,255);//\par
+        else PutString2(sX+30, sY+136, DRAW_DIALOGBOX_SummonPanel13, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 147) && (msY < sY + 158))\par
+            PutString2(sX+30, sY+147, DRAW_DIALOGBOX_SummonPanel14, 255,255,255);//\par
+        else PutString2(sX+30, sY+147, DRAW_DIALOGBOX_SummonPanel14, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 158) && (msY < sY + 169))\par
+            PutString2(sX+30, sY+158, DRAW_DIALOGBOX_SummonPanel15, 255,255,255);//\par
+        else PutString2(sX+30, sY+158, DRAW_DIALOGBOX_SummonPanel15, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 169) && (msY < sY + 180))\par
+            PutString2(sX+30, sY+169, DRAW_DIALOGBOX_SummonPanel16, 255,255,255);//\par
+        else PutString2(sX+30, sY+169, DRAW_DIALOGBOX_SummonPanel16, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 180) && (msY < sY + 191))\par
+            PutString2(sX+30, sY+180, DRAW_DIALOGBOX_SummonPanel17, 255,255,255);//\par
+        else PutString2(sX+30, sY+180, DRAW_DIALOGBOX_SummonPanel17, 170,170,170);//\par
+            \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 191) && (msY < sY + 202))\par
+            PutString2(sX+30, sY+191, DRAW_DIALOGBOX_SummonPanel18, 255,255,255);//\par
+        else PutString2(sX+30, sY+191, DRAW_DIALOGBOX_SummonPanel18, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 202) && (msY < sY + 213))\par
+            PutString2(sX+30, sY+202, DRAW_DIALOGBOX_SummonPanel19, 255,255,255);//\par
+        else PutString2(sX+30, sY+202, DRAW_DIALOGBOX_SummonPanel19, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 213) && (msY < sY + 224))\par
+            PutString2(sX+30, sY+213, DRAW_DIALOGBOX_SummonPanel20, 255,255,255);//\par
+        else PutString2(sX+30, sY+213, DRAW_DIALOGBOX_SummonPanel20, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 224) && (msY < sY + 235))\par
+            PutString2(sX+30, sY+224, DRAW_DIALOGBOX_SummonPanel21, 255,255,255);//\par
+        else PutString2(sX+30, sY+224, DRAW_DIALOGBOX_SummonPanel21, 170,170,170);//\par
+        \par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 235) && (msY < sY + 246))\par
+            PutString2(sX+30, sY+235, DRAW_DIALOGBOX_SummonPanel22, 255,255,255);//\par
+        else PutString2(sX+30, sY+235, DRAW_DIALOGBOX_SummonPanel22, 170,170,170);//        \par
+\par
+        /********Misc********/\par
+        if ((msX > sX + 30) && (msX < sX + 54) && (msY > sY + 257) && (msY < sY + 268))\par
+            PutString2(sX+30, sY+257, DRAW_DIALOGBOX_SummonPanel23A, 255,255,255);//\par
+        else PutString2(sX+30, sY+257, DRAW_DIALOGBOX_SummonPanel23A, 170,170,170);//\par
+        if ((msX > sX + 54) && (msX < sX + 68) && (msY > sY + 257) && (msY < sY + 268))\par
+            PutString2(sX+54, sY+257, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+54, sY+257, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 68) && (msX < sX + 75) && (msY > sY + 257) && (msY < sY + 268))\par
+            PutString2(sX+68, sY+257, DRAW_DIALOGBOX_SummonPanelN, 255,255,255);//\par
+        else PutString2(sX+68, sY+257, DRAW_DIALOGBOX_SummonPanelN, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 268) && (msY < sY + 279))\par
+            PutString2(sX+30, sY+268, DRAW_DIALOGBOX_SummonPanel24, 255,255,255);//\par
+        else PutString2(sX+30, sY+268, DRAW_DIALOGBOX_SummonPanel24, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 279) && (msY < sY + 290))\par
+            PutString2(sX+30, sY+279, DRAW_DIALOGBOX_SummonPanel25, 255,255,255);//\par
+        else PutString2(sX+30, sY+279, DRAW_DIALOGBOX_SummonPanel25, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 290) && (msY < sY + 301))\par
+            PutString2(sX+30, sY+290, DRAW_DIALOGBOX_SummonPanel26, 255,255,255);//\par
+        else PutString2(sX+30, sY+290, DRAW_DIALOGBOX_SummonPanel26, 170,170,170);//\par
+        if ((msX > sX + 30) && (msX < sX + 65) && (msY > sY + 301) && (msY < sY + 312))\par
+            PutString2(sX+30, sY+301, DRAW_DIALOGBOX_SummonPanel27, 255,255,255);//\par
+        else PutString2(sX+30, sY+301, DRAW_DIALOGBOX_SummonPanel27, 170,170,170);//\par
+        \par
+         /********Master********/\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 81) && (msY < sY + 92))\par
+            PutString2(sX+75, sY+81, DRAW_DIALOGBOX_SummonPanel28, 255,255,255);//\par
+        else PutString2(sX+75, sY+81, DRAW_DIALOGBOX_SummonPanel28, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 92) && (msY < sY + 103))\par
+            PutString2(sX+75, sY+92, DRAW_DIALOGBOX_SummonPanel29, 255,255,255);//\par
+        else PutString2(sX+75, sY+92, DRAW_DIALOGBOX_SummonPanel29, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 103) && (msY < sY + 114))\par
+            PutString2(sX+75, sY+103, DRAW_DIALOGBOX_SummonPanel30, 255,255,255);//\par
+        else PutString2(sX+75, sY+103, DRAW_DIALOGBOX_SummonPanel30, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 114) && (msY < sY + 125))\par
+            PutString2(sX+75, sY+114, DRAW_DIALOGBOX_SummonPanel31, 255,255,255);//\par
+        else PutString2(sX+75, sY+114, DRAW_DIALOGBOX_SummonPanel31, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 125) && (msY < sY + 136))\par
+            PutString2(sX+75, sY+125, DRAW_DIALOGBOX_SummonPanel32, 255,255,255);//\par
+        else PutString2(sX+75, sY+125, DRAW_DIALOGBOX_SummonPanel32, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 136) && (msY < sY + 147))\par
+            PutString2(sX+75, sY+136, DRAW_DIALOGBOX_SummonPanel33, 255,255,255);//\par
+        else PutString2(sX+75, sY+136, DRAW_DIALOGBOX_SummonPanel33, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 147) && (msY < sY + 158))\par
+            PutString2(sX+75, sY+147, DRAW_DIALOGBOX_SummonPanel34, 255,255,255);//\par
+        else PutString2(sX+75, sY+147, DRAW_DIALOGBOX_SummonPanel34, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 158) && (msY < sY + 169))\par
+            PutString2(sX+75, sY+158, DRAW_DIALOGBOX_SummonPanel35, 255,255,255);//\par
+        else PutString2(sX+75, sY+158, DRAW_DIALOGBOX_SummonPanel35, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 169) && (msY < sY + 180))\par
+            PutString2(sX+75, sY+169, DRAW_DIALOGBOX_SummonPanel36, 255,255,255);//\par
+        else PutString2(sX+75, sY+169, DRAW_DIALOGBOX_SummonPanel36, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 180) && (msY < sY + 191))\par
+            PutString2(sX+75, sY+180, DRAW_DIALOGBOX_SummonPanel37, 255,255,255);//\par
+        else PutString2(sX+75, sY+180, DRAW_DIALOGBOX_SummonPanel37, 170,170,170);//\par
+        if ((msX > sX + 75) && (msX < sX + 120) && (msY > sY + 191) && (msY < sY + 202))\par
+            PutString2(sX+75, sY+191, DRAW_DIALOGBOX_SummonPanel38, 255,255,255);//\par
+        else PutString2(sX+75, sY+191, DRAW_DIALOGBOX_SummonPanel38, 170,170,170);//\par
+    \par
+        /********Helde********/\par
+        if ((msX > sX + 85) && (msX < sX + 115) && (msY > sY + 213) && (msY < sY + 224))\par
+            PutString2(sX+85, sY+213, DRAW_DIALOGBOX_SummonPanel57A, 255,255,255);//\par
+        else PutString2(sX+85, sY+213, DRAW_DIALOGBOX_SummonPanel57A, 170,170,170);//\par
+        if ((msX > sX + 115) && (msX < sX + 120) && (msY > sY + 213) && (msY < sY + 224))\par
+            PutString2(sX+115, sY+213, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+115, sY+213, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 85) && (msX < sX + 120) && (msY > sY + 224) && (msY < sY + 235))\par
+            PutString2(sX+85, sY+224, DRAW_DIALOGBOX_SummonPanel58A, 255,255,255);//\par
+        else PutString2(sX+85, sY+224, DRAW_DIALOGBOX_SummonPanel58A, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 125) && (msY > sY + 224) && (msY < sY + 235))\par
+            PutString2(sX+120, sY+224, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+120, sY+224, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 85) && (msX < sX + 125) && (msY > sY + 235) && (msY < sY + 246))\par
+            PutString2(sX+85, sY+235, DRAW_DIALOGBOX_SummonPanel59A, 255,255,255);//\par
+        else PutString2(sX+85, sY+235, DRAW_DIALOGBOX_SummonPanel59A, 170,170,170);//\par
+        if ((msX > sX + 125) && (msX < sX + 130) && (msY > sY + 235) && (msY < sY + 246))\par
+            PutString2(sX+125, sY+235, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+125, sY+235, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 85) && (msX < sX + 128) && (msY > sY + 246) && (msY < sY + 257))\par
+            PutString2(sX+85, sY+246, DRAW_DIALOGBOX_SummonPanel60A, 255,255,255);//\par
+        else PutString2(sX+85, sY+246, DRAW_DIALOGBOX_SummonPanel60A, 170,170,170);//\par
+        if ((msX > sX + 128) && (msX < sX + 133) && (msY > sY + 246) && (msY < sY + 257))\par
+            PutString2(sX+128, sY+246, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+128, sY+246, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 85) && (msX < sX + 125) && (msY > sY + 257) && (msY < sY + 268))\par
+            PutString2(sX+85, sY+257, DRAW_DIALOGBOX_SummonPanel61A, 255,255,255);//\par
+        else PutString2(sX+85, sY+257,DRAW_DIALOGBOX_SummonPanel61A, 170,170,170);//\par
+        if ((msX > sX + 125) && (msX < sX + 130) && (msY > sY + 257) && (msY < sY + 268))\par
+            PutString2(sX+125, sY+257, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+125, sY+257, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 85) && (msX < sX + 124) && (msY > sY + 268) && (msY < sY + 279))\par
+            PutString2(sX+85, sY+268, DRAW_DIALOGBOX_SummonPanel62A, 255,255,255);//\par
+        else PutString2(sX+85, sY+268, DRAW_DIALOGBOX_SummonPanel62A, 170,170,170);//\par
+        if ((msX > sX + 124) && (msX < sX + 129) && (msY > sY + 268) && (msY < sY + 279))\par
+            PutString2(sX+124, sY+268, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+124, sY+268, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 85) && (msX < sX + 115) && (msY > sY + 279) && (msY < sY + 290))\par
+            PutString2(sX+85, sY+279, DRAW_DIALOGBOX_SummonPanel63A, 255,255,255);//\par
+        else PutString2(sX+85, sY+279, DRAW_DIALOGBOX_SummonPanel63A, 170,170,170);//\par
+        if ((msX > sX + 115) && (msX < sX + 120) && (msY > sY + 279) && (msY < sY + 290))\par
+            PutString2(sX+115, sY+279, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+115, sY+279, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 85) && (msX < sX + 120) && (msY > sY + 290) && (msY < sY + 301))\par
+            PutString2(sX+85, sY+290, DRAW_DIALOGBOX_SummonPanel64A, 255,255,255);//\par
+        else PutString2(sX+85, sY+290, DRAW_DIALOGBOX_SummonPanel64A, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 125) && (msY > sY + 290) && (msY < sY + 301))\par
+            PutString2(sX+120, sY+290, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+120, sY+290, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 85) && (msX < sX + 125) && (msY > sY + 301) && (msY < sY + 312))\par
+            PutString2(sX+85, sY+301, DRAW_DIALOGBOX_SummonPanel65A, 255,255,255);//\par
+        else PutString2(sX+85, sY+301, DRAW_DIALOGBOX_SummonPanel65A, 170,170,170);//\par
+        if ((msX > sX + 125) && (msX < sX + 130) && (msY > sY + 301) && (msY < sY + 312))\par
+            PutString2(sX+125, sY+301, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+125, sY+301, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        \par
+        /********Sade********/\par
+        if ((msX > sX + 120) && (msX < sX + 150) && (msY > sY + 81) && (msY < sY + 92))\par
+            PutString2(sX+120, sY+81, DRAW_DIALOGBOX_SummonPanel66A, 255,255,255);//\par
+        else PutString2(sX+120, sY+81, DRAW_DIALOGBOX_SummonPanel66A, 170,170,170);//\par
+        if ((msX > sX + 150) && (msX < sX + 165) && (msY > sY + 81) && (msY < sY + 92))\par
+            PutString2(sX+150, sY+81, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+150, sY+81, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 150) && (msY > sY + 92) && (msY < sY + 103))\par
+            PutString2(sX+120, sY+92, DRAW_DIALOGBOX_SummonPanel67A, 255,255,255);//\par
+        else PutString2(sX+120, sY+92, DRAW_DIALOGBOX_SummonPanel67A, 170,170,170);//\par
+        if ((msX > sX + 150) && (msX < sX + 165) && (msY > sY + 92) && (msY < sY + 103))\par
+            PutString2(sX+150, sY+92, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+150, sY+92, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 155) && (msY > sY + 103) && (msY < sY + 114))\par
+            PutString2(sX+120, sY+103, DRAW_DIALOGBOX_SummonPanel68A, 255,255,255);//\par
+        else PutString2(sX+120, sY+103, DRAW_DIALOGBOX_SummonPanel68A, 170,170,170);//\par
+        if ((msX > sX + 155) && (msX < sX + 165) && (msY > sY + 103) && (msY < sY + 114))\par
+            PutString2(sX+155, sY+103, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+155, sY+103, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 150) && (msY > sY + 114) && (msY < sY + 125))\par
+            PutString2(sX+120, sY+114, DRAW_DIALOGBOX_SummonPanel69A, 255,255,255);//\par
+        else PutString2(sX+120, sY+114, DRAW_DIALOGBOX_SummonPanel69A, 170,170,170);//\par
+        if ((msX > sX + 150) && (msX < sX + 165) && (msY > sY + 114) && (msY < sY + 125))\par
+            PutString2(sX+150, sY+114, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+150, sY+114, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 150) && (msY > sY + 125) && (msY < sY + 136))\par
+            PutString2(sX+120, sY+125, DRAW_DIALOGBOX_SummonPanel70A, 255,255,255);//\par
+        else PutString2(sX+120, sY+125, DRAW_DIALOGBOX_SummonPanel70A, 170,170,170);//\par
+        if ((msX > sX + 150) && (msX < sX + 165) && (msY > sY + 125) && (msY < sY + 136))\par
+            PutString2(sX+150, sY+125, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+150, sY+125, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 160) && (msY > sY + 136) && (msY < sY + 147))\par
+            PutString2(sX+120, sY+136, DRAW_DIALOGBOX_SummonPanel71A, 255,255,255);//\par
+        else PutString2(sX+120, sY+136, DRAW_DIALOGBOX_SummonPanel71A, 170,170,170);//\par
+        if ((msX > sX + 160) && (msX < sX + 165) && (msY > sY + 136) && (msY < sY + 147))\par
+            PutString2(sX+160, sY+136, DRAW_DIALOGBOX_SummonPanelE, 255,255,255);//\par
+        else PutString2(sX+160, sY+136, DRAW_DIALOGBOX_SummonPanelE, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 147) && (msY < sY + 158))\par
+            PutString2(sX+120, sY+147, DRAW_DIALOGBOX_SummonPanel72, 255,255,255);//\par
+        else PutString2(sX+120, sY+147, DRAW_DIALOGBOX_SummonPanel72, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 158) && (msY < sY + 169))\par
+            PutString2(sX+120, sY+158, DRAW_DIALOGBOX_SummonPanel73, 255,255,255);//\par
+        else PutString2(sX+120, sY+158, DRAW_DIALOGBOX_SummonPanel73, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 169) && (msY < sY + 180))\par
+            PutString2(sX+120, sY+169, DRAW_DIALOGBOX_SummonPanel74, 255,255,255);//\par
+        else PutString2(sX+120, sY+169, DRAW_DIALOGBOX_SummonPanel74, 170,170,170);//\par
+        if ((msX > sX + 120) && (msX < sX + 165) && (msY > sY + 180) && (msY < sY + 191))\par
+            PutString2(sX+120, sY+180, DRAW_DIALOGBOX_SummonPanel75, 255,255,255);//\par
+        else PutString2(sX+120, sY+180, DRAW_DIALOGBOX_SummonPanel75, 170,170,170);//\par
+            \par
+        /********Elite********/\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 81) && (msY < sY + 92))\par
+            PutString2(sX+175, sY+81, DRAW_DIALOGBOX_SummonPanel39, 255,255,255);//\par
+        else PutString2(sX+175, sY+81, DRAW_DIALOGBOX_SummonPanel39, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 92) && (msY < sY + 103))\par
+            PutString2(sX+175, sY+92, DRAW_DIALOGBOX_SummonPanel40, 255,255,255);//\par
+        else PutString2(sX+175, sY+92, DRAW_DIALOGBOX_SummonPanel40, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 103) && (msY < sY + 114))\par
+            PutString2(sX+175, sY+103, DRAW_DIALOGBOX_SummonPanel41, 255,255,255);//\par
+        else PutString2(sX+175, sY+103, DRAW_DIALOGBOX_SummonPanel41, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 114) && (msY < sY + 125))\par
+            PutString2(sX+175, sY+114, DRAW_DIALOGBOX_SummonPanel42, 255,255,255);//\par
+        else PutString2(sX+175, sY+114, DRAW_DIALOGBOX_SummonPanel42, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 125) && (msY < sY + 136))\par
+            PutString2(sX+175, sY+125, DRAW_DIALOGBOX_SummonPanel43, 255,255,255);//\par
+        else PutString2(sX+175, sY+125, DRAW_DIALOGBOX_SummonPanel43, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 136) && (msY < sY + 147))\par
+            PutString2(sX+175, sY+136, DRAW_DIALOGBOX_SummonPanel44, 255,255,255);//\par
+        else PutString2(sX+175, sY+136, DRAW_DIALOGBOX_SummonPanel44, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 147) && (msY < sY + 158))\par
+            PutString2(sX+175, sY+147, DRAW_DIALOGBOX_SummonPanel45, 255,255,255);//\par
+        else PutString2(sX+175, sY+147, DRAW_DIALOGBOX_SummonPanel45, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 158) && (msY < sY + 169))\par
+            PutString2(sX+175, sY+158, DRAW_DIALOGBOX_SummonPanel46, 255,255,255);//\par
+        else PutString2(sX+175, sY+158, DRAW_DIALOGBOX_SummonPanel46, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 169) && (msY < sY + 180))\par
+            PutString2(sX+175, sY+169, DRAW_DIALOGBOX_SummonPanel47, 255,255,255);//\par
+        else PutString2(sX+175, sY+169, DRAW_DIALOGBOX_SummonPanel47, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 180) && (msY < sY + 191))\par
+            PutString2(sX+175, sY+180, DRAW_DIALOGBOX_SummonPanel48, 255,255,255);//\par
+        else PutString2(sX+175, sY+180, DRAW_DIALOGBOX_SummonPanel48, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 191) && (msY < sY + 202))\par
+            PutString2(sX+175, sY+191, DRAW_DIALOGBOX_SummonPanel49, 255,255,255);//\par
+        else PutString2(sX+175, sY+191, DRAW_DIALOGBOX_SummonPanel49, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 202) && (msY < sY + 213))\par
+            PutString2(sX+175, sY+202, DRAW_DIALOGBOX_SummonPanel50, 255,255,255);//\par
+        else PutString2(sX+175, sY+202, DRAW_DIALOGBOX_SummonPanel50, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 213) && (msY < sY + 224))\par
+            PutString2(sX+175, sY+213, DRAW_DIALOGBOX_SummonPanel51, 255,255,255);//\par
+        else PutString2(sX+175, sY+213, DRAW_DIALOGBOX_SummonPanel51, 170,170,170);//\par
+            \par
+        /********Boss********/\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 235) && (msY < sY + 246))\par
+            PutString2(sX+175, sY+235, DRAW_DIALOGBOX_SummonPanel52, 255,255,255);//\par
+        else PutString2(sX+175, sY+235, DRAW_DIALOGBOX_SummonPanel52, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 246) && (msY < sY + 257))\par
+            PutString2(sX+175, sY+246, DRAW_DIALOGBOX_SummonPanel53, 255,255,255);//\par
+        else PutString2(sX+175, sY+246, DRAW_DIALOGBOX_SummonPanel53, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 257) && (msY < sY + 268))\par
+            PutString2(sX+175, sY+257, DRAW_DIALOGBOX_SummonPanel54, 255,255,255);//\par
+        else PutString2(sX+175, sY+257, DRAW_DIALOGBOX_SummonPanel54, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 268) && (msY < sY + 279))\par
+            PutString2(sX+175, sY+268, DRAW_DIALOGBOX_SummonPanel55, 255,255,255);//\par
+        else PutString2(sX+175, sY+268, DRAW_DIALOGBOX_SummonPanel55, 170,170,170);//\par
+        if ((msX > sX + 175) && (msX < sX + 210) && (msY > sY + 279) && (msY < sY + 290))\par
+            PutString2(sX+175, sY+279, DRAW_DIALOGBOX_SummonPanel56, 255,255,255);//\par
+        else PutString2(sX+175, sY+279, DRAW_DIALOGBOX_SummonPanel56, 170,170,170);//\par
+\par
+        break;\par
+\par
+    case 13://Lista de Amigos\par
+        PutString_SprFont(sX+90,sY+35,"Lista de Amigos",1,1,8);\par
+\par
+        if (foreveralone == TRUE)\par
+        \{    PutAlignedString(sX, sX + szX, sY + 70, "No hay amigos para mostrar", 0,0,0);\par
+        \}\par
+        else\par
+        \{    for(int i = 0; i < iTotalFriends; i++)\par
+            \{    if((msX > sX + 35) && (msX < sX + 220) && (msY > sY + (i * 12) + 70) && (msY < sY + (i * 12) + 82))\par
+                    PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,255,255));\par
+                else\par
+                \{    if(i == iIndexSelected) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,255,255));\par
+                    else\par
+                    \{    if(m_stFriendList[i].sStatus == 0) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,0,0));\par
+                        else PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(0,255,0));\par
+                    \}\par
+                    /*if(m_stFriendList[i].bIsSelected) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,255,255));\par
+                    else\par
+                    \{    if(m_stFriendList[i].sStatus == 0) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,0,0));\par
+                        else PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(0,255,0));\par
+                    \}*/\par
+                \}\par
+            \}\par
+        \}\par
+        if((msX > sX + 25) && (msX < sX + 80) && (msY > sY + 305) && (msY < sY + 315))\par
+            PutString(sX + 25, sY + 305, "Add", RGB(255,255,255));\par
+        else\par
+            PutString(sX + 25, sY + 305, "Add", RGB(0,0,255));\par
+\par
+        if((msX > sX + 80) && (msX < sX + 135) && (msY > sY + 305) && (msY < sY + 315))\par
+            PutString(sX + 80, sY + 305, "Delete", RGB(255,255,255));\par
+        else\par
+            PutString(sX + 80, sY + 305, "Delete", RGB(0,0,255));\par
+\par
+        if((msX > sX + 135) && (msX < sX + 190) && (msY > sY + 305) && (msY < sY + 315))\par
+            PutString(sX + 135, sY + 305, "Realiz", RGB(255,255,255));\par
+        else\par
+            PutString(sX + 135, sY + 305, "Realiz", RGB(0,0,255));\par
+\par
+        if((msX > sX + 190) && (msX < sX + 245) && (msY > sY + 305) && (msY < sY + 315))\par
+            PutString(sX + 190, sY + 305, "Reload", RGB(255,255,255));\par
+        else\par
+            PutString(sX + 190, sY + 305, "Reload", RGB(0,0,255));\par
+\par
+        break;\par
+\par
+    case 14://Lista de Amigos - Solicitudes Recibidas\par
+        PutString_SprFont(sX+90,sY+35,"Solicitudes Recibidas",1,1,8);\par
+\par
+        if (iSolicitudesRecibidas == 0)\par
+        \{    PutAlignedString(sX, sX + szX, sY + 70, "No tienes solicitudes recibidas pendientes", 0,0,0);\par
+        \}\par
+        else\par
+        \{    for(int i = 0; i < iSolicitudesRecibidas; i++)\par
+            \{    if((msX > sX + 35) && (msX < sX + 220) && (msY > sY + (i * 12) + 70) && (msY < sY + (i * 12) + 82))\par
+                    PutString(sX + 35, sY + (i * 12) + 70, m_stSolicitudesRecibidas[i].cPlayerName, RGB(255,255,255));\par
+                else\par
+                \{    if(i == iIndexSelected) PutString(sX + 35, sY + (i * 12) + 70, m_stSolicitudesRecibidas[i].cPlayerName, RGB(255,255,255));\par
+                    else\par
+                    \{    if(m_stSolicitudesRecibidas[i].sStatus == 0) PutString(sX + 35, sY + (i * 12) + 70, m_stSolicitudesRecibidas[i].cPlayerName, RGB(255,0,0));\par
+                        else PutString(sX + 35, sY + (i * 12) + 70, m_stSolicitudesRecibidas[i].cPlayerName, RGB(0,255,0));\par
+                    \}\par
+                    /*if(m_stFriendList[i].bIsSelected) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,255,255));\par
+                    else\par
+                    \{    if(m_stFriendList[i].sStatus == 0) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,0,0));\par
+                        else PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(0,255,0));\par
+                    \}*/\par
+                \}\par
+            \}\par
+        \}\par
+        \par
+        break;\par
+    case 15://Lista de Amigos - Solicitudes Realizadas\par
+        PutString_SprFont(sX+90,sY+35,"Solicitudes Realizadas",1,1,8);\par
+\par
+        if (iSolicitudesRealizadas == 0)\par
+        \{    PutAlignedString(sX, sX + szX, sY + 70, "No tienes solicitudes realizadas pendientes", 0,0,0);\par
+        \}\par
+        else\par
+        \{    for(int i = 0; i < iSolicitudesRealizadas; i++)\par
+            \{    if((msX > sX + 35) && (msX < sX + 220) && (msY > sY + (i * 12) + 70) && (msY < sY + (i * 12) + 82))\par
+                    PutString(sX + 35, sY + (i * 12) + 70, m_stSolicitudesRealizadas[i].cPlayerName, RGB(255,255,255));\par
+                else\par
+                \{    if(i == iIndexSelected) PutString(sX + 35, sY + (i * 12) + 70, m_stSolicitudesRealizadas[i].cPlayerName, RGB(255,255,255));\par
+                    else\par
+                    \{    if(m_stSolicitudesRealizadas[i].sStatus == 0) PutString(sX + 35, sY + (i * 12) + 70, m_stSolicitudesRealizadas[i].cPlayerName, RGB(255,0,0));\par
+                        else PutString(sX + 35, sY + (i * 12) + 70, m_stSolicitudesRealizadas[i].cPlayerName, RGB(0,255,0));\par
+                    \}\par
+                    /*if(m_stFriendList[i].bIsSelected) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,255,255));\par
+                    else\par
+                    \{    if(m_stFriendList[i].sStatus == 0) PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(255,0,0));\par
+                        else PutString(sX + 35, sY + (i * 12) + 70, m_stFriendList[i].cPlayerName, RGB(0,255,0));\par
+                    \}*/\par
+                \}\par
+            \}\par
+        \}\par
+        \par
+        break;\par
+\par
+    case 16://Lista de Amigos - Cargando Solicitudes Recibidas\par
+        bSendCommand(MSGID_REQUEST_SOLICITUDESRECIBIDAS, NULL, NULL, NULL, NULL, NULL, NULL);\par
+        PutAlignedString(sX, sX + szX, sY + 70, "Cargando solicitudes recibidas", 0,0,0);\par
+        break;\par
+    case 17://Lista de Amigos - Cargando Solicitudes Realziadas\par
+        bSendCommand(MSGID_REQUEST_SOLICITUDESREALIZADAS, NULL, NULL, NULL, NULL, NULL, NULL);\par
+        PutAlignedString(sX, sX + szX, sY + 70, "Cargando solicitudes realizadas", 0,0,0);\par
+        break;\par
+\par
+    case 18://Lista de Guild\par
+        PutString_SprFont(sX + (szX / 2)-(8*7),sY+35,"Lista de Guild",1,1,8);//"Lista de Guild"\par
+        \par
+        switch(guildlistrank)\{\par
+        case 0:// no guild\par
+            PutAlignedString(sX, sX + szX, sY + 70, "No perteneces a ningun guild", 0,0,0);\par
+        \par
+            break;\par
+        case 1:// guildmaster\par
+            PutAlignedString(sX, sX + szX, sY + 70, "Sos GM de un guild", 0,0,0);\par
+        \par
+            break;\par
+        case 2:// guildmember\par
+            PutAlignedString(sX, sX + szX, sY + 70, "Perteneces a un guild", 0,0,0);\par
+        \par
+            break;\par
+        \}\par
+\par
+        break;\par
+    \}\par
+\}\par
+ahora en game.h agregar:\par
+C\'f3digo:\par
+    //PlayerPanel\par
+    void DrawDialogBox_PlayerPanel(int msX, int msY);//52\par
+    void DlgBoxClick_PlayerPanel(int msX, int msY);\par
+en LAN_ENG.h agregar:\par
+C\'f3digo:\par
+//PlayerPanel cMode = 0\par
+#define    DRAW_DIALOGBOX_PlayerPanel0        "HELBREATH PHI"\par
+#define    DRAW_DIALOGBOX_PlayerPanel1        "Lista de Amigos"\par
+#define    DRAW_DIALOGBOX_PlayerPanel2        "Lista de Guild"\par
+#define    DRAW_DIALOGBOX_PlayerPanel3        "Estadisticas"\par
+#define    DRAW_DIALOGBOX_PlayerPanel4        "Trade EK"\par
+#define    DRAW_DIALOGBOX_PlayerPanel5        "Eventos"\par
+#define    DRAW_DIALOGBOX_PlayerPanel6        "Raid Time"\par
+#define    DRAW_DIALOGBOX_PlayerPanel7        "Comandos"\par
+#define    DRAW_DIALOGBOX_PlayerPanel8        "Staff"\par
+#define    DRAW_DIALOGBOX_PlayerPanel9        "PlayerPanel"\par
+\par
+//GMPanel (1) cMode = 10\par
+#define\tab DRAW_DIALOGBOX_GMPanel1\tab\tab\tab "GM PANEL"\par
+//#define\tab DRAW_DIALOGBOX_GMPanel2\tab\tab\tab "GMPanel"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel3B\tab\tab "Begin Crusade"\par
+#define\tab DRAW_DIALOGBOX_GMPanel3E\tab\tab "End Crusade"\par
+#define\tab DRAW_DIALOGBOX_GMPanel4B\tab\tab "Begin Apocalypse"\par
+#define\tab DRAW_DIALOGBOX_GMPanel4E\tab\tab "End Apocalypse"\par
+#define\tab DRAW_DIALOGBOX_GMPanel5B\tab\tab "Begin Heldenian"\par
+#define\tab DRAW_DIALOGBOX_GMPanel5E\tab\tab "End Heldenian"\par
+#define\tab DRAW_DIALOGBOX_GMPanel6ON\tab\tab "Heldenian Fight ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel6OFF\tab\tab "Heldenian Fight OFF"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel7\tab\tab\tab "Summon NPC"\par
+#define\tab DRAW_DIALOGBOX_GMPanel8\tab\tab\tab "Unsummon All NPC"\par
+#define\tab DRAW_DIALOGBOX_GMPanel9\tab\tab\tab "Summon Player"\par
+#define\tab DRAW_DIALOGBOX_GMPanel10\tab\tab "Summon All Players"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel11\tab\tab "Create Item"\par
+#define\tab DRAW_DIALOGBOX_GMPanel12\tab\tab "Change City"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel13\tab\tab "Goto"\par
+#define\tab DRAW_DIALOGBOX_GMPanel14\tab\tab "Teleport"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel15\tab\tab "Clear NPC"\par
+#define\tab DRAW_DIALOGBOX_GMPanel16\tab\tab "Clear Map"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel17\tab\tab "Kill"\par
+#define\tab DRAW_DIALOGBOX_GMPanel18\tab\tab "Revive"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel19\tab\tab "Send"\par
+#define\tab DRAW_DIALOGBOX_GMPanel20\tab\tab "Shut Up"\par
+#define\tab DRAW_DIALOGBOX_GMPanel21\tab\tab "Ban"\par
+#define\tab DRAW_DIALOGBOX_GMPanel22\tab\tab "Ban IP"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel44\tab\tab "Siguiente Pagina"\par
+\par
+//GMPanel (2) cMode = 11\par
+#define\tab DRAW_DIALOGBOX_GMPanel23\tab\tab "Check IP"\par
+#define\tab DRAW_DIALOGBOX_GMPanel24\tab\tab "Set Raid Time"\par
+#define\tab DRAW_DIALOGBOX_GMPanel25\tab\tab "Check Stats"\par
+#define\tab DRAW_DIALOGBOX_GMPanel26\tab\tab "Set Status"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel27ON\tab\tab "Set Invi ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel27OFF\tab\tab "Set Invi OFF"\par
+#define\tab DRAW_DIALOGBOX_GMPanel28ON\tab\tab "Set Zerk ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel285OFF\tab "Set Zerk OFF"\par
+#define\tab DRAW_DIALOGBOX_GMPanel29ON\tab\tab "Set Freeze ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel29OFF\tab\tab "Set Freeze OFF"\par
+#define\tab DRAW_DIALOGBOX_GMPanel30ON\tab\tab "Attack Mode ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel30OFF\tab\tab "Attack Mode OFF"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel31A\tab\tab "Reserve Fight Zone"\par
+#define\tab DRAW_DIALOGBOX_GMPanel31B\tab\tab "Get Ticket"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel32\tab\tab "Energy Sphere"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel33ON\tab\tab "Observe Mode ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel33OFF\tab\tab "Observe Mode OFF"\par
+#define\tab DRAW_DIALOGBOX_GMPanel34\tab\tab "Polymorph"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel35\tab\tab "Monster Count"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel36\tab\tab "Weather"\par
+#define\tab DRAW_DIALOGBOX_GMPanel37\tab\tab "Storm"\par
+#define\tab DRAW_DIALOGBOX_GMPanel38A\tab\tab "Time/Dia"\par
+#define\tab DRAW_DIALOGBOX_GMPanel38B\tab\tab "Time/Noche"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel39ON\tab\tab "Admin Attack ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel39OFF\tab\tab "Admin Attack OFF"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel40\tab\tab "Attack"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel41\tab\tab "Close Connection"\par
+#define\tab DRAW_DIALOGBOX_GMPanel42\tab\tab "Disconnect All"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel43\tab\tab "Shut Down Server"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel45\tab\tab "Pagina Anterior"\par
+\par
+//50Cent - GMPanel\par
+#define DEF_CATEG_STATUSTOOLS "GM Status & Tools"\par
+#define DEF_CATEG_SERVERMANIP "Server Manipulation"\par
+#define DEF_CATEG_PLAYERMANIP "Player Manipulation"\par
+// Centuu : Player Panel\par
+#define DEF_CATEG_CHARCOMMANDS "Player Commands"\par
+#define DEF_CATEG_TRADEEKLIST  "Trade Ek List"\par
+\par
+#define DEF_ENABLE\tab\tab\tab\tab "Enable Admin Cmd"\par
+\par
+#define DEF_KILL\tab\tab\tab\tab "Kill Cmd"\par
+#define DEF_REVIVE\tab\tab\tab\tab "Revive Cmd"\par
+#define DEF_CLOSECON\tab\tab\tab "Close Con. Cmd"\par
+#define DEF_SEND\tab\tab\tab\tab "Send Cmd"\par
+#define DEF_GOTO\tab\tab\tab\tab "Goto Cmd"\par
+#define DEF_SUMMONALL\tab\tab\tab "Summon All Cmd"\par
+#define DEF_SUMMONPLAYER\tab\tab "Summon Player Cmd"\par
+#define DEF_SHUTUP\tab\tab\tab\tab "Shutup Cmd"\par
+#define DEF_ATTACK\tab\tab\tab\tab "Guard Attack Cmd"\par
+\par
+#define DEF_SHUTDOWN\tab\tab\tab "Shut Down Server Cmd"\par
+#define DEF_RESERVEFZ\tab\tab\tab "Reserve Arena Cmd"\par
+#define DEF_SETATTACKMODE_ON\tab "Attack Mode On/"\par
+#define DEF_SETATTACKMODE_OFF\tab "Off"\par
+#define DEF_DISCONNECTALL\tab\tab "Disconnect All Cmd"\par
+#define DEF_CLEARNPC\tab\tab\tab "Clear Npc Cmd"\par
+\par
+#define DEF_OBSERVERMODE_ON\tab\tab "Obs. Mode On/"\par
+#define DEF_OBSERVERMODE_OFF\tab "Off"\par
+#define DEF_TELEPORT\tab\tab\tab "Teleport"\par
+#define DEF_GMATTACK\tab\tab\tab "Admin Attack Cmd"\par
+#define DEF_INVI_ON\tab\tab\tab\tab "Invi On/"\par
+#define DEF_INVI_OFF\tab\tab\tab "Off"\par
+#define DEF_EVENT_ON\tab\tab\tab "Event On/"\par
+#define DEF_EVENT_OFF\tab\tab\tab "Off"\par
+#define DEF_SUMMON\tab\tab\tab\tab "Summon Cmd"\par
+#define DEF_CREATEITEM\tab\tab\tab "Create Item Cmd"\par
+#define DEF_EVENTTP_OFF\tab\tab\tab "Event Tp Cmd"\par
+\par
+//Lista de Summon\par
+#define DRAW_DIALOGBOX_SummonPanel1\tab\tab "Boss"\par
+#define DRAW_DIALOGBOX_SummonPanel2\tab\tab "Elite"\par
+#define DRAW_DIALOGBOX_SummonPanel3\tab\tab "Master"\par
+#define DRAW_DIALOGBOX_SummonPanel4\tab\tab "Common"\par
+#define DRAW_DIALOGBOX_SummonPanel5\tab\tab "Misc."\par
+#define DRAW_DIALOGBOX_SummonPanel6\tab\tab "Held"\par
+#define DRAW_DIALOGBOX_SummonPanel7\tab\tab "Sade"\par
+\par
+//Lista de Summon - Common\par
+#define DRAW_DIALOGBOX_SummonPanel8\tab\tab "Dummy"\par
+#define DRAW_DIALOGBOX_SummonPanel9\tab\tab "Slime"\par
+#define DRAW_DIALOGBOX_SummonPanel10\tab "Skel."\par
+#define DRAW_DIALOGBOX_SummonPanel11\tab "Orc"\par
+#define DRAW_DIALOGBOX_SummonPanel12\tab "G.Ant"\par
+#define DRAW_DIALOGBOX_SummonPanel13\tab "G.Scorp"\par
+#define DRAW_DIALOGBOX_SummonPanel14\tab "Snake"\par
+#define DRAW_DIALOGBOX_SummonPanel15\tab "Zombie"\par
+#define DRAW_DIALOGBOX_SummonPanel16\tab "S.Golem"\par
+#define DRAW_DIALOGBOX_SummonPanel17\tab "C.Golem"\par
+#define DRAW_DIALOGBOX_SummonPanel18\tab "Cyclope"\par
+#define DRAW_DIALOGBOX_SummonPanel19\tab "HH"\par
+#define DRAW_DIALOGBOX_SummonPanel20\tab "Troll"\par
+#define DRAW_DIALOGBOX_SummonPanel21\tab "Frog"\par
+#define DRAW_DIALOGBOX_SummonPanel22\tab "Rudolph"\par
+\par
+//Lista de Summon - Misc.\par
+#define DRAW_DIALOGBOX_SummonPanel23A\tab "G. A"\par
+#define DRAW_DIALOGBOX_SummonPanel24\tab "Unicorn"\par
+#define DRAW_DIALOGBOX_SummonPanel25\tab "Rabbit"\par
+#define DRAW_DIALOGBOX_SummonPanel26\tab "Cat"\par
+#define DRAW_DIALOGBOX_SummonPanel27\tab "Crop"\par
+\par
+//Lista de Summon - Master\par
+#define DRAW_DIALOGBOX_SummonPanel28\tab "Ogre"\par
+#define DRAW_DIALOGBOX_SummonPanel29\tab "WW"\par
+#define DRAW_DIALOGBOX_SummonPanel30\tab "C.Plant"\par
+#define DRAW_DIALOGBOX_SummonPanel31\tab "M.Giant"\par
+#define DRAW_DIALOGBOX_SummonPanel32\tab "Dire"\par
+#define DRAW_DIALOGBOX_SummonPanel33\tab "Frost"\par
+#define DRAW_DIALOGBOX_SummonPanel34\tab "I.Golem"\par
+#define DRAW_DIALOGBOX_SummonPanel35\tab "C.Turtle"\par
+#define DRAW_DIALOGBOX_SummonPanel36\tab "G.Cray"\par
+#define DRAW_DIALOGBOX_SummonPanel37\tab "G.Tree"\par
+#define DRAW_DIALOGBOX_SummonPanel38\tab "Tento"\par
+\par
+//Lista de Summon - Elite\par
+#define DRAW_DIALOGBOX_SummonPanel39\tab "Liche"\par
+#define DRAW_DIALOGBOX_SummonPanel40\tab "Demon"\par
+#define DRAW_DIALOGBOX_SummonPanel41\tab "Ettin"\par
+#define DRAW_DIALOGBOX_SummonPanel42\tab "Stalker"\par
+#define DRAW_DIALOGBOX_SummonPanel43\tab "Gagoyle"\par
+#define DRAW_DIALOGBOX_SummonPanel44\tab "Beholder"\par
+#define DRAW_DIALOGBOX_SummonPanel45\tab "D.Elf"\par
+#define DRAW_DIALOGBOX_SummonPanel46\tab "Barlog"\par
+#define DRAW_DIALOGBOX_SummonPanel47\tab "Centa."\par
+#define DRAW_DIALOGBOX_SummonPanel48\tab "G.Lize"\par
+#define DRAW_DIALOGBOX_SummonPanel49\tab "M.M. Orc"\par
+#define DRAW_DIALOGBOX_SummonPanel50\tab "Mino."\par
+#define DRAW_DIALOGBOX_SummonPanel51\tab "Nizie"\par
+\par
+//Lista de Summon - Boss\par
+#define DRAW_DIALOGBOX_SummonPanel52\tab "Aba"\par
+#define DRAW_DIALOGBOX_SummonPanel53\tab "F.Wyv"\par
+#define DRAW_DIALOGBOX_SummonPanel54\tab "Wyv"\par
+#define DRAW_DIALOGBOX_SummonPanel55\tab "TW"\par
+#define DRAW_DIALOGBOX_SummonPanel56\tab "HC"\par
+\par
+//Lista de Summon - Helde\par
+#define DRAW_DIALOGBOX_SummonPanel57A\tab "CP.A"\par
+#define DRAW_DIALOGBOX_SummonPanel58A\tab "Sor.A"\par
+#define DRAW_DIALOGBOX_SummonPanel59A\tab "ATK.A"\par
+#define DRAW_DIALOGBOX_SummonPanel60A\tab "ElfM.A"\par
+#define DRAW_DIALOGBOX_SummonPanel61A\tab "DSK.A"\par
+#define DRAW_DIALOGBOX_SummonPanel62A\tab "HBT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel63A\tab "CT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel64A\tab "Bar.A"\par
+#define DRAW_DIALOGBOX_SummonPanel65A\tab "AGC.A"\par
+\par
+//Lista de Summon - Sade\par
+#define DRAW_DIALOGBOX_SummonPanel66A\tab "AT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel67A\tab "CT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel68A\tab "MC.A"\par
+#define DRAW_DIALOGBOX_SummonPanel69A\tab "DT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel70A\tab "XY.A"\par
+#define DRAW_DIALOGBOX_SummonPanel71A\tab "LWB.A"\par
+#define DRAW_DIALOGBOX_SummonPanel72\tab "M.Stone"\par
+#define DRAW_DIALOGBOX_SummonPanel73\tab "GHKnight"\par
+#define DRAW_DIALOGBOX_SummonPanel74\tab "TKnight"\par
+#define DRAW_DIALOGBOX_SummonPanel75\tab "BGolem"\par
+\par
+#define DRAW_DIALOGBOX_SummonPanelE\tab\tab "/E"\par
+#define DRAW_DIALOGBOX_SummonPanelN\tab\tab "/N"\par
+\par
+//Lista de Teleport\par
+#define DEF_SUBTP_CATE_ARE\tab "Ares"\par
+#define DEF_SUBTP_CATE_ELV\tab "Elv"\par
+#define DEF_SUBTP_CATE_DUN\tab "Dungeon"\par
+#define DEF_SUBTP_CATE_EVE\tab "Event"\par
+#define DEF_SUBTP_CATE_OTH\tab "Other"\par
+\par
+//Lista de Teleport - Ares&Elv:\par
+#define DEF_SUBTP1\tab "Farm"//arefarm//elvfarm\par
+#define DEF_SUBTP2\tab "Brk. 1"//arebrk11//arebrk11\par
+#define DEF_SUBTP3\tab "Brk. 1"//arebrk12//arebrk12\par
+#define DEF_SUBTP4\tab "Brk. 2"//arebrk21//arebrk21\par
+#define DEF_SUBTP5\tab "Brk. 2"//arebrk22//arebrk22\par
+#define DEF_SUBTP6\tab "Dungeon"//aresdend1//elvined1\par
+#define DEF_SUBTP7\tab "City"//aresden//elvine\par
+#define DEF_SUBTP8\tab "BS"//bsmith_1//bsmith_2\par
+#define DEF_SUBTP9\tab "CH"//cityhall_1//cityhall_2\par
+#define DEF_SUBTP10\tab "GH"//gldhall_1//gldhall_2\par
+#define DEF_SUBTP11\tab "Shop"//gshop_1//gshop_2\par
+#define DEF_SUBTP12\tab "M.Tower"//wzdtwr_1//wzdtwr_2\par
+#define DEF_SUBTP13\tab "WH"//wrhus_1//wrhus_2\par
+#define DEF_SUBTP14\tab "WHF"//arewrhus//elvwrhus\par
+#define DEF_SUBTP15\tab "Church"//cath_1//cath_2\par
+#define DEF_SUBTP18\tab "R.Zone"//resurr1//resurr2\par
+#define DEF_SUBTP19\tab "Garden"//areuni//elvuni\par
+#define DEF_SUBTP20\tab "Jail"//arejail//elvjail\par
+#define DEF_SUBTP21\tab "Co.Hall"//CmdHall_1//CmdHall_2\par
+\par
+//Lista de Teleport - Dungeons:\par
+#define DEF_SUBTP22\tab "Dun.L2"//dglv2\par
+#define DEF_SUBTP23\tab "Dun.L3"//dglv3\par
+#define DEF_SUBTP24\tab "Dun.L4"//dglv4\par
+#define DEF_SUBTP25\tab "ML Mine"//middled1x\par
+#define DEF_SUBTP26\tab "ML Dun."//midddlen\par
+#define DEF_SUBTP27\tab "Dru.City"//druncncity\par
+#define DEF_SUBTP28\tab "Inf. A"//inferniaA\par
+#define DEF_SUBTP29\tab "Inf. B"//inferniaB\par
+#define DEF_SUBTP30\tab "Maze"//maze\par
+#define DEF_SUBTP31\tab "Abaddon"//abaddon\par
+\par
+//Lista de Teleport - Event:\par
+#define DEF_SUBTP32\tab "Arena 1"//fightzone1\par
+#define DEF_SUBTP33\tab "Arena 2"//fightzone2\par
+#define DEF_SUBTP34\tab "Arena 3"//fightzone3\par
+#define DEF_SUBTP35\tab "Arena 4"//fightzone4\par
+#define DEF_SUBTP36\tab "Arena 5"//fightzone5\par
+#define DEF_SUBTP37\tab "Arena 6"//fightzone6\par
+#define DEF_SUBTP38\tab "Arena 7"//fightzone7\par
+#define DEF_SUBTP39\tab "Arena 8"//fightzone8\par
+#define DEF_SUBTP40\tab "Arena 9"//fightzone9\par
+#define DEF_SUBTP41\tab "BI"//bisle\par
+#define DEF_SUBTP42\tab "B.Field"//BtField\par
+#define DEF_SUBTP43\tab "G.Held."//GodH\par
+#define DEF_SUBTP44\tab "H.Ramp."//HRampart\par
+#define DEF_SUBTP45\tab "ML"//middleland\par
+#define DEF_SUBTP46\tab "IB"//icebound\par
+\par
+//Lista de Teleport - Others:\par
+#define DEF_SUBTP47\tab "Beg.Zone"//default\par
+#define DEF_SUBTP48\tab "R.High."//huntzone1\par
+#define DEF_SUBTP49\tab "E.Field"//huntzone2\par
+#define DEF_SUBTP50\tab "D.Valley"//huntzone3\par
+#define DEF_SUBTP51\tab "S.Wood"//huntzone4\par
+#define DEF_SUBTP52\tab "TOH.1"//toh1\par
+#define DEF_SUBTP53\tab "TOH.2"//toh2\par
+#define DEF_SUBTP54\tab "TOH.3"//toh3\par
+#define DEF_SUBTP55\tab "PL"//2ndmiddle\par
+#define DEF_SUBTP56\tab "Proce."//procella\par
+yo que ustedes agrego esto arriba de la funcion DrawDialogBox_PlayerPanel, para ir guiandose nada mas, sino es un quilombo jajaj:\par
+\par
+C\'f3digo:\par
+//PlayerPanel\par
+/************************************************************************************************\par
+*                                    PLAYER PANEL HB PHI                                            *\par
+*                                                                                                *\par
+*                    void CGame::DrawDialogBox_PlayerPanel(int msX, int msY)                        *\par
+*                                                                                                *\par
+*    cMode 0  = PlayerPanel                            cMode 1  = Cargando Lista de Amigos            *\par
+*    cMode 2  = Cargando Lista de Guild                cMode 3  = Estadisticas                        *\par
+*    cMode 4  = -                                    cMode 5  = Eventos                            *\par
+*    cMode 6  = Raid Time                            cMode 7  = Comandos                            *\par
+*    cMode 8  = Staff                                cMode 9  = -                                *\par
+*    cMode 10 = GMPanel                                cMode 11 = Lista de Teleport                *\par
+*    cMode 12 = Lista de Summon                        cMode 13 = Lista de Amigos                    *\par
+*    cMode 14 = Solicitudes Recibidas (L.A.)            cMode 15 = Solicitudes Realziadas (L.A.)    *\par
+*    cMode 16 = Cargando Solicitudes Recibidas        cMode 17 = Cargando Solicitudes Realizadas    *\par
+*    cMode 18 = Lista de Guild                        cMode 19 = -                                *\par
+*************************************************************************************************/\par
+Ahora Busco bien el code del TradeEk, Lista de Amigos, Lista de Guild que estan adentro del playerpanel (Gaucha, preferis q lo ponga aca o un tema aparte?)\par
+\par
+saludos\par
+\par
+PD: la lista de amigos y la lista de guild q voy a agregar por lo menos a mi me LLENABAN de LAG, tanta q me daba dc, pero funcionaba..\par
+\par
+\par
+---\par
+\par
+\par
+ERRORES RESPUESTA: \par
+\par
+Re: PlayerPanel (by Tomasarg)\par
+C\'f3digo:\par
+C:\\Documents and Settings\\Arielito0\\Escritorio\\hb\\Helbreath Server\\Sources\\HelGame\\Game.cpp(17536) : error C2065: 'iTotalFriends' : undeclared identifier\par
+C:\\Documents and Settings\\Arielito0\\Escritorio\\hb\\Helbreath Server\\Sources\\HelGame\\Game.cpp(17538) : error C2065: 'iIndexSelected' : undeclared identifier\par
+C:\\Documents and Settings\\Arielito0\\Escritorio\\hb\\Helbreath Server\\Sources\\HelGame\\Game.cpp(17554) : error C2065: 'm_stFriendList' : undeclared identifier\par
+C:\\Documents and Settings\\Arielito0\\Escritorio\\hb\\Helbreath Server\\Sources\\HelGame\\Game.cpp(17554) : error C2109: subscript requires array or pointer type\par
+C:\\Documents and Settings\\Arielito0\\Escritorio\\hb\\Helbreath Server\\Sources\\HelGame\\Game.cpp(17554) : error C2228: left of '.cPlayerName' must have class/struct/union type\par
+C:\\Documents and Settings\\Arielito0\\Escritorio\\hb\\Helbreath Server\\Sources\\HelGame\\Game.cpp(17570) : error C2065: 'MSGID_REQUEST_FRIENDLIST' : undeclared identifier\par
+C:\\Documents and Settings\\Arielito0\\Escritorio\\hb\\Helbreath Server\\Sources\\HelGame\\Game.cpp(25718) : error C2065: 'MSGID_REQUEST_GUILDLIST' : undeclared identifier\par
+esos son porque son parte del code de la lista de amigos y guild, que todavia no subi, ma\'f1ana lo subo, sino fijate en los lugares que aparece y "comentalos" por el momento porque esos 2 codigos todavia no puedo hacer que sirvan (funcionan pero te llenan de lag)\par
+\par
+igualmente me olvide una parte\par
+\par
+en el client, en LAN_ENG.h\par
+C\'f3digo:\par
+//GMPanel (1) cMode = 10\par
+#define\tab DRAW_DIALOGBOX_GMPanel1\tab\tab\tab "GM PANEL"\par
+//#define\tab DRAW_DIALOGBOX_GMPanel2\tab\tab\tab "GMPanel"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel3B\tab\tab "Begin Crusade"\par
+#define\tab DRAW_DIALOGBOX_GMPanel3E\tab\tab "End Crusade"\par
+#define\tab DRAW_DIALOGBOX_GMPanel4B\tab\tab "Begin Apocalypse"\par
+#define\tab DRAW_DIALOGBOX_GMPanel4E\tab\tab "End Apocalypse"\par
+#define\tab DRAW_DIALOGBOX_GMPanel5B\tab\tab "Begin Heldenian"\par
+#define\tab DRAW_DIALOGBOX_GMPanel5E\tab\tab "End Heldenian"\par
+#define\tab DRAW_DIALOGBOX_GMPanel6ON\tab\tab "Heldenian Fight ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel6OFF\tab\tab "Heldenian Fight OFF"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel7\tab\tab\tab "Summon NPC"\par
+#define\tab DRAW_DIALOGBOX_GMPanel8\tab\tab\tab "Unsummon All NPC"\par
+#define\tab DRAW_DIALOGBOX_GMPanel9\tab\tab\tab "Summon Player"\par
+#define\tab DRAW_DIALOGBOX_GMPanel10\tab\tab "Summon All Players"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel11\tab\tab "Create Item"\par
+#define\tab DRAW_DIALOGBOX_GMPanel12\tab\tab "Change City"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel13\tab\tab "Goto"\par
+#define\tab DRAW_DIALOGBOX_GMPanel14\tab\tab "Teleport"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel15\tab\tab "Clear NPC"\par
+#define\tab DRAW_DIALOGBOX_GMPanel16\tab\tab "Clear Map"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel17\tab\tab "Kill"\par
+#define\tab DRAW_DIALOGBOX_GMPanel18\tab\tab "Revive"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel19\tab\tab "Send"\par
+#define\tab DRAW_DIALOGBOX_GMPanel20\tab\tab "Shut Up"\par
+#define\tab DRAW_DIALOGBOX_GMPanel21\tab\tab "Ban"\par
+#define\tab DRAW_DIALOGBOX_GMPanel22\tab\tab "Ban IP"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel44\tab\tab "Siguiente Pagina"\par
+\par
+//GMPanel (2) cMode = 11\par
+#define\tab DRAW_DIALOGBOX_GMPanel23\tab\tab "Check IP"\par
+#define\tab DRAW_DIALOGBOX_GMPanel24\tab\tab "Set Raid Time"\par
+#define\tab DRAW_DIALOGBOX_GMPanel25\tab\tab "Check Stats"\par
+#define\tab DRAW_DIALOGBOX_GMPanel26\tab\tab "Set Status"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel27ON\tab\tab "Set Invi ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel27OFF\tab\tab "Set Invi OFF"\par
+#define\tab DRAW_DIALOGBOX_GMPanel28ON\tab\tab "Set Zerk ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel285OFF\tab "Set Zerk OFF"\par
+#define\tab DRAW_DIALOGBOX_GMPanel29ON\tab\tab "Set Freeze ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel29OFF\tab\tab "Set Freeze OFF"\par
+#define\tab DRAW_DIALOGBOX_GMPanel30ON\tab\tab "Attack Mode ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel30OFF\tab\tab "Attack Mode OFF"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel31A\tab\tab "Reserve Fight Zone"\par
+#define\tab DRAW_DIALOGBOX_GMPanel31B\tab\tab "Get Ticket"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel32\tab\tab "Energy Sphere"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel33ON\tab\tab "Observe Mode ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel33OFF\tab\tab "Observe Mode OFF"\par
+#define\tab DRAW_DIALOGBOX_GMPanel34\tab\tab "Polymorph"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel35\tab\tab "Monster Count"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel36\tab\tab "Weather"\par
+#define\tab DRAW_DIALOGBOX_GMPanel37\tab\tab "Storm"\par
+#define\tab DRAW_DIALOGBOX_GMPanel38A\tab\tab "Time/Dia"\par
+#define\tab DRAW_DIALOGBOX_GMPanel38B\tab\tab "Time/Noche"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel39ON\tab\tab "Admin Attack ON"\par
+#define\tab DRAW_DIALOGBOX_GMPanel39OFF\tab\tab "Admin Attack OFF"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel40\tab\tab "Attack"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel41\tab\tab "Close Connection"\par
+#define\tab DRAW_DIALOGBOX_GMPanel42\tab\tab "Disconnect All"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel43\tab\tab "Shut Down Server"\par
+\par
+#define\tab DRAW_DIALOGBOX_GMPanel45\tab\tab "Pagina Anterior"\par
+\par
+//50Cent - GMPanel\par
+#define DEF_CATEG_STATUSTOOLS "GM Status & Tools"\par
+#define DEF_CATEG_SERVERMANIP "Server Manipulation"\par
+#define DEF_CATEG_PLAYERMANIP "Player Manipulation"\par
+// Centuu : Player Panel\par
+#define DEF_CATEG_CHARCOMMANDS "Player Commands"\par
+#define DEF_CATEG_TRADEEKLIST  "Trade Ek List"\par
+\par
+#define DEF_ENABLE\tab\tab\tab\tab "Enable Admin Cmd"\par
+\par
+#define DEF_KILL\tab\tab\tab\tab "Kill Cmd"\par
+#define DEF_REVIVE\tab\tab\tab\tab "Revive Cmd"\par
+#define DEF_CLOSECON\tab\tab\tab "Close Con. Cmd"\par
+#define DEF_SEND\tab\tab\tab\tab "Send Cmd"\par
+#define DEF_GOTO\tab\tab\tab\tab "Goto Cmd"\par
+#define DEF_SUMMONALL\tab\tab\tab "Summon All Cmd"\par
+#define DEF_SUMMONPLAYER\tab\tab "Summon Player Cmd"\par
+#define DEF_SHUTUP\tab\tab\tab\tab "Shutup Cmd"\par
+#define DEF_ATTACK\tab\tab\tab\tab "Guard Attack Cmd"\par
+\par
+#define DEF_SHUTDOWN\tab\tab\tab "Shut Down Server Cmd"\par
+#define DEF_RESERVEFZ\tab\tab\tab "Reserve Arena Cmd"\par
+#define DEF_SETATTACKMODE_ON\tab "Attack Mode On/"\par
+#define DEF_SETATTACKMODE_OFF\tab "Off"\par
+#define DEF_DISCONNECTALL\tab\tab "Disconnect All Cmd"\par
+#define DEF_CLEARNPC\tab\tab\tab "Clear Npc Cmd"\par
+\par
+#define DEF_OBSERVERMODE_ON\tab\tab "Obs. Mode On/"\par
+#define DEF_OBSERVERMODE_OFF\tab "Off"\par
+#define DEF_TELEPORT\tab\tab\tab "Teleport"\par
+#define DEF_GMATTACK\tab\tab\tab "Admin Attack Cmd"\par
+#define DEF_INVI_ON\tab\tab\tab\tab "Invi On/"\par
+#define DEF_INVI_OFF\tab\tab\tab "Off"\par
+#define DEF_EVENT_ON\tab\tab\tab "Event On/"\par
+#define DEF_EVENT_OFF\tab\tab\tab "Off"\par
+#define DEF_SUMMON\tab\tab\tab\tab "Summon Cmd"\par
+#define DEF_CREATEITEM\tab\tab\tab "Create Item Cmd"\par
+#define DEF_EVENTTP_OFF\tab\tab\tab "Event Tp Cmd"\par
+\par
+//Lista de Summon\par
+#define DRAW_DIALOGBOX_SummonPanel1\tab\tab "Boss"\par
+#define DRAW_DIALOGBOX_SummonPanel2\tab\tab "Elite"\par
+#define DRAW_DIALOGBOX_SummonPanel3\tab\tab "Master"\par
+#define DRAW_DIALOGBOX_SummonPanel4\tab\tab "Common"\par
+#define DRAW_DIALOGBOX_SummonPanel5\tab\tab "Misc."\par
+#define DRAW_DIALOGBOX_SummonPanel6\tab\tab "Held"\par
+#define DRAW_DIALOGBOX_SummonPanel7\tab\tab "Sade"\par
+\par
+//Lista de Summon - Common\par
+#define DRAW_DIALOGBOX_SummonPanel8\tab\tab "Dummy"\par
+#define DRAW_DIALOGBOX_SummonPanel9\tab\tab "Slime"\par
+#define DRAW_DIALOGBOX_SummonPanel10\tab "Skel."\par
+#define DRAW_DIALOGBOX_SummonPanel11\tab "Orc"\par
+#define DRAW_DIALOGBOX_SummonPanel12\tab "G.Ant"\par
+#define DRAW_DIALOGBOX_SummonPanel13\tab "G.Scorp"\par
+#define DRAW_DIALOGBOX_SummonPanel14\tab "Snake"\par
+#define DRAW_DIALOGBOX_SummonPanel15\tab "Zombie"\par
+#define DRAW_DIALOGBOX_SummonPanel16\tab "S.Golem"\par
+#define DRAW_DIALOGBOX_SummonPanel17\tab "C.Golem"\par
+#define DRAW_DIALOGBOX_SummonPanel18\tab "Cyclope"\par
+#define DRAW_DIALOGBOX_SummonPanel19\tab "HH"\par
+#define DRAW_DIALOGBOX_SummonPanel20\tab "Troll"\par
+#define DRAW_DIALOGBOX_SummonPanel21\tab "Frog"\par
+#define DRAW_DIALOGBOX_SummonPanel22\tab "Rudolph"\par
+\par
+//Lista de Summon - Misc.\par
+#define DRAW_DIALOGBOX_SummonPanel23A\tab "G. A"\par
+#define DRAW_DIALOGBOX_SummonPanel24\tab "Unicorn"\par
+#define DRAW_DIALOGBOX_SummonPanel25\tab "Rabbit"\par
+#define DRAW_DIALOGBOX_SummonPanel26\tab "Cat"\par
+#define DRAW_DIALOGBOX_SummonPanel27\tab "Crop"\par
+\par
+//Lista de Summon - Master\par
+#define DRAW_DIALOGBOX_SummonPanel28\tab "Ogre"\par
+#define DRAW_DIALOGBOX_SummonPanel29\tab "WW"\par
+#define DRAW_DIALOGBOX_SummonPanel30\tab "C.Plant"\par
+#define DRAW_DIALOGBOX_SummonPanel31\tab "M.Giant"\par
+#define DRAW_DIALOGBOX_SummonPanel32\tab "Dire"\par
+#define DRAW_DIALOGBOX_SummonPanel33\tab "Frost"\par
+#define DRAW_DIALOGBOX_SummonPanel34\tab "I.Golem"\par
+#define DRAW_DIALOGBOX_SummonPanel35\tab "C.Turtle"\par
+#define DRAW_DIALOGBOX_SummonPanel36\tab "G.Cray"\par
+#define DRAW_DIALOGBOX_SummonPanel37\tab "G.Tree"\par
+#define DRAW_DIALOGBOX_SummonPanel38\tab "Tento"\par
+\par
+//Lista de Summon - Elite\par
+#define DRAW_DIALOGBOX_SummonPanel39\tab "Liche"\par
+#define DRAW_DIALOGBOX_SummonPanel40\tab "Demon"\par
+#define DRAW_DIALOGBOX_SummonPanel41\tab "Ettin"\par
+#define DRAW_DIALOGBOX_SummonPanel42\tab "Stalker"\par
+#define DRAW_DIALOGBOX_SummonPanel43\tab "Gagoyle"\par
+#define DRAW_DIALOGBOX_SummonPanel44\tab "Beholder"\par
+#define DRAW_DIALOGBOX_SummonPanel45\tab "D.Elf"\par
+#define DRAW_DIALOGBOX_SummonPanel46\tab "Barlog"\par
+#define DRAW_DIALOGBOX_SummonPanel47\tab "Centa."\par
+#define DRAW_DIALOGBOX_SummonPanel48\tab "G.Lize"\par
+#define DRAW_DIALOGBOX_SummonPanel49\tab "M.M. Orc"\par
+#define DRAW_DIALOGBOX_SummonPanel50\tab "Mino."\par
+#define DRAW_DIALOGBOX_SummonPanel51\tab "Nizie"\par
+\par
+//Lista de Summon - Boss\par
+#define DRAW_DIALOGBOX_SummonPanel52\tab "Aba"\par
+#define DRAW_DIALOGBOX_SummonPanel53\tab "F.Wyv"\par
+#define DRAW_DIALOGBOX_SummonPanel54\tab "Wyv"\par
+#define DRAW_DIALOGBOX_SummonPanel55\tab "TW"\par
+#define DRAW_DIALOGBOX_SummonPanel56\tab "HC"\par
+\par
+//Lista de Summon - Helde\par
+#define DRAW_DIALOGBOX_SummonPanel57A\tab "CP.A"\par
+#define DRAW_DIALOGBOX_SummonPanel58A\tab "Sor.A"\par
+#define DRAW_DIALOGBOX_SummonPanel59A\tab "ATK.A"\par
+#define DRAW_DIALOGBOX_SummonPanel60A\tab "ElfM.A"\par
+#define DRAW_DIALOGBOX_SummonPanel61A\tab "DSK.A"\par
+#define DRAW_DIALOGBOX_SummonPanel62A\tab "HBT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel63A\tab "CT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel64A\tab "Bar.A"\par
+#define DRAW_DIALOGBOX_SummonPanel65A\tab "AGC.A"\par
+\par
+//Lista de Summon - Sade\par
+#define DRAW_DIALOGBOX_SummonPanel66A\tab "AT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel67A\tab "CT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel68A\tab "MC.A"\par
+#define DRAW_DIALOGBOX_SummonPanel69A\tab "DT.A"\par
+#define DRAW_DIALOGBOX_SummonPanel70A\tab "XY.A"\par
+#define DRAW_DIALOGBOX_SummonPanel71A\tab "LWB.A"\par
+#define DRAW_DIALOGBOX_SummonPanel72\tab "M.Stone"\par
+#define DRAW_DIALOGBOX_SummonPanel73\tab "GHKnight"\par
+#define DRAW_DIALOGBOX_SummonPanel74\tab "TKnight"\par
+#define DRAW_DIALOGBOX_SummonPanel75\tab "BGolem"\par
+\par
+#define DRAW_DIALOGBOX_SummonPanelE\tab\tab "/E"\par
+#define DRAW_DIALOGBOX_SummonPanelN\tab\tab "/N"\par
+\par
+//Lista de Teleport\par
+#define DEF_SUBTP_CATE_ARE\tab "Ares"\par
+#define DEF_SUBTP_CATE_ELV\tab "Elv"\par
+#define DEF_SUBTP_CATE_DUN\tab "Dungeon"\par
+#define DEF_SUBTP_CATE_EVE\tab "Event"\par
+#define DEF_SUBTP_CATE_OTH\tab "Other"\par
+\par
+//Lista de Teleport - Ares&Elv:\par
+#define DEF_SUBTP1\tab "Farm"//arefarm//elvfarm\par
+#define DEF_SUBTP2\tab "Brk. 1"//arebrk11//arebrk11\par
+#define DEF_SUBTP3\tab "Brk. 1"//arebrk12//arebrk12\par
+#define DEF_SUBTP4\tab "Brk. 2"//arebrk21//arebrk21\par
+#define DEF_SUBTP5\tab "Brk. 2"//arebrk22//arebrk22\par
+#define DEF_SUBTP6\tab "Dungeon"//aresdend1//elvined1\par
+#define DEF_SUBTP7\tab "City"//aresden//elvine\par
+#define DEF_SUBTP8\tab "BS"//bsmith_1//bsmith_2\par
+#define DEF_SUBTP9\tab "CH"//cityhall_1//cityhall_2\par
+#define DEF_SUBTP10\tab "GH"//gldhall_1//gldhall_2\par
+#define DEF_SUBTP11\tab "Shop"//gshop_1//gshop_2\par
+#define DEF_SUBTP12\tab "M.Tower"//wzdtwr_1//wzdtwr_2\par
+#define DEF_SUBTP13\tab "WH"//wrhus_1//wrhus_2\par
+#define DEF_SUBTP14\tab "WHF"//arewrhus//elvwrhus\par
+#define DEF_SUBTP15\tab "Church"//cath_1//cath_2\par
+#define DEF_SUBTP18\tab "R.Zone"//resurr1//resurr2\par
+#define DEF_SUBTP19\tab "Garden"//areuni//elvuni\par
+#define DEF_SUBTP20\tab "Jail"//arejail//elvjail\par
+#define DEF_SUBTP21\tab "Co.Hall"//CmdHall_1//CmdHall_2\par
+\par
+//Lista de Teleport - Dungeons:\par
+#define DEF_SUBTP22\tab "Dun.L2"//dglv2\par
+#define DEF_SUBTP23\tab "Dun.L3"//dglv3\par
+#define DEF_SUBTP24\tab "Dun.L4"//dglv4\par
+#define DEF_SUBTP25\tab "ML Mine"//middled1x\par
+#define DEF_SUBTP26\tab "ML Dun."//midddlen\par
+#define DEF_SUBTP27\tab "Dru.City"//druncncity\par
+#define DEF_SUBTP28\tab "Inf. A"//inferniaA\par
+#define DEF_SUBTP29\tab "Inf. B"//inferniaB\par
+#define DEF_SUBTP30\tab "Maze"//maze\par
+#define DEF_SUBTP31\tab "Abaddon"//abaddon\par
+\par
+//Lista de Teleport - Event:\par
+#define DEF_SUBTP32\tab "Arena 1"//fightzone1\par
+#define DEF_SUBTP33\tab "Arena 2"//fightzone2\par
+#define DEF_SUBTP34\tab "Arena 3"//fightzone3\par
+#define DEF_SUBTP35\tab "Arena 4"//fightzone4\par
+#define DEF_SUBTP36\tab "Arena 5"//fightzone5\par
+#define DEF_SUBTP37\tab "Arena 6"//fightzone6\par
+#define DEF_SUBTP38\tab "Arena 7"//fightzone7\par
+#define DEF_SUBTP39\tab "Arena 8"//fightzone8\par
+#define DEF_SUBTP40\tab "Arena 9"//fightzone9\par
+#define DEF_SUBTP41\tab "BI"//bisle\par
+#define DEF_SUBTP42\tab "B.Field"//BtField\par
+#define DEF_SUBTP43\tab "G.Held."//GodH\par
+#define DEF_SUBTP44\tab "H.Ramp."//HRampart\par
+#define DEF_SUBTP45\tab "ML"//middleland\par
+#define DEF_SUBTP46\tab "IB"//icebound\par
+\par
+//Lista de Teleport - Others:\par
+#define DEF_SUBTP47\tab "Beg.Zone"//default\par
+#define DEF_SUBTP48\tab "R.High."//huntzone1\par
+#define DEF_SUBTP49\tab "E.Field"//huntzone2\par
+#define DEF_SUBTP50\tab "D.Valley"//huntzone3\par
+#define DEF_SUBTP51\tab "S.Wood"//huntzone4\par
+#define DEF_SUBTP52\tab "TOH.1"//toh1\par
+#define DEF_SUBTP53\tab "TOH.2"//toh2\par
+#define DEF_SUBTP54\tab "TOH.3"//toh3\par
+#define DEF_SUBTP55\tab "PL"//2ndmiddle\par
+#define DEF_SUBTP56\tab "Proce."//procella\par
+ahora lo edito en arriba de todo\par
+\par
+cualquier cosa avisa\par
+\par
+pd: 50, veo que el que hizo el gmpanel para el hbcordoba fuiste vos, asique espero no te moleste que lo haya usado ni lo haya publicado como parte de este code, cualquier cosa avisame\par
+--\par
+\par
+funciona, pero le falta practicamente todo xD\par
+\par
+solo tiene lo del HBCordoba aca, que esta funcionando, en mis files estan los codes para la lista de amigos y la lista de guild... pero tampoco funcionan como deberian porq te llenan de lag y te da cl..\par
+\par
+todo el resto, "Eventos", "Estadisticas", "Staff", etc nunca los hice, no creo que cueste mucho hacerlo.. este mes y principios del otro estoy con poco tiempo y el que tengo libre no lo estoy usando para el hb, pero mas adelante pretendo hacerlos...\par
+\par
+staff por ejemplo mi idea era que los ordene primero por online/offline, despues por admin level, y ultimo alfabeticamente... pero que aparesca como cuando lo ves en pantalla... es decir:\par
+\par
+"GM1\par
+GameMaster\par
+Profile"\par
+\par
+profile es por lo del code que poste de q cambie segun el /pf\par
+\par
+eventos, seria que muestre arriba de la ventana si hay algun evento y cual, y despues "links" con info de cada evento\par
+\par
+estadisticas, seria que tengas distintos "links", q cada uno te muestre una cosa distinta de las obvias (ek, death, mps, rep, sades ganadas por cada city mostrando la ultima tmb, lo mismo con held y apoca, etc)\par
+\par
+\par
+si alguno tiene ganas de hacerlo :P... o fijarse como mejorar mi lista de amigos y guild q no sirven asi, bienvenido sea y le agradezco xD\par
+\par
+saludos!\par
+\par
+PD: Tambien esta funcionando el "Trade EK", que lo postie aparte (esta hecho para q funcione dentro de este playerpanel pero se puede modificar)\par
+}
+ 

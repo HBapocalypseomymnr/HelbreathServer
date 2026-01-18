@@ -1,0 +1,22 @@
+void CGame::PlayerOrder_ExchangeEXP(int iClientH) {
+int i;
+int exp;
+int exp2;
+char buff[100];
+if (m_pClientList[iClientH]->m_iLevel < 180) {
+ShowInGameMsg(iClientH," You must have 180 level");
+return;
+}
+exp = m_pClientList[iClientH]->m_iExp - 119633989;
+//sets exp to ammount over your limit
+
+if (exp>=5000000)//if you have a spendable excess
+{
+
+exp2=exp / 5000000; // exp2 = number of points obtainable
+m_pClientList[iClientH]->m_iMajesticCount += exp2;
+wsprintf(buff," You have gained %d master upgrade points",exp2);
+ShowInGameMsg(iClientH,buff);
+m_pClientList[iClientH]->m_iExp -= (exp2 * 5000000);
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_EXP, NULL, NULL, NULL, NULL);
+}

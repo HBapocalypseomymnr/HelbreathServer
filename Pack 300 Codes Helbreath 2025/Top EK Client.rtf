@@ -1,0 +1,932 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 TOP EK (By Morla)\par
+C\'f3digo:\par
+Top EK en el Cliente :D\par
+\par
+Sources HGServer, Game.cpp\par
+\par
+* Agregar\par
+\par
+int m_iEkTop1, m_iEkTop2, m_iPkTop1, m_iPkTop2;\par
+//Top server\par
+int  aHBTopKills[16];\par
+int  aHBTopDeaths[16];\par
+char  aHBTopClientH[15][11];\par
+char m_cEkTop1[12], m_cEkTop2[12], m_cPkTop1[12], m_cPkTop2[12];\par
+\par
+Game.cpp - CGame::InitPlayerData\par
+\par
+* Agregar\par
+\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOPPLAYERS, 1, m_iEkTop1, NULL, m_cEkTop1); // MORLA 2.4 - Actualiza el Top List para el pj\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOPPLAYERS, 2, m_iEkTop2, NULL, m_cEkTop2);\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOPPLAYERS, 3, m_iPkTop1, NULL, m_cPkTop1);\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOPPLAYERS, 4, m_iPkTop2, NULL, m_cPkTop2);\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ENEMYKILLS, m_pClientList[iClientH]->m_iEnemyKillCount, m_pClientList[iClientH]->m_iDeaths, NULL, NULL);\par
+\par
+~\par
+\par
+* Agregar\par
+\par
+BOOL CGame::bReadTopPlayersFile(char * cFn) // MORLA 2.4 - Tops\par
+\{\par
+ FILE * pFile;\par
+ HANDLE hFile;\par
+ DWORD  dwFileSize;\par
+ char * cp, * token, cReadMode;\par
+ char seps[] = "= \\t\\n";\par
+ class CStrTok * pStrTok;\par
+        \par
+        cReadMode = 0;\par
+        hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);\par
+        dwFileSize = GetFileSize(hFile, NULL);\par
+        if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);\par
+        pFile = fopen(cFn, "rt");\par
+        if (pFile == NULL) \par
+        \{       \par
+                PutLogList("(!) Cannot open TopPlayers file.");\par
+                return FALSE;\par
+        \}\par
+        else \par
+        \{       \par
+                PutLogList("(_) Reading TopPlayers file...");\par
+                cp = new char[dwFileSize+2];\par
+                ZeroMemory(cp, dwFileSize+2);\par
+                fread(cp, dwFileSize, 1, pFile);\par
+                pStrTok = new class CStrTok(cp, seps);\par
+                token = pStrTok->pGet();\par
+                while( token != NULL )                          \par
+                \{       \par
+                        if (cReadMode != 0) \par
+                        \{       \par
+                                switch (cReadMode) \par
+                                \{\par
+                                        case 1:\par
+                                                ZeroMemory(m_cEkTop1, sizeof(m_cEkTop1)); \par
+                                                memcpy (m_cEkTop1, token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 2:\par
+                                                m_iEkTop1 = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 3:\par
+                                                ZeroMemory(m_cEkTop2, sizeof(m_cEkTop2)); \par
+                                                memcpy (m_cEkTop2, token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 4:\par
+                                                m_iEkTop2 = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 5:\par
+                                                ZeroMemory(m_cPkTop1, sizeof(m_cPkTop1)); \par
+                                                memcpy (m_cPkTop1, token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 6:\par
+                                                m_iPkTop1 = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 7:\par
+                                                ZeroMemory(m_cPkTop2, sizeof(m_cPkTop2)); \par
+                                                memcpy (m_cPkTop2, token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 8:\par
+                                                m_iPkTop2 = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        // morla 2.10 - TOP Server 15\par
+                                                \par
+\par
+                                        case 54:\par
+                                                aHBTopDeaths[1] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 55:\par
+                                                aHBTopKills[1] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 56:\par
+                                                ZeroMemory(aHBTopClientH[1], sizeof(aHBTopClientH[1])); \par
+                                                memcpy (aHBTopClientH[1], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 57:\par
+                                                aHBTopDeaths[2] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 58:\par
+                                                aHBTopKills[2] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 59:\par
+                                                ZeroMemory(aHBTopClientH[2], sizeof(aHBTopClientH[2])); \par
+                                                memcpy (aHBTopClientH[2], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 60:\par
+                                                aHBTopDeaths[3] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 61:\par
+                                                aHBTopKills[3] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 62:\par
+                                                ZeroMemory(aHBTopClientH[3], sizeof(aHBTopClientH[3])); \par
+                                                memcpy (aHBTopClientH[3], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 63:\par
+                                                aHBTopDeaths[4] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 64:\par
+                                                aHBTopKills[4] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 65:\par
+                                                ZeroMemory(aHBTopClientH[4], sizeof(aHBTopClientH[4])); \par
+                                                memcpy (aHBTopClientH[4], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 66:\par
+                                                aHBTopDeaths[5] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 67:\par
+                                                aHBTopKills[5] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 68:\par
+                                                ZeroMemory(aHBTopClientH[5], sizeof(aHBTopClientH[5])); \par
+                                                memcpy (aHBTopClientH[5], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 69:\par
+                                                aHBTopDeaths[6] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 70:\par
+                                                aHBTopKills[6] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 71:\par
+                                                ZeroMemory(aHBTopClientH[6], sizeof(aHBTopClientH[6])); \par
+                                                memcpy (aHBTopClientH[6], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 72:\par
+                                                aHBTopDeaths[7] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 73:\par
+                                                aHBTopKills[7] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 74:\par
+                                                ZeroMemory(aHBTopClientH[7], sizeof(aHBTopClientH[7])); \par
+                                                memcpy (aHBTopClientH[7], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 75:\par
+                                                aHBTopDeaths[8] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 76:\par
+                                                aHBTopKills[8] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 77:\par
+                                                ZeroMemory(aHBTopClientH[8], sizeof(aHBTopClientH[8])); \par
+                                                memcpy (aHBTopClientH[8], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 78:\par
+                                                aHBTopDeaths[9] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 79:\par
+                                                aHBTopKills[9] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 80:\par
+                                                ZeroMemory(aHBTopClientH[9], sizeof(aHBTopClientH[1])); \par
+                                                memcpy (aHBTopClientH[9], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 81:\par
+                                                aHBTopDeaths[10] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 82:\par
+                                                aHBTopKills[10] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 83:\par
+                                                ZeroMemory(aHBTopClientH[10], sizeof(aHBTopClientH[10])); \par
+                                                memcpy (aHBTopClientH[10], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 84:\par
+                                                aHBTopDeaths[11] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 85:\par
+                                                aHBTopKills[11] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 86:\par
+                                                ZeroMemory(aHBTopClientH[11], sizeof(aHBTopClientH[11])); \par
+                                                memcpy (aHBTopClientH[11], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 87:\par
+                                                aHBTopDeaths[12] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 88:\par
+                                                aHBTopKills[12] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 89:\par
+                                                ZeroMemory(aHBTopClientH[12], sizeof(aHBTopClientH[12])); \par
+                                                memcpy (aHBTopClientH[12], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 90:\par
+                                                aHBTopDeaths[13] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 91:\par
+                                                aHBTopKills[13] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 92:\par
+                                                ZeroMemory(aHBTopClientH[13], sizeof(aHBTopClientH[13])); \par
+                                                memcpy (aHBTopClientH[13], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 93:\par
+                                                aHBTopDeaths[14] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 94:\par
+                                                aHBTopKills[14] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 95:\par
+                                                ZeroMemory(aHBTopClientH[14], sizeof(aHBTopClientH[14])); \par
+                                                memcpy (aHBTopClientH[14], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                        case 96:\par
+                                                aHBTopDeaths[15] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 97:\par
+                                                aHBTopKills[15] = _atoi64(token);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+\par
+                                        case 98:\par
+                                                ZeroMemory(aHBTopClientH[15], sizeof(aHBTopClientH[15])); \par
+                                                memcpy (aHBTopClientH[15], token, 10);\par
+                                                cReadMode = 0;\par
+                                                break;\par
+                                \}\par
+                        \}\par
+                        else \par
+                        \{       \par
+                                if (memcmp(token, "EkTop-1n", 8) == 0) cReadMode = 1;\par
+                                if (memcmp(token, "EkTop-1p", 8) == 0) cReadMode = 2;\par
+                                if (memcmp(token, "EkTop-2n", 8) == 0) cReadMode = 3;\par
+                                if (memcmp(token, "EkTop-2p", 8) == 0) cReadMode = 4;\par
+                                if (memcmp(token, "PkTop-1n", 8) == 0) cReadMode = 5;\par
+                                if (memcmp(token, "PkTop-1p", 8) == 0) cReadMode = 6;\par
+                                if (memcmp(token, "PkTop-2n", 8) == 0) cReadMode = 7;\par
+                                if (memcmp(token, "PkTop-2p", 8) == 0) cReadMode = 8;\par
+                                // MORLA 2.10 - Top HB\par
+                                if (memcmp(token, "HBTop-1d", 8) == 0) cReadMode = 54;\par
+                                if (memcmp(token, "HBTop-1k", 8) == 0) cReadMode = 55;\par
+                                if (memcmp(token, "HBTop-1n", 8) == 0) cReadMode = 56;\par
+                                if (memcmp(token, "HBTop-2d", 8) == 0) cReadMode = 57;\par
+                                if (memcmp(token, "HBTop-2k", 8) == 0) cReadMode = 58;\par
+                                if (memcmp(token, "HBTop-2n", 8) == 0) cReadMode = 59;\par
+                                if (memcmp(token, "HBTop-3d", 8) == 0) cReadMode = 60;\par
+                                if (memcmp(token, "HBTop-3k", 8) == 0) cReadMode = 61;\par
+                                if (memcmp(token, "HBTop-3n", 8) == 0) cReadMode = 62;\par
+                                if (memcmp(token, "HBTop-4d", 8) == 0) cReadMode = 63;\par
+                                if (memcmp(token, "HBTop-4k", 8) == 0) cReadMode = 64;\par
+                                if (memcmp(token, "HBTop-4n", 8) == 0) cReadMode = 65;\par
+                                if (memcmp(token, "HBTop-5d", 8) == 0) cReadMode = 66;\par
+                                if (memcmp(token, "HBTop-5k", 8) == 0) cReadMode = 67;\par
+                                if (memcmp(token, "HBTop-5n", 8) == 0) cReadMode = 68;\par
+                                if (memcmp(token, "HBTop-6d", 8) == 0) cReadMode = 69;\par
+                                if (memcmp(token, "HBTop-6k", 8) == 0) cReadMode = 70;\par
+                                if (memcmp(token, "HBTop-6n", 8) == 0) cReadMode = 71;\par
+                                if (memcmp(token, "HBTop-7d", 8) == 0) cReadMode = 72;\par
+                                if (memcmp(token, "HBTop-7k", 8) == 0) cReadMode = 73;\par
+                                if (memcmp(token, "HBTop-7n", 8) == 0) cReadMode = 74;\par
+                                if (memcmp(token, "HBTop-8d", 8) == 0) cReadMode = 75;\par
+                                if (memcmp(token, "HBTop-8k", 8) == 0) cReadMode = 76;\par
+                                if (memcmp(token, "HBTop-8n", 8) == 0) cReadMode = 77;\par
+                                if (memcmp(token, "HBTop-9d", 8) == 0) cReadMode = 78;\par
+                                if (memcmp(token, "HBTop-9k", 8) == 0) cReadMode = 79;\par
+                                if (memcmp(token, "HBTop-9n", 8) == 0) cReadMode = 80;\par
+                                if (memcmp(token, "HBTop-10d", 9) == 0) cReadMode = 81;\par
+                                if (memcmp(token, "HBTop-10k", 9) == 0) cReadMode = 82;\par
+                                if (memcmp(token, "HBTop-10n", 9) == 0) cReadMode = 83;\par
+                                if (memcmp(token, "HBTop-11d", 9) == 0) cReadMode = 84;\par
+                                if (memcmp(token, "HBTop-11k", 9) == 0) cReadMode = 85;\par
+                                if (memcmp(token, "HBTop-11n", 9) == 0) cReadMode = 86;\par
+                                if (memcmp(token, "HBTop-12d", 9) == 0) cReadMode = 87;\par
+                                if (memcmp(token, "HBTop-12k", 9) == 0) cReadMode = 88;\par
+                                if (memcmp(token, "HBTop-12n", 9) == 0) cReadMode = 89;\par
+                                if (memcmp(token, "HBTop-13d", 9) == 0) cReadMode = 90;\par
+                                if (memcmp(token, "HBTop-13k", 9) == 0) cReadMode = 91;\par
+                                if (memcmp(token, "HBTop-13n", 9) == 0) cReadMode = 92;\par
+                                if (memcmp(token, "HBTop-14d", 9) == 0) cReadMode = 93;\par
+                                if (memcmp(token, "HBTop-14k", 9) == 0) cReadMode = 94;\par
+                                if (memcmp(token, "HBTop-14n", 9) == 0) cReadMode = 95;\par
+                                if (memcmp(token, "HBTop-15d", 9) == 0) cReadMode = 96;\par
+                                if (memcmp(token, "HBTop-15k", 9) == 0) cReadMode = 97;\par
+                                if (memcmp(token, "HBTop-15n", 9) == 0) cReadMode = 98;\par
+                        \}                       \par
+                        token = pStrTok->pGet();\par
+                \}\par
+                delete pStrTok;\par
+                delete cp;\par
+        \}\par
+        if (pFile != NULL) fclose(pFile);\par
+        wsprintf(G_cTxt, "(_) Read TopPlayers file. %s");\par
+        PutLogList(G_cTxt);\par
+        return TRUE;\par
+\}\par
+\par
+\par
+void CGame::calcularTopEkPlayer(int iClientH) // MORLA 2.4 - Calcular si tiene mas EKs\par
+\{\par
+        char cMsg[255];\par
+    ZeroMemory(cMsg, sizeof(cMsg));\par
+        int i;\par
+        \par
+        if      ((m_pClientList[iClientH]->m_iEnemyKillCount > m_iEkTop1) \par
+                && (strcmp(m_pClientList[iClientH]->m_cLocation, "aresden") == 0))\par
+        \{\par
+                m_iEkTop1 = m_pClientList[iClientH]->m_iEnemyKillCount;\par
+                ZeroMemory(m_cEkTop1, sizeof(m_cEkTop1));\par
+                wsprintf(m_cEkTop1, m_pClientList[iClientH]->m_cCharName);              \par
+                for (i = 1; i < DEF_MAXCLIENTS; i++) // Check all clients\par
+                \{\par
+                        if ((m_pClientList[i] != NULL))  // Check if client is avtice\par
+                        \{\par
+                                wsprintf(cMsg, "\'a1%s is the new Master of Aresden!", m_pClientList[iClientH]->m_cCharName);\par
+                                ShowClientMsg(i, "TopPlayers", cMsg);\par
+                                PutLogFileList(cMsg); // Enter into logs\par
+                                SendNotifyMsg(NULL, i, DEF_NOTIFY_TOPPLAYERS, 1, m_pClientList[iClientH]->m_iEnemyKillCount, NULL, m_pClientList[iClientH]->m_cCharName);\par
+                        \}\par
+                \}\par
+                \par
+        \}\par
+        else \{\par
+                if      ((m_pClientList[iClientH]->m_iEnemyKillCount > m_iEkTop2) \par
+                        && (strcmp(m_pClientList[iClientH]->m_cLocation, "elvine") == 0))\par
+                \{\par
+                        m_iEkTop2 = m_pClientList[iClientH]->m_iEnemyKillCount;\par
+                        ZeroMemory(m_cEkTop2, sizeof(m_cEkTop2));\par
+                        wsprintf(m_cEkTop2, m_pClientList[iClientH]->m_cCharName);                      \par
+                        for (i = 1; i < DEF_MAXCLIENTS; i++) // Check all clients\par
+                        \{\par
+                                if ((m_pClientList[i] != NULL))  // Check if client is avtice\par
+                                \{\par
+                                        wsprintf(cMsg, "\'a1%s is the new Master of Elvine!", m_pClientList[iClientH]->m_cCharName);\par
+                                        ShowClientMsg(i, "TopPlayers", cMsg);\par
+                                        PutLogFileList(cMsg); // Enter into logs\par
+                                        SendNotifyMsg(NULL, i, DEF_NOTIFY_TOPPLAYERS, 2, m_pClientList[iClientH]->m_iEnemyKillCount, NULL, m_pClientList[iClientH]->m_cCharName);\par
+                                \}\par
+                        \}\par
+                \}\par
+        \}\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ENEMYKILLS, NULL, m_pClientList[iClientH]->m_iDeaths, NULL, NULL);\par
+        calcularTop15HB(iClientH);\par
+\}\par
+\par
+void CGame::calcularTopPkPlayer(int iClientH) // MORLA 2.4 - Calcular si tiene mas Deaths\par
+\{\par
+        char cMsg[255];\par
+    ZeroMemory(cMsg, sizeof(cMsg));\par
+        int i;\par
+        \par
+        if      ((m_pClientList[iClientH]->m_iDeaths > m_iPkTop1) \par
+                && (strcmp(m_pClientList[iClientH]->m_cLocation, "aresden") == 0))\par
+        \{\par
+                m_iPkTop1 = m_pClientList[iClientH]->m_iDeaths;\par
+                ZeroMemory(m_cPkTop1, sizeof(m_cPkTop1));\par
+                wsprintf(m_cPkTop1, m_pClientList[iClientH]->m_cCharName);              \par
+                for (i = 1; i < DEF_MAXCLIENTS; i++) // Check all clients\par
+                \{\par
+                        if ((m_pClientList[i] != NULL))  // Check if client is avtice\par
+                        \{\par
+                                wsprintf(cMsg, "\'a1%s is the new n00b of Aresden!", m_pClientList[iClientH]->m_cCharName);\par
+                                ShowClientMsg(i, "TopPlayers", cMsg);\par
+                                PutLogFileList(cMsg); // Enter into logs\par
+                                _CreateTopPlayers();\par
+                                SendNotifyMsg(NULL, i, DEF_NOTIFY_TOPPLAYERS, 3, m_pClientList[iClientH]->m_iDeaths, NULL, m_pClientList[iClientH]->m_cCharName);\par
+                        \}\par
+                \}\par
+        \}\par
+        else \{\par
+                if      ((m_pClientList[iClientH]->m_iDeaths > m_iPkTop2) \par
+                        && (strcmp(m_pClientList[iClientH]->m_cLocation, "elvine") == 0))\par
+                \{\par
+                        m_iPkTop2 = m_pClientList[iClientH]->m_iDeaths;\par
+                        ZeroMemory(m_cPkTop2, sizeof(m_cPkTop2));\par
+                        wsprintf(m_cPkTop2, m_pClientList[iClientH]->m_cCharName);                      \par
+                        for (i = 1; i < DEF_MAXCLIENTS; i++) // Check all clients\par
+                        \{\par
+                                if ((m_pClientList[i] != NULL))  // Check if client is avtice\par
+                                \{\par
+                                        wsprintf(cMsg, "\'a1%s is the new n00b of Elvine!", m_pClientList[iClientH]->m_cCharName);\par
+                                        ShowClientMsg(i, "TopPlayers", cMsg);\par
+                                        PutLogFileList(cMsg); // Enter into logs\par
+                                        _CreateTopPlayers();\par
+                                        SendNotifyMsg(NULL, i, DEF_NOTIFY_TOPPLAYERS, 4, m_pClientList[iClientH]->m_iDeaths, NULL, m_pClientList[iClientH]->m_cCharName);\par
+                                \}\par
+                        \}\par
+                \}\par
+        \}\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ENEMYKILLS, NULL, m_pClientList[iClientH]->m_iDeaths, NULL, NULL);\par
+        calcularTop15HB(iClientH);\par
+\}\par
+\par
+void CGame::_CreateTopPlayers() // MORLA 2.4 - Guarda el archivo TopPlayers\par
+\{\par
+ char * cp, cTxt[9024], cFn[256], cTemp[9024];  \par
+ FILE * pFile;          \par
+        \par
+        _mkdir("GameData");\par
+        ZeroMemory(cFn, sizeof(cFn));                                     \par
+        strcat(cFn,"..\\\\GameConfigs\\\\TopPlayers.txt");          \par
+        pFile = fopen(cFn, "wt");\par
+        if (pFile == NULL) \par
+        \{       \par
+                wsprintf(G_cTxt, "(!) Cannot create TopPlayers file.");\par
+                PutLogList(G_cTxt);\par
+        \}\par
+        else \par
+        \{       \par
+                ZeroMemory(cTemp, sizeof(cTemp));               \par
+                ZeroMemory(cTxt, sizeof(cTxt));\par
+                wsprintf(cTxt, "EkTop-1n = %s\\nEkTop-1p = %d\\nEkTop-2n = %s\\nEkTop-2p = %d\\nPkTop-1n = %s\\nPkTop-1p = %d\\nPkTop-2n = %s\\nPkTop-2p = %d\\nHBTop-1d = %d\\nHBTop-1k = %d\\nHBTop-1n = %s\\nHBTop-2d = %d\\nHBTop-2k = %d\\nHBTop-2n = %s\\nHBTop-3d = %d\\nHBTop-3k = %d\\nHBTop-3n = %s\\nHBTop-4d = %d\\nHBTop-4k = %d\\nHBTop-4n = %s\\nHBTop-5d = %d\\nHBTop-5k = %d\\nHBTop-5n = %s\\nHBTop-6d = %d\\nHBTop-6k = %d\\nHBTop-6n = %s\\nHBTop-7d = %d\\nHBTop-7k = %d\\nHBTop-7n = %s\\nHBTop-8d = %d\\nHBTop-8k = %d\\nHBTop-8n = %s\\nHBTop-9d = %d\\nHBTop-9k = %d\\nHBTop-9n = %s\\nHBTop-10d = %d\\nHBTop-10k = %d\\nHBTop-10n = %s\\nHBTop-11d = %d\\nHBTop-11k = %d\\nHBTop-11n = %s\\nHBTop-12d = %d\\nHBTop-12k = %d\\nHBTop-12n = %s\\nHBTop-13d = %d\\nHBTop-13k = %d\\nHBTop-13n = %s\\nHBTop-14d = %d\\nHBTop-14k = %d\\nHBTop-14n = %s\\nHBTop-15d = %d\\nHBTop-15k = %d\\nHBTop-15n = %s\\n",\par
+                        m_cEkTop1, m_iEkTop1, m_cEkTop2, m_iEkTop2, m_cPkTop1, m_iPkTop1, m_cPkTop2, m_iPkTop2,\par
+                        aHBTopDeaths[1],aHBTopKills[1],aHBTopClientH[1],aHBTopDeaths[2],aHBTopKills[2],aHBTopClientH[2],\par
+                        aHBTopDeaths[3],aHBTopKills[3],aHBTopClientH[3],aHBTopDeaths[4],aHBTopKills[4],aHBTopClientH[4],\par
+                        aHBTopDeaths[5],aHBTopKills[5],aHBTopClientH[5],aHBTopDeaths[6],aHBTopKills[6],aHBTopClientH[6],\par
+                        aHBTopDeaths[7],aHBTopKills[7],aHBTopClientH[7],aHBTopDeaths[8],aHBTopKills[8],aHBTopClientH[8],\par
+                        aHBTopDeaths[9],aHBTopKills[9],aHBTopClientH[9],aHBTopDeaths[10],aHBTopKills[10],aHBTopClientH[10],\par
+                        aHBTopDeaths[11],aHBTopKills[11],aHBTopClientH[11],aHBTopDeaths[12],aHBTopKills[12],aHBTopClientH[12],\par
+                        aHBTopDeaths[13],aHBTopKills[13],aHBTopClientH[13],aHBTopDeaths[14],aHBTopKills[14],aHBTopClientH[14],\par
+                        aHBTopDeaths[15],aHBTopKills[15],aHBTopClientH[15]);\par
+                strcat(cTemp, cTxt);\par
+\par
+                cp = (char *)cTemp;\par
+                fwrite(cp, strlen(cp), 1, pFile);               \par
+                wsprintf(G_cTxt, "(_) TopPlayers file created.");\par
+                PutLogList(G_cTxt);\par
+        \}\par
+        if (pFile != NULL) fclose(pFile);\par
+\par
+\}\par
+\par
+void CGame::ordenarTop15HB(int iClientH) // MORLA 2.4 - Calcular si tiene mas Deaths\par
+\{\par
+        char cMsg[255];\par
+    ZeroMemory(cMsg, sizeof(cMsg));\par
+        int aux1, aux2, p, q, i;\par
+        char aux3[10];\par
+\par
+        for (p=1; p<=14; p++)\par
+        \{\par
+                for (q=p+1; q<=15; q++)\par
+                \{\par
+                        if (aHBTopKills[p] < aHBTopKills[q])\par
+                        \{\par
+                                aux1 = aHBTopKills[p];\par
+                                aux2 = aHBTopDeaths[p];\par
+                                ZeroMemory(aux3, sizeof(aux3));\par
+                                strcpy(aux3, aHBTopClientH[p]);\par
+\par
+                                aHBTopKills[p] = aHBTopKills[q];\par
+                                aHBTopDeaths[p] = aHBTopDeaths[q];\par
+                                ZeroMemory(aHBTopClientH[p], sizeof(aHBTopClientH[p]));\par
+                                strcpy(aHBTopClientH[p], aHBTopClientH[q]);\par
+\par
+                                aHBTopKills[q] = aux1;\par
+                                aHBTopDeaths[q] = aux2;\par
+                                ZeroMemory(aHBTopClientH[q], sizeof(aHBTopClientH[q]));\par
+                                strcpy(aHBTopClientH[q], aux3);\par
+                        \}\par
+                \}\par
+        \}\par
+        _CreateTopPlayers();\par
+        for (i = 0; i < DEF_MAXCLIENTS; i++) // Check all clients\par
+        \{\par
+                if (m_pClientList[i] != NULL) \{\par
+                        //      if (memcmp(m_pClientList[i]->m_cMapName, "deathmach", 9) == 0)\par
+                        for (p=1; p<=15; p++)\par
+                        \{\par
+                                SendNotifyMsg(NULL, i, DEF_NOTIFY_TOP15HB, p, aHBTopKills[p], aHBTopDeaths[p], aHBTopClientH[p]);\par
+                        \}\par
+                \}\par
+        \}\par
+\}\par
+\par
+void CGame::calcularTop15HB(int iClientH) // MORLA 2.4 - Calcular si tiene mas Deaths\par
+\{\par
+        char cMsg[255];\par
+    ZeroMemory(cMsg, sizeof(cMsg));\par
+        int p;\par
+        bool bExiste = false;\par
+        \par
+        for (p=1; p<=15; p++)\par
+        \{\par
+                if (strcmp(aHBTopClientH[p], m_pClientList[iClientH]->m_cCharName) == 0)\par
+                \{\par
+                        aHBTopKills[p] = m_pClientList[iClientH]->m_iEnemyKillCount;\par
+                        aHBTopDeaths[p] = m_pClientList[iClientH]->m_iDeaths;\par
+                        ZeroMemory(aHBTopClientH[p], sizeof(aHBTopClientH[p]));\par
+                        memcpy(aHBTopClientH[p], m_pClientList[iClientH]->m_cCharName, 10);\par
+                        bExiste = true;\par
+                        ordenarTop15HB(iClientH);\par
+                \}\par
+        \}\par
+        if (bExiste == false)\par
+        \{\par
+                if(aHBTopKills[15] < m_pClientList[iClientH]->m_iEnemyKillCount)\par
+                \{\par
+                        aHBTopKills[15] = m_pClientList[iClientH]->m_iEnemyKillCount;\par
+                        aHBTopDeaths[15] = m_pClientList[iClientH]->m_iDeaths;\par
+                        ZeroMemory(aHBTopClientH[15], sizeof(aHBTopClientH[15]));\par
+                        memcpy(aHBTopClientH[15], m_pClientList[iClientH]->m_cCharName, 10);\par
+                        ordenarTop15HB(iClientH);\par
+                \}\par
+        \}\par
+\}\par
+\par
+~\par
+\par
+Game.cpp - CGame::EnemyKillRewardHandler\par
+\par
+* Buscar (varias veces): m_pClientList[iAttackerH]->m_iEnemyKillCount\par
+* Abajo agregar:\par
+                                m_pClientList[iClientH]->m_iDeaths++; // MORLA 2.2 - Le suma una muerte al pj\par
+                                calcularTopEkPlayer(iAttackerH); // MORLA 2.4 - Revisa si es el mas groso \par
+                                calcularTopPkPlayer(iClientH); // MORLA 2.4 - Revisa si es el mas pt\par
+\par
+Game.cpp - CGame::SendNotifyMsg\par
+\par
+* Agregar\par
+\par
+        case DEF_NOTIFY_TOPPLAYERS:\par
+                // MORLA 2.4 - Actualiza el Top Players\par
+                ip  = (int *)cp;\par
+                *ip = (int)sV1;\par
+                cp += 4;\par
+                        \par
+                ip  = (int *)cp;\par
+                *ip = (int)sV2;\par
+                cp += 4;\par
+\par
+                memcpy(cp, pString, 10);\par
+                cp += 10;\par
+\par
+                iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 26 + 12);\par
+                break;\par
+\par
+        case DEF_NOTIFY_TOP15HB:\par
+                // MORLA 2.10 - Top 15 en Server\par
+                ip  = (int *)cp;\par
+                *ip = (int)sV1;\par
+                cp += 4;\par
+                        \par
+                ip  = (int *)cp;\par
+                *ip = (int)sV2;\par
+                cp += 4;\par
+\par
+                ip  = (int *)cp;\par
+                *ip = (int)sV3;\par
+                cp += 4;\par
+\par
+                memcpy(cp, pString, 10);\par
+                cp += 10;\par
+\par
+                iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 26 + 12);\par
+                break;\par
+\par
+* Modificar:\par
+\par
+        case DEF_NOTIFY_ENEMYKILLS:\par
+                ip  = (int *)cp;\par
+                *ip = (int)sV1;\par
+                cp += 4;\par
+\par
+                ip  = (int *)cp;\par
+                *ip = (int)sV2;\par
+                cp += 4;\par
+\par
+                iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 26 + 12);\par
+                break;\par
+\par
+Game.cpp - CGame::RequestInitDataHandler\par
+\par
+        // MORLA 2.10 - Top:\par
+        for (i=1; i<=15; i++)\par
+        \{\par
+                SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOP15HB, i, aHBTopKills[i], aHBTopDeaths[i], aHBTopClientH[i]);\par
+        \}\par
+\par
+Sources HGServer, Client.h\par
+\par
+* Agregar\par
+\par
+int m_iDeaths;\par
+\par
+Sources HGServer, Client.cpp\par
+\par
+* Agregar\par
+\par
+m_iDeaths = 0;\par
+\par
+Sources HGServer, Game.h\par
+\par
+* Agregar\par
+\par
+        void calcularTopEkPlayer(int iClientH); // MORLA 2.4 - Calcular top players de Enemy Kill\par
+        void calcularTopPkPlayer(int iClientH); // MORLA 2.4 - Calcular top players de Player Kill (jiji osea deaths, no tenia ganas de cambiarlo)\par
+        void _CreateTopPlayers(); // MORLA 2.4 - Guardar Datos\par
+        void calcularTop15HB(int iClientH);\par
+        void ordenarTop15HB(int iClientH);\par
+        BOOL bReadTopPlayersFile(char * cFn);\par
+\par
+NetMessages.h\par
+\par
+* Agregar\par
+\par
+ #define DEF_NOTIFY_TOPPLAYERS                                          0x0F13\par
+ #define DEF_NOTIFY_TOP15HB                                                     0x0F23\par
+\par
+Sources Client, Game.cpp\par
+\par
+* Agregar\par
+\par
+char cTopEK1[10] = "1", cTopEK2[10] = "2", cTopPK1[10] = "3", cTopPK2[10] = "4";\par
+int iTopEK1, iTopEK2, iTopPK1, iTopPK2 = 0;\par
+//MORLA 2.10 - Top 15 Server\par
+int iHBTOPk[16];\par
+int iHBTOPd[16];\par
+char iHBTOPn[16][15];\par
+\par
+~\par
+\par
+* Agregar\par
+\par
+void CGame::NotifyMsg_EnemyKills(char *pData) // MORLA 2.2 - Actualiza la info de eks y Deaths \par
+\{\par
+ char * cp;\par
+ int  * ip, iV1, iV2, iV3;\par
+\par
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+        ip = (int *)cp;\par
+        iV1 = *ip;\par
+        cp += 4;\par
+\par
+        ip = (int *)cp;\par
+        iV2 = *ip;\par
+        cp += 4;\par
+\par
+        m_iEnemyKillCount = iV1;\par
+        m_iPlayerDeaths = iV2;\par
+\par
+\}\par
+\par
+void CGame::NotifyMsg_Top15HB(char *pData) // MORLA 2.10 - Top 15\par
+\{\par
+ char * cp, cStr[256];\par
+ int  * ip, iV1, iV2, iV3;\par
+\par
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+        ip = (int *)cp;\par
+        iV1 = *ip;\par
+        cp += 4;\par
+\par
+        ip = (int *)cp;\par
+        iV2 = *ip;\par
+        cp += 4;\par
+\par
+        ip = (int *)cp;\par
+        iV3 = *ip;\par
+        cp += 4;\par
+        \par
+        strcpy(cStr, cp);\par
+        switch (iV1)\par
+        \{\par
+                case 1: iHBTOPk[1] = iV2; iHBTOPd[1] = iV3;     ZeroMemory(iHBTOPn[1], sizeof(iHBTOPn[1])); memcpy (iHBTOPn[1], cStr, 10); break;\par
+                case 2: iHBTOPk[2] = iV2; iHBTOPd[2] = iV3;     ZeroMemory(iHBTOPn[2], sizeof(iHBTOPn[2])); memcpy (iHBTOPn[2], cStr, 10); break;\par
+                case 3: iHBTOPk[3] = iV2; iHBTOPd[3] = iV3;     ZeroMemory(iHBTOPn[3], sizeof(iHBTOPn[3])); memcpy (iHBTOPn[3], cStr, 10); break;\par
+                case 4: iHBTOPk[4] = iV2; iHBTOPd[4] = iV3;     ZeroMemory(iHBTOPn[4], sizeof(iHBTOPn[4])); memcpy (iHBTOPn[4], cStr, 10); break;\par
+                case 5: iHBTOPk[5] = iV2; iHBTOPd[5] = iV3;     ZeroMemory(iHBTOPn[5], sizeof(iHBTOPn[5])); memcpy (iHBTOPn[5], cStr, 10); break;\par
+                case 6: iHBTOPk[6] = iV2; iHBTOPd[6] = iV3;     ZeroMemory(iHBTOPn[6], sizeof(iHBTOPn[6])); memcpy (iHBTOPn[6], cStr, 10); break;\par
+                case 7: iHBTOPk[7] = iV2; iHBTOPd[7] = iV3;     ZeroMemory(iHBTOPn[7], sizeof(iHBTOPn[7])); memcpy (iHBTOPn[7], cStr, 10); break;\par
+                case 8: iHBTOPk[8] = iV2; iHBTOPd[8] = iV3;     ZeroMemory(iHBTOPn[8], sizeof(iHBTOPn[8])); memcpy (iHBTOPn[8], cStr, 10); break;\par
+                case 9: iHBTOPk[9] = iV2; iHBTOPd[9] = iV3;     ZeroMemory(iHBTOPn[9], sizeof(iHBTOPn[9])); memcpy (iHBTOPn[9], cStr, 10); break;\par
+                case 10:        iHBTOPk[10] = iV2; iHBTOPd[10] = iV3;   ZeroMemory(iHBTOPn[10], sizeof(iHBTOPn[10])); memcpy (iHBTOPn[10], cStr, 10); break;\par
+                case 11:        iHBTOPk[11] = iV2; iHBTOPd[11] = iV3;   ZeroMemory(iHBTOPn[11], sizeof(iHBTOPn[11])); memcpy (iHBTOPn[11], cStr, 10); break;\par
+                case 12:        iHBTOPk[12] = iV2; iHBTOPd[12] = iV3;   ZeroMemory(iHBTOPn[12], sizeof(iHBTOPn[12])); memcpy (iHBTOPn[12], cStr, 10); break;\par
+                case 13:        iHBTOPk[13] = iV2; iHBTOPd[13] = iV3;   ZeroMemory(iHBTOPn[13], sizeof(iHBTOPn[13])); memcpy (iHBTOPn[13], cStr, 10); break;\par
+                case 14:        iHBTOPk[14] = iV2; iHBTOPd[14] = iV3;   ZeroMemory(iHBTOPn[14], sizeof(iHBTOPn[14])); memcpy (iHBTOPn[14], cStr, 10); break;\par
+                case 15:        iHBTOPk[15] = iV2; iHBTOPd[15] = iV3;   ZeroMemory(iHBTOPn[15], sizeof(iHBTOPn[15])); memcpy (iHBTOPn[15], cStr, 10); break;\par
+                default: break;\par
+        \}\par
+\}\par
+\par
+\par
+\par
+\par
+void CGame::NotifyMsg_TopPlayers(char *pData) // MORLA 2.2 - Actualiza la info de Top Players\par
+\{\par
+ char * cp, cStr[256];\par
+ int  * ip, iV1, iV2;\par
+\par
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+        ip = (int *)cp;\par
+        iV1 = *ip;\par
+        cp += 4;\par
+\par
+        ip = (int *)cp;\par
+        iV2 = *ip;\par
+        cp += 4;\par
+\par
+        strcpy(cStr, cp);\par
+\par
+        switch (iV1)\par
+        \{\par
+                case 1: iTopEK1 = iV2;  ZeroMemory(cTopEK1, sizeof(cTopEK1)); memcpy (cTopEK1, cStr, 10); break;\par
+                case 2: iTopEK2 = iV2;  ZeroMemory(cTopEK2, sizeof(cTopEK2)); memcpy (cTopEK2, cStr, 10); break;\par
+                case 3: iTopPK1 = iV2;  ZeroMemory(cTopPK1, sizeof(cTopPK1)); memcpy (cTopPK1, cStr, 10); break;\par
+                case 4: iTopPK2 = iV2;  ZeroMemory(cTopPK2, sizeof(cTopPK2)); memcpy (cTopPK2, cStr, 10); break;\par
+                \}\par
+\}\par
+\par
+void CGame::DlgBoxClick_TopServer(short msX, short msY) // MORLA 2.9 - Top Server\par
+\{       short sX, sY;\par
+        sX = m_stDialogBoxInfo[58].sX;\par
+        sY = m_stDialogBoxInfo[58].sY;\par
+        DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2, FALSE, m_bDialogTrans);\par
+\}\par
+\par
+void CGame::DrawDialogBox_TopServer(short msX, short msY) // TOP 15 server\par
+\{\par
+        short sX, sY, szX;\par
+        char cTxt[120];\par
+        int i;\par
+\par
+\par
+\par
+         /*DWORD dwTime = timeGetTime();\par
+         if (bResurr2 == false)\par
+         \{\par
+                 bResurr2 = true;\par
+                 posActual2 = 900;\par
+         \}\par
+         sX = m_stDialogBoxInfo[58].sX; // MORLA 2.10 - efecto de desplazamiento (5:50 am re al pedo!)\par
+         if (posActual2 > m_stDialogBoxInfo[58].sX)\par
+         \{\par
+                 sX = posActual2;       \par
+                 posActual2 -= 10;\par
+         \}\par
+         else\par
+         \{\par
+                 sX = m_stDialogBoxInfo[58].sX;\par
+         \}*/\par
+\par
+\par
+\par
+\par
+        sX = m_stDialogBoxInfo[58].sX;\par
+        sY = m_stDialogBoxInfo[58].sY;\par
+        szX = m_stDialogBoxInfo[58].sSizeX;\par
+        \par
+    DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2, FALSE, m_bDialogTrans);\par
+        switch (m_stDialogBoxInfo[58].cMode) \{\par
+        case 0:\par
+                PutString_SprFont(sX+40,sY+35,"Top Players",1,1,8);//"Player Panel"\par
+                \par
+                for (i=1; i<=15; i++)\par
+                \{\par
+                        if (i>=10)\par
+                        \{\par
+                                wsprintf(G_cTxt, "%s - %d EKs - %d Deaths", iHBTOPn[i], iHBTOPk[i], iHBTOPd[i]);\par
+                                PutString2(sX+45, sY+42+17*i, G_cTxt, 255-30-i*10, 255-i*10,255-30-i*10); // 170,170,170\par
+                        \}\par
+                        else\par
+                        \{\par
+                                wsprintf(G_cTxt, "%s - %d EKs - %d Deaths", iHBTOPn[i], iHBTOPk[i], iHBTOPd[i]);\par
+                                PutString2(sX+40, sY+42+17*i, G_cTxt, 255-30-i*10, 255-i*10,255-30-i*10);\par
+                        \}\par
+                        wsprintf(G_cTxt, "%d)", i);\par
+                        PutString2(sX+26, sY+42+17*i, G_cTxt, 255,200,0);\par
+                \}\par
+                break;\par
+        \}\par
+\}\par
+\par
+~\par
+\par
+Game.cpp - CGame::NotifyMsgHandler\par
+\par
+* Modificar:\par
+\par
+        case DEF_NOTIFY_ENEMYKILLS:\par
+                NotifyMsg_EnemyKills(pData);\par
+                break;\par
+\par
+* Agregar:\par
+\par
+        case DEF_NOTIFY_TOP15HB: // MORLA 2.4 - Recibe la info de ek y Death\par
+                NotifyMsg_Top15HB(pData);\par
+                break;\par
+\par
+        case DEF_NOTIFY_TOPPLAYERS: // MORLA 2.2 - Recibe la info de Top Players\par
+                NotifyMsg_TopPlayers(pData);\par
+                break;\par
+\par
+Game.cpp - CGame::onkeyup\par
+\par
+* Modificar:\par
+\par
+        case VK_F1:\par
+                if( m_bIsDialogEnabled[58] == TRUE ) DisableDialogBox(58);\par
+                else EnableDialogBox(58, 0, 0, 0, NULL);\par
+                PlaySound('E', 14, 5);\par
+                break;\par
+\par
+Game.cpp - CGame::CGame\par
+\par
+* Agregar:\par
+\par
+        // MORLA 2.9 // Top Server\par
+    m_stDialogBoxInfo[58].sX = 358;\par
+    m_stDialogBoxInfo[58].sY = 65;\par
+    m_stDialogBoxInfo[58].sSizeX = 258;\par
+    m_stDialogBoxInfo[58].sSizeY = 339;\par
+\par
+Game.cpp - CGame::EnableDialogBox\par
+\par
+* Agregar\par
+\par
+        case 58: \par
+                if (m_bIsDialogEnabled[58] == FALSE) \{\par
+                        m_stDialogBoxInfo[58].cMode     = 0;\par
+                        m_stDialogBoxInfo[58].sV1 = 0;\par
+                \}\par
+                break;\par
+\par
+Game.cpp - CGame::_bCheckDlgBoxClick\par
+}
+ 

@@ -1,0 +1,40 @@
+Bueno encontre un code en un txt en mi pc que era un bow que quitaba al parecer sp con cada hit en relacion al char. Lo edite para que envez que quite sp quite hp, no lo puede probar asique no estoy del todo seguro si funciona, porfavor alguien pruebe ;D
+
+El chance es calculado basandose en la vit del player, mientras mas vit tenga mas chance tiene.
+
+Ir a los Src de tu HGserver, en el Game.cpp buscar:
+
+Code:
+if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 848) &&
+    (m_cDayOrNight == 1)) {
+    iAP_SM += 4;
+    iAP_L += 4;
+    }
+
+Justo abajo agregar:
+Code:
+if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 1200)// VampireSwordATENCIÓN: ID DE LA SWORD
+    {   
+    int iHPChance;
+    iHPChance = (200 - m_pClientList[sAttackerH]->m_iVit) / 10;
+    if (iHPChance < 3) iHPChance = 3;
+
+    switch (cTargetType) {
+    case DEF_OWNERTYPE_PLAYER:
+    if (iDice(1,iHPChance) == 1) {
+    if (m_pClientList[sTargetH]->m_iHP > 0)
+    {   m_pClientList[sTargetH]->m_iHP -= (iDice(1,5) * 10);
+    if (m_pClientList[sTargetH]->m_iHP < 0) m_pClientList[sTargetH]->m_iHP = 0;
+    SendNotifyMsg(NULL, sTargetH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+    }
+    }
+    break;
+
+    case DEF_OWNERTYPE_NPC:   
+    break;
+    }   
+    }
+
+Luego ir al item3.cfg y alfinal agregar este item:
+Code:
+Item = 1200 VampireSword 1 9 1 2 10 2 2 12 2 50000 0 1 18 -3700 6000 13 10 120 0 -15 10 8 1 9Nota: el efecto solo funciona si el objetivo que se ataca es un player

@@ -1,0 +1,62 @@
+/*******
+/**dax**
+/*******
+
+
+I made this code for HBSecret but they've had it for a while now so I guess others should be allowed to play with magical weapons too.
+
+Note no extra damage is added as a result of these effects. If you want extra damage code your own in iCalculateAttackEffect or wait for some other poor prick to do it for you (you people seem to be good at that)
+
+Example used in this code
+Wep: Striker
+Type: 2 hand
+ID: 293
+Sprite: BroadSword
+Magic effects:
+Critical: Casts Mass-Magic-Missile Aura on the attacker and shoots Energy-Bolt at the target.
+Normal/dash: Shoots Magic-Missile
+
+Client.cpp
+Function: iClientMotion_Attack_Handler
+Find
+
+CODE  
+if (sOwner != NULL) {
+ if ((wType != 0) && ((dwTime - m_pClientList[iClientH]->m_dwRecentAttackTime) > 100)) { 
+  if ((m_pClientList[iClientH]->m_pIsProcessingAllowed == FALSE) && (m_pClientList[iClientH]->m_bIsInsideWarehouse == FALSE) 
+   && (m_pClientList[iClientH]->m_bIsInsideWizardTower == FALSE) && (m_pClientList[iClientH]->m_bIsInsideOwnTown == FALSE)) { 
+
+
+Add this under it
+
+CODE  
+/***************************************
+********** Magic Weapons **********
+***************************************/
+sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ];
+if (sItemIndex != -1 && m_pClientList[iClientH]->m_pItemList[sItemIndex] != NULL)
+{
+ if ((m_pClientList[iClientH]->m_sAppr2 & 0xF000) != 0)
+ {
+  if(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 293) // Striker
+  {
+   short sType;
+
+   if(wType >= 20) // (ALT) Critical Attack
+   {
+    sType = 84; // Mass-Magic-Missile Aura
+    SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, sX, sY, (sType+100), m_pClientList[iClientH]->m_sType);
+
+    sType = 10; // Energy-Bolt
+    SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+   }
+   else // Dash/Normal Attack
+   {
+    sType = 0; // Magic-Missile
+    SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+   }
+  }
+ }
+}
+/***************************************
+***************************************/ 

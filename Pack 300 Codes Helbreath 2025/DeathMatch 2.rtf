@@ -1,0 +1,461 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 DeathMatch Event\par
+Posiblemente Bug\par
+Les dejo el deathmatch que arme hace unas semanas, no lo pude testear del todo por el tema que no tenia nadie con quien testear , pero deberia andar sin problemas. De todas maneras, cualquier bug, reportarlo aca, y hare el fix a la brevedad.\par
+\par
+Esta prohibido el post de esta informaci\'f3n\par
+cualquier otra comunidad/foro\par
+\par
+Como funciona el evento:\par
+- El evento esta siempre activo, cualquier jugador puede acceder a la area desde el cityhall officer.\par
+- Es muy simple de jugar, se trata de matar a los demas jugadores, acumulando DeathMatchKillPoint(que luedo pueden ser utiles si agregan algun trade).\par
+- Al morir revives con 75% del hp/mp/sp y criticals y ganas un DeathMatchDeathPoint.\par
+- Al matar un jugadores, ganas un DeathMatchKillPoint, max mp y max criticals.\par
+\par
+\par
+ClientSRC:\par
+Game.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+m_iTimeLeftSecAccount = NULL;\par
+    m_iTimeLeftSecIP      = NULL;\par
+    m_bWhisper = TRUE;\par
+    m_bShout   = TRUE;\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    for(int h = 0; h < 10; h++)\par
+    \{\par
+        ZeroMemory(m_stDeathMatchTop[h].cDeathMatchTopName, sizeof(m_stDeathMatchTop[h].cDeathMatchTopName));\par
+        m_stDeathMatchTop[h].iDeathMatchTopKills = -1;\par
+        m_stDeathMatchTop[h].iDeathMatchTopDeaths = -1;\par
+    \}\par
+Buscar:\par
+C\'f3digo:\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 220) && (msY < sY + 245)) \{\par
+            if (m_bIsCrusadeMode == FALSE) return;\par
+            EnableDialogBox(33, 1, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 270))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORTTO_DEATHMATCH, NULL, NULL, NULL, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+            DisableDialogBox(13);\par
+        \}\par
+Buscar:\par
+C\'f3digo:\par
+case DEF_NOTIFY_ENEMYKILLS:\par
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+        ip = (int *)cp;\par
+        m_iEnemyKillCount = *ip;\par
+        break;\par
+y justo arriba agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    case DEF_NOTIFY_DEATHMATCHTOP:\par
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+        for(i = 0; i < 10; i++)\par
+        \{\par
+            ZeroMemory(m_stDeathMatchTop[i].cDeathMatchTopName, sizeof(m_stDeathMatchTop[i].cDeathMatchTopName));\par
+            memcpy(m_stDeathMatchTop[i].cDeathMatchTopName, cp, 11);\par
+            cp += 11;\par
+\par
+            ip = (int *)cp;\par
+            m_stDeathMatchTop[i].iDeathMatchTopKills = *ip;\par
+            cp += 4;\par
+\par
+            ip = (int *)cp;\par
+            m_stDeathMatchTop[i].iDeathMatchTopDeaths = *ip;\par
+            cp += 4;\par
+        \}\par
+        break;\par
+    case DEF_NOTIFY_DEATHMATCHDATA:\par
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+        \par
+        ip = (int *)cp;\par
+        m_iDeathMatchKills = *ip;\par
+        cp += 4;\par
+\par
+        ip = (int *)cp;\par
+        m_iDeathMatchDeaths = *ip;\par
+        break;\par
+Buscar:\par
+C\'f3digo:\par
+//Snoopy adding Heldenian turret count:\par
+    if (   (iUpdateRet != 0 ) && (m_iHeldenianAresdenLeftTower != -1)\par
+        && (memcmp(m_cCurLocation, "BtField", 7) == 0))\par
+    \{    wsprintf( G_cTxt, "Aresden Flags : %d",  m_iHeldenianAresdenFlags);\par
+        PutString( 10, 140, G_cTxt, RGB(255,255,255) );\par
+        wsprintf( G_cTxt, "Aresden Flags : %d",  m_iHeldenianElvineFlags);\par
+        PutString( 10, 160, G_cTxt, RGB(255,255,255) );\par
+        wsprintf( G_cTxt, "Aresden's rest building number : %d",  m_iHeldenianAresdenLeftTower);\par
+        PutString( 10, 180, G_cTxt, RGB(255,255,255) );\par
+        wsprintf( G_cTxt, "Elvine's rest building number : %d",  m_iHeldenianElvineLeftTower);\par
+        PutString( 10, 200, G_cTxt, RGB(255,255,255) );\par
+    \}\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    if((iUpdateRet != 0 ) && (memcmp(m_cMapMessage, "Arena 2", 7) == 0))\par
+    \{\par
+        wsprintf(G_cTxt, "Kills/Deaths: %d/%d",  m_iDeathMatchKills, m_iDeathMatchDeaths);\par
+        PutString(10, 140, G_cTxt, RGB(255,255,255));\par
+        PutString(480, 140, "Name", RGB(255,255,255));\par
+        PutString(560, 140, "Kills", RGB(255,255,255));\par
+        PutString(600, 140, "Deaths", RGB(255,255,255));\par
+        int iSpace = 0;\par
+        for(int x = 0; x < 10; x++)\par
+        \{\par
+            if(m_stDeathMatchTop[x].iDeathMatchTopKills != -1)\par
+            \{\par
+                wsprintf(G_cTxt, "%s", m_stDeathMatchTop[x].cDeathMatchTopName);\par
+                PutString(480, 153 + iSpace, G_cTxt, RGB(255,255,255));\par
+                wsprintf(G_cTxt, "%d", m_stDeathMatchTop[x].iDeathMatchTopKills);\par
+                PutString(560, 153 + iSpace, G_cTxt, RGB(255, 255, 255));\par
+                wsprintf(G_cTxt, "%d", m_stDeathMatchTop[x].iDeathMatchTopDeaths);\par
+                PutString(600, 153 + iSpace, G_cTxt, RGB(255, 255, 255));\par
+                iSpace += 13;\par
+            \}\par
+        \}\par
+    \}\par
+Buscar:\par
+C\'f3digo:\par
+//Change crusade role\par
+        if ( m_bIsCrusadeMode && m_bCitizen )\par
+        \{    if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 220) && (msY < sY + 220))\par
+                 PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 255,255,255);//"Change the crusade assignment."\par
+            else PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 4,0,50);//"\par
+        \}else    PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 65,65,65);//"\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 270))\par
+             PutAlignedString(sX, sX + szX, sY + 245, "Teleport to DeathMatch Arena", 255,255,255);\par
+        else PutAlignedString(sX, sX + szX, sY + 245, "Teleport to DeathMatch Arena", 4,0,50);\par
+Game.h:\par
+Agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    int m_iDeathMatchKills, m_iDeathMatchDeaths;\par
+    struct \{\par
+        char cDeathMatchTopName[21];\par
+        int iDeathMatchTopKills;\par
+        int iDeathMatchTopDeaths;\par
+    \}m_stDeathMatchTop[10];\par
+Netmessage.h:\par
+Agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+#define DEF_NOTIFY_DEATHMATCHTOP                    0x1F50\par
+#define DEF_NOTIFY_DEATHMATCHDATA                    0x1F51\par
+#define MSGID_REQUEST_TELEPORTTO_DEATHMATCH            0x1F52\par
+HGSRC:\par
+Client.cpp:\par
+Agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    m_iDeathMatchKills = m_iDeathMatchDeaths = 0;\par
+Client.h:\par
+Agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    int m_iDeathMatchKills, m_iDeathMatchDeaths;\par
+Game.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+m_iIndexGSS = 6;\par
+    m_dwCrusadeGUID = NULL;\par
+    m_iCrusadeWinnerSide = NULL;\par
+    m_iLastCrusadeWinner = 0;\par
+    m_sLastCrusadeDate = -1;\par
+    m_iFinalShutdownCount = 0;\par
+    m_bIsCrusadeWarStarter = FALSE;\par
+    m_iLatestCrusadeDayOfWeek = -1;\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    for(int h = 0; h < 300; h++)\par
+    \{\par
+        ZeroMemory(m_stDeathMatchTop[h].cDeathMatchTopName, sizeof(m_stDeathMatchTop[h].cDeathMatchTopName));\par
+        m_stDeathMatchTop[h].iDeathMatchTopKills = -1;\par
+        m_stDeathMatchTop[h].iDeathMatchTopDeaths = -1;\par
+    \}\par
+Buscar:\par
+C\'f3digo:\par
+if (memcmp(m_pClientList[iClientH]->m_cMapName, "fight", 5) == 0) \{\par
+            wsprintf(G_cTxt, "Char(%s)-Exit(%s)", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_cMapName);\par
+            PutLogEventFileList(G_cTxt);\par
+        \}\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+        if(memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "fightzone2", 10) == 0) UpdateDeathMatch(iClientH);\par
+Buscar:\par
+C\'f3digo:\par
+case 80: // v2.15 \'c3\'81\'c3\'b6\'c3\'81\'c2\'b8\'c2\'be\'c3\'86\'c3\'80\'c3\'8c\'c3\'85\'c3\'9b\'c2\'be\'c3\'b7\'c2\'b1\'c3\emdash\'c2\'b7\'c2\'b9\'c3\'80\'c3\'8c\'c2\'b5\'c3\'a5\par
+                if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                    wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                    PutLogList(cTxt);\par
+                    delete pContents;\par
+                    delete pStrTok;\par
+                    return FALSE;\par
+                \}\par
+\par
+                m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = atoi(token);\par
+                cReadModeA = 0;\par
+                break;\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+case 86://50Cent - DeathMatch\par
+                if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                    wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                    PutLogList(cTxt);\par
+                    delete pContents;\par
+                    delete pStrTok;\par
+                    return FALSE;\par
+                \}\par
+\par
+                m_pClientList[iClientH]->m_iDeathMatchKills = atoi(token);\par
+                cReadModeA = 0;\par
+                break;\par
+            case 87://50Cent - DeathMatch\par
+                if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                    wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                    PutLogList(cTxt);\par
+                    delete pContents;\par
+                    delete pStrTok;\par
+                    return FALSE;\par
+                \}\par
+\par
+                m_pClientList[iClientH]->m_iDeathMatchDeaths = atoi(token);\par
+                cReadModeA = 0;\par
+                break;\par
+Buscar:\par
+C\'f3digo:\par
+if (memcmp(token, "gizon-item-upgade-left", 22) == 0) cReadModeA = 80;\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+            if (memcmp(token, "death-match-kills", 17) == 0) cReadModeA = 86;\par
+            if (memcmp(token, "death-match-deaths", 18) == 0) cReadModeA = 87;\par
+Buscar:\par
+C\'f3digo:\par
+wsprintf(cTxt, "gizon-item-upgade-left = %d", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);\par
+    strcat(pData, cTxt);\par
+    strcat(pData,"\\n");\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    wsprintf(cTxt, "death-match-kills = %d", m_pClientList[iClientH]->m_iDeathMatchKills);\par
+    strcat(pData, cTxt);\par
+    strcat(pData,"\\n");\par
+    wsprintf(cTxt, "death-match-deaths = %d", m_pClientList[iClientH]->m_iDeathMatchDeaths);\par
+    strcat(pData, cTxt);\par
+    strcat(pData,"\\n");\par
+Buscar:\par
+C\'f3digo:\par
+default:\par
+                wsprintf(m_msgBuff,"Unknown message received! (0x%.8X) Delete Client",*dwpMsgID);\par
+                PutLogList(m_msgBuff);\par
+                DeleteClient(iClientH, TRUE, TRUE); // v1.4\par
+                break;\par
+y justo arriba agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+            case MSGID_REQUEST_TELEPORTTO_DEATHMATCH:\par
+                RequestTeleportHandler(iClientH, "2   ", "fightzone2", -1, -1);\par
+                break;\par
+Buscar:\par
+C\'f3digo:\par
+case DEF_NOTIFY_ENEMYKILLS:\par
+    //50Cent - Pet System\par
+    case DEF_NOTIFY_PETLEVEL:\par
+        ip  = (int *)cp;\par
+        *ip = (int)sV1;\par
+        cp += 4;\par
+\par
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 10);\par
+        break;\par
+y justo arriba agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    case DEF_NOTIFY_DEATHMATCHTOP:\par
+        for(i = 0; i < 10; i++)\par
+        \{\par
+            memcpy(cp, m_stDeathMatchTop[i].cDeathMatchTopName, 11);\par
+            cp += 11;\par
+\par
+            ip  = (int *)cp;\par
+            *ip = (int)m_stDeathMatchTop[i].iDeathMatchTopKills;\par
+            cp += 4;\par
+\par
+            ip  = (int *)cp;\par
+            *ip = (int)m_stDeathMatchTop[i].iDeathMatchTopKills;\par
+            cp += 4;\par
+        \}\par
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 196);\par
+        break;\par
+    case DEF_NOTIFY_DEATHMATCHDATA:\par
+        ip  = (int *)cp;\par
+        *ip = (int)sV1;\par
+        cp += 4;\par
+\par
+        ip  = (int *)cp;\par
+        *ip = (int)sV2;\par
+        cp += 4;\par
+\par
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 14);\par
+        break;\par
+Buscar:\par
+C\'f3digo:\par
+if (m_pClientList[iClientH]->m_iQuest != NULL) \{ \par
+                cQuestRemain = (m_pQuestConfigList[m_pClientList[iClientH]->m_iQuest]->m_iMaxCount - m_pClientList[iClientH]->m_iCurQuestCount);\par
+                SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_QUESTCOUNTER, cQuestRemain, NULL, NULL, NULL);\par
+                _bCheckIsQuestCompleted(iClientH);\par
+        \}\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+        if(memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "fightzone2", 10) == 0) UpdateDeathMatch(-1);\par
+        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_DEATHMATCHDATA, m_pClientList[iClientH]->m_iDeathMatchKills, m_pClientList[iClientH]->m_iDeathMatchDeaths, NULL, NULL);\par
+Buscar:\par
+C\'f3digo:\par
+else if (cAttackerType == DEF_OWNERTYPE_PLAYER_INDIRECT) \{\par
+\tab\tab _bPKLog(DEF_PKLOG_BYOTHER,iClientH,NULL,NULL) ;\par
+\tab\tab // \'c7\'c3\'b7\'b9\'c0\'cc\'be\'ee\'b0\'a1 \'c1\'d7\'be\'fa\'c1\'f6\'b8\'b8 \'b0\'f8\'b0\'dd\'c0\'da\'b0\'a1 \'b0\'a3\'c1\'a2\'c0\'fb\'c0\'cc\'b4\'d9. \'be\'c6\'b9\'ab\'b7\'b1 \'bf\'b5\'c7\'e2\'c0\'cc \'be\'f8\'b4\'d9.\par
+\tab\tab // m_pClientList[iClientH]->m_iExp -= iDice(1, 50);\par
+\tab\tab // if (m_pClientList[iClientH]->m_iExp < 0) m_pClientList[iClientH]->m_iExp = 0;\par
+\par
+\tab\tab // SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_EXP, NULL, NULL, NULL, NULL);\par
+\tab\}\par
+y justo despues de eso agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+if (cAttackerType == DEF_OWNERTYPE_PLAYER) DeathMatchProcess(iAttackerH, iClientH);\par
+Buscar:\par
+C\'f3digo:\par
+if (bResurrect == FALSE) \{\par
+        m_pClientList[iClientH]->m_bIsBeingResurrected = FALSE;\par
+        return;\par
+    \}\par
+y remplazar todo eso por:\par
+C\'f3digo:\par
+if (bResurrect == FALSE) \{\par
+        m_pClientList[iClientH]->m_bIsBeingResurrected = FALSE;\par
+        //50Cent - DeathMatch\par
+        if(memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "fightzone2", 10) == 0)\par
+        \{\par
+            m_pClientList[iClientH]->m_bIsKilled = FALSE;\par
+            m_pClientList[iClientH]->m_iHP = iGetMaxHP(iClientH); \par
+            m_pClientList[iClientH]->m_iMP = iGetMaxHP(iClientH);\par
+            m_pClientList[iClientH]->m_iSP = iGetMaxSP(iClientH);\par
+            m_pClientList[iClientH]->m_bIsBeingResurrected = FALSE;\par
+            if(memcmp(m_pClientList[iClientH]->m_cLocation, "aresden", 7) == 0) RequestTeleportHandler(iClientH, "2   ", "aresden", -1, -1);\par
+            else if(memcmp(m_pClientList[iClientH]->m_cLocation, "elvine", 6) == 0) RequestTeleportHandler(iClientH, "2   ", "elvine", -1, -1);\par
+            UpdateDeathMatch(iClientH);\par
+        \}\par
+        return;\par
+    \}\par
+Alfinal del Game.cpp agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+void CGame::DeathMatchProcess(int iAttacker, int iVictim)\par
+\{\par
+    if(memcmp(m_pMapList[m_pClientList[iAttacker]->m_cMapIndex]->m_cName, "fightzone2", 10) == 0)\par
+    \{\par
+        m_pClientList[iAttacker]->m_iDeathMatchKills++;\par
+        m_pClientList[iAttacker]->m_iMP = iGetMaxMP(iAttacker);\par
+        m_pClientList[iAttacker]->m_iSuperAttackLeft = (m_pClientList[iAttacker]->m_iLevel / 10);\par
+        SendNotifyMsg(NULL, iAttacker, DEF_NOTIFY_SUPERATTACKLEFT, NULL, NULL, NULL, NULL);\par
+        \par
+        m_pClientList[iVictim]->m_iDeathMatchDeaths++;\par
+        SendNotifyMsg(NULL, iVictim, DEF_NOTIFY_RESURRECTPLAYER, NULL, NULL, NULL, NULL);\par
+        SendNotifyMsg(NULL, iAttacker, DEF_NOTIFY_DEATHMATCHDATA, m_pClientList[iAttacker]->m_iDeathMatchKills, m_pClientList[iAttacker]->m_iDeathMatchDeaths, NULL, NULL);\par
+        SendNotifyMsg(NULL, iVictim, DEF_NOTIFY_DEATHMATCHDATA, m_pClientList[iVictim]->m_iDeathMatchKills, m_pClientList[iVictim]->m_iDeathMatchDeaths, NULL, NULL);\par
+        UpdateDeathMatch(-1);\par
+    \}\par
+\}\par
+void CGame::UpdateDeathMatch(int iClientH)\par
+\{\par
+    ComposeDeathMatchTopList(iClientH);\par
+\par
+    for(int i = 0; i < DEF_MAXCLIENTS; i++)\par
+    \{\par
+        if(m_pClientList[i] != NULL)\par
+        \{\par
+            if(memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "fightzone2", 10) == 0)\par
+            \{\par
+                SendNotifyMsg(NULL, i, DEF_NOTIFY_DEATHMATCHTOP, NULL, NULL, NULL, NULL);\par
+            \}\par
+        \}\par
+    \}\par
+\}\par
+\par
+void CGame::ComposeDeathMatchTopList(int iClientH)\par
+\{\par
+    int iIndex = 0;\par
+    for(int i = 0; i < DEF_MAXCLIENTS; i++)\par
+    \{\par
+        if(m_pClientList[i] != NULL)\par
+        \{\par
+            if(iClientH == i) continue;\par
+            if(iIndex == 300) break;\par
+            if(memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "fightzone2", 10) == 0)\par
+            \{\par
+                memcpy(m_stDeathMatchTop[iIndex].cDeathMatchTopName, m_pClientList[i]->m_cCharName, 11);\par
+                m_stDeathMatchTop[iIndex].iDeathMatchTopKills = m_pClientList[i]->m_iDeathMatchKills;\par
+                m_stDeathMatchTop[iIndex].iDeathMatchTopDeaths = m_pClientList[i]->m_iDeathMatchDeaths;\par
+                iIndex++;\par
+            \}\par
+        \}\par
+    \}\par
+    char cTempName[11];\par
+    int iTempKills, iTempDeaths;\par
+    for(i = 0; i < 300; i++)\par
+    \{\par
+        for(int j = 0; j < 300; j++)\par
+        \{\par
+            if(m_stDeathMatchTop[i].iDeathMatchTopKills >= m_stDeathMatchTop[j].iDeathMatchTopKills)\par
+            \{\par
+                memcpy(cTempName, m_stDeathMatchTop[i].cDeathMatchTopName, 11);\par
+                iTempKills = m_stDeathMatchTop[i].iDeathMatchTopKills;\par
+                iTempDeaths = m_stDeathMatchTop[i].iDeathMatchTopDeaths;\par
+\par
+                memcpy(m_stDeathMatchTop[i].cDeathMatchTopName, m_stDeathMatchTop[j].cDeathMatchTopName, 11);\par
+                memcpy(m_stDeathMatchTop[j].cDeathMatchTopName, cTempName, 11);\par
+\par
+                m_stDeathMatchTop[i].iDeathMatchTopKills = m_stDeathMatchTop[j].iDeathMatchTopKills;\par
+                m_stDeathMatchTop[j].iDeathMatchTopKills = iTempKills;\par
+\par
+                m_stDeathMatchTop[i].iDeathMatchTopDeaths = m_stDeathMatchTop[j].iDeathMatchTopDeaths;\par
+                m_stDeathMatchTop[j].iDeathMatchTopDeaths = iTempDeaths;\par
+            \}\par
+        \}\par
+    \}\par
+\}\par
+Game.h:\par
+Agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    void DeathMatchProcess(int iAttacker, int iVictim);\par
+    void ComposeDeathMatchTopList(int iClientH);\par
+    void UpdateDeathMatch(int iClientH);\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+    struct \{\par
+        char cDeathMatchTopName[11];\par
+        int iDeathMatchTopKills;\par
+        int iDeathMatchTopDeaths;\par
+    \}m_stDeathMatchTop[300];\par
+Netmessage.h:\par
+Agregar:\par
+C\'f3digo:\par
+//50Cent - DeathMatch\par
+#define DEF_NOTIFY_DEATHMATCHTOP                    0x1F50\par
+#define DEF_NOTIFY_DEATHMATCHDATA                    0x1F51\par
+#define MSGID_REQUEST_TELEPORTTO_DEATHMATCH            0x1F52\par
+}
+ 

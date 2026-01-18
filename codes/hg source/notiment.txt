@@ -1,0 +1,113 @@
+Seeing as I stopped working on HBXP source because too many nubs pissed me off, i'm going to release some of the stuff I made.. Not sure if its any use, but I had fun with it.
+
+Basically it will display a random message every few minutes, can be useful for reminding people of stuff, or whatever you want to put in there..
+
+Anyway- here's the code.
+
+In HGServer ->> game.cpp
+
+FIND:
+
+CODE  
+
+void CGame::OnTimer(char cType)
+ 
+
+
+
+ADD at the top:
+
+CODE  
+
+int q; //added for "advertiser"
+char cAdvert[1000]; //holds the text for the "advert"
+ZeroMemory(cAdvert, sizeof(cAdvert));
+ 
+
+
+
+FIND
+
+CODE  
+
+if ((dwTime - m_dwGameTime3) > 3000) {
+ SyncMiddlelandMapInfo();
+ CheckDynamicObjectList();
+ DynamicObjectEffectProcessor();
+ NoticeHandler();
+ SpecialEventHandler();
+ EnergySphereProcessor();
+ m_dwGameTime3 = dwTime;
+}
+ 
+
+
+
+ADD BELOW:
+
+CODE  
+
+//Orkl: Advertiser Code
+if ((dwTime - m_dwGameTime7) > 800000) { //Timer
+  switch(iDice(1,10)) { //Pick a random advert
+//Change these to whatever you want to display
+   case  1: wsprintf(cAdvert, "SERVER: Advert1"); break;
+   case  2: wsprintf(cAdvert, "SERVER: Advert2"); break;
+   case  3: wsprintf(cAdvert, "SERVER: Advert3"); break;
+   case  4: wsprintf(cAdvert, "SERVER: Advert4"); break;
+   case  5: wsprintf(cAdvert, "SERVER: Advert5"); break;
+   case  6: wsprintf(cAdvert, "SERVER: Advert6"); break;
+   case  7: wsprintf(cAdvert, "SERVER: Advert7"); break;
+   case  8: wsprintf(cAdvert, "SERVER: Advert8"); break;
+   case  9: wsprintf(cAdvert, "SERVER: Advert9"); break;
+   case 10: wsprintf(cAdvert, "SERVER: Advert10"); break;
+  }
+
+  for (q = 1; q < DEF_MAXCLIENTS; q++) // Check all clients
+  {
+    if ((m_pClientList[q] != NULL))  // Check if client is active
+    { //Send message to server.
+     SendNotifyMsg(NULL, q, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cAdvert);
+    }
+  }
+ m_dwGameTime7 = dwTime; //Reset timer so it doesn't spam :D
+}
+//end
+ 
+
+
+
+
+In HGServer ->> Game.h
+
+FIND:
+
+CODE  
+
+DWORD m_dwWhetherTime, m_dwGameTime1, m_dwGameTime2, m_dwGameTime3, m_dwGameTime4, m_dwGameTime5, m_dwGameTime6, m_dwFishTime; 
+ 
+
+
+
+REPLACE WITH
+
+CODE  
+
+DWORD m_dwWhetherTime, m_dwGameTime1, m_dwGameTime2, m_dwGameTime3, m_dwGameTime4, m_dwGameTime5, m_dwGameTime6, m_dwGameTime7, m_dwFishTime; //Orkl - added 7 for advertiser
+ 
+
+
+
+->>Save all & build
+
+Basically this will display one of the 10 messages to the client every time the timer goes off.. You can change the time to whatever you want, but what its set as works quite well.
+
+Suggestions for adverts:
+
+"SERVER: Welcome to ~SERVER~, we hope you enjoy your stay"
+"SERVER: Please vote for us by visiting: http://SERVER.EXTENSION and clicking on the buttons!"
+"SERVER: Please dont annoy GM's for events, if a GM is free, they may do an event"
+
+You get the idea..
+
+Enjoy  

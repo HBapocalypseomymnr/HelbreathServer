@@ -1,0 +1,32 @@
+Fix Windows 7/Vista
+Bueno me levante de buen humor y con ganas de hacer un aporte.
+Tengo este Fix hace rato, casi nadie lo tiene exepto por un par al que se los pase yo, pero creo que por el bien de TODO el juego es hora de compartirlo.
+
+Cliente compatible con windows 7. Simplemente forzamos apagada la sincronizacion vertical en el helgame.
+
+En el src del cliente, en DXC_ddraw.cpp buscan
+
+Código:
+ddVal = m_lpBackB4flip->BltFast( 0, 0, m_lpBackB4, &m_rcFlipping, DDBLTFAST_NOCOLORKEY); // | DDBLTFAST_WAIT);
+ddVal = m_lpFrontB4->Flip(m_lpBackB4flip, DDFLIP_WAIT);
+y lo reemplazan por:
+
+Código:
+ddVal = m_lpBackB4flip->BltFast( 0, 0, m_lpBackB4, &m_rcFlipping, DDBLTFAST_NOCOLORKEY); // | DDBLTFAST_WAIT);
+ddVal = m_lpFrontB4->Flip(m_lpBackB4flip, DDFLIP_NOVSYNC);
+Facil No?
+Se termino el bug de los FPS en el Helbreath.
+
+Gentileza de Helbreath Nemmesis.
+
+Esto deberia agregar, es importante:
+
+El bug de los fps del helbreath se debe basicamente a la sincronizacion vertical, y a las actualizaciones que fue teniendo Directx con los años.
+La forma de zafar de este bug, era desactivando a mano la sincronizacion vertical.
+
+Este Fix, basicamente lo que hace es no activarla. Por eso no hay bug NO IMPORTA QUE WINDOWS SEA. Tambien anda perfecto en Vista.
+
+
+Pero tengan en cuenta lo siguiente que es muy importante. Con esto el helgame no la activa. Y no necesitan tocar nada en las configs de su placa de video, PERO quizas alguno de ustedes, en su placa de viideo, tiene la sincronizacion vertical FORCE ON (forzar encendido).
+En este caso, van a estar bugueados.
+Casi todas las placas, seteann la sincronizacion vertical en automatico o en "dejar que la aplicacion decida" en ese caso no va ahaber bug. el bug solo lo van a tener lo que la tengan forzada encenndida.

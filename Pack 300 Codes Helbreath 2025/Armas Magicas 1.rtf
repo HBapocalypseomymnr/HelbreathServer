@@ -1,0 +1,469 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Armas Magicas [SuperSword] (By Diuuude)\par
+Bueno aqui vengo a mostrar un Code de que es para las magias.. Por ejemplo agarras una sword.. Por ejemplo una devas, y ai en el code puede traer el tipo de Magia que puede tirar, O la ID, y esa id la podes cambiar por alguna otra magia que quieras... Bueno empesemos ... \par
+\par
+\par
+Paso 1 en : iCalculateAttackEffect\par
+\par
+Buscar:\par
+C\'f3digo:\par
+m_pClientList[sTargetH]->m_iHP -= iAP_SM;\par
+if (m_pClientList[sTargetH]->m_iHP <= 0) \{\par
+if (cAttackerType == DEF_OWNERTYPE_PLAYER)\par
+bAnalyzeCriminalAction(sAttackerH, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);\par
+ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iAP_SM);\par
+bKilled = TRUE;\par
+iKilledDice = m_pClientList[sTargetH]->m_iLevel;\par
+\}\par
+\par
+Justo antes de la derecha Agregar : \par
+\par
+C\'f3digo:\par
+// Magic Weapons - Add Magical Damages\par
+if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != NULL)) \{\par
+double iInitial_AP_SM, iWeaponDamage, iTotalMagicDamage;\par
+int iMagDamage;\par
+short sManaCost;\par
+DWORD dwType1, dwType2, dwValue1, dwValue2;\par
+\par
+if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1)\{\par
+sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];\par
+\}\par
+else if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)\{\par
+sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];\par
+\}\par
+else sItemIndex = -1;\par
+\par
+if(sItemIndex != -1)\{\par
+if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) != NULL) \{\par
+dwType1 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) >> 20;\par
+dwValue1 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x000F0000) >> 16;\par
+dwType2 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) >> 12;\par
+dwValue2 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000F00) >> 8;\par
+\}\par
+if(dwType1 == 15)\{\par
+sManaCost = dwValue2*2;\par
+if(m_pClientList[sAttackerH]->m_iMP >= sManaCost)\{\par
+iWeaponDamage = (double)dwValue2*7;\par
+iInitial_AP_SM = (double)iAP_SM;\par
+iMagDamage = (double)m_pClientList[sAttackerH]->m_iMag/20;\par
+if (iMagDamage <= 1) iMagDamage = 0;\par
+if (iMagDamage > 10) iMagDamage = 10;\par
+iTotalMagicDamage = ((iInitial_AP_SM/100.0f)*(iWeaponDamage+100))+iMagDamage;\par
+iAP_SM = (int)iTotalMagicDamage;\par
+m_pClientList[sAttackerH]->m_iMP -= sManaCost;\par
+SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);\par
+\}\par
+\}\par
+\}\par
+\}\par
+// End of Magic Weapons\par
+\par
+Paso 2 ) En la funcion de : iCalculateAttackEffect\par
+\par
+Buscar :\par
+C\'f3digo:\par
+switch (m_pNpcList[sTargetH]->m_cActionLimit) \{\par
+case 0:\par
+case 3:\par
+case 5:\par
+m_pNpcList[sTargetH]->m_iHP -= iDamage;\par
+break;\par
+\}\par
+\par
+if (m_pNpcList[sTargetH]->m_iHP <= 0) \{\par
+NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);\par
+bKilled = TRUE;\par
+iKilledDice = m_pNpcList[sTargetH]->m_iHitDice;\par
+\}\par
+\par
+\par
+Antes de la Derecha Agregar esto : \par
+\par
+C\'f3digo:\par
+// Magic Weapons - Add Magical Damages\par
+if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != NULL)) \{\par
+double iInitial_AP_SM, iWeaponDamage, iTotalMagicDamage;\par
+int iMagDamage;\par
+short sManaCost;\par
+DWORD dwType1, dwType2, dwValue1, dwValue2;\par
+\par
+if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1)\{\par
+sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];\par
+\}\par
+else if(m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)\{\par
+sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];\par
+\}\par
+else sItemIndex = -1;\par
+\par
+if(sItemIndex != -1)\{\par
+if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) != NULL) \{\par
+dwType1 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) >> 20;\par
+dwValue1 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x000F0000) >> 16;\par
+dwType2 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) >> 12;\par
+dwValue2 = (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000F00) >> 8;\par
+\}\par
+if(dwType1 == 15)\{\par
+sManaCost = dwValue2*2;\par
+if(m_pClientList[sAttackerH]->m_iMP >= sManaCost)\{\par
+iWeaponDamage = (double)dwValue2*7;\par
+iInitial_AP_SM = (double)iDamage;\par
+iMagDamage = (double)m_pClientList[sAttackerH]->m_iMag/20;\par
+if (iMagDamage <= 1) iMagDamage = 0;\par
+if (iMagDamage > 10) iMagDamage = 10;\par
+iTotalMagicDamage = ((iInitial_AP_SM/100.0f)*(iWeaponDamage+100))+iMagDamage;\par
+iDamage = (int)iTotalMagicDamage;\par
+m_pClientList[sAttackerH]->m_iMP -= sManaCost;\par
+SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);\par
+\}\par
+\}\par
+\}\par
+\}\par
+// End of Magic Weapons\par
+\par
+Paso 3 : En la funcion iClientMotion_Attack_Handler\par
+Buscar :\par
+C\'f3digo:\par
+sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];\par
+if (sItemIndex != -1 && m_pClientList[iClientH]->m_pItemList[sItemIndex] != NULL) \{\par
+if(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 874)\{ // Directional bow\par
+for(i = 2; i < 10; i++)\{\par
+iErr = 0;\par
+m_Misc.GetPoint2(sX, sY, dX, dY, &tX, &tY, &iErr, i);\par
+m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, tX, tY);\par
+iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, tX, tY, wType, bNearAttack, bIsDash, TRUE); // 1\par
+if ((abs(tdX - dX) <= 1) && (abs(tdY - dY) <= 1)) \{\par
+m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, dX, dY);\par
+iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, dX, dY, wType, bNearAttack, bIsDash, FALSE); // 0\par
+\}\par
+\}\par
+\}\par
+\par
+\par
+A la derecha agregar :\par
+C\'f3digo:\par
+// Magic Weapons - Add Special Effect for Weapon\par
+short sType, sManaCost;\par
+DWORD dwType1, dwType2, dwValue1, dwValue2;\par
+\par
+if(m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1)\{\par
+sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];\par
+\}\par
+else if(m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)\{\par
+sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];\par
+\}\par
+else sItemIndex = -1;\par
+\par
+if(sItemIndex != -1)\{\par
+if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) != NULL) \{\par
+dwType1 = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) >> 20;\par
+dwValue1 = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x000F0000) >> 16;\par
+dwType2 = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) >> 12;\par
+dwValue2 = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000F00) >> 8;\par
+\}\par
+if(dwType1 == 15)\{\par
+sManaCost = dwValue2*2;\par
+if (m_pClientList[iClientH]->m_iMP >= sManaCost)\{\par
+switch(dwValue1)\{\par
+// Fire-Strike\par
+case 1:\par
+sType = 30;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Lightning\par
+case 2:\par
+sType = 43;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Chill-Wind\par
+case 3:\par
+sType = 45;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Ice-Strike\par
+case 4:\par
+sType = 57;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Energy-Strike\par
+case 5:\par
+sType = 60;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Mass-Fire-Strike\par
+case 6:\par
+sType = 61;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Mass-Chill-Wind\par
+case 7:\par
+sType = 63;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Earthworm-Strike\par
+case 8:\par
+sType = 64;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Bloody-Shock-Wave\par
+case 9:\par
+sType = 70;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Mass-Ice-Strike\par
+case 10:\par
+sType = 72;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Lightning-Strike\par
+case 11:\par
+sType = 74;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Ice-Whirlwind\par
+case 12:\par
+sType = 75;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Meteor-Strike\par
+case 13:\par
+sType = 81;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Mass-Magic-Missile\par
+case 14:\par
+sType = 82;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Blizzard\par
+case 15:\par
+sType = 91;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+// Earth-Shock-Wave\par
+case 16:\par
+sType = 96;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+break;\par
+\}\par
+// Critical Attack - Mass-Magic-Missile Aura\par
+if(wType >= 20)\par
+\{\par
+sType = 84;\par
+SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, sX, sY, (sType+100), m_pClientList[iClientH]->m_sType);\par
+\}\par
+\}\par
+\}\par
+\}\par
+// End of Magic Weapons\par
+\par
+\par
+Paso 4 : En la funcion de NpcDeadItemGenerator\par
+Buscar :\par
+C\'f3digo:\par
+else if ((iResult >= 9700) && (iResult <= 10000)) \{\par
+dwType = 9;\par
+cColor = 8;\par
+\}\par
+pItem->m_cItemColor = cColor;\par
+\par
+Remplasar por :\par
+C\'f3digo:\par
+else if ((iResult >= 9700) && (iResult <= 10000)) \{\par
+dwType = 9;\par
+cColor = 8;\par
+\}\par
+// Magic Weapons - Drops Improvement\par
+else if ((iResult >= 10001) && (iResult <= 10500)) \{\par
+dwType = 15; // Magic\par
+cColor = 10; // Black Color\par
+\}\par
+// End of Magic Weapons\par
+pItem->m_cItemColor = cColor;\par
+\par
+Paso 5 : En la funcion .. NpcDeadItemGenerator\par
+\par
+Buscar :\par
+C\'f3digo:\par
+iResult = iDice(1, 30000);\par
+if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%\par
+else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%\par
+else if ((iResult >= 17400) && (iResult < 22400)) dwValue = 3; // 4356/29348 = 14.8%\par
+else if ((iResult >= 22400) && (iResult < 25400)) dwValue = 4; // 2874/29348 = 9.7%\par
+else if ((iResult >= 25400) && (iResult < 27400)) dwValue = 5; // 1897/29348 = 6.4%\par
+else if ((iResult >= 27400) && (iResult < 28400)) dwValue = 6; // 1252/29348 = 4.2%\par
+else if ((iResult >= 28400) && (iResult < 28900)) dwValue = 7; // 826/29348 = 2.8%\par
+else if ((iResult >= 28900) && (iResult < 29300)) dwValue = 8; // 545/29348 = 1.85%\par
+else if ((iResult >= 29300) && (iResult < 29600)) dwValue = 9; // 360/29348 = 1.2%\par
+else if ((iResult >= 29600) && (iResult < 29800)) dwValue = 10; // 237/29348 = 0.8%\par
+else if ((iResult >= 29800) && (iResult < 29900)) dwValue = 11; // 156/29348 = 0.5%\par
+else if ((iResult >= 29900) && (iResult < 29970)) dwValue = 12; // 103/29348 = 0.3%\par
+else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%\par
+\par
+Remplasar por esto :\par
+C\'f3digo:\par
+// Magic Weapons - Set the Spell Effect on Dropped Item\par
+if (dwType == 15)\{\par
+iResult = iDice(1, 30060);\par
+if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // Fire-Strike\par
+else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // Lightning\par
+else if ((iResult >= 17400) && (iResult < 22400)) dwValue = 3; // Chill-Wind\par
+else if ((iResult >= 22400) && (iResult < 25400)) dwValue = 4; // Ice-Strike\par
+else if ((iResult >= 25400) && (iResult < 27400)) dwValue = 5; // Energy-Strike\par
+else if ((iResult >= 27400) && (iResult < 28400)) dwValue = 6; // Mass-Fire-Strike\par
+else if ((iResult >= 28400) && (iResult < 28900)) dwValue = 7; // Mass-Chill-Wind\par
+else if ((iResult >= 28900) && (iResult < 29300)) dwValue = 8; // Earthworm-Strike\par
+else if ((iResult >= 29300) && (iResult < 29600)) dwValue = 9; // Bloody-Shock-Wave\par
+else if ((iResult >= 29600) && (iResult < 29800)) dwValue = 10; // Mass-Ice-Strike\par
+else if ((iResult >= 29800) && (iResult < 29900)) dwValue = 11; // Lightning-Strike\par
+else if ((iResult >= 29900) && (iResult < 29970)) dwValue = 12; // Ice-Whirlwind\par
+else if ((iResult >= 29970) && (iResult < 30000)) dwValue = 13; // Meteor-Strike\par
+else if ((iResult >= 30000) && (iResult < 30025)) dwValue = 14; // Mass-Magic-Missile\par
+else if ((iResult >= 30025) && (iResult < 30045)) dwValue = 15; // Blizzard\par
+else if ((iResult >= 30045) && (iResult <= 30060)) dwValue = 16; // Earth-Shock-Wave\par
+sMagicLevel = 1;\par
+\}\par
+else\{\par
+iResult = iDice(1, 30000);\par
+if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%\par
+else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%\par
+else if ((iResult >= 17400) && (iResult < 22400)) dwValue = 3; // 4356/29348 = 14.8%\par
+else if ((iResult >= 22400) && (iResult < 25400)) dwValue = 4; // 2874/29348 = 9.7%\par
+else if ((iResult >= 25400) && (iResult < 27400)) dwValue = 5; // 1897/29348 = 6.4%\par
+else if ((iResult >= 27400) && (iResult < 28400)) dwValue = 6; // 1252/29348 = 4.2%\par
+else if ((iResult >= 28400) && (iResult < 28900)) dwValue = 7; // 826/29348 = 2.8%\par
+else if ((iResult >= 28900) && (iResult < 29300)) dwValue = 8; // 545/29348 = 1.85%\par
+else if ((iResult >= 29300) && (iResult < 29600)) dwValue = 9; // 360/29348 = 1.2%\par
+else if ((iResult >= 29600) && (iResult < 29800)) dwValue = 10; // 237/29348 = 0.8%\par
+else if ((iResult >= 29800) && (iResult < 29900)) dwValue = 11; // 156/29348 = 0.5%\par
+else if ((iResult >= 29900) && (iResult < 29970)) dwValue = 12; // 103/29348 = 0.3%\par
+else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%\par
+else dwValue = 1; // v2.03 906\par
+sMagicLevel = 0;\par
+\}\par
+// End of Magic Weapons\par
+\par
+Paso 6 : En la funcion de NpcDeadItemGenerator\par
+\par
+Buscar :\par
+C\'f3digo:\par
+switch (dwType) \{\par
+case 1: // +5\par
+if (dwValue <= 5) dwValue = 5;\par
+break;\par
+case 2: // +20\par
+if (dwValue <= 4) dwValue = 4;\par
+break;\par
+case 6: // +16%\par
+if (dwValue <= 4) dwValue = 4;\par
+break;\par
+case 8: // +14%\par
+if (dwValue <= 2) dwValue = 2;\par
+break;\par
+if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;\par
+\par
+Y Remplazalo por esto :\par
+C\'f3digo:\par
+switch (dwType) \{\par
+case 1: // +5\par
+if (dwValue <= 5) dwValue = 5;\par
+break;\par
+case 2: // +20\par
+if (dwValue <= 4) dwValue = 4;\par
+break;\par
+case 6: // +16%\par
+if (dwValue <= 4) dwValue = 4;\par
+break;\par
+case 8: // +14%\par
+if (dwValue <= 2) dwValue = 2;\par
+break;\par
+// Magic Weapons - Better Stats for Strong NPC killed\par
+case 15:\par
+switch(iGenLevel)\{\par
+case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat\par
+if(dwValue > 4) dwValue = 4;\par
+if(dwValue < 1) dwValue = 1;\par
+case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie\par
+if(dwValue > 6) dwValue = 6;\par
+if(dwValue < 3) dwValue = 3;\par
+case 3: // Stone-Golem, Clay-Golem\par
+if(dwValue > 7) dwValue = 7;\par
+if(dwValue < 4) dwValue = 4;\par
+case 4: // Hellbound, Rudolphif(dwValue > 8) dwValue = 8;\par
+if(dwValue < 5) dwValue = 5;\par
+case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar\par
+if(dwValue > 10) dwValue = 10;\par
+if(dwValue < 7) dwValue = 7;\par
+case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem\par
+if(dwValue > 12) dwValue = 12;\par
+if(dwValue < 9) dwValue = 9;\par
+case 7: // Liche, Frost\par
+if(dwValue > 13) dwValue = 13;\par
+if(dwValue < 10) dwValue = 10;\par
+case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle\par
+if(dwValue > 16) dwValue = 16;\par
+if(dwValue < 13) dwValue = 13;\par
+\}\par
+// End of Magic Weapons\par
+\}\par
+if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;\par
+\par
+\par
+\par
+Paso 7 : En la funcion de NpcDeadItemGenerator\par
+\par
+Buscar :\par
+C\'f3digo:\par
+switch (dwType) \{\par
+case 2: // +21%\par
+if (dwValue <= 3) dwValue = 3;\par
+break;\par
+case 10: // 7\par
+if (dwValue > 7) dwValue = 7;\par
+break;\par
+case 11: // Exp +20%\par
+dwValue = 2;\par
+break;\par
+case 12: // Gold +50%\par
+dwValue = 5;\par
+break;\par
+\}\par
+\par
+Justo arriba antes de la derecha Agregar : \par
+\par
+\par
+C\'f3digo:\par
+// Magic Weapons - Better Stats for Strong NPC Killed\par
+if (sMagicLevel >0)\{\par
+switch(iGenLevel)\{\par
+case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat\par
+if(dwValue > 2) dwValue = 2;\par
+if(dwValue < 1) dwValue = 1;\par
+case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie\par
+if(dwValue > 3) dwValue = 3;\par
+if(dwValue < 1) dwValue = 1;\par
+case 3: // Stone-Golem, Clay-Golem\par
+if(dwValue > 4) dwValue = 4;\par
+if(dwValue < 2) dwValue = 2;\par
+case 4: // Hellbound, Rudolph\par
+if(dwValue > 5) dwValue = 5;\par
+if(dwValue < 2) dwValue = 2;\par
+case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar\par
+if(dwValue > 7) dwValue = 7;\par
+if(dwValue < 3) dwValue = 3;\par
+case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem\par
+if(dwValue > 9) dwValue = 9;\par
+if(dwValue < 5) dwValue = 5;\par
+case 7: // Liche, Frost\par
+if(dwValue > 10) dwValue = 10;\par
+if(dwValue < 6) dwValue = 6;\par
+case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyleif(dwValue > 15) dwValue = 15;\par
+if(dwValue < 9) dwValue = 9;\par
+\}\par
+\}\par
+// End of Magic Weapons\par
+\par
+\par
+By \'bf?\par
+}
+ 

@@ -1,0 +1,44 @@
+add to game.cpp 
+
+CODE  
+}
+
+  if (memcmp(cp, "/changecity ", 12) == 0) {
+  PlayerOrder_ChangeCity(iClientH);
+  return; 
+ } 
+
+
+
+then again game.cpp
+
+
+CODE  
+void CGame::PlayerOrder_ChangeCity(int iClientH)
+{
+char cGizonTooLow[256], cGizonSuccesful[256];
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft < 5){
+ZeroMemory(cGizonTooLow, sizeof(cGizonTooLow));
+wsprintf(cGizonTooLow,"You Dont Have 5 Majestic points");
+ShowClientMsg(iClientH, cGizonTooLow);
+}
+else{
+ if (memcmp(m_pClientList[iClientH]->m_cLocation, "aresden",7) == 0 ) strcpy(m_pClientList[iClientH]->m_cLocation,"elvine");
+else if (memcmp(m_pClientList[iClientH]->m_cLocation, "elvine",6) == 0 ) strcpy(m_pClientList[iClientH]->m_cLocation,"aresden");
+ ZeroMemory(cGizonSuccesful, sizeof(cGizonSuccesful));
+wsprintf(cGizonSuccesful, "City Change Succesfuled!");
+ShowClientMsg(iClientH, cGizonSuccesful);
+m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= 5;
+DeleteClient(iClientH, TRUE, TRUE);
+}
+} 
+
+
+
+adn then to game.h
+
+CODE  
+// Treax's City Change Code
+void PlayerOrder_ChangeCity(int iClientH); 

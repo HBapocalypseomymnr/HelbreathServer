@@ -1,0 +1,68 @@
+Get Admins
+Author - Acidx
+
+
+
+Note from developer:
+
+this is unfinished WIP But So far this.
+Displays all Online Admins on the HG at the time.
+This doesn't work cross server, if you want it to then just add a GSM message for it you can base it off of the SummonGuild code for it here in this same forums, ill do it later dont really have the time atm.
+unless someone edits this before i do.
+p.s. dunno if there is a code out like this..
+if there is then oh well haha
+For example
+someone types /admins
+a Message pops up
+Server: Active Admin: Acidx[GM]
+Server: 1 Active Admins Online
+Works like a charm...
+Oh yea the person needs to have admin user level > 1
+to be seen on the admin list
+
+In Game.CPP Add
+
+/*===========Get Admins==By Acidx====/admins=======*/
+void CGame::PlayerCommandCheckAdmins(int iClientH)
+{//An Acidx Production - Last Updated:Aug.29.2006
+char cNotifyMessage[256],cNotifyMessage2[256], cGMName
+[12];
+int i,x;
+WORD * wp;
+char * cp;
+char cBuff[256];
+cGMName[12];
+ZeroMemory(cNotifyMessage, sizeof(cNotifyMessage));
+ZeroMemory(cNotifyMessage2, sizeof(cNotifyMessage2));
+x = 0;
+for (i = 0; i < DEF_MAXCLIENTS; i++)
+if (m_pClientList[i] != NULL) {
+
+if (m_pClientList[i]->m_iAdminUserLevel > 1) {
+wsprintf(cNotifyMessage, "Active Admin: %s", m_pClientList[i]->m_cCharName);
+ShowClientMsg(iClientH, cNotifyMessage);
+x++;
+}
+}
+wsprintf(cNotifyMessage2, "%i Admins Are Online", x);
+ShowClientMsg(iClientH, cNotifyMessage2);
+}
+
+
+In Game.cpp in ChatMsgHandler(); add
+
+}
+/*====Add us Some /Commands here====*/
+if (memcmp(cp, "/admins", 7) == 0) {
+PlayerCommandCheckAdmins(iClientH);
+return;
+}
+
+
+in Game.h add
+
+
+/*====Add us some Declares here pal===*/
+void PlayerCommandCheckAdmins(int iClientH);
+
+

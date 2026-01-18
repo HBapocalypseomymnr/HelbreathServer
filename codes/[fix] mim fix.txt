@@ -1,0 +1,144 @@
+bueno aca dejo el mim fixed 
+exclusivo para HBSS
+
+game.cpp
+
+reemplazar toda la funcion:
+
+Código:
+void CGame::RestoreSprites()
+{
+    for (int i = 0; i < DEF_MAXSPRITES; i++)
+    if (m_pSprite[i] != NULL) m_pSprite[i]->iRestore();
+}
+char _tmp_cTmpDirX[9] = { 0,0,1,1,1,0,-1,-1,-1 };
+char _tmp_cTmpDirY[9] = { 0,-1,-1,0,1,1,1,0,-1 };
+char CGame::cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck, BOOL bMIM)
+{
+ char  cDir, cTmpDir;
+ //int   aX, aY, aX2, aY2, dX, dY;
+ int   aX, aY, dX, dY;
+ int   i;
+    if ((sX == dstX) && (sY == dstY)) return 0;
+    dX = sX;
+    dY = sY;
+    if (bMIM == FALSE) // MIM Fix
+         cDir = m_Misc.cGetNextMoveDir(dX, dY, dstX, dstY);
+    else cDir = m_Misc.cGetNextMoveDir(dstX, dstY, dX, dY);
+
+    if (m_cPlayerTurn == 0)
+    for (i = cDir; i <= cDir + 2;i++)
+    {    cTmpDir = i;
+        if (cTmpDir > 8) cTmpDir -= 8;
+        aX = _tmp_cTmpDirX[cTmpDir];
+        aY = _tmp_cTmpDirY[cTmpDir];
+        if (((dX + aX) == m_iPrevMoveX) && ((dY + aY) == m_iPrevMoveY) && (m_bIsPrevMoveBlocked == TRUE) && (bMoveCheck == TRUE))
+        {    m_bIsPrevMoveBlocked = FALSE;
+        }else if (m_pMapData->bGetIsLocateable(dX + aX, dY + aY) == TRUE)
+        {    if( m_pMapData->bIsTeleportLoc(dX + aX, dY + aY) == TRUE )
+            {    if( _bCheckMoveable(dX + aX, dY + aY) == TRUE ) return cTmpDir;
+                else
+                {    SetTopMsg( DEF_MSG_GETNEXTMOVEDIR, 5 );
+                }
+            }else return cTmpDir;
+    }    }
+
+    if (m_cPlayerTurn == 1)
+    for (i = cDir; i >= cDir - 2;i--)
+    {    cTmpDir = i;
+        if (cTmpDir < 1) cTmpDir += 8;
+        aX = _tmp_cTmpDirX[cTmpDir];
+        aY = _tmp_cTmpDirY[cTmpDir];
+        if (((dX + aX) == m_iPrevMoveX) && ((dY + aY) == m_iPrevMoveY) && (m_bIsPrevMoveBlocked == TRUE) && (bMoveCheck == TRUE))
+        {    m_bIsPrevMoveBlocked = FALSE;
+        }else if (m_pMapData->bGetIsLocateable(dX + aX, dY + aY) == TRUE)
+        {    if( m_pMapData->bIsTeleportLoc(dX + aX, dY + aY) == TRUE )
+            {    if( _bCheckMoveable(dX + aX, dY + aY) == TRUE ) return cTmpDir;
+                else
+                {    SetTopMsg( DEF_MSG_GETNEXTMOVEDIR, 5 );
+                }
+            }else return cTmpDir;
+    }    }
+    return 0;
+}
+
+buscar:
+
+Código:
+MOTION_COMMAND_PROCESS:;y modifican esto:
+
+        if (m_sDamageMove != 0) {
+            m_cCommand = DEF_OBJECTDAMAGEMOVE;
+            m_sCommX = m_sPlayerX;
+            m_sCommY = m_sPlayerY;
+
+            switch (m_sDamageMove) {
+            case 1: m_sCommY--; break;
+            case 2: m_sCommX++; m_sCommY--; break;
+            case 3: m_sCommX++; break;
+            case 4: m_sCommX++; m_sCommY++; break;
+            case 5: m_sCommY++; break;
+            case 6: m_sCommX--; m_sCommY++; break;
+            case 7: m_sCommX--; break;
+            case 8: m_sCommX--; m_sCommY--; break;
+            }
+
+por esto:
+
+Código:
+       if (m_sDamageMove != 0)
+        {    m_cCommand = DEF_OBJECTDAMAGEMOVE;
+            m_sCommX = m_sPlayerX;
+            m_sCommY = m_sPlayerY;
+    // mim crit fixed by kaozures tocado para ande bien by cloud :P
+            if (m_bIllusionMVT == TRUE) {
+            switch (m_sDamageMove) {
+            case 1: m_sCommY++; break;
+            case 2: m_sCommX--; m_sCommY++; break;
+            case 3: m_sCommX--; break;
+            case 4: m_sCommX--; m_sCommY--; break;
+            case 5: m_sCommY--; break;
+            case 6: m_sCommX++; m_sCommY--; break;
+            case 7: m_sCommX++; break;
+            case 8: m_sCommX++; m_sCommY++; break;
+            }
+
+            }
+            else {
+            switch (m_sDamageMove) {
+            case 1: m_sCommY--; break;
+            case 2: m_sCommX++; m_sCommY--; break;
+            case 3: m_sCommX++; break;
+            case 4: m_sCommX++; m_sCommY++; break;
+            case 5: m_sCommY++; break;
+            case 6: m_sCommX--; m_sCommY++; break;
+            case 7: m_sCommX--; break;
+            case 8: m_sCommX--; m_sCommY--; break;
+            }
+            }
+
+en la funcion:
+
+void CGame::InitDataResponseHandler(char * pData)abajo de:
+
+    // CLEROTH - BLACK FIX
+    ip = (int *)cp;
+    m_iPlayerStatus = *ip;
+    cp += 4;
+
+
+agregar:
+
+    //Snoopy MIM fix
+    if ((m_iPlayerStatus & 0x00200000) == 0x00200000) 
+    {    m_bIllusionMVT = TRUE;    
+    }else
+    {    m_bIllusionMVT = FALSE;
+    }
+
+game.h
+
+reemplazar:
+
+Código:
+char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck = FALSE, BOOL bMIM = FALSE);by snoopy

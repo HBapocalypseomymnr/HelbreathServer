@@ -1,0 +1,215 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\lang11274\f0\fs20\par
+Primero en los sources del Cliente, Game.cpp\par
+En la funci\'f3n\par
+C\'f3digo:\par
+BOOL CGame::bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int iV2, int iV3, char * pString, int iV4)\par
+Agregar abajo de\par
+C\'f3digo:\par
+switch (dwMsgID) \{\par
+Esto\par
+C\'f3digo:\par
+\tab case DEF_REQUEST_CHANGECITY_YES:\par
+\tab        case DEF_REQUEST_CHANGECITY_NO:\par
+\tab\tab dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+\tab\tab *dwp = dwMsgID;\par
+\tab\tab wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+\tab\tab *wp = NULL;\par
+\tab\tab iRet = m_pGSock->iSendMsg(cMsg, 6, cKey);\par
+\tab\tab break;\par
+En la funci\'f3n\par
+C\'f3digo:\par
+BOOL CGame::_bCheckDlgBoxClick(short msX, short msY)\par
+Agregar abajo de\par
+C\'f3digo:\par
+switch (cDlgID) \{\par
+Esto\par
+C\'f3digo:\par
+\tab\tab\tab case 52: \par
+\tab\tab\tab\tab DlgBoxClick_ChangeCity(msX, msY);\par
+\tab\tab\tab\tab break;\par
+En la funci\'f3n\par
+C\'f3digo:\par
+void CGame::DrawDialogBoxs(short msX, short msY, short msZ, char cLB)\par
+Agregar abajo de\par
+C\'f3digo:\par
+switch (m_cDialogBoxOrder[i]) \{\par
+Esto\par
+C\'f3digo:\par
+\tab\tab case 52:\par
+\tab\tab\tab DrawDialogBox_ChangeCity(msX, msY);\par
+\tab\tab\tab break;\par
+En la funci\'f3n\par
+C\'f3digo:\par
+void CGame::EnableDialogBox(int iBoxID, int cType, int sV1, int sV2, char * pString)\par
+Agregar abajo de\par
+C\'f3digo:\par
+switch (iBoxID) \{\par
+Esto\par
+C\'f3digo:\par
+\tab case 52: \par
+\tab\tab if (m_bIsDialogEnabled[52] == FALSE) \par
+\tab\tab\{\tab m_stDialogBoxInfo[52].sX = 185;\par
+\tab\tab\tab m_stDialogBoxInfo[52].sY = 100;\par
+\tab\tab\tab m_stDialogBoxInfo[52].cMode\tab = 0;\par
+\tab\tab\tab m_stDialogBoxInfo[52].sView = 0;\par
+\tab\tab\tab m_bSkillUsingStatus = FALSE;\par
+\tab\tab\}\par
+\tab\tab break;\par
+En la funci\'f3n\par
+C\'f3digo:\par
+void CGame::NotifyMsgHandler(char * pData)\par
+Agregar abajo de\par
+C\'f3digo:\par
+switch (wEventType) \{\par
+Esto\par
+C\'f3digo:\par
+\tab case DEF_NOTIFY_CHANGECITY:\par
+                EnableDialogBox(52, 0, NULL, NULL);\par
+\tab\tab break;\par
+En la funci\'f3n\par
+C\'f3digo:\par
+void CGame::InitDataResponseHandler(char * pData)\par
+Agregar\par
+C\'f3digo:\par
+DisableDialogBox(52);\par
+En la funci\'f3n\par
+C\'f3digo:\par
+CGame::CGame()\par
+Agregar\par
+C\'f3digo:\par
+\tab m_stDialogBoxInfo[52].sX = 185;\par
+\tab m_stDialogBoxInfo[52].sY = 100;\par
+\tab m_stDialogBoxInfo[52].sSizeX = 270;\par
+\tab m_stDialogBoxInfo[52].sSizeY = 105;\par
+Y agregar 2 nuevas funciones\par
+C\'f3digo:\par
+void CGame::DrawDialogBox_ChangeCity(short msX, short msY)\par
+\{short sX, sY;\par
+\tab sX = m_stDialogBoxInfo[52].sX;\par
+\tab sY = m_stDialogBoxInfo[52].sY;\par
+\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME1, sX, sY, 2);\par
+\tab PutString(sX + 50, sY + 20, "          Do you really", RGB(4,0,50));\par
+\tab PutString(sX + 80, sY + 35, "wanna change city?", RGB(4,0,50));\par
+\tab if ((msX >= sX + 30) && (msX <= sX + 30 + DEF_BTNSZX) && (msY >= sY + 55) && (msY <= sY + 55 + DEF_BTNSZY)) \par
+\tab\{\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + 30, sY + 55 ,19);\par
+\tab\}else\par
+\tab\{\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + 30, sY + 55 , 18);\par
+\tab\}\par
+\tab if ((msX >= sX + 170 ) && (msX <= sX + 170 + DEF_BTNSZX ) && (msY >= sY + 55 ) && (msY <= sY + 55 + DEF_BTNSZY)) \par
+\tab\{\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + 170 , sY + 55 , 3);\par
+\tab\}else\par
+\tab\{\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + 170, sY + 55 , 2);\par
+\tab\}\par
+\}\par
+\par
+void CGame::DlgBoxClick_ChangeCity(short msX, short msY)\par
+\{short sX, sY;\par
+\tab sX = m_stDialogBoxInfo[52].sX;\par
+\tab sY = m_stDialogBoxInfo[52].sY;\par
+\tab if ((msX >= sX + 30) && (msX <= sX + 30 + DEF_BTNSZX) && (msY >= sY + 55) && (msY <= sY + 55 + DEF_BTNSZY)) \par
+\tab\{   bSendCommand(DEF_REQUEST_CHANGECITY_YES, 0, 0, 0, 0 ,0, NULL, 0);\par
+\tab\tab DisableDialogBox(52);\par
+\tab\}else if ((msX >= sX + 170 ) && (msX <= sX + 170 + DEF_BTNSZX ) && (msY >= sY + 55 ) && (msY <= sY + 55 + DEF_BTNSZY)) \par
+\tab\{\tab bSendCommand(DEF_REQUEST_CHANGECITY_NO, 0, 0, 0, 0 ,0, NULL, 0);\par
+\tab\tab DisableDialogBox(52);\par
+\tab\}\par
+\}\par
+Declarar en Game.h\par
+C\'f3digo:\par
+void DlgBoxClick_ChangeCity(short msX, short msY);\par
+void DrawDialogBox_ChangeCity(short msX, short msY);\par
+Segundo en los sources del HG, Game.cpp\par
+Agregar 2 nuevas funciones\par
+C\'f3digo:\par
+void CGame::PlayerRequest_ChangeCity(int iClientH)\par
+\{\par
+\tab if (m_pClientList[iClientH] == NULL) return;\par
+\tab // Centuu : No tiene los majestic's necesarios.\par
+\tab if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft < 200) \{   \par
+\tab\tab ShowClientMsg(iClientH, " You don't have 200 Majestic points."); \par
+\tab\tab return;\par
+\tab\}\par
+\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_CHANGECITY, NULL, NULL, NULL, NULL);\par
+\}\par
+void CGame::PlayerOrder_ChangeCity(int iClientH, BOOL bChange) \par
+\{\par
+\tab if (m_pClientList[iClientH] == NULL) return;  \par
+\tab if (bChange == TRUE) \{ .\par
+\tab\tab if (memcmp(m_pClientList[iClientH]->m_cLocation, "aresden", 7) == 0) \{ \par
+\tab\tab\tab strcpy(m_pClientList[iClientH]->m_cLocation, "elvine"); \par
+\tab\tab\tab ShowClientMsg(iClientH, " Now you're a citizen of Elvine.");\par
+\tab\tab\}\par
+\tab\tab else if (memcmp(m_pClientList[iClientH]->m_cLocation, "elvine", 6) == 0) \{ \par
+\tab\tab\tab strcpy(m_pClientList[iClientH]->m_cLocation, "aresden");  \par
+\tab\tab\tab ShowClientMsg(iClientH, " Now you're a citizen of Aresden.");\par
+\tab\tab\}\par
+\tab\tab m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= 200;\par
+\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, NULL, NULL, NULL, NULL);\par
+\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_CHANGEPLAYMODE, NULL, NULL, NULL, m_pClientList[iClientH]->m_cLocation);\par
+\tab\tab SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, m_pClientList[iClientH]->m_iLevel, NULL, NULL, NULL);\par
+\tab\tab ShowClientMsg(iClientH, " Change city successfully.");\par
+\tab\}\par
+\tab else if (bChange == FALSE) return; .\par
+\}\par
+En la funci\'f3n\par
+C\'f3digo:\par
+void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize)\par
+Agregar abajo de\par
+C\'f3digo:\par
+\tab\tab if (memcmp(cp, "/to", 3) == 0) \{\par
+\tab\tab\tab ToggleWhisperPlayer(iClientH, cp, dwMsgSize - 21);\par
+\tab\tab\tab return;\par
+\tab\tab\}\par
+Esto\par
+C\'f3digo:\par
+\tab\tab if (memcmp(cp, "/changecity", 11) == 0) \{ \par
+\tab\tab\tab PlayerRequest_ChangeCity(iClientH);  \par
+            return; \par
+\tab\tab\}\par
+En la funci\'f3n\par
+C\'f3digo:\par
+void CGame::MsgProcess()\par
+Agregar arriba de\par
+C\'f3digo:\par
+\tab\tab\tab default:\par
+\tab\tab\tab\tab wsprintf(m_msgBuff,"Unknown message received! (0x%.8X) Delete Client",*dwpMsgID);\par
+\tab\tab\tab\tab PutLogList(m_msgBuff);\par
+\tab\tab\tab\tab DeleteClient(iClientH, TRUE, TRUE); // v1.4\par
+\tab\tab\tab\tab break;\par
+Esto\par
+C\'f3digo:\par
+\tab\tab\tab\par
+\tab\tab\tab case DEF_REQUEST_CHANGECITY_YES:\par
+\tab\tab\tab\tab PlayerOrder_ChangeCity(iClientH, TRUE);\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab case DEF_REQUEST_CHANGECITY_NO:\par
+\tab\tab\tab\tab PlayerOrder_ChangeCity(iClientH, FALSE);\par
+\tab\tab\tab\tab break;\par
+En la funci\'f3n\par
+\par
+C\'f3digo:\par
+void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, char * pString, DWORD sV4, DWORD sV5, DWORD sV6, DWORD sV7, DWORD sV8, DWORD sV9, char * pString2)\par
+Agregar abajo de\par
+\par
+C\'f3digo:\par
+switch (wMsgType) \{\par
+Esto\par
+\par
+C\'f3digo:\par
+\tab case DEF_NOTIFY_CHANGECITY: \par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 16);\par
+\tab\tab break;\par
+Y declarar en Game.h\par
+\par
+C\'f3digo:\par
+void PlayerOrder_ChangeCity(int iClientH, BOOL bChange);\par
+void PlayerRequest_ChangeCity(int iClientH);\par
+Agregar en NetMessages.h (del Cliente y el HG)\par
+\par
+C\'f3digo:\par
+#define DEF_NOTIFY_CHANGECITY 0x0CA1\par
+#define DEF_REQUEST_CHANGECITY_YES 0x0FC9422E\par
+#define DEF_REQUEST_CHANGECITY_NO  0x0FC9423E\par
+}
+ 

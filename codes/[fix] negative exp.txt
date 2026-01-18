@@ -1,0 +1,43 @@
+Este code detecta si un personaje tiene exp negativa, si asi es, le pone la exp de max lvl.
+
+HGSources. Game.cpp:
+buscamos en la funcion:
+
+
+Código:
+BOOL CGame::_bCheckCharacterData(int iClientH)
+
+esto (en algunos casos el 3er if):
+
+
+Código:
+if (m_pClientList[iClientH]->m_iExp < 0) {
+
+y lo reemplazamos por:
+
+
+Código:
+	if (m_pClientList[iClientH]->m_iExp < 0) {
+		m_pClientList[iClientH]->m_iExp = DEF_PLAYER_MAX_EXPERIENCE; // juan249 - Exp negativa Fix.
+		wsprintf(G_cTxt, "Packet Editing: (%s) Player: (%s) experience is below 0 - (Exp:%d). - FIXED", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_iExp);
+		PutHackLogFileList(G_cTxt);
+		return FALSE;
+	}
+
+Ahora buscamos:
+
+
+Código:
+#include "Game.h"y abajo agregamos:
+
+
+Código:
+#include "GlobalDef.h"ahora abrimos GlobalDef.h y agregamos:
+
+
+Código:
+#define DEF_PLAYER_MAX_EXPERIENCE       121586796 // juan249 - Exp negativa fix.y reemplazan los numeros 121586796 por la exp de un personaje max lvl de su servidor.
+
+by juan249. basado en el code de fix stats de mihd
+
+Salu2

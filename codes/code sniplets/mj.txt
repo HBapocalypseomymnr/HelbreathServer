@@ -1,0 +1,38 @@
+else if ((iValue >=	1) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 745)) { // BlackKnightTemple 
+				iValue += 2;
+				if (iValue > 15) iValue = 15;
+				if (iValue == 2) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = 549593344;
+				if (iValue == 4) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = 1086595584;
+				if (iValue == 6) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = 1623597824;
+				if (iValue == 8) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = 2160600064;
+				if (iValue == 10) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = 2697602304;
+				if (iValue == 12) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = 3234604544;
+				if (iValue == 14) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = 3771607040;
+				if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = 4040108544;
+				if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;
+				
+					dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
+				dwTemp = dwTemp & 0x0FFFFFFF;
+				m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
+				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);
+				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, 
+					m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
+					m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, 
+					m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
+					m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
+					m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
+					m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,
+					m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
+					m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute ) ;
+				_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);				
+			}
+			else {
+				iValue += 2;
+				if (iValue > 15) iValue = 15;
+				dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
+				dwTemp = dwTemp & 0x0FFFFFFF;
+				m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
+				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);
+				_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
+			}
+			break;

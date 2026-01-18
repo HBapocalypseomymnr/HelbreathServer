@@ -1,0 +1,248 @@
+Hola les dejo Polymorph Magic Fix espero que lo disfruten.
+
+
+
+***************HGServer Sources:*********************
+
+
+Abrimos el Game.cpp y buscamos esta función:
+
+
+Código:
+void CGame::NpcBehavior_Attack(int iNpcH)
+
+Y agregamos:
+
+
+Código:
+	if (m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_bIsPolymorph == TRUE) return;
+
+Ahora esto: 
+
+
+Código:
+void CGame::TimeStaminarPointsUp(int iClientH)
+
+y abajo de 
+Código:
+double dV1, dV2, dV3;
+
+Agregamos:
+
+
+Código:
+	if (m_pClientList[iClientH]->m_bIsPolymorph == TRUE) {
+		m_pClientList[iClientH]->m_iSP = 0;
+		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+		return;
+	}
+
+
+Ahora debuelta buscamos:
+
+
+Código:
+void CGame::ToggleCombatModeHandler(int iClientH)
+
+Y arriba de esto:
+
+
+Código:
+SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
+
+
+Agregamos esto:
+
+
+Código:
+	if (sAppr2 == 0 && m_pClientList[iClientH]->m_bIsPolymorph == FALSE) {
+		m_pClientList[iClientH]->m_sAppr2 = (0xF000 | m_pClientList[iClientH]->m_sAppr2);
+	}
+	else {
+		m_pClientList[iClientH]->m_sAppr2 = (0x0FFF & m_pClientList[iClientH]->m_sAppr2);
+	}
+
+
+Ahora buscamos la función: 
+Código:
+case DEF_MAGICTYPE_POLYMORPHY 
+
+la reemplazamos por todo esto:
+
+
+Código:
+		case DEF_MAGICTYPE_POLYMORPH: // [20] Polymorph
+			m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+			switch (cOwnerType) {
+			case DEF_OWNERTYPE_PLAYER:
+				if (m_pClientList[iClientH] == NULL) goto MAGIC_NOEFFECT;
+				if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && ( m_pClientList[iClientH] != m_pClientList[sOwnerH])) break;
+				if (m_pClientList[iClientH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_POLYMORPH ] != 0) goto MAGIC_NOEFFECT;
+				m_pClientList[iClientH]->m_sOriginalType = m_pClientList[sOwnerH]->m_sType;
+				switch (iDice(1,8)) {
+				case 1: m_pClientList[iClientH]->m_sType = 29; break;
+				case 2: m_pClientList[iClientH]->m_sType = 14; break;
+				case 3: m_pClientList[iClientH]->m_sType = 11; break;
+				case 4: m_pClientList[iClientH]->m_sType = 18; break;
+				case 5: m_pClientList[iClientH]->m_sType = 12; break;
+				case 6: m_pClientList[iClientH]->m_sType = 23; break;
+				case 7: m_pClientList[iClientH]->m_sType = 28; break;
+				case 8: m_pClientList[iClientH]->m_sType = 13; break;
+				}
+				m_pClientList[sOwnerH]->m_bIsPolymorph = TRUE;
+				TimeStaminarPointsUp(iClientH);
+				ToggleCombatModeHandler(iClientH);
+				break;
+			}							
+			SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
+			bRegisterDelayEvent(DEF_DELAYEVENTTYPE_MAGICRELEASE, DEF_MAGICTYPE_POLYMORPH, dwTime + (m_pMagicConfigList[sType]->m_dwLastTime*1000), 
+				sOwnerH, cOwnerType, NULL, NULL, NULL, m_pMagicConfigList[sType]->m_sValue4, NULL, NULL);
+			if (cOwnerType == DEF_OWNERTYPE_PLAYER)	SendNotifyMsg(NULL, sOwnerH, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_POLYMORPH, m_pMagicConfigList[sType]->m_sValue4, NULL, NULL);
+			
+			break;
+
+
+Ahora buscamos:
+
+
+Código:
+		case DEF_ITEMEFFECTTYPE_SP:
+Y agregamos:
+
+
+Código:
+			if (m_pClientList[iClientH]->m_bIsPolymorph == TRUE) {
+				m_pClientList[iClientH]->m_iSP = 0;
+				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+				break;
+			}
+
+
+
+buscarmos:
+
+
+Código:
+void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3, BOOL bExp, int iAttr)
+
+En la función: 
+Código:
+case DEF_OWNERTYPE_PLAYER:
+
+Agregamos:
+
+
+Código:
+				if (m_pClientList[sTargetH]->m_bIsPolymorph == TRUE) return;
+
+
+Buscamos:
+
+
+Código:
+void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, BOOL bExp, int iAttr)
+
+Y en la función:
+
+
+Código:
+case DEF_OWNERTYPE_PLAYER:
+
+Agregamos:
+
+
+Código:
+				if (m_pClientList[sTargetH]->m_bIsPolymorph == TRUE) return;
+
+
+Código:
+void CGame::Effect_SpUp_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3)
+
+Abajo de: 
+Código:
+DWORD dwTime = timeGetTime();
+
+Agregamos:
+
+
+Código:
+	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+		if (m_pClientList[sAttackerH] == NULL || m_pClientList[sAttackerH]->m_bIsPolymorph == TRUE) {
+			m_pClientList[sAttackerH]->m_iSP = 0;
+			SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+			return;
+		}
+	}
+
+Ahora buscamos dos veces:
+
+
+Código:
+if (m_pDelayEventList[i]->m_iEffectType == DEF_MAGICTYPE_ICE)
+
+Y reemplazamos las funciones que allan de polymorph por estas:
+
+
+Código:
+						// Polymorph
+						if (m_pDelayEventList[i]->m_iEffectType == DEF_MAGICTYPE_POLYMORPH) {
+							m_pClientList[m_pDelayEventList[i]->m_iTargetH]->m_sType = m_pClientList[m_pDelayEventList[i]->m_iTargetH]->m_sOriginalType;
+							m_pClientList[m_pDelayEventList[i]->m_iTargetH]->m_bIsPolymorph = FALSE;
+							SendEventToNearClient_TypeA(m_pDelayEventList[i]->m_iTargetH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
+						}
+
+
+Buscamos:
+
+
+Código:
+int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttackerH, char cAttackerType, int tdX, int tdY, int iAttackMode, BOOL bNearAttack, BOOL bIsDash, BOOL bArrowUse)
+
+
+Y en la función 
+Código:
+case DEF_OWNERTYPE_PLAYER:
+
+Agregamos:
+
+Código:
+		if (m_pClientList[sTargetH]->m_bIsPolymorph == TRUE) return 0;
+
+
+Ahora vamos al Client.h y agregamos:
+
+Código:
+	BOOL m_bIsPolymorph;
+
+
+
+Ahora al Client.cpp y tambien agregamos:
+
+Código:
+	m_bIsPolymorph = FALSE;
+
+
+
+******************Client Sources***********************
+
+Buscamos: 
+Código:
+void CGame::InitGameSettings
+
+Y agregamos:
+
+
+Código:
+	m_bIsPolymorph = FALSE;
+
+
+Vamos al Game.h y agregamos:
+
+
+Código:
+	BOOL m_bIsPolymorph;
+
+-------
+
+Code fix by: Mahjunia
+Guia by: Mahjunia

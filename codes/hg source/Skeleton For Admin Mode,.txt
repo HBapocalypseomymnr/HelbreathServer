@@ -1,0 +1,161 @@
+Well i get alot of time to just create new bits and pieces of code
+So Heres an example of the AdminMode Command im making..
+This is gunna use a command to set a value to a storage class.
+Saying That you are Active as an admin or Not active..
+So the admin would say...
+/gmmode 1
+(You are Now an Active GameMaster)
+/gmmode 0
+(You are no Longer an Active GameMaster)
+
+Alot of you are gunna say well this is useless...
+or might not understand it...
+WELL in theory this is perfect and adds alot of diffrent Actions to process here...
+We could take this skeleton and Use it for MANY many things..
+Say For instance if you disable your admin powers.. you wont except whispers and you go into observer mode, while all your GM powers are Inactive.. just if your pissed or dont want bothered...
+Now... Another good spot it comes in handy is new functions that can added and integrated with this system...
+Alot of commands can be activated from this alone instead of using that gay Standerd admin verify...
+Well ill leave it up to you guys to decide what you want to do with it...
+Ill also Update my /admins command at the end of this to show an example of its usage...
+
+
+
+
+in ChatMsgHandler(); add this in there
+
+CODE  
+
+if (memcmp(cp, "/gmmode ", 8) == 0) {
+  AdminOrder_AdminMode(iClientH, cp, dwMsgSize - 21);
+  return; 
+ }
+ 
+
+
+
+
+Now in Game.CPP add the following Function
+
+
+
+CODE  
+void CGame::AdminOrder_AdminMode(int iClientH, char *pData, DWORD dwMsgSize)
+{
+char   seps[] = "= \t\n";
+char   * token, cBuff[256]; 
+class  CStrTok * pStrTok;
+char cAdminModeMsg[100];
+if (m_pClientList[iClientH] == NULL) return;
+if ((dwMsgSize) <= 0) return;
+int i;
+if (m_pClientList[iClientH]->m_iAdminUserLevel < 1) {
+ // Admin user levelÀÌ ³·¾Æ¼­ ÀÌ ±â´ÉÀ» »ç¿ëÇÒ ¼ö ¾ø´Ù.
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);
+ return;
+}
+ZeroMemory(cBuff, sizeof(cBuff));
+memcpy(cBuff, pData, dwMsgSize);
+
+pStrTok = new class CStrTok(cBuff, seps);
+token = pStrTok->pGet();
+token = pStrTok->pGet();
+if (token != NULL) {
+
+ if (token[0] == '1')
+ {
+  //Todo: Add some Shit here To activate if admin mode is on... 
+  wsprintf(cAdminModeMsg,"The Admin: %s Has Now Became Active",m_pClientList[iClientH]->m_cCharName);
+  m_pClientList[iClientH]->m_iGMMode = 1;
+  SetInvisibilityFlag(iClientH, DEF_OWNERTYPE_PLAYER, TRUE);
+
+ }
+ else
+  //Todo: Add some shit here to de-activate if admin mode is off...
+  wsprintf(cAdminModeMsg,"The Admin: %s is Now In-Active",m_pClientList[iClientH]->m_cCharName);
+  if (token[0] == '0') m_pClientList[iClientH]->m_iGMMode = 0;
+  SetInvisibilityFlag(iClientH, DEF_OWNERTYPE_PLAYER, TRUE);
+
+}
+for (i = 1; i < DEF_MAXCLIENTS; i++)
+SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cAdminModeMsg);
+delete pStrTok;
+
+} 
+
+
+
+
+Now in Game.H add the following 
+
+CODE  
+void AdminOrder_AdminMode(int iClientH, char *pData, DWORD dwMsgSize);
+ 
+
+
+
+Now in Client.h Find int m_iRating;
+add this bellow it.
+
+CODE  
+
+int m_iGMMode;//Acidx added for GMMODE
+ 
+
+
+
+Now in Client.CPP find m_cAura = 0;
+add this bellow it
+
+
+CODE  
+m_iGMMode = 0; 
+
+
+
+There we go Working Admin mode... Well it should be i havnt tested it at all haha
+
+Now to use it in a function...
+Lets say you have my /admins already in.. if not you can try it out...
+its not Cross server but it gets the job done...
+Anyways here is an example of my /admins Re-Written to use this..
+
+
+CODE  
+/*===========Get Admins==By Acidx====/admins=======*/
+void CGame::PlayerCommandCheckAdmins(int iClientH)
+{//An Acidx Production - Last Updated:Aug.29.2006
+char  cNotifyMessage[256],cNotifyMessage2[256], cGMName[12];
+int i,x;
+WORD   * wp;
+char   * cp;
+char cBuff[256];
+cGMName[12];
+ZeroMemory(cNotifyMessage, sizeof(cNotifyMessage));
+ZeroMemory(cNotifyMessage2, sizeof(cNotifyMessage2));
+x = 0;
+for (i = 0; i < DEF_MAXCLIENTS; i++) 
+if (m_pClientList[i] != NULL) {
+
+if (m_pClientList[i]->m_iAdminUserLevel > 1) {
+ if(m_pClientList[i]->m_iGMMode == 1)
+ {
+wsprintf(cNotifyMessage, "Active Admin: %s", m_pClientList[i]->m_cCharName);
+ShowClientMsg(iClientH, cNotifyMessage, 4);
+ }
+ else if (m_pClientList[i]->m_iGMMode == 0)
+ {
+wsprintf(cNotifyMessage, "In-Active Admin: %s", m_pClientList[i]->m_cCharName);
+ShowClientMsg(iClientH, cNotifyMessage, 4);
+ }
+}
+}
+// wsprintf(cNotifyMessage2, "%i Admins Are Online", x);
+//ShowClientMsg(iClientH, cNotifyMessage2, 10);
+} 
+
+
+
+i hope you guys use this small Skeleton i designed...
+its fairly simple for activation/de-activation and it has alot of potential
+Enjoy 
+

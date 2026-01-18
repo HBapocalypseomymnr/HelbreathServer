@@ -1,0 +1,420 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 C\'f3digo:\par
+add In Item.h\par
+\par
+#define DEF_ITEMEFFECTTYPE_ADDBALLPOINTS 33\par
+\par
+Find\par
+\par
+C\'f3digo:\par
+wsprintf(cTxt, "gizon-item-upgade-left = %d", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);\par
+strcat(pData, cTxt\par
+strcat(pData,"\\n");\par
+Add\par
+\par
+C\'f3digo:\par
+wsprintf(cTxt, "character-ball-points = %d", m_pClientList[iClientH]->m_iBallPoints);\par
+strcat(pData, cTxt);\par
+strcat(pData,"\\n");\par
+\par
+\par
+Find\par
+\par
+C\'f3digo:\par
+m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = atoi(token);\par
+cReadModeA = 0;\par
+break;\par
+\par
+\par
+Add\par
+C\'f3digo:\par
+case 81:\par
+if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+wsprintf(cTxt, "(!!!) Player(%s) data file error! (BallPoints) - Connection closed. ", m_pClientList[iClientH]->m_cCharName);\par
+PutLogList(cTxt);\par
+delete pContents;\par
+delete pStrTok;\par
+return FALSE;\par
+\}\par
+\par
+m_pClientList[iClientH]->m_iBallPoints = atoi(token);\par
+cReadModeA = 0;\par
+break;\par
+Find\par
+\par
+C\'f3digo:\par
+if (memcmp(token, "gizon-item-upgade-left", 22) == 0) cReadModeA = 80;\par
+Add\par
+\par
+C\'f3digo:\par
+if (memcmp(token, "character-ball-points", 21) == 0) cReadModeA = 81;\par
+Find\par
+C\'f3digo:\par
+case DEF_ITEMEFFECTTYPE_STUDYMAGIC:\par
+iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;\par
+if (m_pMagicConfigList[iV1] != NULL)\par
+RequestStudyMagicHandler(iClientH, m_pMagicConfigList[iV1]->m_cName, FALSE);\par
+break;\par
+\par
+Add\par
+C\'f3digo:\par
+case DEF_ITEMEFFECTTYPE_ADDBALLPOINTS:\par
+iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;\par
+m_pClientList[iClientH]->m_iBallPoints += iV1;\par
+\par
+wsprintf(cInfoString,"%d Ball Points added. Total Amount: %d ", iV1, m_pClientList[iClientH]->m_iBallPoints);\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString);\par
+break;\par
+\par
+\par
+\par
+\par
+Find\par
+\par
+C\'f3digo:\par
+for (i = 0; i < DEF_MAXTELEPORTLIST; i++)\par
+if (m_pTeleportConfigList[i] != NULL) delete m_pTeleportConfigList[i];\par
+Add\par
+\par
+C\'f3digo:\par
+for (i = 0; i < DEF_MAXBALLTRADE; i++)\par
+if (m_pBallTradeConfigList[i] != NULL) delete m_pBallTradeConfigList[i];\par
+\par
+Find\par
+\par
+C\'f3digo:\par
+for (i = 0; i < DEF_MAXTELEPORTLIST; i++)\par
+m_pTeleportConfigList[i] = NULL;\par
+\par
+Add\par
+\par
+C\'f3digo:\par
+for (i = 0; i < DEF_MAXBALLTRADE; i++)\par
+m_pBallTradeConfigList[i] = NULL;\par
+\par
+Find\par
+\par
+C\'f3digo:\par
+for (i = 0; i < DEF_MAXTELEPORTLIST; i++)\par
+if (m_pTeleportConfigList[i] != NULL) delete m_pTeleportConfigList[i];\par
+Add\par
+\par
+C\'f3digo:\par
+for (i = 0; i < DEF_MAXBALLTRADE; i++)\par
+if (m_pBallTradeConfigList[i] != NULL) delete m_pBallTradeConfigList[i];\par
+Add\par
+\par
+C\'f3digo:\par
+if (bDecodeBallTrade("..\\\\GameConfigs\\\\BallTrade.cfg" ) == FALSE)\par
+\{ PutLogList(" ");\par
+PutLogList("(!!!) CRITICAL ERROR! Cannot execute server! BallTrade.cfg file contents error!");\par
+return FALSE;\par
+\}\par
+\par
+Add\par
+\par
+C\'f3digo:\par
+if (memcmp(cp, "/trade ", 7) == 0) \{\par
+RequestBallItem(iClientH, cp, dwMsgSize - 21);\par
+return;\par
+\}\par
+if (memcmp(cp, "/ballpoint", 10) == 0) \{\par
+char cInfoString[50];\par
+wsprintf(cInfoString," Amount of Ball Points: (%d) ", m_pClientList[iClientH]->m_iBallPoints);\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString);\par
+return;\par
+\}\par
+\par
+Add\par
+\par
+C\'f3digo:\par
+void CGame::RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize)\par
+\{\par
+DWORD * dwp;\par
+WORD * wp;\par
+char * cp, cI[6], cBallItem[21], cData[120], cBuff[256], * token;\par
+int iRet, i, j, iEraseReq, iSkillLimit, iSkillLevel, iResult, iDifficulty;\par
+short * sp, sItemIndex[6], sTemp;\par
+short sItemNumber[6], sItemArray[12];\par
+BOOL bDup, bFlag;\par
+class CStrTok * pStrTok;\par
+class CItem * pItem;\par
+char seps[] = "= \\t\\n";\par
+char cInfoString[50];\par
+\par
+\par
+if (m_pClientList[iClientH] == NULL) return;\par
+if ((dwMsgSize) <= 0) return;// if the command is just "/trade " than no effect.\par
+for (int i = 0; i < DEF_MAXBALLTRADE; i++)\par
+if (m_pBallTradeConfigList[i] != NULL)\par
+\{ delete m_pBallTradeConfigList[i];\par
+m_pBallTradeConfigList[i] = NULL;\par
+\}\par
+ZeroMemory(cBuff, sizeof(cBuff));\par
+memcpy(cBuff, pData, dwMsgSize);\par
+pStrTok = new class CStrTok(cBuff, seps);\par
+token = pStrTok->pGet();\par
+token = pStrTok->pGet();\par
+if (token == NULL) \{\par
+delete pStrTok;\par
+return;\par
+\}\par
+ZeroMemory(cBallItem, sizeof(cBallItem));\par
+strcpy(cBallItem, token);\par
+if (strlen(cBallItem) != 0) \{ \par
+pItem = NULL;\par
+pItem = new class CItem;\par
+if (pItem == NULL) return;\par
+\par
+// if the given itemname doesnt exist delete item\par
+if (_bInitItemAttr(pItem, cBallItem) == FALSE) \{\par
+delete pItem;\par
+wsprintf(cInfoString,"Wroung BallTrade Item ");\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString);\par
+return; \par
+\}\par
+\par
+if (m_pBallTradeConfigList[i]->m_iReqPoints > m_pClientList[iClientH]->m_iBallPoints) \{ \par
+wsprintf(cInfoString,"You Dont Have Right Amount BallTrade points");\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString);\par
+return;\par
+\}\par
+/* (m_pBallTradeConfigList[i]->m_iReqPoints < m_pClientList[iClientH]->m_iBallPoints)) \{\par
+wsprintf(cInfoString,"BallTrade Completed ");\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString);\par
+bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, iClientH);\par
+*/\par
+\par
+\par
+\par
+if (_bInitItemAttr(pItem, cBallItem) == TRUE) \par
+\{\par
+if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE)\{\par
+ZeroMemory(cData, sizeof(cData));\par
+dwp = (DWORD *)(cData + DEF_INDEX4_MSGID);\par
+*dwp = MSGID_NOTIFY;\par
+wp = (WORD *)(cData + DEF_INDEX2_MSGTYPE);\par
+*wp = DEF_NOTIFY_ITEMOBTAINED; \par
+cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); \par
+*cp = 1;\par
+cp++; \par
+memcpy(cp, pItem->m_cName, 20);\par
+cp += 20; \par
+dwp = (DWORD *)cp;\par
+*dwp = pItem->m_dwCount;\par
+cp += 4; \par
+*cp = pItem->m_cItemType;\par
+cp++; \par
+*cp = pItem->m_cEquipPos;\par
+cp++; \par
+*cp = (char)0;\par
+cp++; \par
+sp = (short *)cp;\par
+*sp = pItem->m_sLevelLimit;\par
+cp += 2; \par
+*cp = pItem->m_cGenderLimit;\par
+cp++; \par
+wp = (WORD *)cp;\par
+*wp = pItem->m_wCurLifeSpan;\par
+cp += 2; \par
+wp = (WORD *)cp;\par
+*wp = pItem->m_wWeight;\par
+cp += 2; \par
+sp = (short *)cp;\par
+*sp = pItem->m_sSprite;\par
+cp += 2; \par
+sp = (short *)cp;\par
+*sp = pItem->m_sSpriteFrame;\par
+cp += 2;\par
+*cp = pItem->m_cItemColor;\par
+cp++;\par
+*cp = (char)pItem->m_sItemSpecEffectValue2; // v1.41\par
+cp++; \par
+dwp = (DWORD *)cp;\par
+*dwp = pItem->m_dwAttribute;\par
+cp += 4;\par
+\par
+\par
+if (iEraseReq == 1) delete pItem;\par
+iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53);\par
+switch (iRet) \{\par
+case DEF_XSOCKEVENT_QUENEFULL:\par
+case DEF_XSOCKEVENT_SOCKETERROR:\par
+case DEF_XSOCKEVENT_CRITICALERROR:\par
+case DEF_XSOCKEVENT_SOCKETCLOSED:\par
+\par
+DeleteClient(iClientH, TRUE, TRUE);\par
+break;\par
+\} \par
+\}\par
+else\par
+\{ delete pItem;\par
+pItem = NULL;\par
+\par
+\par
+\}\par
+\} \par
+\}\par
+\}\par
+Add\par
+\par
+\par
+C\'f3digo:\par
+BOOL CGame::bDecodeBallTrade(char *pFn)\par
+\{FILE * pFile;\par
+HANDLE hFile;\par
+DWORD dwFileSize;\par
+char * cp, * token, cReadModeA, cReadModeB;\par
+char seps[] = "= \\t\\n";\par
+class CStrTok * pStrTok;\par
+int iIndex;\par
+int iBallTradeConfigListIndex;\par
+for (int i = 0; i < DEF_MAXBALLTRADE; i++)\par
+if (m_pBallTradeConfigList[i] != NULL)\par
+\{ delete m_pBallTradeConfigList[i];\par
+m_pBallTradeConfigList[i] = NULL;\par
+\}\par
+cReadModeA = 0;\par
+cReadModeB = 0;\par
+iIndex = 0;\par
+hFile = CreateFile(pFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);\par
+dwFileSize = GetFileSize(hFile, NULL);\par
+if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);\par
+pFile = fopen(pFn, "rt");\par
+if (pFile == NULL)\par
+\{ PutLogList("(!) Cannot open BallTrade.cfg file.");\par
+return FALSE;\par
+\}else\par
+\{ PutLogList("(!) Reading BallTrade.cfg...");\par
+cp = new char[dwFileSize+2];\par
+ZeroMemory(cp, dwFileSize+2);\par
+fread(cp, dwFileSize, 1, pFile);\par
+pStrTok = new class CStrTok(cp, seps);\par
+token = pStrTok->pGet();\par
+while( token != NULL )\par
+\{ if (cReadModeA != 0)\par
+\{ switch (cReadModeA) \{\par
+case 1:\par
+switch (cReadModeB) \{\par
+case 1: // BallTrade n\'b0\par
+if (_bGetIsStringIsNumber(token) == FALSE)\par
+\{ PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file error - Wrong Data format.");\par
+delete pStrTok; delete cp; return FALSE;\par
+\}\par
+iBallTradeConfigListIndex = atoi(token);\par
+if ((iBallTradeConfigListIndex < 0) || (iBallTradeConfigListIndex >= DEF_MAXBALLTRADE))\par
+\{ PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file error - Wrong BallTrade number.");\par
+return FALSE;\par
+\}\par
+if (m_pBallTradeConfigList[iBallTradeConfigListIndex] != NULL)\par
+\{ PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file error - Duplicate BallTrade number.");\par
+return FALSE;\par
+\}\par
+m_pBallTradeConfigList[iBallTradeConfigListIndex] = new class CBallTrade;\par
+cReadModeB = 2;\par
+break;\par
+case 2:\par
+ZeroMemory(m_pBallTradeConfigList[iBallTradeConfigListIndex]->m_cName, sizeof(m_pBallTradeConfigList[iBallTradeConfigListIndex]->m_cName));\par
+memcpy(m_pBallTradeConfigList[iBallTradeConfigListIndex]->m_cName, token, strlen(token));\par
+PutLogList(token);\par
+\par
+\par
+cReadModeB = 3;\par
+break;\par
+\par
+case 3:\par
+if (_bGetIsStringIsNumber(token) == FALSE)\par
+\{ PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file error - MaxLvl- Wrong Data format.");\par
+delete cp; delete pStrTok; return FALSE;\par
+\}\par
+m_pBallTradeConfigList[iBallTradeConfigListIndex]->m_iReqPoints = atoi(token);\par
+PutLogList(token);\par
+cReadModeA = 0;\par
+cReadModeB = 0;\par
+break;\par
+\}\par
+break;\par
+default:\par
+break;\par
+\}\par
+\}else\par
+\{ if (memcmp(token, "balltrade", 9) == 0)\par
+\{ cReadModeA = 1;\par
+cReadModeB = 1;\par
+\}else if (memcmp(token, "[END]", 5) == 0)\par
+\{ cReadModeA = 0;\par
+cReadModeB = 0;\par
+break; // Stop While Loop\par
+\}\par
+\}\par
+token = pStrTok->pGet();\par
+\} // while\par
+delete pStrTok; delete cp;\par
+if ((cReadModeA != 0) || (cReadModeB != 0)||(iBallTradeConfigListIndex < 0)||(iBallTradeConfigListIndex >= DEF_MAXBALLTRADE))\par
+\{ PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file contents error!");\par
+return FALSE;\par
+\}\par
+if (pFile != NULL) fclose(pFile);\par
+wsprintf(G_cTxt, "(!) BallTrade(Total:%d) configuration - success!", iBallTradeConfigListIndex);\par
+PutLogList(G_cTxt);\par
+return TRUE;\par
+\}\par
+\}\par
+\par
+\par
+\par
+add To Game.h\par
+\par
+Code: Select all\par
+#define DEF_MAXBALLTRADE 50\par
+\par
+void RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize);\par
+BOOL bDecodeBallTrade(char *pFn);\par
+\par
+class CBallTrade * m_pBallTradeConfigList[DEF_MAXBALLTRADE];\par
+\par
+\par
+\par
+\par
+Add In Item.h\par
+\par
+Code: Select all\par
+class CBallTrade\par
+\{\par
+public:\par
+// virtual ~CBallTrade();\par
+\par
+char m_cName[20];\par
+int m_iReqPoints;\par
+\par
+\};\par
+\par
+add to Item.cpp\par
+\par
+C\'f3digo:\par
+CBallTrade::CBallTrade()\par
+\{\par
+\par
+ZeroMemory(m_cName, sizeof(m_cName));\par
+m_iReqPoints = 0; // The amount of points needed.\par
+\par
+\}\par
+\par
+Make A New Cfg IN GameConfigs Called .cfg\par
+C\'f3digo:\par
+[CONFIG]\par
+\par
+\par
+balltrade = 1 Zem 10 [ENDITEM]\par
+balltrade = 2 KlonessAxe 60 [ENDITEM]\par
+balltrade = 3 CancelManual 100 [ENDITEM]\par
+\par
+\par
+[END]\par
+\par
+Txt Based code.\par
+coded by juggalo2\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?1019-BallTrade-Source-Txt-Base-(By-juggalo2)#ixzz2EQM4QyjV\par
+}
+ 

@@ -1,0 +1,401 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\lang11274\f0\fs20\par
+*Primera Parte*\par
+GAME.cpp\par
+C\'f3digo:\par
+void CGame::GlobalStartApocalypseMode(int iClientH, char *pData, DWORD dwMsgSize)\par
+\{\par
+    char *cp, cData[120];\par
+    DWORD *dwp, dwApocalypseGUID;\par
+\par
+    if (m_pClientList[iClientH]->m_iAdminUserLevel < 3) return;\par
+    if (m_bIsApocalypseMode == TRUE) return;\par
+    if (m_bIsHeldenianMode == TRUE) return;\par
+    if (m_bIsCrusadeMode == TRUE) return;\par
+    \par
+    dwApocalypseGUID = timeGetTime();\par
+\par
+    wsprintf(G_cTxt, "(%s) GM Order(%s): beginapocalypse", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);\par
+    PutLogList(G_cTxt);\par
+    bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, FALSE, G_cTxt);\par
+    \par
+    ZeroMemory(cData, sizeof(cData));\par
+    cp = (char *)cData;\par
+    *cp = GSM_BEGINAPOCALYPSE;\par
+    cp++;\par
+    dwp = (DWORD *)cp;\par
+    *dwp = dwApocalypseGUID;\par
+    cp += 4;\par
+    \par
+    bStockMsgToGateServer(cData, 5);\par
+    LocalStartApocalypseMode(dwApocalypseGUID);\par
+\}\par
+void CGame::LocalStartApocalypseMode(DWORD dwApocalypseGUID)\par
+\{\par
+    int i;\par
+    \par
+    m_bIsApocalypseMode = TRUE;\par
+\par
+    if (dwApocalypseGUID != NULL) \{\par
+        _CreateApocalypseGUID(dwApocalypseGUID);\par
+        m_dwApocalypseGUID = dwApocalypseGUID;\par
+    \}\par
+    \par
+    for (i = 0; i < DEF_MAXCLIENTS; i++) \{\par
+        if (m_pClientList[i] != NULL) \{\par
+            SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATESTARTMSG, NULL, NULL, NULL, NULL);\par
+        \}\par
+    \}\par
+\par
+    for (i = 0; i < DEF_MAXMAPS; i++) \{\par
+        if (m_pMapList[i] != NULL) \{\par
+            if (m_pMapList[i]->m_iApocalypseMobGenType != 0) \{\par
+            //1 for no respawn, 2 for Boss spawn when map empty\par
+            m_pMapList[i]->m_iMaximumObject = 0;\par
+            \}\par
+        \}\par
+    \}\par
+\par
+    PutLogList("(!) Apocalypse Mode ON.");\par
+        PutLogList(G_cTxt);\par
+\}\par
+void CGame::GlobalEndApocalypseMode()\par
+\{\par
+    char *cp, cData[120];\par
+\par
+        if (m_bIsApocalypseMode == FALSE) return;\par
+    \par
+    ZeroMemory(cData, sizeof(cData));\par
+    cp = (char *)cData;\par
+    *cp = GSM_ENDAPOCALYPSE;\par
+    cp++;\par
+    \par
+    LocalEndApocalypseMode();\par
+\par
+    bStockMsgToGateServer(cData, 5);\par
+\}\par
+void CGame::LocalEndApocalypseMode()\par
+\{\par
+ int i;\par
+    \par
+    m_bIsApocalypseMode = FALSE;    \par
+    \par
+    for (i = 1; i < DEF_MAXCLIENTS; i++) \{\par
+    if (m_pClientList[i] != NULL) \{\par
+            SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEENDMSG, NULL, NULL, NULL, NULL);\par
+            if (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_bIsApocalypseMap == TRUE)\par
+                m_pClientList[i]->m_iTimeLeft_ForceRecall = 200;\par
+        \}\par
+    \}\par
+\par
+    wsprintf(G_cTxt,"(!)Apocalypse Mode OFF.");\par
+    PutLogList(G_cTxt);    \par
+    _CreateApocalypseGUID(m_dwApocalypseGUID);\par
+    \par
+\}\par
+void CGame::_CreateApocalypseGUID(DWORD dwApocalypseGUID)\par
+\{\par
+    char *cp, cTxt[256], cFn[256], cTemp[1024];\par
+    FILE *pFile;\par
+    \par
+    _mkdir("GameData");\par
+    ZeroMemory(cFn, sizeof(cFn));\par
+    \par
+    strcat(cFn, "GameData");\par
+    strcat(cFn, "\\\\");\par
+    strcat(cFn, "\\\\");\par
+    strcat(cFn, "ApocalypseGUID.txt");\par
+    \par
+    pFile = fopen(cFn, "wt");\par
+    if (pFile == NULL) \{\par
+        wsprintf(cTxt, "(!) Cannot create ApocalypseGUID(%d) file", dwApocalypseGUID);\par
+        PutLogList(cTxt);\par
+    \}\par
+    else \{\par
+        ZeroMemory(cTemp, sizeof(cTemp));\par
+        ZeroMemory(cTxt, sizeof(cTxt));\par
+        \par
+        wsprintf(cTxt, "ApocalypseGUID = %d\\n", dwApocalypseGUID);\par
+        strcat(cTemp, cTxt);\par
+        \par
+        cp = (char *)cTemp;\par
+        fwrite(cp, strlen(cp), 1, pFile);\par
+        \par
+        wsprintf(cTxt, "(O) ApocalypseGUID(%d) file created", dwApocalypseGUID);\par
+        PutLogList(cTxt);\par
+    \}\par
+    if (pFile != NULL) fclose(pFile);\par
+\}\par
+BOOL CGame::bReadApocalypseGUIDFile(char * cFn)\par
+\{\par
+ FILE * pFile;\par
+ HANDLE hFile;\par
+ DWORD  dwFileSize;\par
+ char * cp, * token, cReadMode;\par
+ char seps[] = "= \\t\\n";\par
+ class CStrTok * pStrTok;\par
+\par
+    cReadMode = 0;\par
+\par
+    hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);\par
+    dwFileSize = GetFileSize(hFile, NULL);\par
+    if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);\par
+\par
+    pFile = fopen(cFn, "rt");\par
+    if (pFile == NULL) \{\par
+        // \'b0\'d4\'c0\'d3\'bc *\'b9\'f6\'c0\'c7 \'c3\'ca\'b1\'e2\'c8 * \'c6\'c4\'c0\'cf\'c0\'bb \'c0\'d0\'c0\'bb \'bc\'f6 \'be\'f8\'b4\'d9.\par
+        PutLogList("(!) Cannot open ApocalypseGUID file.");\par
+        return FALSE;\par
+    \}\par
+    else \{\par
+        PutLogList("(!) Reading ApocalypseGUID file...");\par
+        cp = new char[dwFileSize+2];\par
+        ZeroMemory(cp, dwFileSize+2);\par
+        fread(cp, dwFileSize, 1, pFile);\par
+\par
+        pStrTok = new class CStrTok(cp, seps);\par
+        token = pStrTok->pGet();\par
+\par
+        while( token != NULL )   \{\par
+            \par
+            if (cReadMode != 0) \{\par
+                switch (cReadMode) \{\par
+                case 1:\par
+                    m_dwApocalypseGUID = atoi(token);\par
+                    wsprintf(G_cTxt, "ApocalypseGUID = %d", m_dwApocalypseGUID);\par
+                    PutLogList(G_cTxt);\par
+                    cReadMode = 0;\par
+                    break;\par
+                \}\par
+            \}\par
+            else \{\par
+                if (memcmp(token, "ApocalypseGUID", 11) == 0) cReadMode = 1;\par
+            \}\par
+            \par
+            token = pStrTok->pGet();\par
+        \}\par
+\par
+        delete pStrTok;\par
+        delete cp;\par
+    \}\par
+    if (pFile != NULL) fclose(pFile);\par
+\par
+    return TRUE;\par
+\}\par
+void CGame::SendThunder(int iClient, short sX, short sY, short sV3, short sV4)\par
+\{ char  * cp, cData[100];\par
+DWORD * dwp;\par
+WORD * wp;\par
+short * sp;\par
+int iRet;\par
+ZeroMemory(cData, sizeof(cData));\par
+dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);\par
+*dwp = MSGID_EVENT_COMMON;\par
+wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);\par
+*wp  = DEF_COMMONTYPE_MAGIC;\par
+cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);\par
+sp  = (short *)cp;\par
+*sp = sX;\par
+cp += 2;\par
+sp  = (short *)cp;\par
+*sp = sY;\par
+cp += 2;\par
+sp  = (short *)cp;\par
+*sp = sX;\par
+cp += 2;\par
+sp  = (short *)cp;\par
+*sp = sY;\par
+cp += 2;\par
+sp  = (short *)cp;\par
+*sp = sV3;\par
+cp += 2;\par
+sp  = (short *)cp;\par
+*sp = sV4;\par
+cp += 2;\par
+iRet = m_pClientList[iClient]->m_pXSock->iSendMsg(cData, 18);\par
+\}\par
+void CGame::DoAbaddonThunderDamageHandler()\par
+\{\par
+ int iResult;\par
+ register int i;\par
+\par
+    if (m_bIsApocalypseMode != TRUE) return;\par
+    if (iDice(1, 100) != 1) return;\par
+    for (i = 0; i < DEF_MAXCLIENTS; i++) \{\par
+        if (m_pClientList[i] != NULL) \{\par
+        if (m_pClientList[i]->m_iAdminUserLevel > 0) return;\par
+            if (memcmp(m_pClientList[i]->m_cMapName, "abaddon", 7) == 0) \{\par
+                iResult = iDice(1,20) + 100;\par
+                if ((m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2) ||\par
+                    (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5)) \{\par
+                    iResult /= 2;\par
+                \}\par
+                SendNotifyMsg(NULL, i, DEF_NOTIFY_ABADDONTHUNDER, NULL, NULL, NULL, NULL);\par
+                m_pClientList[i]->m_iHP -= iResult;\par
+                if (m_pClientList[i]->m_iHP <= 0) \{\par
+                    ClientKilledHandler(i, NULL, NULL, iResult);\par
+                \}\par
+                else if (iResult > 0) \{\par
+                    SendNotifyMsg(NULL, i, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);\par
+                    SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, NULL, NULL);\par
+                    if (m_pClientList[i]->m_bSkillUsingStatus[19] != TRUE) \{\par
+                            m_pMapList[m_pClientList[i]->m_cMapIndex]->ClearOwner(0, i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);\par
+                            m_pMapList[m_pClientList[i]->m_cMapIndex]->SetOwner(i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);\par
+                    \}\par
+                    if (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) \{\par
+                        SendNotifyMsg(NULL, i, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT], NULL, NULL);\par
+                        bRemoveFromDelayEventList(i, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);\par
+                    \}\par
+                \}\par
+            \}\par
+        \}\par
+    \}\par
+\}\par
+GAME.CPP arriba de /clearmap poner:\par
+\par
+C\'f3digo:\par
+if (memcmp(cp, "/beginapocalypse", 16) == 0) \{\par
+            if (m_pClientList[iClientH]->m_iAdminUserLevel > 3) \{\par
+                if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == FALSE) return;\par
+                GlobalStartApocalypseMode(iClientH, cp, dwMsgSize - 21);\par
+                wsprintf(cTemp, "GM Order(%s): beginapocalypse", m_pClientList[iClientH]->m_cCharName);\par
+                bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, FALSE, cTemp);\par
+        \}\par
+            return;\par
+        \}\par
+\par
+        if (memcmp(cp, "/endapocalypse", 14) == 0) \{\par
+            if (m_pClientList[iClientH]->m_iAdminUserLevel > 3) \{\par
+                if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == FALSE) return;\par
+                GlobalEndApocalypseMode();\par
+                wsprintf(cTemp, "GM Order(%s): endapocalypse", m_pClientList[iClientH]->m_cCharName);\par
+                bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, FALSE, cTemp);\par
+        \}\par
+            return;\par
+        \}\par
+\par
+\par
+*Segunda Parte*\par
+ASEGURENSE DE TENER ESTO EN GAME.CPP CASI AL FINAL DE void CGame::CheckClientResponseTime() en el caso de que no este lo agregan.\par
+C\'f3digo:\par
+//Apocalypse Related Functions\par
+                if (m_pClientList[i] == NULL) break;\par
+                if (m_bIsApocalypseMode == TRUE) \{\par
+                    if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "icebound", 8) == 0)\par
+                        SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 89, 31, NULL, m_pClientList[i]->m_cMapName);\par
+                    else if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "maze", 4) == 0)\par
+                        SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 38, 163, NULL, m_pClientList[i]->m_cMapName);\par
+                \}\par
+                if (m_pClientList[i] == NULL) break;\par
+                if ((m_bIsApocalypseMode == TRUE) &&\par
+                    (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject == 0)) \{\par
+                    if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "procella", 8) == 0)\par
+                    SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 59, 196, NULL, m_pClientList[i]->m_cMapName);\par
+                \}\par
+\par
+                if (m_pClientList[i] == NULL) break;\par
+                if ((m_bIsApocalypseMode == TRUE) &&\par
+                    (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject == 0)) \{\par
+                        if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "inferniaA", 9) == 0)\par
+                            SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 115, 104, NULL, m_pClientList[i]->m_cMapName);\par
+                        else if (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "inferniaB", 9) == 0)\par
+                            SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 39, 118, NULL, m_pClientList[i]->m_cMapName);\par
+                    \}\par
+\par
+                if (m_pClientList[i] == NULL) break;\par
+                if ((m_bIsApocalypseMode == TRUE) &&\par
+                    (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "icebound", 8) == 0) &&\par
+                    ((m_pClientList[i]->m_sX == 89 && m_pClientList[i]->m_sY == 31) ||\par
+                    (m_pClientList[i]->m_sX == 89 && m_pClientList[i]->m_sY == 32) ||\par
+                    (m_pClientList[i]->m_sX == 90 && m_pClientList[i]->m_sY == 31) ||\par
+                    (m_pClientList[i]->m_sX == 90 && m_pClientList[i]->m_sY == 32))) \{\par
+                      RequestTeleportHandler(i, "2   ", "druncncity", -1, -1);\par
+                \}\par
+\par
+                if (m_pClientList[i] == NULL) break;\par
+                if ((m_bIsApocalypseMode == TRUE) &&\par
+                    (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject == 0) &&\par
+                ((memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "inferniaA", 9) == 0) &&\par
+                    (m_pClientList[i]->m_sX == 115 && m_pClientList[i]->m_sY == 105))\par
+                    ||\par
+                    ((memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "inferniaB", 9) == 0) &&\par
+                    (m_pClientList[i]->m_sX == 39 && m_pClientList[i]->m_sY == 119))) \{\par
+                    RequestTeleportHandler(i, "2   ", "maze", -1, -1);\par
+                \}\par
+\par
+\par
+                if (m_pClientList[i] == NULL) break;\par
+                    if ((m_bIsApocalypseMode == TRUE) &&\par
+                    (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject == 0) &&\par
+                    (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "procella", 8) == 0) &&\par
+                    (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject <= 0) &&\par
+                    ((m_pClientList[i]->m_sX == 59 && m_pClientList[i]->m_sY == 196) ||\par
+                    (m_pClientList[i]->m_sX == 60 && m_pClientList[i]->m_sY == 196) ||\par
+                    (m_pClientList[i]->m_sX == 59 && m_pClientList[i]->m_sY == 197) ||\par
+                    (m_pClientList[i]->m_sX == 60 && m_pClientList[i]->m_sY == 197))) \{\par
+                      RequestTeleportHandler(i, "2   ", "abaddon", -1, -1);\par
+                \}\par
+\par
+                if (m_pClientList[i] == NULL) break;\par
+                if ((m_bIsApocalypseMode == TRUE) &&\par
+                    (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "druncncity", 10) == 0) &&\par
+                    (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject == 0) &&\par
+                    ((m_pClientList[i]->m_sX == 34 && m_pClientList[i]->m_sY == 85) ||\par
+                    (m_pClientList[i]->m_sX == 34 && m_pClientList[i]->m_sY == 84) ||\par
+                    (m_pClientList[i]->m_sX == 33 && m_pClientList[i]->m_sY == 84) ||\par
+                    (m_pClientList[i]->m_sX == 33 && m_pClientList[i]->m_sY == 83) ||\par
+                    (m_pClientList[i]->m_sX == 32 && m_pClientList[i]->m_sY == 83))) \{\par
+                      RequestTeleportHandler(i, "2   ", "inferniaA", -1, -1);\par
+                \}\par
+\par
+                if (m_pClientList[i] == NULL) break;\par
+                if ((m_bIsApocalypseMode == TRUE) &&\par
+                    (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "druncncity", 10) == 0) &&\par
+                    (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject == 0) &&\par
+                    ((m_pClientList[i]->m_sX == 148 && m_pClientList[i]->m_sY == 65) ||\par
+                    (m_pClientList[i]->m_sX == 148 && m_pClientList[i]->m_sY == 64) ||\par
+                    (m_pClientList[i]->m_sX == 147 && m_pClientList[i]->m_sY == 64) ||\par
+                    (m_pClientList[i]->m_sX == 147 && m_pClientList[i]->m_sY == 63) ||\par
+                    (m_pClientList[i]->m_sX == 146 && m_pClientList[i]->m_sY == 63))) \{\par
+                      RequestTeleportHandler(i, "2   ", "inferniaB", -1, -1);\par
+                \}\par
+\par
+                if (m_pClientList[i] == NULL) break;\par
+                if ((m_bIsApocalypseMode == TRUE) &&\par
+                    (memcmp(m_pMapList[m_pClientList[i]->m_cMapIndex]->m_cName, "druncncity",10) == 0) &&\par
+                    (m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iTotalActiveObject == 0)) \{\par
+                        SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 148, 61, NULL,\par
+                                m_pClientList[i]->m_cMapName);\par
+                        SendNotifyMsg(NULL, i, DEF_NOTIFY_APOCGATEOPEN, 34, 82, NULL,\par
+                                m_pClientList[i]->m_cMapName);\par
+                \}\par
+EN GAME.CPP ASEGURARSE TENER ESTOS CASES EN\par
+void CGame::ServerStockMsgHandler(char *pData)\par
+\par
+C\'f3digo:\par
+case GSM_BEGINAPOCALYPSE:\par
+            cp++;\par
+            dwp = (DWORD *)cp;\par
+            cp += 4;\par
+            LocalStartApocalypseMode(*dwp);\par
+            break;\par
+        \par
+        case GSM_ENDAPOCALYPSE:\par
+            cp++;\par
+            LocalEndApocalypseMode();\par
+            break;\par
+GAME.H AGREGAR\par
+\par
+EN GAME.H ASEGURENSE DE TENER ESTO\par
+C\'f3digo:\par
+void GlobalStartApocalypseMode(int iClientH, char *pData, DWORD dwMsgSize);\par
+void LocalStartApocalypseMode(DWORD dwApocalypseGUID);\par
+void GlobalEndApocalypseMode();\par
+void LocalEndApocalypseMode();\par
+void SendThunder(int iClient, short sX, short sY, short sV3, short sV4);\par
+void DoAbaddonThunderDamageHandler();\par
+BOOL bReadScheduleConfigFile(char *pFn);\par
+BOOL bReadApocalypseGUIDFile(char * cFn);\par
+void _CreateApocalypseGUID(DWORD dwApocalypseGUID);\par
+}
+ 

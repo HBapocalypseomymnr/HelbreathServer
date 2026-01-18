@@ -1,0 +1,9 @@
+ if (m_pClientList[iClientH]->m_iRating < -50) iProb = 500;
+       if ((m_pClientList[iClientH]->m_iRating >= -50) && (m_pClientList[iClientH]->m_iRating < 0)) iProb = 400;
+       if (m_pClientList[iClientH]->m_iRating == 0) iProb = 350;
+       if ((m_pClientList[iClientH]->m_iRating > 0) && (m_pClientList[iClientH]->m_iRating <= 50)) iProb = 300;
+       if ((m_pClientList[iClientH]->m_iRating > 50) && (m_pClientList[iClientH]->m_iRating <= 100)) iProb = 250;
+       if ((m_pClientList[iClientH]->m_iRating > 100) && (m_pClientList[iClientH]->m_iRating <= 200)) iProb = 200;
+       if (m_pClientList[iClientH]->m_iRating > 200){
+     iProb = 150 - (m_pClientList[iClientH]->m_iRating / 10);
+    }

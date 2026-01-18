@@ -1,0 +1,191 @@
+Num = ID of item
+
+Name = Name of item
+
+Type = Type of item:
+? -1 = Coloured item
+? 0 = Not stackable
+? 1 = Equip able items
+? 3 = Useable items
+? 5 = Stackable items
+? 6 = Arrows
+? 7 = Eatable items
+? 8 = Fishing rod
+? 9 = Map
+? 10 = Alchemy bowl + Anvil
+? 11 = Dye pots + Flags
+? 12 = Manufacturing Bars
+
+Epos = Item position:
+? 0 = None
+? 1 = Head
+? 2 = Outer Chest
+? 3 = Inner Chest
+? 4 = Legs
+? 5 = Feet
+? 6 = Neck
+? 7 = Shield
+? 8 = One handed weapon
+? 9 = Two handed weapon
+? 10 = Right hand finger
+? 11 = Left hand finger
+? 12 = Cape
+? 13 = On the floor
+
+Effect = Effect of item:
+Weapons + Amour:
+? 0 = None
+? 1 = Physical damage
+? 2 = Increase defence
+? 3 = Ranged physical damage
+? 4 = Health increase
+? 5 = Mana increase
+? 6 = Stamina increase
+? 7 = Food
+? 9 = Learn a skill
+? 10 = Map
+? 11 = Spell effect
+? 12 = Skin hair change
+? 13 = Magic cost reduction for wands
+
+Rings + Necklaces:
+? 1 = Magic resistance
+? 2 = Magic cost reduction
+? 3 = Adds physical damage
+? 4 = Adds defence
+? 5 = % to avoid death
+? 6 = Add magic damage
+? 7 = Lightning protection
+? 9 = See invisible
+? 10 = Ice protection
+? 11 = Poison protection
+? 15 = Ruby + Emerald Ring effect
+? 16 = Flag
+? 17 = Dye
+? 18 = Learn spell
+? 19 = Blood weapons
+? 20 = Wand MShield
+? 22 = PG + SPG potions
+? 24 = Weapons with special effect
+? 25 = Armour with special effect
+? 26 = Zem stone
+? 28 = Unfreeze pot
+
+ETValue(6) = ?????
+
+MaxLife = Max endurance
+
+Seffect = Special effect:
+? 0 = None
+? 1 = Ability that decreases opponent HP by 50%
+? 2 = Ability that freezes opponent
+? 3 = Ability that paralyses opponent
+? 4 = Ability that Kills enemy at one time
+? 5 = Ability that earn some HP as you decrease enemy HP
+? 10 = Defence +10
+? 30 = Defence +30, Permanent Defence Shield Spell
+? 50 = Ability to break enemy weapon
+? 51 = Ability that Protect from physical attacks
+? 52 = Ability that Makes you untouchable
+? 53 = GM Shield
+
+Spr = Look in bag or char detail screen
+
+Sframe = Look in bag or char detail screen
+
+Price = Cost of the item (- stops anyone from buying item in the shop)
+
+Wgt = Weight of the item
+
+ApprV = Look on character
+
+Speed = Strength required to swing weapon fully
+
+L.Lmt = Level needed to equip the item
+
+G.Lmt = Gender limit:
+? 0 = Everyone
+? 1 = Male
+? 2 = Female
+
+HR(2) = Hit ratio bonus against Small/Medium/Large
+
+R.Skill = Skill used for the item:
+? -1 = Armour, Pots and whatever not below
+? 0 = Mining
+? 1 = Fishing
+? 2 = Farming
+? 3 = Magic resistance
+? 4 = Magic
+? 5 = Hand attack
+? 6 = Archery
+? 7 = Short sword
+? 8 = Long sword
+? 9 = Fencing
+? 10 = Axe attack
+? 11 = Shield
+? 12 = Alchemy
+? 13 = Manufacturing
+? 14 = Hammer
+? 15 = ?
+? 16 = ?
+? 17 = ?
+? 18 = ?
+? 19 = Pretend corpse
+? 20 = ?
+? 21 = Staff attack
+? 22 = ?
+? 23 = Poison resistance
+
+Category = What category the items go under:
+? 0 = ZemStone
+? 1 = Weapons
+? 3 = Bows
+? 4 = Single arrow
+? 5 = Shields
+? 6 = Black Smith armour
+? 8 = Wands
+? 11 = Clothes
+? 12 = Boots + Cape
+? 13 = Hero cape + Wizard robe
+? 15 = Santa suits
+? 21 = Potions + Alchemy Bowl + Black Smith Anvil
+? 31 = Alchemy parts + stones + balls
+? 42 = Objects with some in game effect
+? 43 = Fishing rod
+? 46 = Manufacturing parts + Necklaces + Rings
+
+
+Colour = Colour of equipment:
+
+Armours Colour:
+? 0 = Normal
+? 1 = Indigo
+? 2 = Manu-Green
+? 3 = Gold
+? 4 = Crimson Red
+? 5 = Green
+? 6 = Black
+? 7 = Aqua
+? 8 = Pink
+? 9 = Violet
+? 10 = Blue
+? 11 = Knight
+? 12 = Khaki
+? 13 = Yellow
+? 14 = Red
+? 15 = Black
+? 16 = Normal
+
+Weapons Colour:
+? 0 = Normal
+? 1 = Strong/Agile
+? 2 = Strong/Agile
+? 3 = Strong/Agile
+? 4 = Green
+? 5 = Gold
+? 6 = Sharp (Blue)
+? 7 = Righteous (White)
+? 8 = Ancient (Purple)
+? 9 = Blood (Red)
+? 10 = Black

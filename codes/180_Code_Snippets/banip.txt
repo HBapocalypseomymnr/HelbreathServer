@@ -1,0 +1,90 @@
+/banip command
+Author - Blizaga
+
+
+
+this command ban the ip of any player online. to use it u have do the next steps.
+(ofcourse you need to have the IP of the player)
+(!!wont work across servers!!)
+
+
+in Game.cpp add:
+
+void CGame::AdminOrder_BanIP(int iClientH, char *pData, DWORD dwMsgSize)
+{
+char seps[] = "= ";
+char * token, cBuff[256];
+class CStrTok * pStrTok;
+char * pk;
+char cMsg[100], cNick[20], cIPtoBan[15];
+int i;
+FILE * pFile;
+if (m_pClientList[iClientH] == NULL) return;
+if ((dwMsgSize) <= 0) return;
+if (m_pClientList[iClientH]->m_iAdminUserLevel <= 0) {
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);
+return;
+}
+if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == FALSE) return;
+
+ZeroMemory(cBuff, sizeof(cBuff));
+memcpy(cBuff, pData, dwMsgSize);
+pStrTok = new class CStrTok(cBuff, seps);
+token = pStrTok->pGet();
+token = pStrTok->pGet();
+if (token == NULL) {
+delete pStrTok;
+return;
+}
+strcpy(cNick, token);
+pk = pStrTok->pGet();
+
+for (i = 0; i < DEF_MAXCLIENTS; i++) {
+if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cNick, strlen(cNick)) == 0)) {
+strcpy(cIPtoBan, m_pClientList[i]->m_cIPaddress);
+//opens cfg file
+pFile = fopen
+("..GameConfigsBannedList.cfg", "a");
+//notifys to player banned
+wsprintf(cMsg,"You will be banned from the server right now!");
+ShowClientMsg(i, cMsg);
+//notifys to game master the ban is success
+wsprintf(cMsg,"%s was banned ip.",m_pClientList[iClientH]->m_cCharName);
+ShowClientMsg(iClientH, cMsg);
+//shows log
+wsprintf(G_cTxt,"<%d> Client IP Banned: (%s)", i, cIPtoBan);
+PutLogList(G_cTxt);
+//modifys cfg file
+fprintf(pFile, " banned-ip = %s", cIPtoBan);
+fclose(pFile);
+//updates BannedList.cfg on the server
+LocalUpdateConfigs(3);
+//disconnects player, and he can't connect again.. :)
+DeleteClient(i, TRUE, TRUE);
+return;
+}
+}
+delete pStrTok;
+}
+
+In Game.cpp in ChatMsgHandler(); add
+
+if (memcmp(cp, "/banip ", 7) == 0) {
+AdminOrder_BanIP(iClientH, cp, dwMsgSize - 21);
+return;
+}
+
+in Game.h add
+
+
+void AdminOrder_BanIP(int iClientH, char *pData, DWORD dwMsgSize);
+
+
+You can add if you want:
+(pFile == NULL) {
+//error message
+}
+else{
+//banned success
+}
+(it shows a message if it successed or failed) 

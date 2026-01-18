@@ -1,0 +1,473 @@
+All You Must Do To Finish This Code Is Make It Take Off The Ball Points When Recived Items Isnt Hard But You Guys Cant Have Everything The Code Currently Works Just Dosnt Take Any Poaints Away 
+
+Mabby If Im In A Good Enuf Mood Ill Reasle My Drop.cfg Code To Make All Drops By Cfg 
+
+
+To Make A Ball Trade Is One Command
+
+
+Code: Select all
+/trade (Item Name)
+
+
+If The Item Is On The Ball Trade.cfg Then It Will Not Work An Tell Player They Put Wroung Item In
+
+To Check How Many Ball Points You Have 
+
+
+Code: Select all
+/ballpoint
+
+
+
+Enjoy All Let Me Know What Chyea all Think
+
+
+
+
+add In Item.h
+
+#define DEF_ITEMEFFECTTYPE_ADDBALLPOINTS 33 
+
+
+Find
+
+Code: Select all
+wsprintf(cTxt, "gizon-item-upgade-left = %d", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft); 
+strcat(pData, cTxt 
+strcat(pData,"\n"); 
+
+
+Add
+
+
+Code: Select all
+wsprintf(cTxt, "character-ball-points = %d", m_pClientList[iClientH]->m_iBallPoints); 
+strcat(pData, cTxt); 
+strcat(pData,"\n"); 
+
+
+
+Find
+
+Code: Select all
+m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = atoi(token); 
+cReadModeA = 0; 
+break;
+
+
+
+Add
+
+Code: Select all
+case 81: 
+if (_bGetIsStringIsNumber(token) == FALSE) { 
+wsprintf(cTxt, "(!!!) Player(%s) data file error! (BallPoints) - Connection closed. ", m_pClientList[iClientH]->m_cCharName); 
+PutLogList(cTxt); 
+delete pContents; 
+delete pStrTok; 
+return FALSE; 
+} 
+
+m_pClientList[iClientH]->m_iBallPoints = atoi(token); 
+cReadModeA = 0; 
+break;
+
+
+Find
+
+
+Code: Select all
+if (memcmp(token, "gizon-item-upgade-left", 22) == 0) cReadModeA = 80; 
+Add
+
+
+Code: Select all
+if (memcmp(token, "character-ball-points", 21) == 0) cReadModeA = 81; 
+
+
+Find
+
+
+Code: Select all
+case DEF_ITEMEFFECTTYPE_STUDYMAGIC: 
+iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1; 
+if (m_pMagicConfigList[iV1] != NULL) 
+RequestStudyMagicHandler(iClientH, m_pMagicConfigList[iV1]->m_cName, FALSE); 
+break;
+
+
+Add
+
+Code: Select all
+case DEF_ITEMEFFECTTYPE_ADDBALLPOINTS: 
+iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1; 
+m_pClientList[iClientH]->m_iBallPoints += iV1; 
+
+wsprintf(cInfoString,"%d Ball Points added. Total Amount: %d ", iV1, m_pClientList[iClientH]->m_iBallPoints); 
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString); 
+break; 
+
+
+
+
+
+
+Find
+
+Code: Select all
+   for (i = 0; i <  DEF_MAXTELEPORTLIST; i++)
+   if (m_pTeleportConfigList[i] != NULL) delete m_pTeleportConfigList[i];
+
+
+Add
+
+Code: Select all
+      for (i = 0; i <  DEF_MAXBALLTRADE; i++)
+   if (m_pBallTradeConfigList[i] != NULL) delete m_pBallTradeConfigList[i];
+      
+
+
+Find
+
+
+Code: Select all
+for (i = 0; i <  DEF_MAXTELEPORTLIST; i++)
+      m_pTeleportConfigList[i] = NULL;
+
+
+Add
+
+Code: Select all
+      for (i = 0; i <  DEF_MAXBALLTRADE; i++)
+      m_pBallTradeConfigList[i] = NULL;
+
+
+Find
+
+Code: Select all
+   for (i = 0; i <  DEF_MAXTELEPORTLIST; i++)
+   if (m_pTeleportConfigList[i] != NULL) delete m_pTeleportConfigList[i];
+
+
+Add
+
+Code: Select all
+for (i = 0; i <  DEF_MAXBALLTRADE; i++)
+   if (m_pBallTradeConfigList[i] != NULL) delete m_pBallTradeConfigList[i];
+
+
+Add 
+
+
+Code: Select all
+   if (bDecodeBallTrade("..\\GameConfigs\\BallTrade.cfg") == FALSE) 
+   {   PutLogList(" ");
+      PutLogList("(!!!) CRITICAL ERROR! Cannot execute server! BallTrade.cfg file contents error!");
+      return FALSE;
+   }
+
+
+
+Add
+
+
+Code: Select all
+      if (memcmp(cp, "/trade ", 7) == 0) { 
+RequestBallItem(iClientH, cp, dwMsgSize - 21); 
+return; 
+} 
+      if (memcmp(cp, "/ballpoint", 10) == 0) { 
+char cInfoString[50]; 
+wsprintf(cInfoString," Amount of Ball Points: (%d) ", m_pClientList[iClientH]->m_iBallPoints); 
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString); 
+return; 
+} 
+
+
+Add
+
+Code: Select all
+void CGame::RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize) 
+{
+DWORD * dwp;
+WORD  * wp;
+char  * cp, cI[6], cBallItem[21], cData[120], cBuff[256], * token;
+int    iRet, i, j, iEraseReq, iSkillLimit, iSkillLevel, iResult, iDifficulty;
+short * sp, sItemIndex[6], sTemp;
+short  sItemNumber[6], sItemArray[12];
+BOOL   bDup, bFlag;
+class  CStrTok * pStrTok;
+class  CItem * pItem;
+char   seps[] = "= \t\n";
+char cInfoString[50]; 
+
+
+   if (m_pClientList[iClientH] == NULL) return;
+   if ((dwMsgSize)   <= 0) return;// if the command is just "/trade " than no effect.
+   for (int i = 0; i <  DEF_MAXBALLTRADE; i++)
+   if (m_pBallTradeConfigList[i] != NULL) 
+   {   delete m_pBallTradeConfigList[i];
+      m_pBallTradeConfigList[i] = NULL;
+   }
+   ZeroMemory(cBuff, sizeof(cBuff));
+   memcpy(cBuff, pData, dwMsgSize);
+   pStrTok = new class CStrTok(cBuff, seps);
+   token = pStrTok->pGet();
+   token = pStrTok->pGet();
+   if (token == NULL) {
+      delete pStrTok;
+      return;
+   }
+   ZeroMemory(cBallItem, sizeof(cBallItem));
+   strcpy(cBallItem, token);
+      if (strlen(cBallItem) != 0) {   
+         pItem = NULL;
+         pItem = new class CItem;
+         if (pItem == NULL) return;
+   
+      //   if the given itemname doesnt exist delete item
+         if (_bInitItemAttr(pItem, cBallItem) == FALSE) {
+               delete pItem;
+               wsprintf(cInfoString,"Wroung BallTrade Item "); 
+               SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString); 
+               return;   
+            } 
+
+         if (m_pBallTradeConfigList[i]->m_iReqPoints > m_pClientList[iClientH]->m_iBallPoints) {                  
+               wsprintf(cInfoString,"You Dont Have Right Amount BallTrade points"); 
+               SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString); 
+               return; 
+         }
+            /* (m_pBallTradeConfigList[i]->m_iReqPoints < m_pClientList[iClientH]->m_iBallPoints)) {
+             wsprintf(cInfoString,"BallTrade Completed "); 
+            SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString); 
+            bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, iClientH);
+      */
+         
+      
+         
+            if (_bInitItemAttr(pItem, cBallItem) == TRUE)      
+               {
+                  if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE){
+            ZeroMemory(cData, sizeof(cData));
+            dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
+            *dwp = MSGID_NOTIFY;
+            wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);
+            *wp  = DEF_NOTIFY_ITEMOBTAINED;            
+            cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);   
+            *cp = 1;
+            cp++;            
+            memcpy(cp, pItem->m_cName, 20);
+            cp += 20;            
+            dwp  = (DWORD *)cp;
+            *dwp = pItem->m_dwCount;
+            cp += 4;            
+            *cp = pItem->m_cItemType;
+            cp++;            
+            *cp = pItem->m_cEquipPos;
+            cp++;            
+            *cp = (char)0; 
+            cp++;            
+            sp  = (short *)cp;
+            *sp = pItem->m_sLevelLimit;
+            cp += 2;            
+            *cp = pItem->m_cGenderLimit;
+            cp++;            
+            wp = (WORD *)cp;
+            *wp = pItem->m_wCurLifeSpan;
+            cp += 2;            
+            wp = (WORD *)cp;
+            *wp = pItem->m_wWeight;
+            cp += 2;            
+            sp  = (short *)cp;
+            *sp = pItem->m_sSprite;
+            cp += 2;            
+            sp  = (short *)cp;
+            *sp = pItem->m_sSpriteFrame;
+            cp += 2;
+            *cp = pItem->m_cItemColor;
+            cp++;
+            *cp = (char)pItem->m_sItemSpecEffectValue2; // v1.41 
+            cp++;            
+            dwp = (DWORD *)cp;
+            *dwp = pItem->m_dwAttribute;
+            cp += 4;
+            
+            
+            if (iEraseReq == 1) delete pItem;
+            iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53);
+            switch (iRet) {
+            case DEF_XSOCKEVENT_QUENEFULL:
+            case DEF_XSOCKEVENT_SOCKETERROR:
+            case DEF_XSOCKEVENT_CRITICALERROR:
+            case DEF_XSOCKEVENT_SOCKETCLOSED:
+                     
+               DeleteClient(iClientH, TRUE, TRUE);
+               break;
+            }   
+      }
+      else 
+      {   delete pItem;
+         pItem = NULL;
+
+         
+      }
+}   
+}
+}
+
+
+
+
+
+Add
+
+
+
+Code: Select all
+BOOL CGame::bDecodeBallTrade(char *pFn)
+{FILE * pFile;
+HANDLE hFile;
+DWORD  dwFileSize;
+char * cp, * token, cReadModeA, cReadModeB;
+char seps[] = "= \t\n";
+class CStrTok * pStrTok;
+int   iIndex;
+int iBallTradeConfigListIndex; 
+   for (int i = 0; i <  DEF_MAXBALLTRADE; i++)
+   if (m_pBallTradeConfigList[i] != NULL) 
+   {   delete m_pBallTradeConfigList[i];
+      m_pBallTradeConfigList[i] = NULL;
+   }
+   cReadModeA = 0;
+   cReadModeB = 0;
+   iIndex = 0;
+   hFile = CreateFile(pFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
+   dwFileSize = GetFileSize(hFile, NULL);
+   if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);
+   pFile = fopen(pFn, "rt");
+   if (pFile == NULL)
+   {   PutLogList("(!) Cannot open BallTrade.cfg file.");
+      return FALSE;
+   }else
+   {   PutLogList("(!) Reading BallTrade.cfg...");
+      cp = new char[dwFileSize+2];
+      ZeroMemory(cp, dwFileSize+2);
+      fread(cp, dwFileSize, 1, pFile);
+      pStrTok = new class CStrTok(cp, seps);
+      token = pStrTok->pGet();
+      while( token != NULL ) 
+      {   if (cReadModeA != 0) 
+         {   switch (cReadModeA) {
+            case 1:
+               switch (cReadModeB) {
+               case 1: // BallTrade n°
+                  if (_bGetIsStringIsNumber(token) == FALSE)
+                  {   PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file error - Wrong Data format.");
+                     delete pStrTok;   delete cp; return FALSE;
+                  }
+                  iBallTradeConfigListIndex = atoi(token);
+                  if ((iBallTradeConfigListIndex < 0) || (iBallTradeConfigListIndex >= DEF_MAXBALLTRADE))
+                  {   PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file error - Wrong BallTrade number.");
+                     return FALSE;
+                  }
+                  if (m_pBallTradeConfigList[iBallTradeConfigListIndex] != NULL)
+                  {   PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file error - Duplicate BallTrade number.");
+                     return FALSE;
+                  }
+                  m_pBallTradeConfigList[iBallTradeConfigListIndex] = new class CBallTrade;
+                  cReadModeB = 2;
+                  break;
+                  case 2:
+               ZeroMemory(m_pBallTradeConfigList[iBallTradeConfigListIndex]->m_cName, sizeof(m_pBallTradeConfigList[iBallTradeConfigListIndex]->m_cName));
+               memcpy(m_pBallTradeConfigList[iBallTradeConfigListIndex]->m_cName, token, strlen(token));
+PutLogList(token);
+                     
+
+               cReadModeB = 3;
+               break;
+            
+               case 3: 
+                  if (_bGetIsStringIsNumber(token) == FALSE)
+                  {   PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file error - MaxLvl- Wrong Data format.");
+                     delete cp; delete pStrTok; return FALSE;
+                  }
+                  m_pBallTradeConfigList[iBallTradeConfigListIndex]->m_iReqPoints = atoi(token);
+                  PutLogList(token);
+                  cReadModeA = 0;
+                  cReadModeB = 0;
+                  break;
+               }
+               break;
+            default:
+               break;
+            }
+         }else
+         {   if (memcmp(token, "balltrade", 9) == 0)
+            {   cReadModeA = 1;
+               cReadModeB = 1;
+            }else if (memcmp(token, "[END]", 5) == 0)
+            {   cReadModeA = 0;
+               cReadModeB = 0;
+               break; // Stop While Loop
+            }
+         }
+         token = pStrTok->pGet();
+      } // while
+      delete pStrTok;   delete cp;
+      if ((cReadModeA != 0) || (cReadModeB != 0)||(iBallTradeConfigListIndex < 0)||(iBallTradeConfigListIndex >= DEF_MAXBALLTRADE))
+      {   PutLogList("(!!!) CRITICAL ERROR! BallTrade configuration file contents error!");
+         return FALSE;
+      }
+      if (pFile != NULL) fclose(pFile);
+      wsprintf(G_cTxt, "(!) BallTrade(Total:%d) configuration - success!", iBallTradeConfigListIndex);
+      PutLogList(G_cTxt);
+      return TRUE;
+   }
+}
+
+
+
+
+add To Game.h
+
+
+Code: Select all
+#define DEF_MAXBALLTRADE         50
+
+void RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize); 
+BOOL bDecodeBallTrade(char *pFn);
+
+class CBallTrade * m_pBallTradeConfigList[DEF_MAXBALLTRADE];
+
+
+
+
+
+Add In Item.h
+
+
+Code: Select all
+class CBallTrade 
+{ 
+public: 
+  // virtual ~CBallTrade();
+     
+     char m_cName[20]; 
+     int m_iReqPoints; 
+
+}; 
+
+
+
+add to Item.cpp
+
+Code: Select all
+CBallTrade::CBallTrade()
+{
+
+   ZeroMemory(m_cName, sizeof(m_cName));
+   m_iReqPoints         = 0;            // The amount of points needed.
+   
+}

@@ -1,0 +1,439 @@
+Ok here you got Mail system HGserver side:
+
+
+After this:
+
+
+CODE  
+ if (memcmp(cp, "/who", 4) == 0) {
+  if (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelWho) {
+   SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_TOTALUSERS, NULL, NULL, NULL, NULL);
+  }
+
+  return;
+ } 
+
+
+
+Add this:
+
+
+CODE  
+ if (memcmp(cp, "/sendmail ", 10) == 0) {
+  bCreateMail("Gnius", iClientH, "Test postal system", "This is the body of the mail.", NULL);
+  PutLogList("(DebugLog) Invoked sendmail command! Sent test mail to Gnius!");
+  return;
+ } 
+
+
+
+
+Before this code:
+
+
+CODE  
+// Old code
+case DEF_COMMONTYPE_REQ_CREATESLATE:
+ ReqCreateSlateHandler(iClientH, pData); 
+
+
+
+Add this shit:
+
+
+CODE  
+// Helbreath 2
+case DEF_COMMONTYPE_REQUEST_MAILLIST:
+ RequestMailListHandler(iClientH);
+ break;
+case DEF_COMMONTYPE_REQUEST_MAILBODY:
+ RequestMailBodyHandler(iClientH, pData);
+ break;
+case DEF_COMMONTYPE_REQUEST_SENDMAIL:
+ RequestSendMailHandler(iClientH, pData);
+ break; 
+
+
+
+Before this code:
+
+
+CODE  
+case DEF_NOTIFY_SYNTHESIZINGFAILED: 
+
+
+
+Add this facking shit ! im getting tired lol:
+
+
+CODE  
+case DEF_NOTIFY_SENDMAIL_SUCCESS: 
+
+
+
+Before this:
+
+
+CODE  
+case DEF_NOTIFY_REQUEST_ACCEPTPORTAL: 
+
+
+
+Add this shit:
+
+
+CODE  
+case DEF_NOTIFY_UNREADMAIL:
+case DEF_NOTIFY_SENDMAIL_FAILED: 
+
+
+
+After this:
+
+
+CODE  
+if ((dwTime - m_dwGameTime5) > (60000)) {
+ m_dwGameTime5 = dwTime; 
+
+
+
+Add this:
+
+
+CODE  
+ if (bProcessMailStorage() == FALSE) {
+  PutLogList("(!) Error processing mail storage!");
+ } 
+
+
+
+After this BOOL codes:
+
+
+CODE  
+BOOL CGame::bClientAddItem(int iClientH, CItem * pItem, BOOL bDropGround) { 
+
+
+
+Add this :
+
+
+CODE  
+void CGame::RequestMailListHandler(int iClientH) {
+register int i;
+int * ip, iRet, iListSize, iUnreadCount;
+CMail * pMailList;
+DWORD * dwp;
+WORD * wp;
+char * cp;
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
+
+pMailList = pGetMailList(iClientH, &iListSize, &iUnreadCount);
+
+ZeroMemory(G_cData50000, sizeof(G_cData50000));
+
+dwp = (DWORD *)(G_cData50000 + DEF_INDEX4_MSGID);
+*dwp = MSGID_NOTIFY;
+wp = (WORD *)(G_cData50000 + DEF_INDEX2_MSGTYPE);
+*wp = DEF_NOTIFY_MAILLIST;
+
+cp = (char *)(G_cData50000 + DEF_INDEX2_MSGTYPE + 2);
+
+ip = (int *)cp;
+*ip = iListSize;
+cp += 4;
+
+for (i = 0; i < iListSize; i++) {
+ ip = (int *)cp;
+ *ip = pMailList[i].m_iMailId;
+ cp += 4;
+
+ memcpy(cp, pMailList[i].m_cFrom, 10);
+ cp += 10;
+
+ memcpy(cp, pMailList[i].m_cSubject, DEF_MAXMAILSUBJECTSIZE);
+ cp += DEF_MAXMAILSUBJECTSIZE;
+
+ *cp = pMailList[i].m_bIsRead;
+ cp++;
+}
+
+iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(G_cData50000, 10 + (iListSize * (DEF_MAXMAILSUBJECTSIZE + 5)));
+
+switch (iRet) {
+case DEF_XSOCKEVENT_QUENEFULL:
+case DEF_XSOCKEVENT_SOCKETERROR:
+case DEF_XSOCKEVENT_CRITICALERROR:
+case DEF_XSOCKEVENT_SOCKETCLOSED:
+ DeleteClient(iClientH, TRUE, TRUE);
+}
+
+try {
+ delete [] pMailList;
+} catch (...) { }
+
+void CGame::RequestMailBodyHandler(int iClientH, char * pData) {
+int * ip, iRet, iMailId;
+DWORD * dwp;
+WORD * wp;
+char * cp;
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
+
+ip = (int *)(pData + DEF_INDEX2_MSGTYPE + 2);
+iMailId = *ip;
+
+if (iMailId < 1) return;
+
+//bDatabaseConnect();
+//if (bDatabaseAlive() == FALSE) {
+// DatabaseClose();
+// return;
+//}
+
+ZeroMemory(G_cTxt, sizeof(G_cTxt));
+wsprintf(G_cTxt, "SELECT body FROM mailstorage WHERE to_char='%s' AND mail_id='%d'", m_pClientList[iClientH]->m_cCharName, iMailId);
+
+  if (mysql_real_query(&m_MySQL, G_cTxt, strlen(G_cTxt)) != 0) {
+ return;
+}
+
+MYSQL_RES * pResult = mysql_store_result(&m_MySQL);
+
+if (pResult == NULL) {
+ return;
+}
+
+if (mysql_num_rows(pResult) > 0) {
+ char cBody[DEF_MAXMAILBODYSIZE + 1];
+ ZeroMemory(cBody, sizeof(cBody));
+
+ MYSQL_ROW pRow;
+
+ if ((pRow = mysql_fetch_row(pResult)) == NULL) {
+  return;
+ }
+
+ strcpy(cBody, pRow[0]);
+ mysql_free_result(pResult);
+
+ ZeroMemory(G_cData3000, sizeof(G_cData3000));
+
+ dwp = (DWORD *)(G_cData3000 + DEF_INDEX4_MSGID);
+ *dwp = MSGID_NOTIFY;
+ wp = (WORD *)(G_cData3000 + DEF_INDEX2_MSGTYPE);
+ *wp = DEF_NOTIFY_MAILBODY;
+
+ cp = (char *)(G_cData3000 + DEF_INDEX2_MSGTYPE + 2);
+
+ ip = (int *)cp;
+ *ip = strlen(cBody);
+ cp += 4;
+
+ strcpy(cp, cBody);
+ cp += strlen(cBody);
+
+ // Attachment implementation here.
+
+ iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(G_cData3000, 10 + strlen(cBody));
+
+ switch (iRet) {
+ case DEF_XSOCKEVENT_QUENEFULL:
+ case DEF_XSOCKEVENT_SOCKETERROR:
+ case DEF_XSOCKEVENT_CRITICALERROR:
+ case DEF_XSOCKEVENT_SOCKETCLOSED:
+  DeleteClient(iClientH, TRUE, TRUE);
+ }
+}
+}
+
+void CGame::RequestSendMailHandler(int iClientH, char * pData) {
+char * cp, cTo[11], cSubject[DEF_MAXMAILSUBJECTSIZE + 1], cItemIndex;
+WORD * wp, wBodySize;
+int * ip, iAmount;
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
+
+ZeroMemory(cTo, sizeof(cTo));
+ZeroMemory(cSubject, sizeof(cSubject));
+ZeroMemory(G_cData3000, sizeof(G_cData3000));
+
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
+
+memcpy(cTo, cp, 10);
+cp += 10;
+
+memcpy(cSubject, cp, DEF_MAXMAILSUBJECTSIZE);
+cp += DEF_MAXMAILSUBJECTSIZE;
+
+cItemIndex = *cp;
+cp++;
+
+ip = (int *)cp;
+iAmount = *ip;
+cp += 4;
+
+wp = (WORD *)cp;
+wBodySize = *wp;
+cp += 2;
+
+if (wBodySize > DEF_MAXMAILBODYSIZE) {
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SENDMAIL_FAILED, DEF_SENDMAIL_BODYSIZETOOLARGE, NULL, NULL, NULL);
+ return;
+}
+
+memcpy(G_cData3000, cp, wBodySize);
+cp += wBodySize;
+
+// Attachment implementation here.
+CItem * pItem = NULL;
+
+if (bCreateMail(cTo, iClientH, cSubject, G_cData3000, pItem) == FALSE) {
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SENDMAIL_FAILED, DEF_SENDMAIL_CANNOTSAVE, NULL, NULL, NULL);
+ return;
+} else {
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SENDMAIL_SUCCESS, NULL, NULL, NULL, NULL);
+ return;
+}
+}
+} 
+
+
+
+After this shit code ... i dont know if it exists in other HGServers:
+
+
+CODE  
+void CGame::DatabaseClose() {
+try {
+ mysql_close(&m_MySQL);
+} catch (...) { }
+} 
+
+
+
+Add this:
+
+
+CODE  
+bool CGame::bCreateMail(char * cTo, int iClientH, char * cSubject, char * cBody, CItem * pItem) {
+if (m_pClientList[iClientH] == NULL) return FALSE;
+if (cTo == NULL) return FALSE;
+if (cSubject == NULL) return FALSE;
+if (cBody == NULL) return FALSE;
+if ((strlen(cTo) < 1) || (strlen(cTo) > 10)) return FALSE;
+if ((strlen(cSubject) < 1) || (strlen(cTo) > DEF_MAXMAILSUBJECTSIZE)) return FALSE;
+if (strlen(cBody) > DEF_MAXMAILBODYSIZE) return FALSE;
+
+bDatabaseConnect();
+if (bDatabaseAlive() == FALSE) {
+ DatabaseClose();
+ return FALSE;
+}
+
+ZeroMemory(G_cData3000, sizeof(G_cData3000));
+wsprintf(G_cData3000, "INSERT INTO mailstorage (to_char, from_char, subject, body) VALUES ('%s', '%s', '%s', '%s')", cTo, m_pClientList[iClientH]->m_cCharName, cSubject, cBody);
+
+  if (mysql_real_query(&m_MySQL, G_cData3000, strlen(G_cData3000)) != 0) {
+ return FALSE;
+}
+
+if (pItem != NULL) {
+ // Attachment implementation here.
+}
+
+return TRUE;
+}
+
+bool CGame::bProcessMailStorage() {
+register int i;
+int iListSize, iUnreadCount;
+CMail * pMailList;
+
+for (i = 1; i < DEF_MAXCLIENTS; i++) {
+ pMailList = NULL;
+
+ if ((m_pClientList[i] != NULL) &&
+  (m_pClientList[i]->m_bIsInitComplete == TRUE) &&
+  (m_pClientList[i]->m_bIsOnServerChange == FALSE)) {
+
+  pMailList = pGetMailList(i, &iListSize, &iUnreadCount);
+
+  if (iListSize > 0) {
+   if (pMailList == NULL) return FALSE;
+
+   if (iUnreadCount > 0) {
+    SendNotifyMsg(NULL, i, DEF_NOTIFY_UNREADMAIL, 1, NULL, NULL, NULL);
+   }
+
+   try {
+    delete [] pMailList;
+   } catch (...) { }
+  }
+ }
+}
+
+return TRUE;
+}
+
+CMail * CGame::pGetMailList(int iClientH, int * iListSize, int * iUnreadCount) {
+if (m_pClientList[iClientH] == NULL) return NULL;
+if (iListSize == NULL) return NULL;
+
+*iListSize = 0;
+
+if (iUnreadCount == NULL) return NULL;
+
+*iUnreadCount = 0;
+
+bDatabaseConnect();
+if (bDatabaseAlive() == FALSE) {
+ DatabaseClose();
+
+ return NULL;
+}
+
+ZeroMemory(G_cTxt, sizeof(G_cTxt));
+wsprintf(G_cTxt, "SELECT mail_id, from_char, subject, attachment_id, is_read FROM mailstorage WHERE to_char='%s'", m_pClientList[iClientH]->m_cCharName);
+
+  if (mysql_real_query(&m_MySQL, G_cTxt, strlen(G_cTxt)) != 0) {
+ return NULL;
+}
+
+MYSQL_RES * pResult = mysql_store_result(&m_MySQL);
+
+if (pResult == NULL) {
+ return NULL;
+}
+
+*iListSize = (int)mysql_num_rows(pResult);
+CMail * pMailList = new CMail[*iListSize];
+int i = 0;
+
+while (MYSQL_ROW pRow = mysql_fetch_row(pResult)) {
+ pMailList[i].m_iMailId = atoi(pRow[0]);
+ strcpy(pMailList[i].m_cTo, m_pClientList[iClientH]->m_cCharName);
+ strcpy(pMailList[i].m_cFrom, pRow[1]);
+ strcpy(pMailList[i].m_cSubject, pRow[2]);
+
+ if (atoi(pRow[3]) > 0) {
+  // Attachment implementation here.
+ }
+
+ if (atoi(pRow[4]) != 0) {
+  pMailList[i].m_bIsRead = TRUE;
+ } else {
+  *iUnreadCount++;
+ }
+
+ i++;
+}
+
+mysql_free_result(pResult);
+
+return (CMail *)pMailList;
+} 

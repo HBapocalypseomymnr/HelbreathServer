@@ -1,0 +1,313 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20  No permite el ingreso a edificios enemigos (By Snoopy)\par
+Bueno lo dejo con las coordenadas default, si modifican sus mapas o cord, deben modificarlas.\par
+\par
+Esta prohibido el post del code en \par
+cualquier otra comunidad/foro.\par
+\par
+Buscamos en el cliente\par
+\par
+C\'f3digo:\par
+void CGame::RequestTeleportAndWaitData()\par
+Reemplazamos toda la funcion por esta\par
+\par
+C\'f3digo:\par
+void CGame::RequestTeleportAndWaitData()\par
+\{     \par
+    if (strcmp(m_cMapName, "arefarm") == 0)\{\par
+        if (((m_sPlayerX == 78) && (m_sPlayerY == 71))  ||\par
+             ((m_sPlayerX == 79) && (m_sPlayerY == 69))  ||\par
+             ((m_sPlayerX == 78) && (m_sPlayerY == 70))  ||\par
+             ((m_sPlayerX == 80) && (m_sPlayerY == 69))  ||\par
+             ((m_sPlayerX == 79) && (m_sPlayerY == 70)))\{\par
+            if ((m_iLevel < 30) || (m_iLevel>80))\{\par
+                AddEventList(REQUEST_TELEPORT_AND_WAIT_DATA1, 10);\par
+                return;\par
+            \}\par
+        \}\par
+        if (((m_sPlayerX == 114) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 115) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 116) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 117) && (m_sPlayerY == 23))  ||\par
+              ((m_sPlayerX == 118) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 119) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 120) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 121) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 122) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 123) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 124) && (m_sPlayerY == 23))  ||\par
+             ((m_sPlayerX == 125) && (m_sPlayerY == 23)))\{\par
+            if (m_bCitizen == FALSE)\{\par
+                AddEventList(RESPONSE_CHARGED_TELEPORT3, 10);\par
+                return;\par
+            \}\par
+        \}\par
+    \}\par
+    if (strcmp(m_cMapName, "elvfarm") == 0)    \{\par
+        if (((m_sPlayerX == 138) && (m_sPlayerY == 207))  ||\par
+             ((m_sPlayerX == 138) && (m_sPlayerY == 206))  ||\par
+             ((m_sPlayerX == 139) && (m_sPlayerY == 206))  ||\par
+             ((m_sPlayerX == 139) && (m_sPlayerY == 205))  ||\par
+             ((m_sPlayerX == 140) && (m_sPlayerY == 205)))\{\par
+            if ( (m_iLevel < 30) || (m_iLevel>80) )\{\par
+                AddEventList(REQUEST_TELEPORT_AND_WAIT_DATA1, 10);\par
+                return;\par
+            \}\par
+        \}\par
+        if (((m_sPlayerX == 156) && (m_sPlayerY == 229))  ||\par
+             ((m_sPlayerX == 157) && (m_sPlayerY == 229))  ||\par
+             ((m_sPlayerX == 158) && (m_sPlayerY == 229))  ||\par
+             ((m_sPlayerX == 159) && (m_sPlayerY == 229))  ||\par
+              ((m_sPlayerX == 160) && (m_sPlayerY == 229))  ||\par
+             ((m_sPlayerX == 161) && (m_sPlayerY == 229))  ||\par
+             ((m_sPlayerX == 162) && (m_sPlayerY == 229))  ||\par
+             ((m_sPlayerX == 163) && (m_sPlayerY == 229))  ||\par
+             ((m_sPlayerX == 164) && (m_sPlayerY == 229)))\{\par
+            if (m_bCitizen == FALSE)\{\par
+                AddEventList(RESPONSE_CHARGED_TELEPORT3, 10);\par
+                return;\par
+            \}\par
+        \}\par
+\par
+    \}\par
+\par
+    if((m_bIsCrusadeMode == FALSE) && (m_bHunter == TRUE) && (m_bCitizen == TRUE))\{\par
+        if(strcmp(m_cMapName, "aresden") == 0)\{\par
+            if(m_sPlayerY == 20)\{\par
+                if((m_sPlayerX>=27) && (m_sPlayerX<=35)) \{ SetTopMsg( DEF_MSG_GETNEXTMOVEDIR, 5 ); return;\}\par
+                if((m_sPlayerX>=258) && (m_sPlayerX<=266)) \{ SetTopMsg( DEF_MSG_GETNEXTMOVEDIR, 5 ); return;\}\par
+            \}\par
+        \}\par
+        if(strcmp(m_cMapName, "elvine") == 0)\{\par
+            if(m_sPlayerY == 277 ) \{\par
+                if((m_sPlayerX>=21) && (m_sPlayerX<=26)) \{ SetTopMsg( DEF_MSG_GETNEXTMOVEDIR, 5 ); return;\}\par
+            \}\par
+            if(m_sPlayerY == 274 )    \{\par
+                if((m_sPlayerX>=250) && (m_sPlayerX<=257)) \{ SetTopMsg( DEF_MSG_GETNEXTMOVEDIR, 5 ); return;\}\par
+            \}\par
+        \}\par
+    \}\par
+\par
+\par
+// No permite el ingreso a edificios enemigos // www.mundohelbreath.com\par
+// Ciudad de ELVINE, cordenadas DEFAULT\par
+\par
+    if ((strcmp(m_cMapName, "elvine") == 0)&&(strcmp(m_cLocation, "aresden") == 0))\{\par
+\par
+             //CityHall\par
+        if     (((m_sPlayerX  == 135) && (m_sPlayerY == 133))  || \par
+             ((m_sPlayerX == 136) && (m_sPlayerY == 133))  ||\par
+             ((m_sPlayerX == 137) && (m_sPlayerY == 133))  ||            \par
+             ((m_sPlayerX == 137) && (m_sPlayerY == 132))  ||\par
+             ((m_sPlayerX == 144) && (m_sPlayerY == 127))  ||\par
+             ((m_sPlayerX == 145) && (m_sPlayerY == 127))  ||\par
+             ((m_sPlayerX == 145) && (m_sPlayerY == 126))  ||\par
+             ((m_sPlayerX == 146) && (m_sPlayerY == 126))  ||\par
+             \par
+             //Shop\par
+             ((m_sPlayerX == 225) && (m_sPlayerY == 151))  ||\par
+             ((m_sPlayerX == 225) && (m_sPlayerY == 152))  ||\par
+             ((m_sPlayerX == 226) && (m_sPlayerY == 152))  ||\par
+             ((m_sPlayerX == 229) && (m_sPlayerY == 152))  ||\par
+             ((m_sPlayerX == 230) && (m_sPlayerY == 151))  ||\par
+\par
+             //WereHouse\par
+             ((m_sPlayerX == 198) && (m_sPlayerY == 128))  ||\par
+             ((m_sPlayerX == 203) && (m_sPlayerY == 129))  ||\par
+\par
+             //BlackSmith\par
+             ((m_sPlayerX == 229) && (m_sPlayerY == 112))  ||\par
+             ((m_sPlayerX == 229) && (m_sPlayerY == 113))  ||\par
+             ((m_sPlayerX == 230) && (m_sPlayerY == 113))  ||\par
+             ((m_sPlayerX == 239) && (m_sPlayerY == 107))  ||\par
+             ((m_sPlayerX == 240) && (m_sPlayerY == 107))  ||\par
+             ((m_sPlayerX == 241) && (m_sPlayerY == 107))  ||\par
+             ((m_sPlayerX == 241) && (m_sPlayerY == 106))  ||\par
+\par
+             //WereHouse 2\par
+             ((m_sPlayerX == 88) && (m_sPlayerY == 175))  ||\par
+             ((m_sPlayerX == 93) && (m_sPlayerY == 176))  ||\par
+\par
+            \par
+             //GuildHall\par
+             ((m_sPlayerX == 76) && (m_sPlayerY == 141))  ||\par
+             ((m_sPlayerX == 77) && (m_sPlayerY == 141))  ||\par
+             ((m_sPlayerX == 78) && (m_sPlayerY == 141))  ||\par
+             ((m_sPlayerX == 77) && (m_sPlayerY == 140))  ||\par
+\par
+             //MagicShop\par
+             ((m_sPlayerX == 180) && (m_sPlayerY == 77))  ||\par
+             ((m_sPlayerX == 181) && (m_sPlayerY == 77))  ||\par
+             ((m_sPlayerX == 181) && (m_sPlayerY == 76))  ||\par
+\par
+             //Cathedral\par
+             ((m_sPlayerX == 131) && (m_sPlayerY == 77))  ||\par
+             ((m_sPlayerX == 132) && (m_sPlayerY == 77))  ||\par
+             ((m_sPlayerX == 132) && (m_sPlayerY == 76))  ||\par
+             ((m_sPlayerX == 133) && (m_sPlayerY == 76))  ||\par
+\par
+             //Dungeon\par
+             ((m_sPlayerX == 258) && (m_sPlayerY == 82))  ||\par
+             ((m_sPlayerX == 258) && (m_sPlayerY == 83))  ||\par
+             ((m_sPlayerX == 259) && (m_sPlayerY == 82))  ||\par
+             ((m_sPlayerX == 259) && (m_sPlayerY == 81))  ||\par
+             ((m_sPlayerX == 260) && (m_sPlayerY == 81))  ||\par
+\par
+             //Farm\par
+             ((m_sPlayerX == 277) && (m_sPlayerY == 192))  ||\par
+             ((m_sPlayerX == 277) && (m_sPlayerY == 193))  ||\par
+             ((m_sPlayerX == 277) && (m_sPlayerY == 194))  ||\par
+             ((m_sPlayerX == 277) && (m_sPlayerY == 195))  ||\par
+             ((m_sPlayerX == 277) && (m_sPlayerY == 196))  ||\par
+             ((m_sPlayerX == 277) && (m_sPlayerY == 197))  ||\par
+             ((m_sPlayerX == 277) && (m_sPlayerY == 198))  ||\par
+             ((m_sPlayerX == 277) && (m_sPlayerY == 199))  ||\par
+\par
+             //ComanderHall\par
+             ((m_sPlayerX == 213) && (m_sPlayerY == 89))   ||\par
+             ((m_sPlayerX == 214) && (m_sPlayerY == 89))   ||\par
+             ((m_sPlayerX == 214) && (m_sPlayerY == 88))   ||\par
+             ((m_sPlayerX == 220) && (m_sPlayerY == 87))  ||\par
+             ((m_sPlayerX == 221) && (m_sPlayerY == 87))  ||\par
+             ((m_sPlayerX == 222) && (m_sPlayerY == 87)))\par
+            \par
+            \{\par
+            AddEventList(    , 10);\par
+            return;\par
+        \}\par
+    \}\par
+// No permite el ingreso a edificios enemigos // www.mundohelbreath.com\par
+// Ciudad de ELVINE, cordenadas DEFAULT\par
+\par
+\par
+///////////////////////////////////////////////////////////////////////\par
+\par
+// No permite el ingreso a edificios enemigos // www.mundohelbreath.com\par
+// Ciudad de ARESDEN, cordenadas DEFAULT\par
+\par
+    if ((strcmp(m_cMapName, "aresden") == 0)&&(strcmp(m_cLocation, "elvine") == 0))\{\par
+\par
+             //CityHall\par
+        if     (((m_sPlayerX  == 144) && (m_sPlayerY == 123))  || \par
+             ((m_sPlayerX == 145) && (m_sPlayerY == 123))  ||\par
+             ((m_sPlayerX == 145) && (m_sPlayerY == 122))  ||            \par
+             ((m_sPlayerX == 146) && (m_sPlayerY == 122))  ||\par
+             ((m_sPlayerX == 135) && (m_sPlayerY == 129))  ||\par
+             ((m_sPlayerX == 136) && (m_sPlayerY == 129))  ||\par
+             ((m_sPlayerX == 137) && (m_sPlayerY == 129))  ||\par
+             ((m_sPlayerX == 137) && (m_sPlayerY == 128))  ||\par
+             \par
+             //Shop\par
+             ((m_sPlayerX == 126) && (m_sPlayerY == 166))  ||\par
+             ((m_sPlayerX == 126) && (m_sPlayerY == 167))  ||\par
+             ((m_sPlayerX == 127) && (m_sPlayerY == 167))  ||\par
+             ((m_sPlayerX == 130) && (m_sPlayerY == 167))  ||\par
+             ((m_sPlayerX == 131) && (m_sPlayerY == 166))  ||\par
+\par
+             //WereHouse\par
+             ((m_sPlayerX == 102) && (m_sPlayerY == 184))  ||\par
+             ((m_sPlayerX == 107) && (m_sPlayerY == 185))  ||\par
+\par
+             //BlackSmith\par
+             ((m_sPlayerX == 157) && (m_sPlayerY == 200))  ||\par
+             ((m_sPlayerX == 157) && (m_sPlayerY == 201))  ||\par
+             ((m_sPlayerX == 158) && (m_sPlayerY == 201))  ||\par
+             ((m_sPlayerX == 167) && (m_sPlayerY == 195))  ||\par
+             ((m_sPlayerX == 168) && (m_sPlayerY == 195))  ||\par
+             ((m_sPlayerX == 169) && (m_sPlayerY == 195))  ||\par
+             ((m_sPlayerX == 169) && (m_sPlayerY == 194))  ||\par
+\par
+             //WereHouse 2\par
+             ((m_sPlayerX == 218) && (m_sPlayerY == 113))  ||\par
+             ((m_sPlayerX == 223) && (m_sPlayerY == 134))  ||\par
+\par
+            \par
+             //GuildHall\par
+             ((m_sPlayerX == 112) && (m_sPlayerY == 97))  ||\par
+             ((m_sPlayerX == 113) && (m_sPlayerY == 97))  ||\par
+             ((m_sPlayerX == 114) && (m_sPlayerY == 97))  ||\par
+             ((m_sPlayerX == 113) && (m_sPlayerY == 96))  ||\par
+\par
+             //MagicShop\par
+             ((m_sPlayerX == 55) && (m_sPlayerY == 118))  ||\par
+             ((m_sPlayerX == 56) && (m_sPlayerY == 118))  ||\par
+             ((m_sPlayerX == 57) && (m_sPlayerY == 117))  ||\par
+\par
+             //Cathedral\par
+             ((m_sPlayerX == 185) && (m_sPlayerY == 93))  ||\par
+             ((m_sPlayerX == 186) && (m_sPlayerY == 93))  ||\par
+             ((m_sPlayerX == 186) && (m_sPlayerY == 92))  ||\par
+             ((m_sPlayerX == 187) && (m_sPlayerY == 92))  ||\par
+\par
+             //Dungeon\par
+             ((m_sPlayerX == 78) && (m_sPlayerY == 211))  ||\par
+             ((m_sPlayerX == 78) && (m_sPlayerY == 210))  ||\par
+             ((m_sPlayerX == 79) && (m_sPlayerY == 210))  ||\par
+             ((m_sPlayerX == 79) && (m_sPlayerY == 209))  ||\par
+             ((m_sPlayerX == 80) && (m_sPlayerY == 209))  ||\par
+\par
+             //Farm\par
+             ((m_sPlayerX == 279) && (m_sPlayerY == 203))  ||\par
+             ((m_sPlayerX == 279) && (m_sPlayerY == 204))  ||\par
+             ((m_sPlayerX == 279) && (m_sPlayerY == 205))  ||\par
+             ((m_sPlayerX == 279) && (m_sPlayerY == 206))  ||\par
+             ((m_sPlayerX == 279) && (m_sPlayerY == 207))  ||\par
+             ((m_sPlayerX == 279) && (m_sPlayerY == 208))  ||\par
+             ((m_sPlayerX == 279) && (m_sPlayerY == 209))  ||\par
+             ((m_sPlayerX == 279) && (m_sPlayerY == 210))  ||\par
+\par
+             //ComanderHall\par
+             ((m_sPlayerX == 94) && (m_sPlayerY == 161))   ||\par
+             ((m_sPlayerX == 95) && (m_sPlayerY == 161))   ||\par
+             ((m_sPlayerX == 95) && (m_sPlayerY == 160))   ||\par
+             ((m_sPlayerX == 101) && (m_sPlayerY == 159))  ||\par
+             ((m_sPlayerX == 102) && (m_sPlayerY == 159))  ||\par
+             ((m_sPlayerX == 103) && (m_sPlayerY == 159)))\par
+                \par
+            \{\par
+            AddEventList(REQUEST_TELEPORT_AND_WAIT_DATA2, 10);\par
+            return;\par
+        \}\par
+    \}\par
+    bSendCommand(MSGID_REQUEST_TELEPORT, NULL, NULL, NULL, NULL, NULL, NULL);\par
+    ChangeGameMode(DEF_GAMEMODE_ONWAITINGINITDATA);\par
+\}\par
+// No permite el ingreso a edificios enemigos // www.mundohelbreath.com\par
+// Ciudad de ARESDEN, cordenadas DEFAULT\par
+Tambien pueden agregar en LAN_ENG.h (Opcional) para que cuando se pare uno en la coordenada y no lo deje ingresar al edificio, le salga un msj.\par
+\par
+C\'f3digo:\par
+#define    REQUEST_TELEPORT_AND_WAIT_DATA2 "Mensaja que saldra"\par
+\par
+\par
+---\par
+\par
+\par
+como te dije por msn, coord por coord, es malisimo \'ac\'ac\par
+\par
+C\'f3digo:\par
+//Dungeon\par
+             ((m_sPlayerX == 78) && (m_sPlayerY == 211))  ||\par
+             ((m_sPlayerX == 78) && (m_sPlayerY == 210))  ||\par
+             ((m_sPlayerX == 79) && (m_sPlayerY == 210))  ||\par
+             ((m_sPlayerX == 79) && (m_sPlayerY == 209))  ||\par
+             ((m_sPlayerX == 80) && (m_sPlayerY == 209))  ||\par
+Podria hacerse...\par
+\par
+\par
+C\'f3digo:\par
+//Dungeon\par
+             (((m_sPlayerX >= 78) &&(m_sPlayerX <= 80) ) &&\par
+             ((m_sPlayerY >= 209) && (m_sPlayerY <= 211)))\par
+No parece mucha la reduccion, pero ahorras mas de lo que pensas ;), en lo que son lineas de codigo...\par
+\par
+He inclusive, podrias reducir todo el codigo...\par
+\par
+\par
+ya que no necesitas un if, tan amplio... pero eso lo dejo para que lo piensen ^^\par
+\par
+Cya!\par
+\par
+EDIT: en un source, si mal recuerdo, vi en comentado, snoopy... capas flasheo...\par
+}
+ 

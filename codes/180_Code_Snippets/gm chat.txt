@@ -1,0 +1,71 @@
+case '*': //Change GM Chat
+		*cp = 32;
+
+		if ((strlen(cp) < 90) && (m_pClientList[iClientH]->m_iAdminUserLevel > 0)) {
+			ZeroMemory(cTemp, sizeof(cTemp));
+			cp2 = (char *)cTemp;
+			*cp2 = GSM_CHATMSG;
+			cp2++;
+			*cp2 = 11;
+			cp2++;
+			ip = (int *)cp2;
+			*ip = NULL;
+			cp2 += 4;
+			memcpy(cp2, m_pClientList[iClientH]->m_cCharName, 10);
+			cp2 += 10;
+			wp  = (WORD *)cp2;
+			*wp = (WORD)strlen(cp);
+			cp2 += 2;
+			strcpy(cp2, cp);
+			cp2 += strlen(cp);
+			bStockMsgToGateServer(cTemp, strlen(cp) + 18);
+			cSendMode = 11;
+		}
+		break;
+cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 16);
+	*cp = cSendMode;
+	if (cSendMode == 11)
+		*cp = 1;
+	else
+		*cp = cSendMode;
+
+case 11://Change GM Chat
+
+				for (i = 1; i < DEF_MAXCLIENTS; i++)
+				{
+					if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_iAdminUserLevel > 0))
+						iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
+				}
+				break;
+case 11://Change GM Chat
+		ZeroMemory(cTemp, sizeof(cTemp));
+
+		dwp = (DWORD *)cTemp;
+		*dwp = MSGID_COMMAND_CHATMSG;
+
+		wp  = (WORD *)(cTemp + DEF_INDEX2_MSGTYPE);
+		*wp = NULL;
+
+		cp  = (char *)(cTemp + DEF_INDEX2_MSGTYPE + 2);
+		sp  = (short *)cp;
+		*sp = NULL;
+		cp += 2;
+
+		sp  = (short *)cp;
+		*sp = NULL;
+		cp += 2;
+
+		memcpy(cp, pName, 10);
+		cp += 10;
+
+		*cp = 1;
+		cp++;
+
+		memcpy(cp, pData, dwMsgSize);
+		cp += dwMsgSize;
+		for (i = 1; i < DEF_MAXCLIENTS; i++)
+		{
+			if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_iAdminUserLevel > 0))
+				iRet = m_pClientList[i]->m_pXSock->iSendMsg(cTemp, dwMsgSize +22);
+		}
+		break;

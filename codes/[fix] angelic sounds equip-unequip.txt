@@ -1,0 +1,58 @@
+Buscan:  (search)
+
+if (m_bIsItemEquipped[m_stMCursor.sSelectedObjectID] == TRUE) 
+
+Reemplazan (replace)
+
+
+			AddEventList(G_cTxt, 10);
+			if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPendant", 14) == 0) PlaySound('E', 53, 5);
+			else PlaySound('E', 29, 0);
+
+
+Por (for)
+
+			AddEventList(G_cTxt, 10);
+			if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPandent(STR)", 14) == 0) PlaySound('E', 53, 5);
+			if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPandent(DEX)", 14) == 0) PlaySound('E', 53, 5);
+			if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPandent(INT)", 14) == 0) PlaySound('E', 53, 5);
+			if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPandent(MAG)", 14) == 0) PlaySound('E', 53, 5);
+			else PlaySound('E', 29, 0);
+
+despues buscan: (search)
+
+wsprintf(G_cTxt, BITEMDROP_CHARACTER9, cStr1);
+
+y reemplazan (replace
+
+
+	AddEventList(G_cTxt, 10);
+	PlaySound('E', 28, 0);
+
+por (for)
+
+	AddEventList(G_cTxt, 10);
+		if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPandent(STR)", 14) == 0) PlaySound('E', 52, 0);
+		if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPandent(DEX)", 14) == 0) PlaySound('E', 52, 0);
+		if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPandent(INT)", 14) == 0) PlaySound('E', 52, 0);
+		if(memcmp(m_pItemList[m_stMCursor.sSelectedObjectID]->m_cName, "AngelicPandent(MAG)", 14) == 0) PlaySound('E', 52, 0);
+		else PlaySound('E', 28, 0);
+
+y por ultimo buscan: (search)
+
+void CGame::NotifyMsg_ItemReleased(char * pData)
+
+reemplazan (replace)
+
+	if(memcmp(m_pItemList[sItemIndex]->m_cName, "AngelicPendant", 14) == 0) PlaySound('E', 53, 0);
+	else PlaySound('E', 29, 0);
+
+
+por (for):
+
+
+	if(memcmp(m_pItemList[sItemIndex]->m_cName, "AngelicPandent(STR)", 14) == 0) PlaySound('E', 53, 0);
+	if(memcmp(m_pItemList[sItemIndex]->m_cName, "AngelicPandent(DEX)", 14) == 0) PlaySound('E', 53, 0);
+	if(memcmp(m_pItemList[sItemIndex]->m_cName, "AngelicPandent(INT)", 14) == 0) PlaySound('E', 53, 0);
+	if(memcmp(m_pItemList[sItemIndex]->m_cName, "AngelicPandent(MAG)", 14) == 0) PlaySound('E', 53, 0);
+	else PlaySound('E', 29, 0);

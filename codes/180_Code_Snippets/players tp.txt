@@ -1,0 +1,138 @@
+		// juggalo2 players tp
+if (memcmp(cp, "/aresdentp ", 10) == 0) {
+  	if (iClientList[iClientH]->m_iGizonItemUpgradeLeft >= 15000)  {
+  	SetItemCount(iClientList[sClientH]->m_iGizonUpgradeLeft -= 15000);
+	PlayersOrder_AresdenTP(iClientH, cp, dwMsgSize - 21);
+			return;
+		}
+	}
+if (memcmp(cp, "/elvinetp ", 10) == 0) {
+	if (iClientList[iClientH]->m_iGizonItemUpgradeLeft >= 15000)  {
+  	SetItemCount(iClientH, "Gold", dwGetItemCount(iClientH, "Gold") - 15000);
+	PlayersOrder_ElvineTP(iClientH, cp, dwMsgSize - 21);
+			return;
+		}
+}
+
+void PlayersOrder_AresdenTP(int iClientH, char * pData, DWORD dwMsgSize);
+void PlayersOrder_ElvineTP(int iClientH, char * pData, DWORD dwMsgSize);
+
+void CGame::PlayersOrder_AresdenTP(int iClientH, char * pData, DWORD dwMsgSize)
+{
+ char   seps[] = "= \t\n";
+ char   * token, cBuff[256], cMapName[256];
+ class  CStrTok * pStrTok;
+ register int dX, dY;
+ BOOL   bFlag;
+
+	dX = dY = -1;
+
+	if (m_pClientList[iClientH] == NULL) return;
+	if ((dwMsgSize)	<= 0) return;
+
+	
+	
+
+	ZeroMemory(cBuff, sizeof(cBuff));
+	memcpy(cBuff, pData, dwMsgSize);
+
+	pStrTok = new class CStrTok(cBuff, seps);
+	token = pStrTok->pGet();
+	
+	token = pStrTok->pGet();
+	if (token != NULL) {
+		ZeroMemory(cMapName, sizeof(cMapName));
+		strcpy(cMapName, token);
+	}
+
+	token = pStrTok->pGet();
+	if (token != NULL) {
+		dX = atoi(token);
+	}
+
+	token = pStrTok->pGet();
+	if (token != NULL) {
+		dY = atoi(token);
+	}
+
+	bFlag = FALSE;
+	if (strcmp("arewrhus", cMapName) == 0) bFlag = TRUE;
+	if (strcmp("bsmith_1", cMapName) == 0) bFlag = TRUE;
+	if (strcmp("cath_1", cMapName) == 0) bFlag = TRUE;
+	if (strcmp("gldhall_1", cMapName) == 0) bFlag = TRUE;
+	if (strcmp("gshop_1", cMapName) == 0) bFlag = TRUE;
+	if (strcmp("wrhus_1", cMapName) == 0) bFlag = TRUE;
+	if (strcmp("wzdtwr_1", cMapName) == 0) bFlag = TRUE;
+	
+	
+
+if (bFlag == TRUE)
+            if (memcmp(m_pClientList[iClientH]->m_cLocation, "aresden",7) == 0 ) {
+		RequestTeleportHandler(iClientH, "2   ", cMapName, dX, dY);
+   	
+	delete pStrTok;
+	return;
+}
+}
+
+void CGame::PlayersOrder_ElvineTP(int iClientH, char * pData, DWORD dwMsgSize)
+{
+ char   seps[] = "= \t\n";
+ char   * token, cBuff[256], cMapName[256];
+ class  CStrTok * pStrTok;
+ register int dX, dY;
+ BOOL   bFlag;
+
+	dX = dY = -1;
+
+	if (m_pClientList[iClientH] == NULL) return;
+	if ((dwMsgSize)	<= 0) return;
+
+	
+
+	ZeroMemory(cBuff, sizeof(cBuff));
+	memcpy(cBuff, pData, dwMsgSize);
+
+	pStrTok = new class CStrTok(cBuff, seps);
+	token = pStrTok->pGet();
+	
+	token = pStrTok->pGet();
+	if (token != NULL) {
+		ZeroMemory(cMapName, sizeof(cMapName));
+		strcpy(cMapName, token);
+	}
+
+	token = pStrTok->pGet();
+	if (token != NULL) {
+		dX = atoi(token);
+	}
+
+	token = pStrTok->pGet();
+	if (token != NULL) {
+		dY = atoi(token);
+	}
+
+	bFlag = FALSE;
+	if (strcmp("bsmith_2", cMapName) == 0) bFlag = TRUE;
+	if (strcmp("cath_2", cMapName) == 0)      bFlag = TRUE;
+	if (strcmp("elvwrhus", cMapName) == 0) bFlag = TRUE;
+	if (strcmp("gldhall_2", cMapName) == 0)   bFlag = TRUE;
+	if (strcmp("gshop_2", cMapName) == 0)     bFlag = TRUE;
+	if (strcmp("wrhus_2", cMapName) == 0)     bFlag = TRUE;
+	if (strcmp("wzdtwr_2", cMapName) == 0) bFlag = TRUE;
+
+	
+
+if (bFlag == TRUE)
+              if (memcmp(m_pClientList[iClientH]->m_cLocation, "elvine",6) == 0 ) {
+		RequestTeleportHandler(iClientH, "2   ", cMapName, dX, dY);
+   	
+	delete pStrTok;
+	return;
+}
+}
+
+
+
+
+

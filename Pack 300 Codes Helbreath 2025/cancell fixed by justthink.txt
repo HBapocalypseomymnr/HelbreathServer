@@ -1,0 +1,65 @@
+El bug del cancell consiste en que luego de recibir varias veces la magia, los efectos de las protecciones duran menos... Aca les traigo el fix.. testeado (bastante largo por cierto xD), anda 100%..
+
+En la clase CGame deben agregar el siguiente metodo:
+Código:
+CDelayEvent *CGame::GetDelayEvent(int fromIndex, char ownerType, int iEffectType)
+{
+	for (int i = 0; i < DEF_MAXDELAYEVENTS; i++)
+	{
+		if (m_pDelayEventList[i] != NULL)
+		{
+			if ((m_pDelayEventList[i]->m_iTargetH == fromIndex) 
+				&& (m_pDelayEventList[i]->m_cTargetType == ownerType) 
+				&& (m_pDelayEventList[i]->m_iEffectType == iEffectType)) 
+			{
+				return m_pDelayEventList[i];
+			}
+		}
+	}
+
+	return NULL;
+}
+Este metodo, la funcion que cumple es la de devolver el puntero con la informacion del objeto Delay, que contiene el timer de la magia del cliente.. Teniendo esto lo unico que tenemos que hacer es modificar el timer de la magia cuando recibimos un cancell..
+
+Busquen:
+Código:
+case DEF_MAGICTYPE_CANCELLATION:
+Reemplazeen todo el case (hasta el break) por esto:
+Código:
+case DEF_MAGICTYPE_CANCELLATION:
+					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
+					if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) 
+						&& (m_pClientList[sOwnerH] != NULL) 
+						&& (m_pClientList[sOwnerH]->m_iHP > 0) 
+						&& (m_pClientList[sOwnerH]->m_iAdminUserLevel == 0)) 
+					{	
+						CDelayEvent *clientMagic;
+
+						clientMagic = GetDelayEvent((int)sOwnerH, cOwnerType, DEF_MAGICTYPE_INVISIBILITY);
+						if (clientMagic != NULL)
+							clientMagic->m_dwTriggerTime = 0;
+
+						clientMagic = GetDelayEvent((int)sOwnerH, cOwnerType, DEF_MAGICTYPE_BERSERK);
+						if (clientMagic != NULL)							
+							clientMagic->m_dwTriggerTime = 0;
+
+						clientMagic = GetDelayEvent((int)sOwnerH, cOwnerType, DEF_MAGICTYPE_CONFUSE);
+						if (clientMagic != NULL)
+							clientMagic->m_dwTriggerTime = 0;
+
+						clientMagic = GetDelayEvent((int)sOwnerH, cOwnerType, DEF_MAGICTYPE_INHIBITION);
+						if (clientMagic != NULL)
+							clientMagic->m_dwTriggerTime = 0;
+
+						clientMagic = GetDelayEvent((int)sOwnerH, cOwnerType, DEF_MAGICTYPE_PROTECT);
+						if (clientMagic != NULL)
+							clientMagic->m_dwTriggerTime = 0;
+						
+						// Update Client
+						SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
+					}
+					break;
+Y listo, ya tiene solucionado el tema !
+
+
+Saludos..

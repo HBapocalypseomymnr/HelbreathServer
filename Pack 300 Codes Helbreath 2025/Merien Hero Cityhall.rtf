@@ -1,0 +1,504 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Colors can be changed... I just made it this way to make it visible.\par
+\par
+Basicly I copied the Hero's Client and HG codes, changed the Items, add some definitions, notyfies, headers, whatever (sorry I still don't know much of C++) and maybe there are some functions that would be useless, or an easier way to do it but anyway, any developer may do the edit to the code...\par
+\par
+First on Client side, NetMessages.h add:\par
+\par
+CODE\par
+#define DEF_COMMONTYPE_REQ_GETMERIENHEROMANTLE\tab 0x0???\par
+\par
+???= The number you want but must not be in use.\par
+\par
+Go for LAN_ENG.H and add\par
+\par
+CODE\par
+\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU12\tab "Take Merien Hero Item"\par
+#define\tab DRAW_DIALOGBOX_CITYHALL_MENU78\tab "Merien's Cape (EK 800)"\par
+#define\tab DRAW_DIALOGBOX_CITYHALL_MENU79\tab "Merien's Helm (EK 700 - Contrib 200)"\par
+#define\tab DRAW_DIALOGBOX_CITYHALL_MENU80\tab "Merien's Cap (EK 650 - Contrib 200)"\par
+#define\tab DRAW_DIALOGBOX_CITYHALL_MENU81\tab "Merien's Armor (EK 1100 - Contrib 300)"\par
+#define\tab DRAW_DIALOGBOX_CITYHALL_MENU82\tab "Merien's Robe (EK 1000 - Contrib 200)"\par
+#define\tab DRAW_DIALOGBOX_CITYHALL_MENU83\tab "Merien's Hauberk (EK 600 - Contrib 100)"\par
+#define\tab DRAW_DIALOGBOX_CITYHALL_MENU84\tab "Merien's Leggings (EK 800 - Contrib 150)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU87\tab "Here are the available MERIEN items :"\par
+\par
+\par
+Of course, you can change the values and everything here... since it's only what's gonna be shown on the client.\par
+\par
+Go then to Game.cpp search:\par
+\par
+CODE\par
+if ( m_bIsCrusadeMode && m_bCitizen )\par
+\par
+\par
+Under the whole function add:\par
+\par
+CODE\par
+// MERIEN HEROS BY BLIZAGA\par
+ if ((m_iEnemyKillCount >= 100) && (m_iContribution >= 10))\par
+ \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 280))\par
+    PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU12, 255,0,100);\par
+ \tab else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU12, 0,255,0);\par
+ \}else    PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU12, 65,65,65);\par
+\par
+ \par
+\par
+Don't forget the break; at the end.\par
+\par
+Right after on the cases, add at the end:\par
+\par
+\par
+\par
+CODE\par
+case 12: // TRADE MERIEN HERO BY BLIZAGA\par
+ PutAlignedString(sX, sX + szX, sY + 60,  DRAW_DIALOGBOX_CITYHALL_MENU87, 255,0,100);// Here are the Hero's Item aivable :\par
+ // Merien Hero's Cape (EK 800)\par
+ if (m_iEnemyKillCount >= 800)\par
+ \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 110))\par
+    PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU78, 255,0,100);// On mouse over Mode\par
+ \tab else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU78, 0,255,0);// Normal Mode\par
+ \}\par
+ else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU78, 65,65,65);// Disabled Mode\par
+ // Merien Hero's Helm (EK 700 - Contrib 200)\par
+ if ((m_iEnemyKillCount >= 700) && (m_iContribution >= 200)) \par
+ \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 140))\par
+    PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU79, 255,0,100);// On mouse over Mode\par
+ \tab else PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU79, 0,255,0);// Normal Mode\par
+ \}\par
+ else PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU79, 65,65,65);// Disabled Mode\par
+ // Merien Hero's Cap (EK 650 - Contrib 200)"\par
+ if ((m_iEnemyKillCount >= 650) && (m_iContribution >= 200)) \par
+ \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 155) && (msY < sY + 170))\par
+    PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU80, 255,0,100);// On mouse over Mode\par
+ \tab else PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU80, 0,255,0);// Normal Mode\par
+ \}\par
+ else PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU80, 65,65,65);// Disabled Mode\par
+ // Merien Hero's Armor (EK 1100 - Contrib 300)\par
+ if ((m_iEnemyKillCount >= 1100) && (m_iContribution >= 300)) \par
+ \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 185) && (msY < sY + 200))\par
+    PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU81, 255,0,100);// On mouse over Mode\par
+ \tab else PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU81, 0,255,0);// Normal Mode\par
+ \}\par
+ else PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU81, 65,65,65);// Disabled Mode\par
+ // Merien Hero's Robe (EK 1000 - Contrib 200)\par
+ if ((m_iEnemyKillCount >= 1000) && (m_iContribution >= 200)) \par
+ \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 215) && (msY < sY + 230))\par
+    PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU82, 255,0,100);// On mouse over Mode\par
+ \tab else PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU82, 0,255,0);// Normal Mode\par
+ \}\par
+ else PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU82, 65,65,65);// Disabled Mode\par
+ // Merien Hero's Hauberk (EK 600 - Contrib 100)\par
+ if ((m_iEnemyKillCount >= 600) && (m_iContribution >= 100)) \par
+ \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 260))\par
+    PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU83, 255,0,100);// On mouse over Mode\par
+ \tab else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU83, 0,255,0);// Normal Mode\par
+ \}\par
+ else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU83, 65,65,65);// Disabled Mode\par
+ // Merien Hero's Leggings (EK 800 - Contrib 150)\par
+ if ((m_iEnemyKillCount >= 800) && (m_iContribution >= 150)) \par
+ \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 275) && (msY < sY + 290))\par
+    PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU84, 255,0,100);// On mouse over Mode\par
+ \tab else PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU84, 0,255,0);// Normal Mode\par
+ \}\par
+ else PutAlignedString(sX, sX + szX, sY + 275, DRAW_DIALOGBOX_CITYHALL_MENU84, 65,65,65);// Disabled Mode\par
+ \par
+ break;\par
+\par
+ case 13: //dPREGUNTAR PAEA OBTENER MERIEN HERO\par
+ PutAlignedString(sX,sX+szX-1,sY+125,m_cTakeItemName, 255,0,100);\par
+ PutAlignedString(sX+1,sX+szX,sY+125,m_cTakeItemName, 255,0,100);\par
+ PutAlignedString(sX,sX+szX,sY+260,DRAW_DIALOGBOX_CITYHALL_MENU46B, 55,25,25); // would you like..\par
+ if (   (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX)\par
+ \tab && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+    DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);\par
+ else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);\par
+ if (   (msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX)\par
+ \tab && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+    DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);\par
+ else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);\par
+ break;\par
+\}\par
+\}\par
+\par
+\par
+There we finished with the DrawDialogBox_CityHallMenu void, after search the\par
+\par
+CODE\par
+void CGame::DlgBoxClick_CityhallMenu(short msX, short msY)\par
+\par
+\par
+you should see ' code 0 ', at the end of that 'code 0 ' add:\par
+\par
+CODE\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 280))//MERIEN BY BLIZ\par
+ \{\tab if (m_iEnemyKillCount < 100) return;\par
+ \tab m_stDialogBoxInfo[13].cMode = 12;\par
+ \tab PlaySound('E', 14, 5);\par
+ break;\par
+\par
+follow the pattern, always follow the pattern (thats how I did the code heh).\par
+Right after these, more cases appears, add these ones to the list:\par
+\par
+CODE\par
+case 12: //MERIEN HERO TRADE POR Blizaga\par
+ int iReqItemID;\par
+ \tab // MERIEN HERO CAPE\par
+ \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 95) && (msY <= sY + 110))\par
+ \tab\{\tab if(m_bAresden == TRUE) iReqItemID = 955;\par
+   \tab else iReqItemID = 955;\par
+ \tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+ \tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU78,strlen(DRAW_DIALOGBOX_CITYHALL_MENU78));\par
+   \tab m_stDialogBoxInfo[13].cMode = 13;\par
+   \tab m_stDialogBoxInfo[13].sV1=iReqItemID;\par
+   \tab PlaySound('E', 14, 5);\par
+ \}\par
+ // MERIEN HERO HELM\par
+ \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 125) && (msY <= sY + 140))\par
+ \tab\{\tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 943;\par
+   \tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 944;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 943;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 944;\par
+   \tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+   \tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU79,strlen(DRAW_DIALOGBOX_CITYHALL_MENU79));\par
+   \tab m_stDialogBoxInfo[13].cMode = 13;\par
+   \tab m_stDialogBoxInfo[13].sV1=iReqItemID;\par
+   \tab PlaySound('E', 14, 5);\par
+ \tab\}\par
+ \tab // MERIEN HERO CAP AKI KEDE!!!!!!\par
+ \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 155) && (msY <= sY + 170))\par
+ \tab\{\tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 945;\par
+   \tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 946;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 945;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 946;\par
+   \tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+   \tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU49,strlen(DRAW_DIALOGBOX_CITYHALL_MENU49));\par
+   \tab m_stDialogBoxInfo[13].cMode = 13;\par
+   \tab m_stDialogBoxInfo[13].sV1=iReqItemID;\par
+   \tab PlaySound('E', 14, 5);\par
+ \tab\}\par
+ \tab // MERIEN HERO ARMOR\par
+ \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 185) && (msY <= sY + 200))\par
+ \tab\{  \tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 947;\par
+   \tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 948;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 947;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 948;\par
+   \tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+   \tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU50,strlen(DRAW_DIALOGBOX_CITYHALL_MENU50));\par
+   \tab m_stDialogBoxInfo[13].cMode = 13;\par
+   \tab m_stDialogBoxInfo[13].sV1=iReqItemID;\par
+   \tab PlaySound('E', 14, 5);\par
+ \tab\}\par
+ \tab // MERIEN HERO ROBE\par
+ \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 215) && (msY <= sY + 230))\par
+ \tab\{\tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 949;\par
+   \tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 950;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 949;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 950;\par
+   \tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+   \tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU51,strlen(DRAW_DIALOGBOX_CITYHALL_MENU51));\par
+   \tab m_stDialogBoxInfo[13].cMode = 13;\par
+   \tab m_stDialogBoxInfo[13].sV1=iReqItemID;\par
+   \tab PlaySound('E', 14, 5);\par
+ \tab\}\par
+ \tab // MERIEN HERO HAUBERK\par
+ \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 245) && (msY <= sY + 260))\par
+   \{\tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 951;\par
+   \tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 952;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 951;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 952;\par
+   \tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+   \tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU52,strlen(DRAW_DIALOGBOX_CITYHALL_MENU52));\par
+   \tab m_stDialogBoxInfo[13].cMode = 13;\par
+   \tab m_stDialogBoxInfo[13].sV1=iReqItemID;\par
+   \tab PlaySound('E', 14, 5);\par
+ \tab\}\par
+ \tab // MERIEN HERO LEGGINGS\par
+ \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 275) && (msY <= sY + 290))\par
+ \tab\{  \tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 953;\par
+   \tab if((m_bAresden == TRUE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 954;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 1)) iReqItemID = 953;\par
+   \tab if((m_bAresden == FALSE) && (m_pCharList[m_cCurFocus-1]->m_sSex == 2)) iReqItemID = 954;\par
+   \tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+   \tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU53,strlen(DRAW_DIALOGBOX_CITYHALL_MENU53));\par
+   \tab m_stDialogBoxInfo[13].cMode = 13;\par
+   \tab m_stDialogBoxInfo[13].sV1=iReqItemID;\par
+   \tab PlaySound('E', 14, 5);\par
+ \tab\}\par
+ break;\par
+\par
+ case 13: // MERIEN TRADE YES  BY BLIZ FIXED ORIGINAL BY DRAJWER\par
+  if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+ \{\tab bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETMERIENHEROMANTLE, NULL, m_stDialogBoxInfo[13].sV1, NULL, NULL, NULL);\par
+   \tab m_stDialogBoxInfo[13].cMode = 0;\par
+   \tab PlaySound('E', 14, 5);\par
+ \}\par
+ if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+ \{\tab m_stDialogBoxInfo[13].cMode = 12;\par
+   \tab PlaySound('E', 14, 5);\par
+ \}\par
+ \tab break;\par
+\}\par
+\}\par
+\}\par
+\par
+\par
+Well I guess that is for the Client side, if I miss something let me know on this topic please.\par
+\par
+Now server side...\par
+\par
+Go to NetMessages.h and add\par
+CODE\par
+ #define DEF_COMMONTYPE_REQ_GETMERIENHEROMANTLE  \tab 0x0???\par
+\par
+\par
+Remember: ???= Must be same number in Client side and must be a number that is not in use.\par
+\par
+Search:\par
+\par
+CODE\par
+case DEF_COMMONTYPE_REQ_GETHEROMANTLE:\par
+\par
+\par
+Add under that definition (after the break;):\par
+CODE\par
+case DEF_COMMONTYPE_REQ_GETMERIENHEROMANTLE:\par
+//By Blizaga\par
+ GetMerienHeroMantleHandler(iClientH, iV1, pString);\par
+ break;\par
+\par
+\par
+Then make this void...:\par
+CODE\par
+void CGame::GetMerienHeroMantleHandler(int iClientH,int iItemID,char * pString) //Merien Set Instead Of Normal... bliz\par
+\{ \par
+int   i, iNum, iRet, iEraseReq; \par
+char  * cp, cData[256], cItemName[21]; \par
+class CItem * pItem; \par
+DWORD * dwp; \par
+short * sp; \par
+WORD  * wp; \par
+\par
+if (m_pClientList[iClientH] == NULL) return; \par
+if (m_pClientList[iClientH]->m_iEnemyKillCount < 50) return; \par
+if (m_pClientList[iClientH]->m_cSide == 0) return; \par
+if (_iGetItemSpaceLeft(iClientH) == 0) \{\par
+ SendItemNotifyMsg(iClientH,\tab DEF_NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL);\par
+ return;\par
+\}\par
+\par
+//Prevents a crash if item dosent exist\par
+if (m_pItemConfigList[iItemID] == NULL)  return;\par
+\par
+switch(iItemID) \{ \par
+// MERIEN Hero Cape\par
+case 955: //MERIEN HeroCape\par
+ if(m_pClientList[iClientH]->m_iEnemyKillCount<800) return; \par
+ m_pClientList[iClientH]->m_iEnemyKillCount -= 800; \par
+ break; \par
+\par
+// MERIEN HERO Helm\par
+case 943: //MEROIEMN HeroHelm(M)\par
+case 944: //MERIEN HeroHelm(W)\par
+ if(m_pClientList[iClientH]->m_iEnemyKillCount < 700) return; \par
+ m_pClientList[iClientH]->m_iEnemyKillCount -= 700; \par
+ if(m_pClientList[iClientH]->m_iContribution < 200) return; \par
+ m_pClientList[iClientH]->m_iContribution -= 200; \par
+ break; \par
+\par
+// Hero Cap\par
+case 945: //Aresden HeroCap(M)\par
+case 946: //Aresden HeroCap(W)\par
+ if(m_pClientList[iClientH]->m_iEnemyKillCount < 650) return; \par
+ m_pClientList[iClientH]->m_iEnemyKillCount -= 650; \par
+ if(m_pClientList[iClientH]->m_iContribution < 200) return; \par
+ m_pClientList[iClientH]->m_iContribution -= 200; \par
+ break;\par
+\par
+// Hero Armour\par
+case 947: //Aresden HeroArmour(M)\par
+case 948: //Aresden HeroArmour(W)\par
+ if(m_pClientList[iClientH]->m_iEnemyKillCount < 1100) return; \par
+ m_pClientList[iClientH]->m_iEnemyKillCount -= 1100; \par
+ if(m_pClientList[iClientH]->m_iContribution < 300) return; \par
+ m_pClientList[iClientH]->m_iContribution -= 300; \par
+ break; \par
+\par
+// Hero Robe\par
+case 949: //Aresden HeroRobe(M)\par
+case 950: //Aresden HeroRobe(W)\par
+ if(m_pClientList[iClientH]->m_iEnemyKillCount < 1000) return; \par
+ m_pClientList[iClientH]->m_iEnemyKillCount -= 1000; \par
+ if(m_pClientList[iClientH]->m_iContribution < 200) return; \par
+ m_pClientList[iClientH]->m_iContribution -= 200; \par
+ break; \par
+\par
+// Hero Hauberk\par
+case 951: //Aresden HeroHauberk(M)\par
+case 952: //Aresden HeroHauberk(W)\par
+    if(m_pClientList[iClientH]->m_iEnemyKillCount < 600) return; \par
+    m_pClientList[iClientH]->m_iEnemyKillCount -= 600; \par
+    if(m_pClientList[iClientH]->m_iContribution < 100) return; \par
+    m_pClientList[iClientH]->m_iContribution -= 100; \par
+    break; \par
+\par
+ // Hero Leggings\par
+ case 953: //Aresden HeroLeggings(M)\par
+ case 954: //Aresden HeroLeggings(W)\par
+    if(m_pClientList[iClientH]->m_iEnemyKillCount < 800) return; \par
+    m_pClientList[iClientH]->m_iEnemyKillCount -= 800; \par
+    if(m_pClientList[iClientH]->m_iContribution < 150) return; \par
+    m_pClientList[iClientH]->m_iContribution -= 150; \par
+    break; \par
+\par
+ default: \par
+    return; \par
+    break; \par
+ \} \par
+\par
+ ZeroMemory(cItemName, sizeof(cItemName)); \par
+ memcpy(cItemName,m_pItemConfigList[iItemID]->m_cName,20); \par
+ // ReqPurchaseItemHandler\par
+ iNum = 1; \par
+ for (i = 1; i <= iNum; i++) \par
+ \{ \par
+    pItem = new class CItem; \par
+    if (_bInitItemAttr(pItem, cItemName) == FALSE) \par
+    \{ \par
+       delete pItem; \par
+    \} \par
+    else \{ \par
+                                \par
+       if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) \{ \par
+          if (m_pClientList[iClientH]->m_iCurWeightLoad < 0) m_pClientList[iClientH]->m_iCurWeightLoad = 0; \par
+           \par
+          wsprintf(G_cTxt, "(*) Get MerienHeroItem : Char(%s) Player-EK(%d) Player-Contr(%d) Hero Obtained(%s)", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_iEnemyKillCount, m_pClientList[iClientH]->m_iContribution,cItemName); \par
+          PutLogFileList(G_cTxt); \par
+\par
+          pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+          pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+          pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+          pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+\par
+          dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); \par
+          *dwp = MSGID_NOTIFY; \par
+          wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); \par
+          *wp  = DEF_NOTIFY_ITEMOBTAINED; \par
+          cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); \par
+\par
+          *cp = 1; \par
+          cp++; \par
+           \par
+          memcpy(cp, pItem->m_cName, 20); \par
+          cp += 20; \par
+           \par
+          dwp  = (DWORD *)cp; \par
+          *dwp = pItem->m_dwCount; \par
+          cp += 4; \par
+           \par
+          *cp = pItem->m_cItemType; \par
+          cp++; \par
+           \par
+          *cp = pItem->m_cEquipPos; \par
+          cp++; \par
+           \par
+          *cp = (char)0;\par
+          cp++; \par
+           \par
+          sp  = (short *)cp; \par
+          *sp = pItem->m_sLevelLimit; \par
+          cp += 2; \par
+           \par
+          *cp = pItem->m_cGenderLimit; \par
+          cp++; \par
+           \par
+          wp = (WORD *)cp; \par
+          *wp = pItem->m_wCurLifeSpan; \par
+          cp += 2; \par
+           \par
+          wp = (WORD *)cp; \par
+          *wp = pItem->m_wWeight; \par
+          cp += 2; \par
+           \par
+          sp  = (short *)cp; \par
+          *sp = pItem->m_sSprite; \par
+          cp += 2; \par
+           \par
+          sp  = (short *)cp; \par
+          *sp = pItem->m_sSpriteFrame; \par
+          cp += 2; \par
+\par
+          *cp = pItem->m_cItemColor; \par
+          cp++; \par
+\par
+          *cp = (char)pItem->m_sItemSpecEffectValue2; // v1.41 \par
+          cp++; \par
+           \par
+          dwp = (DWORD *)cp; \par
+          *dwp = pItem->m_dwAttribute; \par
+          cp += 4; \par
+          /* \par
+          *cp = (char)(pItem->m_dwAttribute & 0x00000001); // Custom-Item??? ?? \par
+          cp++; \par
+          */ \par
+                                \par
+          if (iEraseReq == 1) delete pItem; \par
+           \par
+          iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53); \par
+           \par
+          iCalcTotalWeight(iClientH); \par
+           \par
+          switch (iRet) \{ \par
+          case DEF_XSOCKEVENT_QUENEFULL: \par
+          case DEF_XSOCKEVENT_SOCKETERROR: \par
+          case DEF_XSOCKEVENT_CRITICALERROR: \par
+          case DEF_XSOCKEVENT_SOCKETCLOSED: \par
+             DeleteClient(iClientH, TRUE, TRUE); \par
+             return; \par
+          \} \par
+\par
+          SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ENEMYKILLS, m_pClientList[iClientH]->m_iEnemyKillCount, NULL, NULL, NULL); \par
+       \} \par
+       else \par
+       \{ \par
+          delete pItem; \par
+\par
+          iCalcTotalWeight(iClientH); \par
+\par
+          dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); \par
+          *dwp = MSGID_NOTIFY; \par
+          wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); \par
+          *wp  = DEF_NOTIFY_CANNOTCARRYMOREITEM; \par
+           \par
+          iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6); \par
+          switch (iRet) \{ \par
+          case DEF_XSOCKEVENT_QUENEFULL: \par
+          case DEF_XSOCKEVENT_SOCKETERROR: \par
+          case DEF_XSOCKEVENT_CRITICALERROR: \par
+          case DEF_XSOCKEVENT_SOCKETCLOSED: \par
+\par
+             DeleteClient(iClientH, TRUE, TRUE); \par
+             return; \par
+          \} \par
+       \} \par
+    \} \par
+  \} \par
+\}\par
+\par
+\par
+I guess that changing item stuff, names, etc... would also work for you to get different items, still maybe you think its too much shit for only this, but well, it's my first code heh and the code is there for anyone...\par
+\par
+Enjoy.\par
+\par
+I forgot\par
+\par
+Put this on Game.h\par
+[CODE] void CGame::GetMerienHeroMantleHandler(int iClientH,int iItemID,char * pString);\par
+QUOTE\par
+Viva Chile mierda y los CHANCHO EN PIEDRA\par
+\par
+\par
+This post has been edited by Blizaga on Jul 18 2006, 08:02 PM\par
+}
+ 

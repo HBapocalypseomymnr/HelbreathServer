@@ -1,0 +1,174 @@
+Here is a lil code for critical candys, critical potions. Eating one critical Pot/candy will increase your critical attacks # by 1 until you reach your maximum crits.
+
+OPEN ITEM.H
+
+FIND
+
+CODE  
+#define DEF_ITEMEFFECTTYPE_ARMORDYE   32 
+
+
+
+AFTER, ADD
+
+CODE  
+#define DEF_ITEMEFFECTTYPE_CRIT   33 
+
+
+
+
+OPEN GAME.CPP
+
+FIND
+
+CODE  
+case DEF_ITEMEFFECTTYPE_SP:
+  iMax = (2*m_pClientList[iClientH]->m_iStr) + (2*m_pClientList[iClientH]->m_iLevel);
+ 
+  if (m_pClientList[iClientH]->m_iSP < iMax) {
+   
+   if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1 == 0) {
+    iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
+    iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
+    iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue3;
+   }
+   else {
+    iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1;
+    iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2;
+    iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue3;
+   }
+
+   m_pClientList[iClientH]->m_iSP += (iDice(iV1, iV2) + iV3); 
+   if (m_pClientList[iClientH]->m_iSP > iMax) 
+    m_pClientList[iClientH]->m_iSP = iMax;
+
+   iEffectResult = 3;
+  } 
+
+
+
+AFTER, ADD
+
+CODE  
+case DEF_ITEMEFFECTTYPE_CRIT:
+  iMax = m_pClientList[iClientH]->m_iLevel / 10;
+  if (m_pClientList[iClientH]->m_iSuperAttackLeft < iMax) m_pClientList[iClientH]->m_iSuperAttackLeft += 1;
+  iEffectResult = 7;
+  break; 
+
+
+
+FIND
+
+CODE  
+switch (iEffectResult) {
+ case 1:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+  break;
+ case 2:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);
+  break;
+ case 3:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+  break;
+ case 4: // Invincible
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_INVINCIBLE, NULL, NULL, NULL, NULL);
+  break;
+ case 5: // Mana
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_MANA, NULL, NULL, NULL, NULL);
+  break;
+ case 6: // EXP
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_EXP, NULL, NULL, NULL, NULL);
+  break;
+ default:
+  break;
+ } 
+
+
+
+REPLACE WITH
+
+CODE  
+switch (iEffectResult) {
+ case 1:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+  break;
+ case 2:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);
+  break;
+ case 3:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+  break;
+ case 4: // Invincible
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_INVINCIBLE, NULL, NULL, NULL, NULL);
+  break;
+ case 5: // Mana
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_MANA, NULL, NULL, NULL, NULL);
+  break;
+ case 6: // EXP
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_EXP, NULL, NULL, NULL, NULL);
+  break;
+ case 7:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SUPERATTACKLEFT, NULL, NULL, NULL, NULL);
+  break;
+ default:
+  break;
+ } 
+
+
+
+
+Now create the new item in item.cfg
+
+If you want the item to be a potion (red)
+
+CODE  
+Item = xxx CritPotion 7 0 33 0 0 0 0 0 0 1 0 6 1 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+If you want the item to be a potion (bigred)
+
+CODE  
+Item = xxx CritPotion 7 0 33 0 0 0 0 0 0 1 0 6 2 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+If you want the item to be a potion (blue)
+
+CODE  
+Item = xxx CritPotion 7 0 33 0 0 0 0 0 0 1 0 6 3 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+If you want the item to be a potion (bigblue)
+
+CODE  
+Item = xxx CritPotion 7 0 33 0 0 0 0 0 0 1 0 6 4 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+If you want the item to be a potion (green)
+
+CODE  
+Item = xxx CritPotion 7 0 33 0 0 0 0 0 0 1 0 6 5 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+If you want the item to be a potion (biggreen)
+
+CODE  
+Item = xxx CritPotion 7 0 33 0 0 0 0 0 0 1 0 6 6 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+If you want the item to be a candy (red)
+
+CODE  
+Item = xxx CritCandy 7 0 33 0 0 0 0 0 0 1 0 6 131 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+If you want the item to be a candy (blue)
+
+CODE  
+Item = xxx CritCandy 7 0 33 0 0 0 0 0 0 1 0 6 132 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+If you want the item to be a candy (green)
+
+CODE  
+Item = xxx CritCandy 7 0 33 0 0 0 0 0 0 1 0 6 133 -12000 30 -1 0 0 0 0 0 -1 21 0 

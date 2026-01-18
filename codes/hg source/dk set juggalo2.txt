@@ -1,0 +1,439 @@
+/****************************************
+/*************all commands***************
+/****************************************
+// GetDKSet Command by Juggalo2
+ if (memcmp(cp, "/getsangflameberge", 11) == 0) {
+  if (m_pClientList[iClientH]->m_iLevel == 180) 
+	   PlayerOrder_GetSangFlameberge(iClientH);
+ return;
+ }
+
+ if (memcmp(cp, "/getdarkflameberge", 11) == 0) {
+  if (m_pClientList[iClientH]->m_iLevel == 180) 
+	   PlayerOrder_GetDarkFlameberge(iClientH);
+ return;
+ }
+
+ if (memcmp(cp, "/getdarkgreatsword", 11) == 0) {
+  if (m_pClientList[iClientH]->m_iLevel == 180) 
+	   PlayerOrder_GetDarkGreatSword(iClientH);
+ return;
+ }
+
+ if (memcmp(cp, "/getsanggiantsword", 11) == 0) {
+  if (m_pClientList[iClientH]->m_iLevel == 180) 
+	   PlayerOrder_GetSangGiantSword(iClientH);
+ return;
+ }
+
+ if (memcmp(cp, "/getdarkgiantsword", 11) == 0) {
+  if (m_pClientList[iClientH]->m_iLevel == 180) 
+	   PlayerOrder_GetDarkGiantSword(iClientH);
+ return;
+ }
+ if (memcmp(cp, "/getblacktemple", 11) == 0) {
+  if (m_pClientList[iClientH]->m_iLevel == 180) 
+	   PlayerOrder_GetBlackTemple(iClientH);
+ return;
+ }
+
+ if (memcmp(cp, "/getdarkmagewand", 11) == 0) {
+  if (m_pClientList[iClientH]->m_iLevel == 180) 
+	   PlayerOrder_GetDarkMageWand(iClientH);
+ return;
+ }
+
+ if (memcmp(cp, "/getblackmagetemple", 11) == 0) {
+  if (m_pClientList[iClientH]->m_iLevel == 180) 
+	   PlayerOrder_GetBlackMageTemple(iClientH);
+ return;
+ }
+
+
+
+/****************************************
+/***************all wepons***************
+/****************************************
+
+void PlayerOrder_GetSangFlameberge(int iClientH);
+void PlayerOrder_GetDarkFlameberge(int iClientH);
+void PlayerOrder_GetDarkGreatSword(int iClientH);
+void PlayerOrder_GetSangGiantSword(int iClientH);
+void PlayerOrder_GetDarkGiantSword(int iClientH);
+void PlayerOrder_GetBlackTemple(int iClientH);
+
+void PlayerOrder_GetDarkMageWand(int iClientH);
+void PlayerOrder_GetBlackMageTemple(int iClientH);
+
+void CGame::PlayerOrder_GetSangFlameberge(int iClientH)
+{
+int  iResult1, iItemID, iProb, iItemIDs, iEraseReq;
+class CItem * pItem;
+
+ char  * cp, cData[256]; 
+ DWORD * dwp; 
+ short * sp; 
+ WORD  * wp; 
+
+
+
+	//Prevents a crash if item dosent exist
+	if (m_pItemConfigList[iItemID] == NULL)  return;
+ 
+iItemID = 703; // SangAhFlameberge
+
+
+
+		if( iItemID != 0 )
+		{
+		iItemIDs = iItemID;
+		pItem = new class CItem;
+     _bInitItemAttr(pItem, iItemID);
+     if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+		  
+
+
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You Got Your DKSet");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+	  
+		   pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; 
+		   pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; 
+           pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; 
+           pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; 
+
+           dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); 
+           *dwp = MSGID_NOTIFY; 
+           wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); 
+           *wp  = DEF_NOTIFY_ITEMOBTAINED; 
+           cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); 
+  return;
+    }
+   }
+  }
+
+
+void CGame::PlayerOrder_GetDarkFlameberge(int iClientH)
+{
+int  iResult1, iItemID, iProb, iItemIDs, iEraseReq;
+class CItem * pItem;
+
+ char  * cp, cData[256]; 
+ DWORD * dwp; 
+ short * sp; 
+ WORD  * wp; 
+
+
+
+	//Prevents a crash if item dosent exist
+	if (m_pItemConfigList[iItemID] == NULL)  return;
+ 
+iItemID = 709; // DarkKnightFlameberge
+
+
+
+		if( iItemID != 0 )
+		{
+		iItemIDs = iItemID;
+		pItem = new class CItem;
+     _bInitItemAttr(pItem, iItemID);
+     if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+		  
+
+
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You Got Your DKSet");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+	  
+		   pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; 
+		   pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; 
+           pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; 
+           pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; 
+
+           dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); 
+           *dwp = MSGID_NOTIFY; 
+           wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); 
+           *wp  = DEF_NOTIFY_ITEMOBTAINED; 
+           cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); 
+  return;
+    }
+   }
+  }
+
+void CGame::PlayerOrder_GetDarkGreatSword(int iClientH)
+{
+int  iResult1, iItemID, iProb, iItemIDs, iEraseReq;
+class CItem * pItem;
+
+ char  * cp, cData[256]; 
+ DWORD * dwp; 
+ short * sp; 
+ WORD  * wp; 
+
+
+
+	//Prevents a crash if item dosent exist
+	if (m_pItemConfigList[iItemID] == NULL)  return;
+ 
+iItemID = 718; // DarkKnightGreatSword
+
+
+		if( iItemID != 0 )
+		{
+		iItemIDs = iItemID;
+		pItem = new class CItem;
+     _bInitItemAttr(pItem, iItemID);
+     if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+		  
+
+
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You Got Your DKSet");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+	  
+		   pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; 
+		   pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; 
+           pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; 
+           pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; 
+
+           dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); 
+           *dwp = MSGID_NOTIFY; 
+           wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); 
+           *wp  = DEF_NOTIFY_ITEMOBTAINED; 
+           cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); 
+  return;
+    }
+   }
+  }
+
+void CGame::PlayerOrder_GetSangGiantSword(int iClientH)
+{
+int  iResult1, iItemID, iProb, iItemIDs, iEraseReq;
+class CItem * pItem;
+
+ char  * cp, cData[256]; 
+ DWORD * dwp; 
+ short * sp; 
+ WORD  * wp; 
+
+
+
+	//Prevents a crash if item dosent exist
+	if (m_pItemConfigList[iItemID] == NULL)  return;
+ 
+
+iItemID = 736; // SangAhGiantSword
+
+
+
+		if( iItemID != 0 )
+		{
+		iItemIDs = iItemID;
+		pItem = new class CItem;
+     _bInitItemAttr(pItem, iItemID);
+     if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+		  
+
+
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You Got Your DKSet");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+	  
+		   pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; 
+		   pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; 
+           pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; 
+           pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; 
+
+           dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); 
+           *dwp = MSGID_NOTIFY; 
+           wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); 
+           *wp  = DEF_NOTIFY_ITEMOBTAINED; 
+           cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); 
+  return;
+    }
+   }
+  }
+
+void CGame::PlayerOrder_GetDarkGiantSword(int iClientH)
+{
+int  iResult1, iItemID, iProb, iItemIDs, iEraseReq;
+class CItem * pItem;
+
+ char  * cp, cData[256]; 
+ DWORD * dwp; 
+ short * sp; 
+ WORD  * wp; 
+
+
+
+	//Prevents a crash if item dosent exist
+	if (m_pItemConfigList[iItemID] == NULL)  return;
+ 
+
+iItemID = 737; // DarkKnightGiantSword
+
+
+
+		if( iItemID != 0 )
+		{
+		iItemIDs = iItemID;
+		pItem = new class CItem;
+     _bInitItemAttr(pItem, iItemID);
+     if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+		  
+
+
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You Got Your DKSet");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+	  
+		   pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; 
+		   pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; 
+           pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; 
+           pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; 
+
+           dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); 
+           *dwp = MSGID_NOTIFY; 
+           wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); 
+           *wp  = DEF_NOTIFY_ITEMOBTAINED; 
+           cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); 
+  return;
+    }
+   }
+  }
+
+void CGame::PlayerOrder_GetBlackTemple(int iClientH)
+{
+int  iResult1, iItemID, iProb, iItemIDs, iEraseReq;
+class CItem * pItem;
+
+ char  * cp, cData[256]; 
+ DWORD * dwp; 
+ short * sp; 
+ WORD  * wp; 
+
+
+
+	//Prevents a crash if item dosent exist
+	if (m_pItemConfigList[iItemID] == NULL)  return;
+ 
+
+
+iItemID = 745; // BlackKnightTemple
+
+
+		if( iItemID != 0 )
+		{
+		iItemIDs = iItemID;
+		pItem = new class CItem;
+     _bInitItemAttr(pItem, iItemID);
+     if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+		  
+
+
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You Got Your DKSet");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+	  
+		   pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; 
+		   pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; 
+           pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; 
+           pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; 
+
+           dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); 
+           *dwp = MSGID_NOTIFY; 
+           wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); 
+           *wp  = DEF_NOTIFY_ITEMOBTAINED; 
+           cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); 
+  return;
+    }
+   }
+  }
+
+void CGame::PlayerOrder_GetDarkMageWand(int iClientH)
+{
+int  iResult1, iItemID, iProb, iItemIDs, iEraseReq;
+class CItem * pItem;
+
+ char  * cp, cData[256]; 
+ DWORD * dwp; 
+ short * sp; 
+ WORD  * wp; 
+
+
+
+	//Prevents a crash if item dosent exist
+	if (m_pItemConfigList[iItemID] == NULL)  return;
+ 
+
+
+iItemID = 738; // 
+
+
+		if( iItemID != 0 )
+		{
+		iItemIDs = iItemID;
+		pItem = new class CItem;
+     _bInitItemAttr(pItem, iItemID);
+     if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+		  
+
+
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You Got Your DKSet");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+	  
+		   pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; 
+		   pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; 
+           pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; 
+           pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; 
+
+           dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); 
+           *dwp = MSGID_NOTIFY; 
+           wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); 
+           *wp  = DEF_NOTIFY_ITEMOBTAINED; 
+           cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); 
+  return;
+    }
+   }
+  }
+
+void CGame::PlayerOrder_GetBlackMageTemple(int iClientH)
+{
+int  iResult1, iItemID, iProb, iItemIDs, iEraseReq;
+class CItem * pItem;
+
+ char  * cp, cData[256]; 
+ DWORD * dwp; 
+ short * sp; 
+ WORD  * wp; 
+
+
+
+	//Prevents a crash if item dosent exist
+	if (m_pItemConfigList[iItemID] == NULL)  return;
+ 
+
+
+iItemID = 746; // 
+
+
+		if( iItemID != 0 )
+		{
+		iItemIDs = iItemID;
+		pItem = new class CItem;
+     _bInitItemAttr(pItem, iItemID);
+     if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
+		  
+
+
+     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You Got Your DKSet");
+     SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, NULL);
+	  
+		   pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; 
+		   pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; 
+           pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; 
+           pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; 
+
+           dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); 
+           *dwp = MSGID_NOTIFY; 
+           wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); 
+           *wp  = DEF_NOTIFY_ITEMOBTAINED; 
+           cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); 
+  return;
+    }
+   }
+  }

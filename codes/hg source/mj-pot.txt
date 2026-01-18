@@ -1,0 +1,136 @@
+OPEN ITEM.H
+
+FIND
+
+CODE  
+#define DEF_ITEMEFFECTTYPE_ARMORDYE   32 
+
+
+
+AFTER, ADD
+
+CODE  
+#define DEF_ITEMEFFECTTYPE_MJ   35 
+#define DEF_ITEMEFFECTTYPE_MJ1   36 
+#define DEF_ITEMEFFECTTYPE_MJ2   37 
+#define DEF_ITEMEFFECTTYPE_MJ3   38 
+#define DEF_ITEMEFFECTTYPE_MJ4   39 
+
+
+#define DEF_ITEMEFFECTTYPE_REP   40 
+
+OPEN GAME.CPP
+
+FIND
+
+CODE  
+case DEF_ITEMEFFECTTYPE_SP:
+  iMax = (2*m_pClientList[iClientH]->m_iStr) + (2*m_pClientList[iClientH]->m_iLevel);
+ 
+  if (m_pClientList[iClientH]->m_iSP < iMax) {
+   
+   if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1 == 0) {
+    iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
+    iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
+    iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue3;
+   }
+   else {
+    iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1;
+    iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2;
+    iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue3;
+   }
+
+   m_pClientList[iClientH]->m_iSP += (iDice(iV1, iV2) + iV3); 
+   if (m_pClientList[iClientH]->m_iSP > iMax) 
+    m_pClientList[iClientH]->m_iSP = iMax;
+
+   iEffectResult = 3;
+  } 
+
+
+
+AFTER, ADD
+
+CODE  
+		case DEF_ITEMEFFECTTYPE_MJ:
+  if m_pClientList[iClientH]->m_iGizonItemUpgradeLeft += 1;
+  iEffectResult = 8;
+  break; 
+  		case DEF_ITEMEFFECTTYPE_MJ1:
+  if m_pClientList[iClientH]->m_iGizonItemUpgradeLeft += 2;
+  iEffectResult = 8;
+  break; 
+  		case DEF_ITEMEFFECTTYPE_MJ2:
+  if m_pClientList[iClientH]->m_iGizonItemUpgradeLeft += 3;
+  iEffectResult = 8;
+  break; 
+  		case DEF_ITEMEFFECTTYPE_MJ3:
+  if m_pClientList[iClientH]->m_iGizonItemUpgradeLeft += 4;
+  iEffectResult = 8;
+  break; 
+  		case DEF_ITEMEFFECTTYPE_MJ4:
+  if m_pClientList[iClientH]->m_iGizonItemUpgradeLeft += 5;
+  iEffectResult = 8;
+  break; 
+
+  		case DEF_ITEMEFFECTTYPE_REP:
+  if m_pClientList[iClientH]->m_iRating += 1;
+  iEffectResult = 9;
+  break;
+
+
+FIND
+
+CODE  
+switch (iEffectResult) {
+ case 1:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
+  break;
+ case 2:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_MP, NULL, NULL, NULL, NULL);
+  break;
+ case 3:
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SP, NULL, NULL, NULL, NULL);
+  break;
+ case 4: // Invincible
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_INVINCIBLE, NULL, NULL, NULL, NULL);
+  break;
+ case 5: // Mana
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_MANA, NULL, NULL, NULL, NULL);
+  break;
+ case 6: // EXP
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SLATE_EXP, NULL, NULL, NULL, NULL);
+  break;
+ default:
+  break;
+ } 
+
+
+
+
+  case 8:
+			SendNotifyMsg(NULL, iClientH, m_iGizonItemUpgradeLeft, NULL, NULL, NULL, NULL);
+			 break;
+	  case 9:
+			SendNotifyMsg(NULL, iClientH, m_iRating, NULL, NULL, NULL, NULL);
+			 break;
+			default:
+			break;
+			 } 
+
+
+
+
+
+CODE  
+Item = xxx CritPotion 7 0 33 0 0 0 0 0 0 1 0 6 2 -12000 30 -1 0 0 0 0 0 -1 21 0 
+
+
+Item  = xxx GreenBall             7      0    35     0 0 0 0 0 0       3       0      6   123  -5000   4000   -1     0     0     0   0   0   -1      31     0
+Item  = xxx RedBall               7      0    36     0 0 0 0 0 0       3       0      6   124  -5000   4000   -1     0     0     0   0   0   -1      31     0
+Item  = xxx YellowBall            7      0    37     0 0 0 0 0 0       3       0      6   125  -5000   4000   -1     0     0     0   0   0   -1      31     0
+Item  = xxx BlueBall              7      0    38     0 0 0 0 0 0       3       0      6   126  -5000   4000   -1     0     0     0   0   0   -1      31     0
+Item  = xxx PearlBall             7      0    39     0 0 0 0 0 0       3       0      6   127  -5000  4000   -1     0     0     0   0   0   -1      31     0
+
+Item  = xxx RepPot             7 0 40 0 0 0 0 0 0 1 0 6 2 -12000 30 -1 0 0 0 0 0 -1 21 0 //add efect number
+

@@ -1,0 +1,58 @@
+HGSources -> Game.cpp -> Buscar :
+
+
+Código:
+if(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 874){ // Directional bow 
+      iErr = 0; 
+      for(i = 1; i < 2; i++){ 
+       m_Misc.GetPoint2(sX, sY, dX, dY, &tX, &tY, &iErr, i); 
+       m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, tX, tY); 
+       iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, tX, tY, wType, bNearAttack, bIsDash, TRUE); // 1 
+       if (((abs(tdX - dX) >= 1) && (abs(tdY - dY) >= 1)) || ((abs(tdX - dX) <= 1) && (abs(tdY - dY) <= 1))) { 
+        m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, dX, dY); 
+        iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, dX, dY, wType, bNearAttack, bIsDash, FALSE); // 0 
+        while (((tdX - dX) >= 1) && ((tdY - dY) >= 1)) { 
+         dX += 4; dY += 4; tY += 4; tX += 4; 
+        } 
+        while (((tdX - dX) <= 1) && ((tdY - dY) <= 1)) { 
+         dX += 4; dY += 4; tY += 4; tX += 4; 
+        } 
+       } 
+      } 
+     }
+
+Reemplazarlo por:
+
+
+Código:
+// Directional Bow. Fixed by juan249
+if(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 874){ // Directional bow 
+      iErr = 0; 
+      for(i = 1; i < 6; i++){ 
+       m_Misc.GetPoint2(sX, sY, dX, dY, &tX, &tY, &iErr, i); 
+       m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, tX, tY); 
+       iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, tX, tY, wType, bNearAttack, bIsDash, TRUE); // 1 
+       if (((abs(tdX - dX) >= 1) && (abs(tdY - dY) >= 1)) || ((abs(tdX - dX) <= 1) && (abs(tdY - dY) <= 1))) { 
+        m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwner, &cOwnerType, dX, dY); 
+        iExp += iCalculateAttackEffect(sOwner, cOwnerType, iClientH, DEF_OWNERTYPE_PLAYER, dX, dY, wType, bNearAttack, bIsDash, FALSE); // 0 
+        while (((tdX - dX) >= 1) && ((tdY - dY) >= 1)) { 
+         dX += 4; dY += 4; tY += 4; tX += 4; 
+        }
+		while (((tdX - dX) >= 1) && ((tdY - dY) >= 1)) { 
+         dX += 4; dY += 4; tY += 4; tX += 4; 
+        } 
+		while (((tdX - dX) >= 1) && ((tdY - dY) >= 1)) { 
+         dX += 4; dY += 4; tY += 4; tX += 4; 
+        } 
+		while (((tdX - dX) >= 1) && ((tdY - dY) >= 1)) { 
+         dX += 4; dY += 4; tY += 4; tX += 4; 
+        } 
+		while (((tdX - dX) >= 1) && ((tdY - dY) >= 1)) { 
+         dX += 4; dY += 4; tY += 4; tX += 4; 
+        } 
+		while (((tdX - dX) >= 1) && ((tdY - dY) >= 1)) { 
+         dX += 4; dY += 4; tY += 4; tX += 4; 
+        } 
+       } 
+      } 
+     }

@@ -1,0 +1,240 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\lang11274\f0\fs20 [CODE] New Main Menu(Boton Web+Foro)\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+Vayan a los src de su client, en el Game.cpp, remplazar la funcion UpdateScreen_OnMainMenu() por esta:\par
+\par
+C\'f3digo:\par
+// 50Cent - Reprogramacion de MainMenu, agregado botones de "Web" y "Foro"\par
+void CGame::UpdateScreen_OnMainMenu()\par
+\{ short msX, msY, msZ;\par
+ char cLB, cRB, cMIresult;\par
+ int  iMIbuttonNum;\par
+ static class CMouseInterface * pMI;\par
+ DWORD dwTime = G_dwGlobalTime;\par
+\par
+ m_iItemDropCnt = 0;\par
+ m_bItemDrop = FALSE;\par
+\par
+    if (m_cGameModeCount == 0)\par
+    \{    if (G_pCalcSocket != NULL)\par
+        \{    delete G_pCalcSocket;\par
+            G_pCalcSocket = NULL;\par
+        \}\par
+        if ( m_pSprite[DEF_SPRID_INTERFACE_ND_LOADING] != NULL )\par
+        \{    delete m_pSprite[DEF_SPRID_INTERFACE_ND_LOADING];\par
+            m_pSprite[DEF_SPRID_INTERFACE_ND_LOADING] = NULL;\par
+        \}\par
+        EndInputString();\par
+        pMI = new class CMouseInterface;\par
+\par
+        // CLEROTH - INTERFACE\par
+        pMI->AddRect(384,177,548,198);\par
+        pMI->AddRect(384,215,548,236);\par
+        pMI->AddRect(384,254,548,275);\par
+        // 50Cent - Aclaracion - Agregado 2 nuevos AddRect\par
+        pMI->AddRect(384,292,548,314);\par
+        pMI->AddRect(384,330,548,353);\par
+\par
+        m_DInput.m_sX = 400;\par
+        m_DInput.m_sY = 240;\par
+\par
+        m_cCurFocus = 1;\par
+        m_cMaxFocus = 3;\par
+\par
+        m_bEnterPressed = FALSE;\par
+        m_cArrowPressed = 0;\par
+    \}\par
+    m_cGameModeCount++;\par
+    if (m_cGameModeCount > 100) m_cGameModeCount = 100;\par
+\par
+    m_DDraw.ClearBackB4();\par
+\par
+    DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_MAINMENU, -1, -1, 0, TRUE);\par
+\par
+    // CLEROTH\par
+    m_DInput.UpdateMouseState(&msX, &msY, &msZ, &cLB, &cRB);\par
+\par
+    if ((msX >= 384) && (msY >= 177) && (msX <= 548) && (msY <= 198)) m_cCurFocus = 1;\par
+    if ((msX >= 384) && (msY >= 215) && (msX <= 548) && (msY <= 236)) m_cCurFocus = 2;\par
+    if ((msX >= 384) && (msY >= 254) && (msX <= 548) && (msY <= 275)) m_cCurFocus = 3;\par
+    // 50Cent - Aclaracion - Agregado 2 nuevos if s para cada boton\par
+    if ((msX >= 384) && (msY >= 292) && (msX <= 548) && (msY <= 314)) m_cCurFocus = 4;\par
+    if ((msX >= 384) && (msY >= 330) && (msX <= 548) && (msY <= 353)) m_cCurFocus = 5;\par
+\par
+    switch (m_cCurFocus) \{\par
+\par
+    case 1:\par
+        m_pSprite[DEF_SPRID_INTERFACE_ND_MAINMENU]->PutSpriteFast(384 , 177, 1, dwTime);\par
+        break;\par
+    case 2:\par
+        m_pSprite[DEF_SPRID_INTERFACE_ND_MAINMENU]->PutSpriteFast(384, 215, 2, dwTime);\par
+        break;\par
+\par
+    case 3:\par
+        m_pSprite[DEF_SPRID_INTERFACE_ND_MAINMENU]->PutSpriteFast(384, 254, 3, dwTime);\par
+        break;\par
+    // 50Cent - Aclaracion - Agregado 2 nuevos cases para cada boton\par
+    case 4:\par
+        m_pSprite[DEF_SPRID_INTERFACE_ND_MAINMENU]->PutSpriteFast(384, 292, 4, dwTime);\par
+        break;\par
+\par
+    case 5:\par
+        m_pSprite[DEF_SPRID_INTERFACE_ND_MAINMENU]->PutSpriteFast(384, 330, 5, dwTime);\par
+        break;\par
+    \}\par
+\par
+    m_pSprite[DEF_SPRID_MOUSECURSOR]->PutSpriteFast(msX, msY, 0, dwTime);\par
+    //m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSpriteRGB(msX, msY, 1, 0, 0, 0, dwTime);\par
+\par
+    if (m_cArrowPressed != 0) \{\par
+           switch (m_cArrowPressed) \{\par
+        case 1:\par
+            m_cCurFocus--;\par
+            if (m_cCurFocus <= 0) m_cCurFocus = m_cMaxFocus;\par
+            break;\par
+        case 3:\par
+            m_cCurFocus++;\par
+            if (m_cCurFocus > m_cMaxFocus) m_cCurFocus = 1;\par
+            break;\par
+        \}\par
+        m_cArrowPressed = 0;\par
+    \}\par
+\par
+    if (m_bEnterPressed == TRUE) \{\par
+        // Enter\par
+        PlaySound('E', 14, 5);\par
+        m_bEnterPressed = FALSE;\par
+        switch (m_cCurFocus) \{\par
+        case 1:\par
+            delete pMI;\par
+            ChangeGameMode(DEF_GAMEMODE_ONSELECTSERVER);\par
+            return;\par
+        case 2:\par
+    #ifdef DEF_MAKE_ACCOUNT\par
+            ClearContents_OnSelectCharacter();\par
+            delete pMI;\par
+            //ChangeGameMode(DEF_GAMEMODE_ONAGREEMENT);\par
+            ChangeGameMode(DEF_GAMEMODE_ONCREATENEWACCOUNT);\par
+    #else\par
+            //GoHomepage();\par
+    #endif\par
+            return;\par
+        case 3:\par
+            delete pMI;\par
+            ChangeGameMode(DEF_GAMEMODE_ONQUIT);\par
+            return;\par
+        // 50Cent - Aclaracion - Agregado 2 nuevos cases para cada boton\par
+        case 4:\par
+            GoHomepage();\par
+            return;\par
+        case 5:\par
+            GoForumpage();\par
+            return;\par
+        \}\par
+    \}\par
+\par
+    DrawVersion(TRUE);\par
+\par
+    iMIbuttonNum = pMI->iGetStatus(msX, msY, cLB, &cMIresult);\par
+    if (cMIresult == DEF_MIRESULT_CLICK) \{\par
+        PlaySound('E', 14, 5);\par
+        m_cCurFocus = iMIbuttonNum;\par
+        switch (iMIbuttonNum)\par
+        \{\par
+        case 1:\par
+            ChangeGameMode(DEF_GAMEMODE_ONSELECTSERVER);\par
+            delete pMI;\par
+            break;\par
+\par
+        case 2:\par
+    #ifdef DEF_MAKE_ACCOUNT\par
+            ClearContents_OnSelectCharacter();\par
+            delete pMI;\par
+            //ChangeGameMode(DEF_GAMEMODE_ONAGREEMENT);\par
+            ChangeGameMode(DEF_GAMEMODE_ONCREATENEWACCOUNT);\par
+    #else\par
+            GoHomepage();\par
+    #endif\par
+            return;\par
+        case 3:\par
+            delete pMI;\par
+            ChangeGameMode(DEF_GAMEMODE_ONQUIT);\par
+            return;\par
+        // 50Cent - Aclaracion - Agregado 2 nuevos cases para cada boton\par
+        case 4:\par
+            GoHomepage();\par
+            return;\par
+        case 5:\par
+            GoForumpage();\par
+            return;\par
+        \}\par
+    \}\par
+//    if ((msX >= 112) && (msY >= 150) && (msX <= 247) && (msY <= 191)) m_cCurFocus = 1;\par
+//    if ((msX >= 73) && (msY >= 192) && (msX <= 281) && (msY <= 230)) m_cCurFocus = 2;\par
+//    if ((msX >= 120) && (msY >= 231) && (msX <= 239) && (msY <= 262)) m_cCurFocus = 3;\par
+\par
+//    if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479);\par
+//    if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479);\par
+\par
+    if (m_DDraw.iFlip() == DDERR_SURFACELOST) RestoreSprites();\par
+\}\par
+Aun en Game.cpp, agregar esta funcion:\par
+Code:\par
+C\'f3digo:\par
+     // 50Cent - Agregada funcion nesaceria para la reprogramacion del MainMenu\par
+void CGame::GoForumpage()\par
+\{    LPCTSTR    url;\par
+    url = MSG_FORUMPAGE;\par
+    int        showcmd = SW_SHOW;\par
+    char    key[MAX_PATH + MAX_PATH];\par
+    SendMessage( G_hWnd, WM_ACTIVATEAPP, 0, 0 );\par
+    // First try ShellExecute()\par
+    HINSTANCE result = ShellExecute(NULL, "open", url, NULL,NULL, showcmd);\par
+\par
+    // If it failed, get the .htm regkey and lookup the program\par
+    if ((UINT)result <= HINSTANCE_ERROR)\par
+    \{  if (GetRegKey(HKEY_CLASSES_ROOT, ".htm", key) == ERROR_SUCCESS)\par
+        \{   lstrcat(key, "\\\\shell\\\\open\\\\command");\par
+\par
+            if (GetRegKey(HKEY_CLASSES_ROOT,key,key) == ERROR_SUCCESS)\par
+            \{  char *pos;\par
+                pos = strstr(key, "\\"%1\\"");\par
+                if (pos == NULL)                    // No quotes found\par
+                \{  pos = strstr(key, "%1");            // Check for %1, without quotes\par
+                    if (pos == NULL)                // No parameter at all...\par
+                        pos = key+lstrlen(key)-1;\par
+                    else *pos = '\\0';                // Remove the parameter\par
+                \}else    *pos = '\\0';                // Remove the parameter\par
+                lstrcat(pos, " ");\par
+                lstrcat(pos, url);\par
+                result = (HINSTANCE) WinExec(key,showcmd);\par
+    \}   \}   \}\par
+\}\par
+En Game.h agregar:\par
+\par
+C\'f3digo:\par
+         void GoForumpage();\par
+y en GlobalDef.H, abajo de \par
+\par
+\par
+C\'f3digo:\par
+#define MSG_HOMEPAGE            "http://www.helbreath.com\par
+agregar:\par
+C\'f3digo:\par
+     #define MSG_FORUMPAGE            "http://www.imperiumgames.com.ar/foro/f180/"\par
+cambien "http://www.imperiumgames.com.ar/foro/f180/" por la direccion de su foro.\par
+\par
+y editen su sprite New-Dialog con esta img:\par
+\par
+\par
+By 50Cent\par
+}
+ 

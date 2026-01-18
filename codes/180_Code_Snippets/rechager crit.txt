@@ -1,0 +1,45 @@
+add to game.cpp 
+
+CODE  
+}
+
+  if (memcmp(cp, "/resetrep ", 12) == 0) {
+  PlayerCommand_RepReset(iClientH);
+  return; 
+ } 
+
+
+
+then again game.cpp
+
+
+CODE  
+void CGame::PlayerCommand_RepReset(int iClientH)
+{
+char cGizonLow[256], cGizonDone[256];
+
+if (m_pClientList[iClientH] == NULL) return;
+if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft < 5){
+ZeroMemory(cGizonLow, sizeof(cGizonLow));
+wsprintf(cGizonLow,"You Need 5 Majestic points");
+ShowClientMsg(iClientH, cGizonLow);
+}
+else{
+  iMax = m_pClientList[iClientH]->m_iLevel / 5;
+  if (m_pClientList[iClientH]->m_iSuperAttackLeft < iMax) m_pClientList[iClientH]->m_iSuperAttackLeft += 1;
+  iEffectResult = 7;
+ZeroMemory(cGizonDone, sizeof(cGizonDone));
+wsprintf(cGizonDone, "Your Rep Is Now 0!");
+ShowClientMsg(iClientH, cGizonDone);
+m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= 5;
+DeleteClient(iClientH, TRUE, TRUE);
+}
+} 
+
+
+
+adn then to game.h
+
+CODE  
+// life[GM] coded
+void PlayerCommand_RepReset(int iClientH); 

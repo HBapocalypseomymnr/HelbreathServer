@@ -1,0 +1,405 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 No Criticial Damage Limit\par
+Hace un tiempo Zero de HBx, libero un code para sacar este limite, mostrando el da\'f1o real envez del tipico "Critical", pero no era muy compatible con la mayoria de los src, y tenia partes medias confusas para el usuario normal D:. Asique les dejo el que arme hace unas semanas.\par
+\par
+Esta prohibido el post de esta informaci\'f3n\par
+cualquier otra comunidad/foro\par
+\par
+Nota: el Da\'f1o maximo teorico deberia ser poco mas de 2kk, pero algunas funciones del HG tienen parametros que aguantan menos, asique el da\'f1o maximo bordea los 32k. No creo que sea necesario entrar a editar mas, considerando que ningun jugador normal alcanzara dmgs tan altos.\par
+\par
+ClientSRC:\par
+Game.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+m_sDamageMove = 0;\par
+    m_sDamageMoveAmount = 0;\par
+y modificar por:\par
+C\'f3digo:\par
+m_sDamageMove = 0;\par
+    //50Cent - No Critical Damage Limit\par
+    m_iDamageMoveAmount = 0;\par
+Buscar:\par
+C\'f3digo:\par
+case DEF_NOTIFY_DAMAGEMOVE:\par
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+        sp = (short *)cp;\par
+        m_sDamageMove = *sp;\par
+        cp += 2;\par
+        sp = (short *)cp;\par
+        m_sDamageMoveAmount = *sp;\par
+        cp += 4;\par
+        break;\par
+y remplazar por el case por:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+    case DEF_NOTIFY_DAMAGEMOVE:\par
+        cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+        sp = (short *)cp;\par
+        m_sDamageMove = *sp;\par
+        cp += 2;\par
+        ip = (int *)cp;\par
+        m_iDamageMoveAmount = *ip;\par
+        cp += 4;\par
+        break;\par
+Buscar:\par
+C\'f3digo:\par
+for (i = 1; i < DEF_MAXCHATMSGS; i++)\par
+            if (m_pChatMsgList[i] == NULL)\par
+            \{    ZeroMemory(cTxt, sizeof(cTxt));\par
+                if (m_sDamageMoveAmount > 0)\par
+                    wsprintf(cTxt, "-%dPts", m_sDamageMoveAmount); //pts\par
+                else strcpy(cTxt, "Critical!");\par
+\par
+                int iFontType;\par
+                if ((m_sDamageMoveAmount >= 0) && (m_sDamageMoveAmount < 12))        iFontType = 21;\par
+                else if ((m_sDamageMoveAmount >= 12) && (m_sDamageMoveAmount < 40)) iFontType = 22;\par
+                else if ((m_sDamageMoveAmount >= 40) || (m_sDamageMoveAmount < 0))    iFontType = 23;\par
+\par
+                m_pChatMsgList[i] = new class CMsg(iFontType, cTxt, m_dwCurTime);\par
+                m_pChatMsgList[i]->m_iObjectID = m_sPlayerObjectID;\par
+                \par
+                if (m_pMapData->bSetChatMsgOwner(m_sPlayerObjectID, -10, -10, i) == FALSE) \{\par
+                    delete m_pChatMsgList[i];\par
+                    m_pChatMsgList[i] = NULL;\par
+                \}\par
+                break;\par
+            \}\par
+y remplazar todo eso por:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+            for (i = 1; i < DEF_MAXCHATMSGS; i++)\par
+            if (m_pChatMsgList[i] == NULL)\par
+            \{    ZeroMemory(cTxt, sizeof(cTxt));\par
+                wsprintf(cTxt, "-%dPts", m_iDamageMoveAmount);\par
+\par
+                int iFontType;\par
+                if ((m_iDamageMoveAmount >= 0) && (m_iDamageMoveAmount < 12))        iFontType = 21;\par
+                else if ((m_iDamageMoveAmount >= 12) && (m_iDamageMoveAmount < 40)) iFontType = 22;\par
+                else if ((m_iDamageMoveAmount >= 40) || (m_iDamageMoveAmount < 0))    iFontType = 23;\par
+\par
+                m_pChatMsgList[i] = new class CMsg(iFontType, cTxt, m_dwCurTime);\par
+                m_pChatMsgList[i]->m_iObjectID = m_sPlayerObjectID;\par
+                \par
+                if (m_pMapData->bSetChatMsgOwner(m_sPlayerObjectID, -10, -10, i) == FALSE) \{\par
+                    delete m_pChatMsgList[i];\par
+                    m_pChatMsgList[i] = NULL;\par
+                \}\par
+                break;\par
+            \}\par
+Ir al metodo:\par
+C\'f3digo:\par
+MotionEventHandler\par
+y despues de:\par
+C\'f3digo:\par
+int iStatus;\par
+agregar:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+ int iDamage = 0;\par
+Buscar:\par
+C\'f3digo:\par
+case DEF_OBJECTMAGIC:\par
+        case DEF_OBJECTDAMAGEMOVE:\par
+        case DEF_OBJECTDAMAGE:\par
+            cDir = *cp;\par
+            cp++;\par
+            sV1 = (short)*cp; //Damage\par
+            cp++;\par
+            sV2 = (short)*cp; //\par
+            cp++;\par
+              break;\par
+            \par
+        case DEF_OBJECTDYING:\par
+            cDir = *cp;\par
+            cp++;\par
+            sV1 = (short)*cp; //Damage\par
+            cp++;\par
+            sV2 = (short)*cp; //\par
+            cp++;\par
+            sp  = (short *)cp;\par
+            sX = *sp;\par
+            cp += 2;\par
+            sp  = (short *)cp;\par
+            sY = *sp;\par
+            cp += 2;\par
+            break;\par
+y remplazar todo esos cases por estos:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+        case DEF_OBJECTMAGIC:\par
+            cDir = *cp;\par
+            cp++;\par
+            sV1 = (short)*cp; //Damage\par
+            cp++;\par
+            sV2 = (short)*cp; //\par
+            cp++;\par
+              break;\par
+        case DEF_OBJECTDAMAGEMOVE:\par
+        case DEF_OBJECTDAMAGE:\par
+            cDir = *cp;\par
+            cp++;\par
+\par
+            ip  = (int *)cp;\par
+            iDamage = *ip;\par
+            cp += 4;\par
+\par
+            sV2 = (short)*cp; //\par
+            cp++;\par
+              break;\par
+            \par
+        case DEF_OBJECTDYING:\par
+            cDir = *cp;\par
+            cp++;\par
+\par
+            ip  = (int *)cp;\par
+            iDamage = *ip;\par
+            cp += 4;\par
+\par
+            sV2 = (short)*cp; //\par
+            cp++;\par
+            sp  = (short *)cp;\par
+            sX = *sp;\par
+            cp += 2;\par
+            sp  = (short *)cp;\par
+            sY = *sp;\par
+            cp += 2;\par
+            break;\par
+Buscar:\par
+C\'f3digo:\par
+for (i = 1; i < DEF_MAXCHATMSGS; i++)\par
+        if (m_pChatMsgList[i] == NULL)\par
+        \{    ZeroMemory(cTxt, sizeof(cTxt));\par
+            if (sV1 > 0)\par
+                wsprintf(cTxt, "-%dPts!", sV1); //pts\par
+            else strcpy(cTxt, "Critical!");\par
+\par
+            int iFontType;\par
+            if ((sV1 >= 0) && (sV1 < 12))        iFontType = 21;\par
+            else if ((sV1 >= 12) && (sV1 < 40)) iFontType = 22;\par
+            else if ((sV1 >= 40) || (sV1 < 0))    iFontType = 23;\par
+            m_pChatMsgList[i] = new class CMsg(iFontType, cTxt, m_dwCurTime);\par
+            m_pChatMsgList[i]->m_iObjectID = wObjectID - 30000;\par
+            if (m_pMapData->bSetChatMsgOwner(wObjectID - 30000, -10, -10, i) == FALSE)\par
+            \{    delete m_pChatMsgList[i];\par
+                m_pChatMsgList[i] = NULL;\par
+            \}\par
+            return;\par
+        \}\par
+y remplazar todo eso por:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+        for (i = 1; i < DEF_MAXCHATMSGS; i++)\par
+        if (m_pChatMsgList[i] == NULL)\par
+        \{    ZeroMemory(cTxt, sizeof(cTxt));\par
+            wsprintf(cTxt, "-%dPts!", iDamage);\par
+            int iFontType;\par
+            if ((iDamage >= 0) && (iDamage < 12))        iFontType = 21;\par
+            else if ((iDamage >= 12) && (iDamage < 40)) iFontType = 22;\par
+            else if ((iDamage >= 40) || (iDamage < 0))    iFontType = 23;\par
+            m_pChatMsgList[i] = new class CMsg(iFontType, cTxt, m_dwCurTime);\par
+            m_pChatMsgList[i]->m_iObjectID = wObjectID - 30000;\par
+            if (m_pMapData->bSetChatMsgOwner(wObjectID - 30000, -10, -10, i) == FALSE)\par
+            \{    delete m_pChatMsgList[i];\par
+                m_pChatMsgList[i] = NULL;\par
+            \}\par
+            return;\par
+        \}\par
+Game.h:\par
+Buscar:\par
+C\'f3digo:\par
+short m_sDamageMove;\par
+    short m_sDamageMoveAmount;\par
+y remplazar por:\par
+C\'f3digo:\par
+short m_sDamageMove;\par
+    //50Cent - No Critical Damage Limit\par
+    int m_iDamageMoveAmount;\par
+HGSRC:\par
+Game.cpp:\par
+Buscar en el metodo:\par
+C\'f3digo:\par
+SendEventToNearClient_TypeA\par
+lo siguiente:\par
+C\'f3digo:\par
+*cp_s = (unsigned char)sV1;\par
+        cp_s++;\par
+y remplazarlo por:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+        ip  = (int *)cp_s;\par
+        *ip = (unsigned int)sV1;\par
+        cp_s += 4;\par
+Buscar:\par
+C\'f3digo:\par
+case DEF_OBJECTMAGIC:\par
+                                    case DEF_OBJECTDAMAGE:\par
+                                    case DEF_OBJECTDAMAGEMOVE:\par
+                                        if (cOwnerSend == TRUE) \par
+                                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);\par
+                                        else\par
+                                            if (i != sOwnerH)\par
+                                                iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);\par
+                                        break;\par
+y remplazar esos cases por:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+                                    case DEF_OBJECTMAGIC:\par
+                                        if (cOwnerSend == TRUE) \par
+                                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);\par
+                                        else\par
+                                            if (i != sOwnerH)\par
+                                                iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);\par
+                                        break;\par
+                                    case DEF_OBJECTDAMAGE:\par
+                                    case DEF_OBJECTDAMAGEMOVE:\par
+                                        if (cOwnerSend == TRUE) \par
+                                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 14, cKey);\par
+                                        else\par
+                                            if (i != sOwnerH)\par
+                                                iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 14, cKey);\par
+                                        break;\par
+Poco mas abajo tendran el siguiente case:\par
+C\'f3digo:\par
+case DEF_OBJECTDYING:\par
+remplazarlo por completo por:\par
+C\'f3digo:\par
+case DEF_OBJECTDYING:\par
+                                        if (cOwnerSend == TRUE) \par
+                                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 18, cKey);//50Cent - No Critical Damage Limit 15\par
+                                        else\par
+                                            if (i != sOwnerH)\par
+                                                iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 18, cKey);//50Cent - No Critical Damage Limit 15\par
+                                        break;\par
+Buscar:\par
+C\'f3digo:\par
+case DEF_OBJECTMAGIC:\par
+                                case DEF_OBJECTDAMAGE:\par
+                                case DEF_OBJECTDAMAGEMOVE:\par
+                                    if (cOwnerSend == TRUE) \par
+                                        iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);\par
+                                    else\par
+                                        if (i != sOwnerH)\par
+                                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);\par
+                                    break;\par
+y remplazar esos cases por:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+                                case DEF_OBJECTMAGIC:\par
+                                    if (cOwnerSend == TRUE) \par
+                                        iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);\par
+                                    else\par
+                                        if (i != sOwnerH)\par
+                                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);\par
+                                    break;\par
+                                case DEF_OBJECTDAMAGE:\par
+                                case DEF_OBJECTDAMAGEMOVE:\par
+                                    if (cOwnerSend == TRUE) \par
+                                        iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 14, cKey);\par
+                                    else\par
+                                        if (i != sOwnerH)\par
+                                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 14, cKey);\par
+                                    break;\par
+Un poco mas abajo tendran el siguiente case:\par
+C\'f3digo:\par
+case DEF_OBJECTDYING:\par
+remplazarlo por:\par
+C\'f3digo:\par
+case DEF_OBJECTDYING:\par
+                                    if (cOwnerSend == TRUE) \par
+                                        iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 18, cKey);//50Cent - No Critical Damage Limit 15\par
+                                    else\par
+                                        if (i != sOwnerH)\par
+                                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 18, cKey);//50Cent - No Critical Damage Limit 15\par
+                                    break;\par
+Buscar:\par
+C\'f3digo:\par
+*cp_s = (unsigned char)sV1;\par
+        cp_s++;\par
+y remplazar por:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+        ip  = (int *)cp_s;\par
+        *ip = (unsigned int)sV1;\par
+        cp_s += 4;\par
+Un poco mas abajo tendran los cases:\par
+C\'f3digo:\par
+case DEF_OBJECTDYING:\par
+(...)\par
+case DEF_OBJECTDAMAGE:\par
+case DEF_OBJECTDAMAGEMOVE:\par
+remplazarlos por:\par
+C\'f3digo:\par
+case DEF_OBJECTDYING:\par
+                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 18, cKey);//50Cent - No Critical Damage Limit 15\par
+                            break;\par
+\par
+                        case DEF_OBJECTDAMAGE:\par
+                        case DEF_OBJECTDAMAGEMOVE:\par
+                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 14, cKey);//50Cent - No Critical Damage Limit 11\par
+                            break;\par
+Un poco mas abajo vera nuevamente los cases:\par
+C\'f3digo:\par
+case DEF_OBJECTDYING:\par
+case DEF_OBJECTDAMAGE:\par
+case DEF_OBJECTDAMAGEMOVE:\par
+remplazarlos por:\par
+C\'f3digo:\par
+case DEF_OBJECTDYING:\par
+                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 18, cKey);//50Cent - No Critical Damage Limit 15\par
+                            break;\par
+\par
+                        case DEF_OBJECTDAMAGE:\par
+                        case DEF_OBJECTDAMAGEMOVE:\par
+                            iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 14, cKey);//50Cent - No Critical Damage Limit 11\par
+                            break;\par
+Buscar:\par
+C\'f3digo:\par
+case DEF_NOTIFY_CONSTRUCTIONPOINT:\par
+    case DEF_NOTIFY_SPECIALABILITYSTATUS:\par
+    case DEF_NOTIFY_DAMAGEMOVE:\par
+        sp = (short *)cp;\par
+        *sp = (short)sV1;\par
+        cp += 2;\par
+\par
+        sp = (short *)cp;\par
+        *sp = (short)sV2;\par
+        cp += 2;\par
+\par
+        sp = (short *)cp;\par
+        *sp = (short)sV3;\par
+        cp += 2;\par
+\par
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 12);\par
+        break;\par
+Y remplazar esos 3 cases por:\par
+C\'f3digo:\par
+//50Cent - No Critical Damage Limit\par
+    case DEF_NOTIFY_CONSTRUCTIONPOINT:\par
+    case DEF_NOTIFY_SPECIALABILITYSTATUS:\par
+        sp = (short *)cp;\par
+        *sp = (short)sV1;\par
+        cp += 2;\par
+\par
+        sp = (short *)cp;\par
+        *sp = (short)sV2;\par
+        cp += 2;\par
+\par
+        sp = (short *)cp;\par
+        *sp = (short)sV3;\par
+        cp += 2;\par
+\par
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 12);\par
+        break;\par
+    case DEF_NOTIFY_DAMAGEMOVE:\par
+        sp = (short *)cp;\par
+        *sp = (short)sV1;\par
+        cp += 2;\par
+\par
+        ip  = (int *)cp;\par
+        *ip    = (int)sV2;\par
+        cp += 4;\par
+\par
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 12);\par
+        break;\par
+}
+ 

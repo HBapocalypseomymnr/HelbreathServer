@@ -1,0 +1,28 @@
+/who for are/elv/trav (same hg only)
+author - juggalo2
+
+
+
+Code to show /who for Elvine, Aresden and Traveller ppl online
+
+if (memcmp(cp, "/who", 4) == 0) {
+char cMsg[120];
+int i, iAres = 0, iElv = 0, itra = 0;
+for (i = 0; i < DEF_MAXCLIENTS; i++){
+if (m_pClientList[i] != NULL) {
+if (memcmp(m_pClientList[i]->m_cLocation, "are", 1) == 0 ) iAres++;
+else if (memcmp(m_pClientList[i]->m_cLocation, "elv", 2) == 0 ) iElv++;
+else if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 3) == 0 ) itra++;
+}
+}
+ZeroMemory(cMsg, sizeof(cMsg));
+wsprintf(cMsg, "Ares: %d Elv: %d Trav: %d", iAres, iElv, itra);
+for (i = 0; i < DEF_MAXCLIENTS; i++){
+if (m_pClientList[i] != NULL) {
+ShowClientMsg(iClientH, cMsg);
+}
+}
+return;
+}
+
+

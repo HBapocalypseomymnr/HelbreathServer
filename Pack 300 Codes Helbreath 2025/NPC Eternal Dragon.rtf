@@ -1,0 +1,1195 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20  [CODE] Eternal-Dragon Part I (By Carlos)\par
+Eternal-Dragon Part I\par
+\par
+C\'f3digo:\par
+en los source del client\par
+C\'f3digo:\par
+en DrawObjects busca\par
+\par
+\par
+case 82: // Sorceress\par
+C\'f3digo:\par
+remplazar por \par
+            \par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+C\'f3digo:\par
+luego en UpdateScreen_OnLoading\par
+\par
+busca\par
+\par
+\par
+    MakeSprite( "Sorceress",      DEF_SPRID_MOB   + 7*8*72, 40, TRUE);// Sorceress (Type: 82)\par
+C\'f3digo:\par
+y remplazar por\par
+\par
+    MakeSprite( "EDragon",          DEF_SPRID_MOB   + 7*8*72, 40, TRUE);//  Eternal-Dragon By Carlos Ramon (Type: 82)\par
+C\'f3digo:\par
+luego en AddEventList\par
+\par
+\par
+\par
+busca\par
+\par
+    60, // Sorceress 82\par
+C\'f3digo:\par
+y remplazar por \par
+\par
+    200, //  Eternal-Dragon By Carlos Ramon 82\par
+C\'f3digo:\par
+luego en DrawObject_OnAttack\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+\par
+tomamos en cuenta que puede aparecer 2 o 3 veces\par
+C\'f3digo:\par
+ahora en DrawObject_OnAttackMove\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+\par
+\par
+tomamos en cuenta que puede aparecer 2 o 3 veces\par
+C\'f3digo:\par
+ahora en DrawObject_OnMagic\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+C\'f3digo:\par
+ahora en DrawObject_OnGetItem\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+C\'f3digo:\par
+ahora en DrawObject_OnDamage\par
+\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+\par
+\par
+tomamos en cuenta que puede aparecer 5 o 6 veces\par
+C\'f3digo:\par
+ahora en DrawObject_OnDying\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+C\'f3digo:\par
+ahora en DrawObject_OnDead\par
+\par
+busca \par
+\par
+\par
+        case 81: // Abaddon\par
+            iFrame = 0;\par
+            iBodyIndex =  DEF_SPRID_MOB  +  (_tmp_sOwnerType - 10 )*8*7 + (3 * 8);\par
+            bTrans = TRUE; // Prevents showing hugly corpse\par
+            break;\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+        case 82: //  Eternal-Dragon By Carlos Ramon\par
+            iFrame = 0;\par
+            iBodyIndex =  DEF_SPRID_MOB  +  (_tmp_sOwnerType - 10 )*8*7 + (3 * 8);\par
+            bTrans = TRUE; // Prevents showing hugly corpse\par
+            break;\par
+C\'f3digo:\par
+ahora en DrawObject_OnMove\par
+\par
+\par
+busca\par
+\par
+    case 82: // Sorceress\par
+C\'f3digo:\par
+y remplazar por \par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+C\'f3digo:\par
+seguimos en DrawObject_OnMove\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+\par
+\par
+tomamos en cuenta que puede aparecer 2 o 3 veces\par
+C\'f3digo:\par
+ahora en DrawObject_OnDamageMove\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto \par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+\par
+\par
+tomamos en cuenta que puede aparecer 2 o 3 veces\par
+C\'f3digo:\par
+ahora en DrawObject_OnMove_ForMenu\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+\par
+\par
+tomamos en cuenta que puede aparecer 2 o 3 veces\par
+C\'f3digo:\par
+ahora en DrawObject_OnStop\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+\par
+\par
+tomamos en cuenta que puede aparecer 2 o 3 veces\par
+C\'f3digo:\par
+ahora en DrawObject_OnRun\par
+\par
+\par
+\par
+busca\par
+\par
+    case 81: // Abaddon\par
+C\'f3digo:\par
+y abajo de eso agregamos esto\par
+\par
+\par
+\par
+    case 82: //  Eternal-Dragon By Carlos Ramon\par
+\par
+\par
+tomamos en cuenta que puede aparecer 2 o 3 veces\par
+C\'f3digo:\par
+luego en LAN_ENG.H\par
+\par
+busca\par
+\par
+#define NPC_NAME_SORCERS        "Sorceress"\par
+C\'f3digo:\par
+y remplazar por\par
+\par
+\par
+#define NPC_NAME_EDRAGON        "Eternal Dragon"\par
+C\'f3digo:\par
+luego en CMapData\par
+\par
+busca\par
+\par
+    //82  Sorceress\par
+    m_stFrame[82][DEF_OBJECTSTOP].m_sFrameTime        = 250;\par
+    m_stFrame[82][DEF_OBJECTSTOP].m_sMaxFrame        = 7;\par
+    m_stFrame[82][DEF_OBJECTMOVE].m_sFrameTime        = 90;\par
+    m_stFrame[82][DEF_OBJECTATTACK].m_sFrameTime    = 100;\par
+    m_stFrame[82][DEF_OBJECTATTACK].m_sMaxFrame        = 7;\par
+    m_stFrame[82][DEF_OBJECTDAMAGE].m_sFrameTime    = 100;\par
+    m_stFrame[82][DEF_OBJECTDAMAGE].m_sMaxFrame        = 7;\par
+    m_stFrame[82][DEF_OBJECTDYING].m_sFrameTime        = 180;\par
+    m_stFrame[82][DEF_OBJECTDYING].m_sMaxFrame        = 7 +3;\par
+C\'f3digo:\par
+y remplazar por\par
+\par
+\par
+    // 82  Eternal-Dragon By Carlos Ramon\par
+    m_stFrame[82][DEF_OBJECTSTOP].m_sFrameTime        = 250;\par
+    m_stFrame[82][DEF_OBJECTSTOP].m_sMaxFrame        = 7;\par
+    m_stFrame[82][DEF_OBJECTMOVE].m_sFrameTime        = 90;\par
+    m_stFrame[82][DEF_OBJECTATTACK].m_sFrameTime    = 100;\par
+    m_stFrame[82][DEF_OBJECTATTACK].m_sMaxFrame        = 7;\par
+    m_stFrame[82][DEF_OBJECTDAMAGE].m_sFrameTime    = 100;\par
+    m_stFrame[82][DEF_OBJECTDAMAGE].m_sMaxFrame        = 7;\par
+    m_stFrame[82][DEF_OBJECTDYING].m_sFrameTime        = 180;\par
+    m_stFrame[82][DEF_OBJECTDYING].m_sMaxFrame        = 15+3;\par
+C\'f3digo:\par
+ahora en iObjectFrameCounter \par
+\par
+busca\par
+\par
+                                        case 82: // Snoopy: Sorceress\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 149, sDist, lPan);\par
+                        break;\par
+\par
+                    case 83: // Snoopy: ATK\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 142, sDist, lPan);\par
+                        break;\par
+\par
+                    case 84: // Snoopy: MasterElf\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('C', 10, sDist, lPan);\par
+                        break;\par
+\par
+                    case 85: // Snoopy: DSK\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 147, sDist, lPan);\par
+                        break;\par
+\par
+                    case 10: // Slime\par
+                    case 50: // TW\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 1, sDist, lPan);\par
+                        break;\par
+\par
+                    case 11: // SKel\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 13, sDist, lPan);\par
+                        break;\par
+\par
+                    case 13: // Cyclops\par
+                    case 49: // HC\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 41, sDist, lPan);\par
+                        break;\par
+\par
+                    case 14: // Orc\par
+                    case 48: // SK\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 9, sDist, lPan);\par
+                        break;\par
+\par
+                    case 16: // Ant\par
+                    case 43: // LWBeetle\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 29, sDist, lPan);\par
+                        break;\par
+\par
+                    case 17: // Scorpion\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 21, sDist, lPan);\par
+                        break;\par
+\par
+                    case 18: // Zombie\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 17, sDist, lPan);\par
+                        break;\par
+\par
+                    case 22: // Snake\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 25, sDist, lPan);\par
+                        break;\par
+\par
+                    case 23: // Clay-Golem\par
+                    case 52: // Gargoyle\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 37, sDist, lPan);\par
+                        break;\par
+\par
+                    case 27: // HH\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 5, sDist, lPan);\par
+                        break;\par
+\par
+                    case 28: // Troll\par
+                    case 78: // Snoopy: Ajout Minaus\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 46, sDist, lPan);\par
+                        break;\par
+\par
+                    case 29: // Ogre\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 51, sDist, lPan);\par
+                        break;\par
+\par
+                    case 30: // Liche\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 55, sDist, lPan);\par
+                        break;\par
+\par
+                    case 31: // DD\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 59, sDist, lPan);\par
+                        break;\par
+\par
+                    case 32: // Uni\par
+                    case 45: // GHKABS\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 63, sDist, lPan);\par
+                        break;\par
+\par
+                    case 33: // WW\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 67, sDist, lPan);\par
+                        break;\par
+\par
+                    case 55://Rabbit\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 71, sDist, lPan);\par
+                        break;\par
+\par
+                    case 56://Cat\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 72, sDist, lPan);\par
+                        break;\par
+\par
+                    case 57://Giant-Frog\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 73, sDist, lPan);\par
+                        break;\par
+\par
+                    case 58://Mountain Giant\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 87, sDist, lPan);\par
+                        break;\par
+\par
+                    case 59://Ettin\par
+                    case 77: // Snoopy: MasterMageOrc\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 91, sDist, lPan);\par
+                        break;\par
+\par
+                    case 60://Cannibal Plant\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 95, sDist, lPan);\par
+                        break;\par
+\par
+                    case 61://Rudolph\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('C', 11, sDist, lPan);\par
+                        break;\par
+\par
+                    case 62: // DireBoar\par
+                    case 74: // Snoopy: GiantCrayFish\par
+                    case 88: // Snoopy: Barbarian\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 87, sDist, lPan);\par
+                        break;\par
+\par
+                    case 63://Frost\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 25, sDist, lPan);\par
+                        break;\par
+\par
+                    case 12: // Stone-Golem\par
+                    case 47: // BG\par
+                    case 65: // Snoopy: IceGolem\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 33, sDist, lPan);\par
+                        break;\par
+                    /*    case 65: // IceGolem particulier a la v2.20, absent de la v3.51\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                        \{    m_pGame->PlaySound('M', 33, sDist, lPan);\par
+                            switch (m_pData[dX][dY].m_cDir) \{\par
+                            case 1 : dx = 0; dy = -1; break;\par
+                            case 2 : dy = -1; dx = 1; break;\par
+                            case 3 : dx = 1; dy = 0; break;\par
+                            case 4 : dx = 1; dy = 1; break;\par
+                            case 5 : dx = 0; dy = 1; break;\par
+                            case 6 : dy = 1; dx = -1; break;\par
+                            case 7 : dx = -1; dy = 0; break;\par
+                            case 8 : dx = -1; dy = -1; break;\par
+                            \}\par
+                            //m_pGame->bAddNewEffect( 75, (m_sPivotX+dX)*32, (m_sPivotY+dY)*32, dx, dy, 0 );\par
+                            //m_pGame->bAddNewEffect( 76, (m_sPivotX+dX)*32, (m_sPivotY+dY)*32, dx, dy, 0 );\par
+                            //m_pGame->bAddNewEffect( 77, (m_sPivotX+dX)*32, (m_sPivotY+dY)*32, dx, dy, 0 );\par
+                        \}\par
+                        break;*/\par
+\par
+                    case 73: // Snoopy: Fite-Wyvern\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 106, sDist, lPan);\par
+                        break;\par
+\par
+                    case 80: // Snoopy: Tentocle\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 110, sDist, lPan);\par
+                        break;\par
+\par
+                    case 72: // Snoopy: Claw Turtle\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 114, sDist, lPan);\par
+                        break;\par
+\par
+                    case 71: // Snoopy: Centaurus\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 117, sDist, lPan);\par
+                        break;\par
+\par
+                    case 76: // Snoopy: Giant Tree\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 122, sDist, lPan);\par
+                        break;\par
+\par
+                    case 75: // Snoopy: Giant Lizard\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 126, sDist, lPan);\par
+                        break;\par
+\par
+                    case 70: // Snoopy: Dragon\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 130, sDist, lPan);\par
+                        break;\par
+\par
+                    case 79: // Snoopy: Nizie\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 134, sDist, lPan);\par
+                        break;\par
+\par
+                    case 81: // void CGame::DrawDruncncity();Abaddon\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 136, sDist, lPan);\par
+                        break;\par
+C\'f3digo:\par
+y remplazar por \par
+\par
+\par
+\par
+\par
+\par
+                    case 83: // Snoopy: ATK\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 142, sDist, lPan);\par
+                        break;\par
+\par
+                    case 84: // Snoopy: MasterElf\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('C', 10, sDist, lPan);\par
+                        break;\par
+\par
+                    case 85: // Snoopy: DSK\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 147, sDist, lPan);\par
+                        break;\par
+\par
+                    case 10: // Slime\par
+                    case 50: // TW\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 1, sDist, lPan);\par
+                        break;\par
+\par
+                    case 11: // SKel\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 13, sDist, lPan);\par
+                        break;\par
+\par
+                    case 13: // Cyclops\par
+                    case 49: // HC\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 41, sDist, lPan);\par
+                        break;\par
+\par
+                    case 14: // Orc\par
+                    case 48: // SK\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 9, sDist, lPan);\par
+                        break;\par
+\par
+                    case 16: // Ant\par
+                    case 43: // LWBeetle\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 29, sDist, lPan);\par
+                        break;\par
+\par
+                    case 17: // Scorpion\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 21, sDist, lPan);\par
+                        break;\par
+\par
+                    case 18: // Zombie\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 17, sDist, lPan);\par
+                        break;\par
+\par
+                    case 22: // Snake\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 25, sDist, lPan);\par
+                        break;\par
+\par
+                    case 23: // Clay-Golem\par
+                    case 52: // Gargoyle\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 37, sDist, lPan);\par
+                        break;\par
+\par
+                    case 27: // HH\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 5, sDist, lPan);\par
+                        break;\par
+\par
+                    case 28: // Troll\par
+                    case 78: // Snoopy: Ajout Minaus\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 46, sDist, lPan);\par
+                        break;\par
+\par
+                    case 29: // Ogre\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 51, sDist, lPan);\par
+                        break;\par
+\par
+                    case 30: // Liche\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 55, sDist, lPan);\par
+                        break;\par
+\par
+                    case 31: // DD\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 59, sDist, lPan);\par
+                        break;\par
+\par
+                    case 32: // Uni\par
+                    case 45: // GHKABS\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 63, sDist, lPan);\par
+                        break;\par
+\par
+                    case 33: // WW\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 67, sDist, lPan);\par
+                        break;\par
+\par
+                    case 55://Rabbit\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 71, sDist, lPan);\par
+                        break;\par
+\par
+                    case 56://Cat\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 72, sDist, lPan);\par
+                        break;\par
+\par
+                    case 57://Giant-Frog\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 73, sDist, lPan);\par
+                        break;\par
+\par
+                    case 58://Mountain Giant\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 87, sDist, lPan);\par
+                        break;\par
+\par
+                    case 59://Ettin\par
+                    case 77: // Snoopy: MasterMageOrc\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 91, sDist, lPan);\par
+                        break;\par
+\par
+                    case 60://Cannibal Plant\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 95, sDist, lPan);\par
+                        break;\par
+\par
+                    case 61://Rudolph\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('C', 11, sDist, lPan);\par
+                        break;\par
+\par
+                    case 62: // DireBoar\par
+                    case 74: // Snoopy: GiantCrayFish\par
+                    case 88: // Snoopy: Barbarian\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 87, sDist, lPan);\par
+                        break;\par
+\par
+                    case 63://Frost\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 25, sDist, lPan);\par
+                        break;\par
+\par
+                    case 12: // Stone-Golem\par
+                    case 47: // BG\par
+                    case 65: // Snoopy: IceGolem\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 33, sDist, lPan);\par
+                        break;\par
+                    /*    case 65: // IceGolem particulier a la v2.20, absent de la v3.51\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                        \{    m_pGame->PlaySound('M', 33, sDist, lPan);\par
+                            switch (m_pData[dX][dY].m_cDir) \{\par
+                            case 1 : dx = 0; dy = -1; break;\par
+                            case 2 : dy = -1; dx = 1; break;\par
+                            case 3 : dx = 1; dy = 0; break;\par
+                            case 4 : dx = 1; dy = 1; break;\par
+                            case 5 : dx = 0; dy = 1; break;\par
+                            case 6 : dy = 1; dx = -1; break;\par
+                            case 7 : dx = -1; dy = 0; break;\par
+                            case 8 : dx = -1; dy = -1; break;\par
+                            \}\par
+                            //m_pGame->bAddNewEffect( 75, (m_sPivotX+dX)*32, (m_sPivotY+dY)*32, dx, dy, 0 );\par
+                            //m_pGame->bAddNewEffect( 76, (m_sPivotX+dX)*32, (m_sPivotY+dY)*32, dx, dy, 0 );\par
+                            //m_pGame->bAddNewEffect( 77, (m_sPivotX+dX)*32, (m_sPivotY+dY)*32, dx, dy, 0 );\par
+                        \}\par
+                        break;*/\par
+\par
+                    case 73: // Snoopy: Fite-Wyvern\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 106, sDist, lPan);\par
+                        break;\par
+\par
+                    case 80: // Snoopy: Tentocle\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 110, sDist, lPan);\par
+                        break;\par
+\par
+                    case 72: // Snoopy: Claw Turtle\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 114, sDist, lPan);\par
+                        break;\par
+\par
+                    case 71: // Snoopy: Centaurus\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 117, sDist, lPan);\par
+                        break;\par
+\par
+                    case 76: // Snoopy: Giant Tree\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 122, sDist, lPan);\par
+                        break;\par
+\par
+                    case 75: // Snoopy: Giant Lizard\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 126, sDist, lPan);\par
+                        break;\par
+\par
+                    case 70: // Snoopy: Dragon\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 130, sDist, lPan);\par
+                        break;\par
+\par
+                    case 79: // Snoopy: Nizie\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 134, sDist, lPan);\par
+                        break;\par
+\par
+                    case 81: // void CGame::DrawDruncncity();Abaddon\par
+                    case 82: //  Eternal-Dragon By Carlos Ramon\par
+                        if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                            m_pGame->PlaySound('M', 136, sDist, lPan);\par
+                        break;\par
+C\'f3digo:\par
+seguimos en iObjectFrameCounter\par
+\par
+\par
+busca\par
+\par
+                        case 81: // Snoopy: Abaddon\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) ) m_pGame->PlaySound('M', 138, sDist, lPan);\par
+                            break;\par
+\par
+                        case 72: // Snoopy: ClawTurtle\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) ) m_pGame->PlaySound('M', 112, sDist, lPan);\par
+                            break;\par
+\par
+                        case 71: // Snoopy: Centaurus\par
+                        case 82: // Snoopy: Sorceress\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) ) m_pGame->PlaySound('M', 116, sDist, lPan);\par
+                            break;\par
+C\'f3digo:\par
+y remplazar por \par
+\par
+\par
+                        case 81: // Snoopy: Abaddon\par
+                        case 82: //  Eternal-Dragon By Carlos Ramon\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) ) m_pGame->PlaySound('M', 138, sDist, lPan);\par
+                            break;\par
+\par
+                        case 72: // Snoopy: ClawTurtle\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) ) m_pGame->PlaySound('M', 112, sDist, lPan);\par
+                            break;\par
+\par
+                        case 71: // Snoopy: Centaurus\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) ) m_pGame->PlaySound('M', 116, sDist, lPan);\par
+                            break;\par
+C\'f3digo:\par
+seguimos en iObjectFrameCounter\par
+\par
+busca\par
+\par
+\par
+                        case 81: // Snoopy: Abaddon\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 138, sDist, lPan);\par
+                            break;\par
+\par
+                        case 72: // Snoopy: ClawTurtle\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 112, sDist, lPan);\par
+                            break;\par
+\par
+                        case 71: // Snoopy: Centaurus\par
+                        case 82: // Snoopy: Sorceress\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 116, sDist, lPan);\par
+                            break;\par
+C\'f3digo:\par
+y remplazar por\par
+\par
+                        case 81: // Snoopy: Abaddon\par
+                        case 82: //  Eternal-Dragon By Carlos Ramon\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 138, sDist, lPan);\par
+                            break;\par
+\par
+                        case 72: // Snoopy: ClawTurtle\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 112, sDist, lPan);\par
+                            break;\par
+\par
+                        case 71: // Snoopy: Centaurus\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 116, sDist, lPan);\par
+                            break;\par
+C\'f3digo:\par
+seguimos en iObjectFrameCounter\par
+\par
+\par
+busca\par
+\par
+\par
+                        case 71: // Snoopy: Centaur\par
+                        case 82: // Snoopy: Sorceress\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 129, sDist, lPan);\par
+                            break;\par
+\par
+                        case 72: // Snoopy: ClawTurtle\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 113, sDist, lPan);\par
+                            break;\par
+\par
+                        case 73: // Snoopy: FireWyvern\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 105, sDist, lPan);\par
+                            break;\par
+\par
+\par
+                        case 60: // Cannibal Plant\par
+                        case 74: // Snoopy: GiantGrayFish\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 98, sDist, lPan);\par
+                            break;\par
+\par
+                        case 75: //Snoopy:\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 125, sDist, lPan);\par
+                            break;\par
+\par
+                        case 76: // Snoopy:\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 121, sDist, lPan);\par
+                            break;\par
+\par
+                        case 78: // Snoopy:\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 103, sDist, lPan);\par
+                            break;\par
+\par
+                        case 79: // Snoopy:\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 133, sDist, lPan);\par
+                            break;\par
+\par
+                        case 80: //Snoopy: Tentocle\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 109, sDist, lPan);\par
+                            break;\par
+\par
+                        case 81: // Snoopy: Abaddon\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 139, sDist, lPan);\par
+                            break;\par
+C\'f3digo:\par
+y remplazar por\par
+\par
+\par
+                        case 71: // Snoopy: Centaur\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 129, sDist, lPan);\par
+                            break;\par
+\par
+                        case 72: // Snoopy: ClawTurtle\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 113, sDist, lPan);\par
+                            break;\par
+\par
+                        case 73: // Snoopy: FireWyvern\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 105, sDist, lPan);\par
+                            break;\par
+\par
+\par
+                        case 60: // Cannibal Plant\par
+                        case 74: // Snoopy: GiantGrayFish\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 98, sDist, lPan);\par
+                            break;\par
+\par
+                        case 75: //Snoopy:\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 125, sDist, lPan);\par
+                            break;\par
+\par
+                        case 76: // Snoopy:\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 121, sDist, lPan);\par
+                            break;\par
+\par
+                        case 78: // Snoopy:\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 103, sDist, lPan);\par
+                            break;\par
+\par
+                        case 79: // Snoopy:\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 133, sDist, lPan);\par
+                            break;\par
+\par
+                        case 80: //Snoopy: Tentocle\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 109, sDist, lPan);\par
+                            break;\par
+\par
+                        case 81: // Snoopy: Abaddon\par
+                        case 82: //  Eternal-Dragon By Carlos Ramon\par
+                            if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+                                m_pGame->PlaySound('M', 139, sDist, lPan);\par
+                            break;\par
+\par
+[CODE] Eternal-Dragon Part II (By Carlos)\par
+en los source del HG\par
+\par
+C\'f3digo:\par
+dentro de MobGenerator\par
+\par
+busca\par
+C\'f3digo:\par
+                case 21:\par
+                    if ((iResult >= 1) && (iResult < 94)) \{\par
+                        iResult = 17; // Unicorn\par
+                        bFirmBerserk = TRUE;\par
+                    \}\par
+                    else if ((iResult >= 94) && (iResult < 95)) \{\par
+                        iResult = 36; // Wyvern\par
+                    \}\par
+                    else if ((iResult >= 95) && (iResult < 96)) \{\par
+                        iResult = 37; // Fire-Wyvern\par
+                    \}\par
+                    else if ((iResult >= 96) && (iResult < 97)) \{\par
+                        iResult = 47; // MasterMage-Orc\par
+                    \}\par
+                    else if ((iResult >= 97) && (iResult < 98)) \{\par
+                        iResult = 35; // Hellclaw\par
+                    \}                \par
+                    else if ((iResult >= 98) && (iResult < 99)) \{\par
+                        iResult = 49; // Tigerworm\par
+                    \}        \par
+                    else if ((iResult >= 99) && (iResult <= 100)) \{\par
+                        iResult = 51; // Abaddon\par
+                    \}\par
+\par
+                    iMapLevel = 4;\par
+                    break;\par
+C\'f3digo:\par
+y remplazar por\par
+\par
+\par
+    case 21:\par
+                    if ((iResult >= 1) && (iResult < 102)) \{\par
+                        iResult = 17; // Unicorn\par
+                        bFirmBerserk = TRUE;\par
+                    \}\par
+                    else if ((iResult >= 94) && (iResult < 95)) \{\par
+                        iResult = 36; // Wyvern\par
+                    \}\par
+                    else if ((iResult >= 95) && (iResult < 96)) \{\par
+                        iResult = 37; // Fire-Wyvern\par
+                    \}\par
+                    else if ((iResult >= 96) && (iResult < 97)) \{\par
+                        iResult = 47; // MasterMage-Orc\par
+                    \}\par
+                    else if ((iResult >= 97) && (iResult < 98)) \{\par
+                        iResult = 35; // Hellclaw\par
+                    \}                \par
+                    else if ((iResult >= 98) && (iResult < 99)) \{\par
+                        iResult = 49; // Tigerworm\par
+                    \}        \par
+                    else if ((iResult >= 99) && (iResult <= 100)) \{\par
+                        iResult = 51; // Abaddon\par
+                    \}\par
+                    else if ((iResult >= 101) && (iResult < 102)) \{\par
+                        iResult = 62; // Eternal-Dragon By Carlos Ramon\par
+                    \}\par
+\par
+                    iMapLevel = 4;\par
+                    break;\par
+C\'f3digo:\par
+Seguimos en MobGenerator\par
+\par
+busca \par
+\par
+                case 61: strcpy(cNpcName, "XY-Elvine");            iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+C\'f3digo:\par
+y debajo agregamos\par
+\par
+\par
+                case 62: strcpy(cNpcName, "Eternal-Dragon");            iNpcID = -1; iProbSA = 20; iKindSA = 1; break; // Eternal-Dragon By Carlos Ramon\par
+C\'f3digo:\par
+Seguimos en MobGenerator\par
+\par
+busca \par
+\par
+\par
+                                    case 81:  strcpy(cNpcName,"Abaddon");            iProbSA = 20; iKindSA = 1;  break;\par
+C\'f3digo:\par
+y debajo agregamos\par
+\par
+\par
+                                    case 82:  strcpy(cNpcName,"Eternal-Dragon");    iProbSA = 20; iKindSA = 1;  break; // Eternal-Dragon By Carlos Ramon\par
+dentro de DeleteNpc\par
+\par
+busca \par
+\par
+\par
+case 81: //Abaddon\par
+bGetMultipleItemNamesWhenDeleteNpc( m_pNpcList[iNpcH]->m_sType, // NPC Type\par
+50, // iProbability\par
+12, // iMin\par
+20, // iMax\par
+m_pNpcList[iNpcH]->m_sX, // sBaseX\par
+m_pNpcList[iNpcH]->m_sY, // sBaseY\par
+DEF_ITEMSPREAD_FIXED, // iItemSpreadType\par
+65, // iSpreadRange\par
+iItemIDs, // BasePos\par
+ItemPositions, // iNumItem\par
+&iNumItem);\par
+break;\par
+C\'f3digo:\par
+y debajo agregamos\par
+\par
+\par
+\par
+        case 82: // Eternal-Dragon By Carlos Ramon\par
+                bGetMultipleItemNamesWhenDeleteNpc( m_pNpcList[iNpcH]->m_sType,    // NPC Type\par
+                                                50,                            // iProbability\par
+                                                12,                            // iMin\par
+                                                20,                            // iMax\par
+                                                m_pNpcList[iNpcH]->m_sX,    // sBaseX\par
+                                                m_pNpcList[iNpcH]->m_sY,    // sBaseY\par
+                                                DEF_ITEMSPREAD_FIXED,        // iItemSpreadType\par
+                                                65,                            // iSpreadRange\par
+                                                iItemIDs,                    // BasePos\par
+                                                ItemPositions,                // iNumItem\par
+                                                &iNumItem);\par
+             break;\par
+C\'f3digo:\par
+luego en AdminOrder_Polymorph\par
+\par
+busca \par
+\par
+        else if (memcmp(token, "Sor", 3) == 0)\par
+            m_pClientList[iClientH]->m_sType = 82;\par
+C\'f3digo:\par
+y arriva de esto agrega\par
+\par
+        // Eternal-Dragon By Carlos Ramon\par
+        else if (memcmp(token, "Eternal-Dragon", 7) == 0)\par
+            m_pClientList[iClientH]->m_sType = 82;\par
+C\'f3digo:\par
+luego en AdminOrder_UnsummonBoss\par
+\par
+buscamos \par
+\par
+            case 81: //Abaddon\par
+y abajo agregamos\par
+\par
+case 82: // Eternal-Dragon By Carlos Ramon\par
+C\'f3digo:\par
+y por ultimo en bGetMultipleItemNamesWhenDeleteNpc\par
+\par
+busca\par
+\par
+\par
+\par
+\par
+\par
+        case 73: // Fire-Wyvern\par
+            // \'c3\'d6\'bb\'f3\'b1\'de\par
+            switch (iDice(1, 6)) \{\par
+                case 1: if (iDice(1,(50 * fProbA)) == 3) iItemID = 658; break; // frozendragonstaff\par
+                case 2: if (iDice(1,(50 * fProbA)) == 2) iItemID = 847; break; // DragonStaff\par
+                case 3: if (iDice(1,(50 * fProbA)) == 2) iItemID = 658; break; // neckIceEle\par
+                case 4: if (iDice(1,(50 * fProbA)) == 2) iItemID = 847; break; // neckIcePro\par
+                case 5: if (iDice(1,(50 * fProbA)) == 2) iItemID = 656; break; // wball\par
+                case 6: if (iDice(1,(50 * fProbA)) == 2) iItemID =  657; break; // Excaliber        \par
+            \}\par
+\par
+            // \'bb\'f3\'b1\'de\par
+            if( iItemID == 0 )\par
+            \{\par
+                switch( iDice(1, 14) ) \{\par
+                    case  1: if (iDice(1,(4 * fProbB)) == 2) iItemID = 650; break; // wball           \par
+                    case  2: if (iDice(1,(4  * fProbB)) == 2) iItemID = 650; break; // zem        \par
+                    case  3: if (iDice(1,(4 * fProbB)) == 2) iItemID = 1870; break; // oball    \par
+                    case  4: if (iDice(1,(4  * fProbB)) == 2) iItemID = 1868; break; // NecklaceOfXelima           \par
+                    case  5: if (iDice(1,(4  * fProbB)) == 2) iItemID = 847; break; // orangeball           \par
+                    case  6: if (iDice(1,(4  * fProbB)) == 2) iItemID = 860; break; // crit\par
+                    case  7: if (iDice(1,(4  * fProbB)) == 2) iItemID = 3045; break; // reppot            \par
+                    case  8: if (iDice(1,(4  * fProbB)) == 2) iItemID = 851; break; // zem      \par
+                    case  9: if (iDice(1,(4  * fProbB)) == 2) iItemID = 847; break; // ringofogrepowerLF\par
+                    case  10: if (iDice(1,(6  * fProbB)) == 2) iItemID = 657; break; // demonpowerLF            \par
+                    case  11: if (iDice(1,(6  * fProbB)) == 2) iItemID = 657; break; // ringwizardLF      \par
+                    case  12: if (iDice(1,(6  * fProbB)) == 2) iItemID = 640; break; // ringmageLF\par
+                    case  13: if (iDice(1,(8  * fProbB)) == 2) iItemID = 847; break; // zem\par
+                    case  14: if (iDice(1,(8  * fProbB)) == 2) iItemID = 641; break; // yellowball\par
+                \}\par
+            \}\par
+\par
+            break;\par
+C\'f3digo:\par
+y justo despues de break; agrega\par
+\par
+\par
+                    case 82: // Eternal-Dragon By Carlos Ramon\par
+\par
+            // \'c3\'d6\'bb\'f3\'b1\'de\par
+            switch (iDice(1, 7)) \{\par
+                case 1: if (iDice(1,(20 * fProbA)) == 3) iItemID = 915; break; // WhiteBall\par
+                case 2: if (iDice(1,(20 * fProbA)) == 2) iItemID = 663; break; // WhiteBall\par
+                case 3: if (iDice(1,(20 * fProbA)) == 2) iItemID = 1168; break; // WhiteBall \par
+                case 4: if (iDice(1,(20 * fProbA)) == 2) iItemID = 663; break; // WhiteBall\par
+                case 5: if (iDice(1,(20 * fProbA)) == 2) iItemID = 915; break; // The_Devastator\par
+                case 6: if (iDice(1,(20 * fProbA)) == 2) iItemID = 3042; break; // VioletBall\par
+                case 7: if (iDice(1,(20 * fProbA)) == 2) iItemID = 1168; break; // AquaBall\par
+\par
+\par
+\par
+            \}\par
+\par
+            // \'bb\'f3\'b1\'de\par
+            if( iItemID == 0 )\par
+            \{\par
+                switch( iDice(1, 16) ) \{\par
+                case  1: if (iDice(1,(2 * fProbB)) == 3) iItemID = 2098; break; // RingoftheXelimaLF\par
+                case  2: if (iDice(1,(2 * fProbB)) == 2) iItemID = 663; break; // RingoftheAbaddonLF\par
+                case  3: if (iDice(1,(2 * fProbB)) == 2) iItemID = 3040; break; // ZemstoneofSacrifice \par
+                case  4: if (iDice(1,(2 * fProbB)) == 2) iItemID = 663; break; // The_Devastator\par
+                case  5: if (iDice(1,(2 * fProbB)) == 2) iItemID = 2020; break; // KlonessWand(MS50)\par
+                case  6: if (iDice(1,(2 * fProbB)) == 2) iItemID = 1168; break; // VioletBall\par
+                case  7: if (iDice(1,(2 * fProbB)) == 2) iItemID = 2098; break; // AquaBall\par
+                case  8: if (iDice(1,(2 * fProbB)) == 2) iItemID = 2020; break; // AquaBall\par
+                case  9: if (iDice(1,(2 * fProbB)) == 2) iItemID = 663; break; // WhiteBall         \par
+                case 10: if (iDice(1,(2 * fProbB)) == 2) iItemID = 3040; break; // WhiteBall          \par
+                case 11: if (iDice(1,(2 * fProbB)) == 2) iItemID = 1167; break; // WhiteBall         \par
+                case 12: if (iDice(1,(2 * fProbB)) == 2) iItemID = 2020; break; // WhiteBall              \par
+                case 13: if (iDice(1,(2 * fProbB)) == 2) iItemID = 1168; break; // VioletBall             \par
+                case 14: if (iDice(1,(2 * fProbB)) == 2) iItemID = 3040; break; // The_Devastator\par
+                case 15: if (iDice(1,(2 * fProbB)) == 2) iItemID = 663; break; // BlackBall \par
+                case 16: if (iDice(1,(2 * fProbB)) == 2) iItemID = 2098; break; // WhiteBall \par
+                \}\par
+            \}\par
+    \par
+        // \'c0\'cf\'b9\'dd \'be\'c6\'c0\'cc\'c5\'db ....dumb korean idiots\par
+        if( iItemID == 0 )\par
+        \{\par
+            switch( iDice(1, 27) ) \{\par
+                case  1: if (iDice(1,(20 * fProbC)) == 3) iItemID = 663; break; // WhiteBall\par
+                case  2: if (iDice(1,(20 * fProbC)) == 2) iItemID = 915; break; // WhiteBall\par
+                case  3: if (iDice(1,(20 * fProbC)) == 2) iItemID = 1168; break; // WhiteBall \par
+                case  4: if (iDice(1,(20 * fProbC)) == 2) iItemID = 915; break; // WhiteBall\par
+                case  5: if (iDice(1,(20 * fProbC)) == 2) iItemID = 3042; break; // The_Devastator\par
+                case  6: if (iDice(1,(20 * fProbC)) == 2) iItemID = 1168; break; // VioletBall\par
+                case  7: if (iDice(1,(2 * fProbC)) == 2) iItemID = 852; break; // zemstone\par
+                case  8: if (iDice(1,(2 * fProbC)) == 2) iItemID = 663; break; // zemstone\par
+                case  9: if (iDice(1,(2 * fProbC)) == 2) iItemID = 655; break; // wball                 \par
+                case 10: if (iDice(1,(2 * fProbC)) == 2) iItemID = 663; break; // ZemstoneofSacrifice               \par
+                case 11: if (iDice(1,(2 * fProbC)) == 2) iItemID = 3041; break; // bigcrit            \par
+                case 12: if (iDice(1,(2 * fProbC)) == 2) iItemID = 3042; break; // neckHP20         \par
+                case 13: if (iDice(1,(2 * fProbC)) == 2) iItemID = 663; break; // ZemstoneofSacrifice   \par
+                case 14: if (iDice(1,(2 * fProbC)) == 2) iItemID = 3041; break; // neckMP20            \par
+                case 15: if (iDice(1,(2 * fProbC)) == 2) iItemID = 1168; break; // neckDM10         \par
+                case 16: if (iDice(1,(2 * fProbC)) == 2) iItemID = 1150; break; // oball hncf \par
+                case 17: if (iDice(1,(2 * fProbC)) == 2) iItemID = 915; break; // yball\par
+                case 18: if (iDice(1,(14 * fProbC)) == 2) iItemID = 852; break; // W------ll \par
+                case 19: if (iDice(1,(20 * fProbC)) == 2) iItemID = 846; break; // wBall\par
+                case 20: if (iDice(1,(2 * fProbC)) == 2) iItemID = 850; break; // neckMP20\par
+                case 21: if (iDice(1,(3 * fProbC)) == 2) iItemID = 864; break; // wBall\par
+                case 22: if (iDice(1,(3 * fProbC)) == 2) iItemID = 655; break; // neckSP20\par
+                case 23: if (iDice(1,(3 * fProbC)) == 2) iItemID = 852; break; // wBall\par
+                case 24: if (iDice(1,(20 * fProbC)) == 2) iItemID = 1866; break; // aDyeGold\par
+                case 25: if (iDice(1,(20 * fProbC)) == 2) iItemID = 1865; break; // aDyeRed\par
+                case 26: if (iDice(1,(20 * fProbC)) == 2) iItemID = 1861; break; // wBall\par
+                case 27: if (iDice(1,(20 * fProbC)) == 2) iItemID = 856; break; // aDyeBlack\par
+            \}\par
+        \}\par
+            \par
+\par
+            break;\par
+}
+ 

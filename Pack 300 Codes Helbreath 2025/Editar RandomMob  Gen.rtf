@@ -1,0 +1,125 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 (GUIA-APORTE) Editar un Random-Mob-Generator\par
+Bueno quiero empesar a hacer aporte en la comunidad asi que les vengo a traer esto espero q me entiendan.. Como dice el titulo editar un random-mob-generator les puede servir a alguno ya que ami me sirvio empezemos.\par
+\par
+BUSCAMOS\par
+C\'f3digo:\par
+void CGame::MobGenerator()\par
+Despues abajo buscamos\par
+\par
+\par
+C\'f3digo:\par
+                             case 2:\par
+\tab\tab\tab\tab\tab if ((iResult >= 1) && (iResult < 10)) \{\par
+\tab\tab\tab\tab\tab\tab iResult = 1;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab else if ((iResult >= 40) && (iResult < 50)) \{\par
+\tab\tab\tab\tab\tab\tab iResult = 2;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab else if ((iResult >= 50) && (iResult < 60)) \{\par
+\tab\tab\tab\tab\tab\tab iResult = 10;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab else if ((iResult >= 61) && (iResult < 70)) \{\par
+\tab\tab\tab\tab\tab\tab iResult = 7;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab else if ((iResult >= 71) && (iResult < 80)) \{\par
+\tab\tab\tab\tab\tab\tab iResult = 24;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab else if ((iResult >= 81) && (iResult < 90)) \{\par
+\tab\tab\tab\tab\tab\tab iResult = 25;\par
+\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab else iResult = 6; \par
+\tab\tab\tab\tab\tab iMapLevel = 1;\par
+\tab\tab\tab\tab\tab break;\par
+Bueno aca tenemos el case 2.. esto seria el random-mob-generator\tab = 1 (2)se refiere al case 2.. q va en el configurado en el txt del mapa. bueno supongamos q editamos el case queremos q cuando ponemos random-mob-generator\tab = 1 2 salgan ettins,giantmountain,giantlizard entonces lo q debemos hacer es lo sigiente ejemplo :\par
+C\'f3digo:\par
+ case 2:\par
+\tab\tab\tab\tab\tab if ((iResult >= 1) && (iResult < 10)) \{\par
+\tab\tab\tab\tab\tab\tab iResult = 1;\par
+\tab\tab\tab\tab\tab\}\par
+El numero iResult = 1; se refiere a una tabla que hay mas abajo q hace referencia a cada bicho solo tienen q cambiar eso por el numero de su npc deseado\par
+Espero q me entiendan ahora les pego la refencia del numero de cada npc\par
+C\'f3digo:\par
+\tab\tab //Random Monster Spawns\par
+\tab\tab\tab\tab switch (iResult) \{\par
+\tab\tab\tab\tab case 1:  strcpy(cNpcName, "Slime");\tab\tab\tab\tab iNpcID = 10; iProbSA = 5;  iKindSA = 1; break;\par
+\tab\tab\tab\tab case 2:  strcpy(cNpcName, "Giant-Ant");\tab\tab\tab iNpcID = 16; iProbSA = 10; iKindSA = 2; break;\par
+\tab\tab\tab\tab case 3:  strcpy(cNpcName, "Orc");\tab\tab\tab\tab iNpcID = 14; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 4:  strcpy(cNpcName, "Zombie");\tab\tab\tab iNpcID = 18; iProbSA = 15; iKindSA = 3; break;\par
+\tab\tab\tab\tab case 5:  strcpy(cNpcName, "Skeleton");\tab\tab\tab iNpcID = 11; iProbSA = 35; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 6:  strcpy(cNpcName, "Orc-Mage");\tab\tab\tab iNpcID = 14; iProbSA = 30; iKindSA = 7; break;\par
+\tab\tab\tab\tab case 7:  strcpy(cNpcName, "Scorpion");\tab\tab\tab iNpcID = 17; iProbSA = 15; iKindSA = 3; break;\par
+\tab\tab\tab\tab case 8:  strcpy(cNpcName, "Stone-Golem");\tab\tab iNpcID = 12; iProbSA = 25; iKindSA = 5; break;\par
+\tab\tab\tab\tab case 9:  strcpy(cNpcName, "Cyclops");\tab\tab\tab iNpcID = 13; iProbSA = 35; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 10: strcpy(cNpcName, "Amphis");\tab\tab\tab iNpcID = 22; iProbSA = 20; iKindSA = 3; break;\par
+\tab\tab\tab\tab case 11: strcpy(cNpcName, "Clay-Golem");\tab\tab iNpcID = 23; iProbSA = 20; iKindSA = 5; break;\par
+\tab\tab\tab\tab case 12: strcpy(cNpcName, "Troll");\tab\tab\tab\tab iNpcID = 28; iProbSA = 25; iKindSA = 3; break; \par
+\tab\tab\tab\tab case 13: strcpy(cNpcName, "Orge");\tab\tab\tab\tab iNpcID = 29; iProbSA = 25; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 14: strcpy(cNpcName, "Hellbound");\tab\tab\tab iNpcID = 27; iProbSA = 25; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 15: strcpy(cNpcName, "Liche");\tab\tab\tab\tab iNpcID = 30; iProbSA = 30; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 16: strcpy(cNpcName, "Demon");\tab\tab\tab\tab iNpcID = 31; iProbSA = 20; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 17: strcpy(cNpcName, "Unicorn");\tab\tab\tab iNpcID = 32; iProbSA = 35; iKindSA = 7; break;\par
+\tab\tab\tab\tab case 18: strcpy(cNpcName, "WereWolf");\tab\tab\tab iNpcID = 33; iProbSA = 25; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 19: strcpy(cNpcName, "YB-Aresden");\tab\tab iNpcID = -1;  iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 20: strcpy(cNpcName, "YB-Elvine");\tab\tab\tab iNpcID = -1;  iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 21: strcpy(cNpcName, "Gagoyle");\tab\tab\tab iNpcID = 52; iProbSA = 20; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 22: strcpy(cNpcName, "Beholder");\tab\tab\tab iNpcID = 53; iProbSA = 20; iKindSA = 5; break;\par
+\tab\tab\tab\tab case 23: strcpy(cNpcName, "Dark-Elf");\tab\tab\tab iNpcID = 54; iProbSA = 20; iKindSA = 3; break;\par
+\tab\tab\tab\tab case 24: strcpy(cNpcName, "Rabbit");\tab\tab\tab iNpcID = -1; iProbSA = 5;  iKindSA = 1; break;\par
+\tab\tab\tab\tab case 25: strcpy(cNpcName, "Cat");\tab\tab\tab\tab iNpcID = -1; iProbSA = 10; iKindSA = 2; break;\par
+\tab\tab\tab\tab case 26: strcpy(cNpcName, "Giant-Frog");\tab\tab iNpcID = 57; iProbSA = 10; iKindSA = 2; break;\par
+\tab\tab\tab\tab case 27: strcpy(cNpcName, "Mountain-Giant");\tab iNpcID = 58; iProbSA = 25; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 28: strcpy(cNpcName, "Ettin");\tab\tab\tab\tab iNpcID = 59; iProbSA = 20; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 29: strcpy(cNpcName, "Cannibal-Plant");\tab iNpcID = 60; iProbSA = 20; iKindSA = 5; break;\par
+\tab\tab\tab\tab case 30: strcpy(cNpcName, "Rudolph");\tab\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 5; break;\par
+\tab\tab\tab\tab case 31: strcpy(cNpcName, "Ice-Golem");\tab\tab\tab iNpcID = 65; iProbSA = 35; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 32: strcpy(cNpcName, "DireBoar");\tab\tab\tab iNpcID = 62; iProbSA = 20; iKindSA = 5; break;\par
+\tab\tab\tab\tab case 33: strcpy(cNpcName, "Frost");\tab\tab\tab\tab iNpcID = 63; iProbSA = 30; iKindSA = 8; break;\par
+\tab\tab\tab\tab case 34: strcpy(cNpcName, "Stalker");           iNpcID = 48; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 35: strcpy(cNpcName, "Hellclaw");\tab\tab\tab iNpcID = 49; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 36: strcpy(cNpcName, "Wyvern");\tab\tab\tab iNpcID = 66; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 37: strcpy(cNpcName, "Fire-Wyvern");\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break; \par
+\tab\tab\tab\tab case 38: strcpy(cNpcName, "Barlog");\tab\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 39: strcpy(cNpcName, "Tentocle");\tab\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 40: strcpy(cNpcName, "Centaurus");\tab\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 41: strcpy(cNpcName, "Giant-Lizard");\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 42: strcpy(cNpcName, "Minotaurs");\tab\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 43: strcpy(cNpcName, "Tentocle");\tab\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 44: strcpy(cNpcName, "Claw-Turtle");\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 45: strcpy(cNpcName, "Giant-Crayfish");\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 46: strcpy(cNpcName, "Giant-Plant");\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 47: strcpy(cNpcName, "MasterMage-Orc");\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 48: strcpy(cNpcName, "Nizie");\tab\tab\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 49: strcpy(cNpcName, "Tigerworm");\tab\tab\tab iNpcID = 50; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 50: strcpy(cNpcName, "Giant-Plant");\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 51: strcpy(cNpcName, "Abaddon");\tab\tab\tab iNpcID = -1; iProbSA = 20; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 52: strcpy(cNpcName, "YW-Aresden");\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 53: strcpy(cNpcName, "YW-Elvine");\tab\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 54: strcpy(cNpcName, "YY-Aresden");\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 55: strcpy(cNpcName, "YY-Elvine");\tab\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 56: strcpy(cNpcName, "XB-Aresden");\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 57: strcpy(cNpcName, "XB-Elvine");\tab\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 58: strcpy(cNpcName, "XW-Aresden");\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 59: strcpy(cNpcName, "XW-Elvine");\tab\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 60: strcpy(cNpcName, "XY-Aresden");\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab case 61: strcpy(cNpcName, "XY-Elvine");\tab\tab\tab iNpcID = -1; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab default: strcpy(cNpcName, "Orc");\tab\tab\tab\tab iNpcID = 14; iProbSA = 15; iKindSA = 1; break;\par
+\tab\tab\tab\tab\}\par
+Bueno ahora tomo un ejemplo del code de arriba comparando con la tabla\par
+\par
+case 2:\par
+if ((iResult >= 1) && (iResult < 10)) \{\par
+iResult = 1;\par
+\}\par
+\par
+Supongamos ese es el primer ejemplo iResult = 1; el numero 1 hace referencia al case 1 de la tabla q seria este :\par
+case 1: strcpy(cNpcName, "Slime");\tab  iNpcID = 10; iProbSA = 5; iKindSA = 1; break;\par
+\par
+Esto quiere decir q respawneara un slime y si cambiamos iResult = 1; esto : iResult = 22;\par
+haria referencia a esto :\par
+case 22: strcpy(cNpcName, "Beholder");\tab  iNpcID = 53; iProbSA = 20; iKindSA = 5; break;\par
+Bueno y respawnearia un beholder me parece q mejor no se los pude explicar y asi pueden editar el Case q ustedes quieran con sus bichos cosas q si editaron el Case 2 cuando en el txt mapa pongan random-mob-generator\tab = 1 2 ese mapa va a tener su respawn editado y asi susesivamente\par
+Espero q les sirva y les haiga gustado\par
+}
+ 

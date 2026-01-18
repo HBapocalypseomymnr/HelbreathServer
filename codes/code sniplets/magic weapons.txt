@@ -1,0 +1,149 @@
+/**************************************\
+			** Magic Weapons					  **
+			** Added on : v3.02					  **
+			** Desc :	Original Code From Dax	  **
+			**			Revamped by Diuuude		  **
+			\**************************************/
+			sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ];
+			if (sItemIndex != -1 && m_pClientList[iClientH]->m_pItemList[sItemIndex] != NULL){
+				if ((m_pClientList[iClientH]->m_sAppr2 & 0xF000) != 0){
+					if(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffect >= 60){
+						short sType;
+						switch(m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpecialEffect){
+							// Effect 60 - Magic-Missile on Target
+							case 60:
+								sType = 0;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 61 - Energy-Bolt on target
+							case 61:
+								sType = 10;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 62 - Fire-Ball on target
+							case 62:
+								sType = 20;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 63 - Fire-Strike on target
+							case 63:
+								sType = 30;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 64 - Lightning-Arrow on target
+							case 64:
+								sType = 37;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 65 - Lightning on target
+							case 65:
+								sType = 43;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 66 - Chill-Wind on target
+							case 66:
+								sType = 45;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 67 - Triple-Energy-Bolt on target
+							case 67:
+								sType = 47;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 68 - Lightning-Bolt on target
+							case 68:
+								sType = 51;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 69 - Ice-Storm on target
+							case 69:
+								sType = 55;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 70 - Mass-Lightning-Arrow on target
+							case 70:
+								sType = 56;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 71 - Ice-Strike on target
+							case 71:
+								sType = 57;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 72 - Energy-Strike on target
+							case 72:
+								sType = 60;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 73 - Mass-Fire-Strike on target
+							case 73:
+								sType = 61;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 74 - Mass-Chill-Wind on target
+							case 74:
+								sType = 63;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 75 - Earthworm-Strike on target
+							case 75:
+								sType = 64;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 76 - Bloody-Shock-Wave on target
+							case 76:
+								sType = 70;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 77 - Mass-Ice-Strike on target
+							case 77:
+								sType = 72;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 78 - Cloud-Kill on target
+							case 78:
+								sType = 73;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 79 - Lightning-Strike on target
+							case 79:
+								sType = 74;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 80 - Ice-Whirlwind on target
+							case 80:
+								sType = 75;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 81 - Meteor-Strike on target
+							case 81:
+								sType = 81;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 82 - Mass-Magic-Missile on target
+							case 82:
+								sType = 82;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 83 - Blizzard on target
+							case 83:
+								sType = 91;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+							// Effect 84 - Earth-Shock-Wave on target
+							case 84:
+								sType = 96;
+								SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, dX, dY, (sType+100), m_pClientList[iClientH]->m_sType);
+								break;
+						}
+						// Critical Aura
+						if(wType >= 20){
+							sType = 84;
+							SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex, sX, sY, sX, sY, (sType+100), m_pClientList[iClientH]->m_sType);
+						}
+					}
+				}
+			}
+			/************************\
+			** End of Magic Weapons **
+			\************************/

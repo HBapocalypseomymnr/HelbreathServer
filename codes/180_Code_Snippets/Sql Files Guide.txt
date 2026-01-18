@@ -1,0 +1,29 @@
+this is cdwriters guide
+
+Very Nice and to help all the others set this up ......
+
+I give u this ....as for client and asking me for files or cfgs please dont this is just to help u get the idea on how to set it up...I made this for friends of mine and i DO not run a Server i just like playing with it at home ...If i missed anything or messed anything up here Please Let me know .....
+
+
+1. unzip this to your c drive or any drive u like, Lets get started by seting up your CFG files and what u need to change ...Open up these files 1 at a time and change the IP address...I should have the Ports set all ready but if not change them to what u want.
+
+GateServer.cfg
+GMIpList.cfg
+HMLserver.cfg
+ISPIPlist.cfg
+WLserver.cfg
+/HGServers/GServer.cfg
+
+2. Next we need to setup MSsql db witch i have included here with the reg crack..first run SQLEVAL.exe and place the files in a directory somewhere does not matter where or witch Drive.. after this goto where u extraced the files and hit the autorun.exe and install MSsql DB to your c:\program files\.....Make sure when installing u use MIXED Mode. Add a password and make sure u write that down. then open SQL Crack.zip and copy the crack file to where u installed MSsql DB , mine is C:\Program Files\Microsoft SQL Server\MSSQL\Binn place the crack here and Crack the MSsql DB.
+
+3. Now after this lets setup the MSsql DB from the Orginal files taken from Siementech HB. Open the file called Nicksws1.sql with notepad. This should be in the SQLsetupFiles Directory and change the path to where your MSsql DB Data files should be if u installed it to the Normal path C:\Program Files\ then the first and second path should be correct all ready, If u have not then correct the path to where you stalled MSsql. Start again with line 3 but this time open the file called Nicksmainlog.sql and change the paths.
+
+4. After all above is done lets open the MSsql Enterprise Manager, This is assuming u started the Mssql from control panel/Administrative tools/Services. If not go there now and open up services looking for Mssql and start it .. Now goto Tools / SQL Query Analyzer above when the Windows opens make sure master is set - top middle of the window -, Now click on the Open folder and browse to your 361HB directory inside the folder called SQLsetupFiles click on Nicksws1.sql when it opens click the Blue check mark or (Ctrl+F5) u should get a (The command(s) completed successfully.) in the results list. Now click Run green arrow next to the Blue check mark or press f5 it should finish completed. after this hit the save command and open the next file called Nicksmainlog.sql and do the exact same thing. MSSQL Bases COMPLETE.
+
+5. Next we need to set up your Data Sources (ODBC) goto your control panel/Administrative tools/Data Sources (ODBC) when this open goto the tab System DSN hit add select SQL server then enter account for the Name and change the pull down for Server to local, click next. now on the next page u want to make sure that u have checked "with SQL Server authentication using a login ID and password entered by user" soon as this is checked u need to add your Login ID : sa and your password when u installed MSSQL in Mixed mode. after that it should check your l/p connection with mssql automaticly when u hit Next. Now on Next window u need to make sure that u have the check mark on "Change the defualt database to" and use the pull down to select mainlogin, hit next . on the next page leave everything else alone but make sure u check the "Log ODBC driver statistics to Log file" hit Finish. Now Test then OK.
+
+6. On the tab System DSN again hit add select SQL server then enter character for the Name and change the pull down for Server to local, click next. now on the next page u want to make sure that u have checked "with SQL Server authentication using a login ID and password entered by user" soon as this is checked u need to add your Login ID : sa and your password when u installed MSSQL in Mixed mode. after that it should check your l/p connection with mssql automaticly when u hit Next. Now on Next window u need to make sure that u have the check mark on "Change the defualt database to" and use the pull down to select ws1, hit next . on the next page leave everything else alone but make sure u check the "Log ODBC driver statistics to Log file" hit Finish. Now Test then OK. Your DONE with your DB setup and ODBC connections ...
+
+7. Now for the fun part u need to hex edit the MainLServer.exe and WorldLServer-3.51.exe. Lets start with the first one use any hex editor and search for the word ACCOUNT_T and below that u will find a line like this.
+DSN=account;User ID=sa;pwd=XXXXXXXXX;Provider=MSDASQL.1 use your hex editor and add in your NEW MSSQL sa password, save your done. now for WorldLServer-3.51.exe its the same above but this time u will see a line like this.
+Data Source=character;User ID=sa;pwd=XXXXXXXX;Provider=MSDASQL.1; use your hex editor and add in your NEW MSSQL sa password.. Your Finished

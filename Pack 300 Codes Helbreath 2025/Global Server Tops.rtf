@@ -1,0 +1,418 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 Global Server Tops By SabbaT[GM]\par
+bueno... el code la hace facil... escanea todos los txt de todos los pj..\par
+\par
+hace un rakin ordenado y listo.. manda al cliente.\par
+\par
+ahora.\par
+\par
+HG SRC\par
+\par
+en MsgProcess de game.cpp\par
+\par
+abajo de\par
+C\'f3digo:\par
+case DEF_MSGFROM_CLIENT:\par
+agregamos\par
+C\'f3digo:\par
+case DEF_COMMONTYPE_REQUESTSERVERTOP:RequestServerTop(iClientH, pData);\par
+break;\par
+en game.cpp abajo de todo agregamos 2 funciones nuevas..\par
+abajo de\par
+C\'f3digo:\par
+void CGame::RequestServerTop(int iClientH, char *pData)\par
+\{ char * cp, cDir[100], cV1, StatA[100], StatB[100], Name[12], cTxt[100];\par
+  short cAccAscII, sPjCounter;\par
+  long iSa, iSb, iAux, iAux2;\par
+  long SAB[2000][2];\par
+  long x, y;\par
+  char CName[2000][12];\par
+  HANDLE hDir = INVALID_HANDLE_VALUE;\par
+  WIN32_FIND_DATA findFileData;\par
+ PutLogList("RequestServerTop");\par
+ if (m_pClientList[iClientH] == NULL) return;\par
+ if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;\par
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+ cV1 = *cp;\par
+ cp++;\par
+ ZeroMemory(cDir, sizeof(cDir));\par
+ ZeroMemory(cTxt, sizeof(cTxt));\par
+ cAccAscII = 0;\par
+ ZeroMemory(StatA, sizeof(StatA));\par
+ ZeroMemory(StatB, sizeof(StatB));\par
+ for( y = 0; y < 2000; y++)\par
+     ZeroMemory(CName[y], sizeof(CName[y]));\par
+ for( y = 0; y < 2000; y++)\par
+     for( x = 0; x < 2; x++)\par
+         SAB[y][x] = 0;\par
+ switch(cV1)\par
+ \{    case 1: memcpy(StatA, "character-EK-Count",     strlen("character-EK-Count"));\par
+            memcpy(StatB, "character-contribution", strlen("character-contribution"));\par
+        break;\par
+    case 2: memcpy(StatA, "death-mach-kills",       strlen("death-mach-kills"));\par
+            memcpy(StatB, "death-mach-deaths",      strlen("death-mach-deaths"));  \par
+        break;\par
+    case 3: memcpy(StatA, "character-LEVEL",        strlen("character-LEVEL"));\par
+            memcpy(StatB, "character-EXP",          strlen("character-EXP"));            \par
+        break;\par
+ \}\par
+ cAccAscII = 0;\par
+ sPjCounter = 0;\par
+ wsprintf(cDir,"..\\\\..\\\\Character\\\\AscII%d\\\\*.txt", cAccAscII);\par
+ while(cAccAscII < 200)\par
+ \{    hDir = FindFirstFile(cDir, &findFileData);\par
+    if( hDir != INVALID_HANDLE_VALUE )\par
+    \{    ZeroMemory(cDir, sizeof(cDir));        \par
+        wsprintf(cDir,"..\\\\..\\\\Character\\\\AscII%d\\\\%s", cAccAscII, findFileData.cFileName);\par
+        ZeroMemory(Name, sizeof(Name));\par
+        iSa = iSb = 0;\par
+        ReadCharConfigFile(cDir, StatA, StatB, Name, &iSa, &iSb);\par
+        memcpy(CName[sPjCounter], Name, strlen(Name));\par
+        SAB[sPjCounter][0] = iSa;\par
+        SAB[sPjCounter][1] = iSb;\par
+        sPjCounter++;\par
+        while (FindNextFile(hDir, &findFileData) != 0)\par
+        \{    ZeroMemory(cDir, sizeof(cDir));\par
+            wsprintf(cDir,"..\\\\..\\\\Character\\\\AscII%d\\\\%s", cAccAscII, findFileData.cFileName);\par
+            ZeroMemory(Name, sizeof(Name));\par
+            iSa = iSb = 0;\par
+            ReadCharConfigFile(cDir, StatA, StatB, Name, &iSa, &iSb);\par
+            memcpy(CName[sPjCounter], Name, strlen(Name));\par
+            SAB[sPjCounter][0] = iSa;\par
+            SAB[sPjCounter][1] = iSb;\par
+            sPjCounter++;\par
+        \}\par
+    \}\par
+    cAccAscII++;\par
+    ZeroMemory(cDir, sizeof(cDir));\par
+    wsprintf(cDir,"..\\\\..\\\\Character\\\\AscII%d\\\\*.txt", cAccAscII);\par
+ \}\par
+ ZeroMemory(Name, sizeof(Name));\par
+ iAux = iAux2 = 0;\par
+ switch (cV1)\par
+ \{    case 3:\par
+    case 1:\par
+        for( y = 0; y < sPjCounter-1; y++)\par
+        \{    for( x = 0; x < sPjCounter+1; x++)\par
+            \{    if ( (SAB[x][0] < SAB[x+1][0]) || ((SAB[x][0] == SAB[x+1][0]) && (SAB[x][1] < SAB[x+1][1])) )\par
+                \{    memcpy(Name, CName[x], strlen(CName[x]));\par
+                    iAux = SAB[x][0];\par
+                    iAux2 = SAB[x][1];\par
+                    memcpy(CName[x], CName[x+1], strlen(CName[x+1]));\par
+                    SAB[x][0] = SAB[x+1][0];\par
+                    SAB[x][1] = SAB[x+1][1];\par
+                    memcpy(CName[x+1], Name, strlen(Name));\par
+                    SAB[x+1][0] = iAux;\par
+                    SAB[x+1][1] = iAux2;\par
+         \}    \}    \}\par
+    break;\par
+    case 2:    \par
+        for( y = 0; y < sPjCounter-1; y++)\par
+        \{    for( x = 0; x < sPjCounter+1; x++)\par
+            \{    if ( (SAB[x][0] < SAB[x+1][0]) || ((SAB[x][0] == SAB[x+1][0]) && (SAB[x][1] > SAB[x+1][1])) )\par
+                \{    memcpy(Name, CName[x], strlen(CName[x]));\par
+                    iAux = SAB[x][0];\par
+                    iAux2 = SAB[x][1];\par
+                    memcpy(CName[x], CName[x+1], strlen(CName[x+1]));\par
+                    SAB[x][0] = SAB[x+1][0];\par
+                    SAB[x][1] = SAB[x+1][1];\par
+                    memcpy(CName[x+1], Name, strlen(Name));\par
+                    SAB[x+1][0] = iAux;\par
+                    SAB[x+1][1] = iAux2;\par
+         \}    \}    \}\par
+    break;\par
+ \}\par
+ for( y = 0; y < sPjCounter; y++)\par
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_RESPONSETOPSERVER, SAB[y][0],  SAB[y][1],  y, CName[y],  NULL,  NULL,  NULL,  NULL,  NULL,  NULL, NULL);\par
+\}\par
+\par
+\par
+void CGame::ReadCharConfigFile(char * cFn, char * cSa, char * cSb, char *name, long *x, long *y)\par
+\{    FILE * pFile;\par
+    HANDLE hFile;\par
+    DWORD  dwFileSize;\par
+    char * cp, * token, cReadMode, cGSMode[16] = "";\par
+    char seps[] = "= \\t\\n";    \par
+    class CStrTok * pStrTok;\par
+    cReadMode = 0;\par
+    hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);\par
+    dwFileSize = GetFileSize(hFile, NULL);\par
+    if (hFile != INVALID_HANDLE_VALUE) \par
+        CloseHandle(hFile);\par
+\par
+\par
+    pFile = fopen(cFn, "rt");\par
+    if (pFile == NULL) \{\par
+        return;\par
+    \}\par
+    else \{\par
+        cp = new char[dwFileSize+2];\par
+        ZeroMemory(cp, dwFileSize+2);\par
+        fread(cp, dwFileSize, 1, pFile);\par
+\par
+\par
+        pStrTok = new class CStrTok(cp, seps);\par
+        token = pStrTok->pGet();\par
+        while( token != NULL )\{\par
+            if (cReadMode != 0)\{\par
+                switch (cReadMode)\{\par
+                case 1:\par
+                    ZeroMemory(name, sizeof(name));\par
+                    memcpy(name, token, strlen(token));\par
+                    cReadMode = 0;\par
+                    break;\par
+                case 2:\par
+                    *x = atoi(token);\par
+                    cReadMode = 0;\par
+                    break;\par
+                case 3:\par
+                    *y = atoi(token);\par
+                    cReadMode = 0;\par
+                    break;\par
+                \}\par
+            \}\par
+            else \{\par
+                if (memcmp(token, "character-name", strlen("character-name")) == 0)\par
+                    cReadMode = 1;\par
+                if (memcmp(token, cSa, strlen(cSa)) == 0)\par
+                    cReadMode = 2;\par
+                if (memcmp(token, cSb, strlen(cSb)) == 0)\par
+                    cReadMode = 3;\par
+            \}\par
+            token = pStrTok->pGet();\par
+        \}\par
+        delete pStrTok;\par
+        delete cp;\par
+    \}\par
+    if (pFile != NULL) fclose(pFile);\par
+\}\par
+en SendNotifyMsg\par
+\par
+declaren esto si les falta\par
+C\'f3digo:\par
+long * xp\par
+abajo de\par
+C\'f3digo:\par
+switch (wMsgType) \{\par
+agregamos\par
+C\'f3digo:\par
+case DEF_NOTIFY_RESPONSETOPSERVER:xp  = (long *)cp;\par
+*xp = sV1;\par
+cp += 4;\par
+xp  = (long *)cp;\par
+*xp = sV2;\par
+cp += 4;\par
+xp  = (long *)cp;\par
+*xp = sV3;\par
+cp += 4;\par
+memcpy(cp, pString, strlen(pString));\par
+cp += strlen(pString);\par
+iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6 + 4 + 4 + 4 + strlen(pString));\par
+break;\par
+en game.h\par
+\par
+agregamos\par
+C\'f3digo:\par
+void ReadCharConfigFile(char * cFn, char * cSa, char * cSb, char *name, long *x, long *y);\par
+void RequestServerTop(int iClientH, char *pData);\par
+en NetMes.h\par
+\par
+agregamos\par
+C\'f3digo:\par
+#define DEF_COMMONTYPE_REQUESTSERVERTOP 0x0EA09998\par
+#define DEF_NOTIFY_RESPONSETOPSERVER 0x0F88\par
+CLIENT SRC\par
+\par
+en NetMes.h\par
+\par
+agregamos\par
+C\'f3digo:\par
+#define DEF_COMMONTYPE_REQUESTSERVERTOP 0x0EA09998\par
+#define DEF_NOTIFY_RESPONSETOPSERVER 0x0F88\par
+en NotifyMsgHandler\par
+\par
+declaren esto si no lo tienen.\par
+C\'f3digo:\par
+long * xp;\par
+char Name[12;]\par
+abajo de\par
+C\'f3digo:\par
+switch (wEventType) \{\par
+agregamos\par
+C\'f3digo:\par
+case DEF_NOTIFY_RESPONSETOPSERVER:cp = (char *)(pData    + DEF_INDEX2_MSGTYPE + 2);\par
+xp = (long *)cp;\par
+iV1 = *xp;\par
+cp += 4;\par
+xp = (long *)cp;\par
+iV2 = *xp;\par
+cp += 4;\par
+xp = (long *)cp;\par
+iV3 = *xp;\par
+cp += 4;\par
+ZeroMemory(Name, sizeof(Name));\par
+memcpy(Name, cp, strlen(cp));\par
+cp += strlen(cp);\par
+memcpy(ServerTop[iV3].Name, Name, strlen(Name));\par
+ServerTop[iV3].x = iV1;\par
+ServerTop[iV3].y = iV2;\par
+ServerTop[iV3].True = TRUE;\par
+break;\par
+en bInit\par
+\par
+agregamos\par
+C\'f3digo:\par
+for (i = 0; i < 2000; i++)\{ ZeroMemory(ServerTop[i].Name, sizeof(ServerTop[i].Name));\par
+  ServerTop[i].x = 0;\par
+  ServerTop[i].y = 0;\par
+  ServerTop[i].True = FALSE;\par
+\}\par
+\par
+en game.h\par
+\par
+agregamos\par
+C\'f3digo:\par
+struct \{\par
+char Name[12];\par
+int x;\par
+int y;\par
+BOOL True;\par
+\} ServerTop[2000];\par
+en bSendCommand\par
+\par
+abajo de\par
+C\'f3digo:\par
+switch (dwMsgID) \{\par
+agregamos\par
+C\'f3digo:\par
+case DEF_COMMONTYPE_REQUESTSERVERTOP:\par
+dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+*dwp = dwMsgID;\par
+wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+*wp = DEF_MSGTYPE_CONFIRM;\par
+cp = (char *)(cMsg + DEF_INDEX2_MSGTYPE + 2);\par
+*cp = (char)iV1;\par
+iRet = m_pGSock->iSendMsg(cMsg, 7);\par
+break;\par
+en DrawDialogBox_CityHallMenu\par
+\par
+declaren esto si no lo tienen.\par
+C\'f3digo:\par
+int i\par
+recomiendo que pongan las coords a gusto.\par
+en el case 0:\par
+\par
+agregamos:\par
+C\'f3digo:\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50) && (msY < sY + 50 + 15))\par
+PutAlignedString(sX, sX + szX, sY + 50, "Server Top's", 200,200,200);\par
+else PutAlignedString(sX, sX + szX, sY + 50, "Server Top's", 100,200,100);\par
+abajo del break que cierra el case 0 ....\par
+\par
+agregamos esto.\par
+C\'f3digo:\par
+case 61:\par
+PutAlignedString(sX, sX + szX, sY + 50, "EK Top Ten", 0, 0, 0);\par
+i = 0;\par
+ZeroMemory(cTxt, sizeof(cTxt));\par
+for ( x = 0; x < 20; x++ )\par
+\{    if (ServerTop[x].True == TRUE)\par
+    \{    wsprintf(cTxt, "%s-(%d)EK And (%d)Contri", ServerTop[x].Name, ServerTop[x].x, ServerTop[x].y);\par
+        PutAlignedString(sX, sX + szX, sY + 70 + 15*i, cTxt, 100 + 5*i, 250, 100 + 5*i);\par
+        ZeroMemory( cTxt, sizeof(cTxt) );\par
+        i = i + 1;\par
+    \}\par
+\}\par
+break;\par
+case 62:\par
+PutAlignedString(sX, sX + szX, sY + 50, "Death Mach Top Ten", 0, 0, 0);\par
+i = 0;\par
+ZeroMemory(cTxt, sizeof(cTxt));\par
+for ( x = 0; x < 20; x++ )\par
+\{    if (ServerTop[x].True == TRUE)\par
+    \{    wsprintf(cTxt, "%s-(%d)DMK And (%d)DMD", ServerTop[x].Name, ServerTop[x].x, ServerTop[x].y);\par
+        PutAlignedString(sX, sX + szX, sY + 70 + 15*i, cTxt, 100 + 5*i, 250, 100 + 5*i);\par
+        ZeroMemory( cTxt, sizeof(cTxt) );\par
+        i = i + 1;\par
+    \}\par
+\}\par
+break;\par
+case 63:\par
+PutAlignedString(sX, sX + szX, sY + 50, "Lvl/Exp Top Ten", 0, 0, 0);\par
+i = 0;\par
+ZeroMemory(cTxt, sizeof(cTxt));\par
+for ( x = 0; x < 20; x++ )\par
+\{    if (ServerTop[x].True == TRUE)\par
+    \{    wsprintf(cTxt, "%s-(%d)Lvl And (%d)Exp", ServerTop[x].Name, ServerTop[x].x, ServerTop[x].y);\par
+        PutAlignedString(sX, sX + szX, sY + 70 + 15*i, cTxt, 100 + 5*i, 250, 100 + 5*i);\par
+        ZeroMemory( cTxt, sizeof(cTxt) );\par
+        i = i + 1;\par
+    \}\par
+\}\par
+break;\par
+case 60:\par
+i = 0;\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "EK Top Ten", 200,200,200);\par
+else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "EK Top Ten", 100,200,100);\par
+        \par
+i = i + 1;\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "DEATHMACH Top Ten", 200,200,200);\par
+else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "DEATHMACH Top Ten", 100,200,100);\par
+\par
+\par
+i = i + 1;\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "EXP Top Ten", 200,200,200);\par
+else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "EXP Top Ten", 100,200,100);\par
+break;\par
+en DlgBoxClick_CityhallMenu lo mismo\par
+C\'f3digo:\par
+int i\par
+tbm cambien coords a gusto.\par
+adentro del case 0 pongan\par
+\par
+agreguen\par
+C\'f3digo:\par
+i = i + 1;\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50) && (msY < sY + 50 + 15))\par
+\{    m_stDialogBoxInfo[13].cMode = 60;\par
+    PlaySound('E', 14, 5);\par
+\}\par
+abajo del break q cierra el case 0 ... agreguen:\par
+C\'f3digo:\par
+case 60:\par
+i = 0;\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+\{    bSendCommand(DEF_COMMONTYPE_REQUESTSERVERTOP, DEF_MSGTYPE_CONFIRM, NULL, 1, NULL, NULL, NULL);\par
+    m_stDialogBoxInfo[13].cMode = 61;\par
+    PlaySound('E', 14, 5);\par
+\}\par
+i = i + 1;\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+\{    m_stDialogBoxInfo[13].cMode = 62;\par
+    bSendCommand(DEF_COMMONTYPE_REQUESTSERVERTOP, DEF_MSGTYPE_CONFIRM, NULL, 2, NULL, NULL, NULL);\par
+    PlaySound('E', 14, 5);\par
+\}\par
+i = i + 1;\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+\{    m_stDialogBoxInfo[13].cMode = 63;\par
+    bSendCommand(DEF_COMMONTYPE_REQUESTSERVERTOP, DEF_MSGTYPE_CONFIRM, NULL, 3, NULL, NULL, NULL);\par
+    PlaySound('E', 14, 5);\par
+\}\par
+break;\par
+nada mas... espero les sirva..\par
+\par
+no subo foto q por q me da la re paja xD.\par
+\par
+entre medio millon de ves para hacer las correspondientes pruebas de escritorio.. pantalla.. y fallas de datos..\par
+\par
+ANDA PERFECTO.\par
+\par
+salu2\par
+\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?1693-Global-Server-Tops-By-SabbaT-GM#ixzz2ET0IK2KZ\par
+}
+ 

@@ -1,0 +1,43 @@
+# Visual Studio / C++ Build
+*.obj
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.exp
+*.idb
+*.ipch
+*.pch
+*.ncb
+*.opt
+*.plg
+*.aps
+*.suo
+*.user
+*.sdf
+*.opensdf
+*.tlog
+*.log
+*.bsc
+*.sbr
+*.map
+
+# Build directories
+Debug/
+Release/
+x64/
+x86/
+*.vs/
+.vs/
+ipch/
+
+# Backup files
+*.bak
+*.tmp
+*~
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

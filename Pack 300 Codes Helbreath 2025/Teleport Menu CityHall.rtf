@@ -1,0 +1,470 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 Teleport Menu en CityHall by SabbaT[GM]\par
+bueno este code lo hice de la mano de doluk como espectador y ayudante. dedicado a el xD...\par
+\par
+CLIENTE SRC\par
+vamos a DrawDialogBox_CityHallMenu\par
+\par
+si no tienen esto declarado arriba de todo de la funcion:\par
+C\'f3digo:\par
+int i;\par
+declarenlo.\par
+\par
+recomiendo que cabien las coords si les qda superpuesto con alguna otra cosa q ya exista en esas coords....\par
+en el "case 0:" agregamos :\par
+C\'f3digo:\par
+if (m_iLevel > 50)\{\par
+i = i + 1;\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Teleport Menu", 200,200,200);\par
+else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Teleport Menu", 100,200,100);\par
+\}\par
+restrinjo a los inferiores de level 50 .\par
+\par
+abajo del "break;" que cierra el "case 0:" agregamos :\par
+C\'f3digo:\par
+    case 52:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden Farms", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden Farms", 100,200,100);\par
+        break;\par
+    case 53:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine Farms", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine Farms", 100,200,100);\par
+        break;\par
+    case 54:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Promiseland", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Promiseland", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Middleland", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Middleland", 100,200,100);\par
+        i = i + 1;//puedes\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Icebound", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Icebound", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Middleland Fortress", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Middleland Fortress", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Basement Of Middleland Fortress", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Basement Of Middleland Fortress", 100,200,100);\par
+        break;\par
+    case 55:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden Dungeons", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden Dungeons", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine Dungeons", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine Dungeons", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Dungeons Level 2", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Dungeons Level 2", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Dungeons Level 3", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Dungeons Level 3", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Dungeons Level 4", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Dungeons Level 4", 100,200,100);\par
+        break;\par
+    case 56:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden Garden", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden Garden", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine Garden", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine Garden", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Rocky Highland", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Rocky Highland", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Eternal Field", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Eternal Field", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Death Valley", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Death Valley", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Silent Wood", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Silent Wood", 100,200,100);\par
+        break;\par
+    case 57:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Tower Of Hell Level 1", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Tower Of Hell Level 1", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Tower Of Hell Level 2", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Tower Of Hell Level 2", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Tower Of Hell Level 3", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Tower Of Hell Level 3", 100,200,100);\par
+        break;\par
+    case 51:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden Domains", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Aresden Domains", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine Domains", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Elvine Domains", 100,200,100);        \par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Middleland Domains", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Middleland Domains", 100,200,100);        \par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Dungeons Domains", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Dungeons Domains", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Huntzones Domains", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Huntzones Domains", 100,200,100);\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+             PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Towers Of Hell Domains", 200,200,200);\par
+        else PutAlignedString(sX, sX + szX, sY + 50 + 15*i, "Towers Of Hell Domains", 100,200,100);\par
+        break;\par
+vamos a DlgBoxClick_CityhallMenu\par
+\par
+si arriva de todo no tienen declarado:\par
+C\'f3digo:\par
+int i;\par
+declarenlo.\par
+\par
+en el "case 0:" agregamos:\par
+C\'f3digo:\par
+        if (m_iLevel > 50)\par
+        \{    i = i + 1;\par
+            if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+            \{    m_stDialogBoxInfo[13].cMode = 51;\par
+                PlaySound('E', 14, 5);\par
+            \}\par
+        \}\par
+con la respectiva restriccion de level 50\par
+\par
+abajo del "break;" que cierra el "case 0:" ... agregamos :\par
+C\'f3digo:\par
+    case 52:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 1, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 2, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        break;\par
+    case 53:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 3, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 4, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        break;\par
+    case 54:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 5, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 6, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 7, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 8, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 9, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        break;\par
+    case 55:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 10, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 11, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 12, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 13, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 14, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        break;\par
+    case 56:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 15, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 16, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 17, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 18, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 19, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 20, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        break;\par
+    case 57:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 21, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 22, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    bSendCommand(MSGID_REQUEST_TELEPORT_LISTB, DEF_MSGTYPE_CONFIRM, NULL, 23, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        break;\par
+    case 51:\par
+        i = 0;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    m_stDialogBoxInfo[13].cMode = 52;\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    m_stDialogBoxInfo[13].cMode = 53;\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    m_stDialogBoxInfo[13].cMode = 54;\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    m_stDialogBoxInfo[13].cMode = 55;\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    m_stDialogBoxInfo[13].cMode = 56;\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        i = i + 1;\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 50 + 15*i) && (msY < sY + 65 + 15*i))\par
+        \{    m_stDialogBoxInfo[13].cMode = 57;\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+        break;\par
+en net mes.h agregamos:\par
+C\'f3digo:\par
+#define MSGID_REQUEST_TELEPORT_LISTB        0x0EA09999\par
+vamos a bSendCommand y abajo de :\par
+C\'f3digo:\par
+switch (dwMsgID) \{\par
+agregamos:\par
+C\'f3digo:\par
+    case MSGID_REQUEST_TELEPORT_LISTB:\par
+        dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+        *dwp = dwMsgID;\par
+        wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+        *wp = DEF_MSGTYPE_CONFIRM;\par
+\par
+\par
+        cp = (char *)(cMsg + DEF_INDEX2_MSGTYPE + 2);\par
+        *cp = (char)iV1;\par
+\par
+\par
+        iRet = m_pGSock->iSendMsg(cMsg, 7);\par
+        break;\par
+HG SRC\par
+\par
+en net mes.h agrergamos:\par
+C\'f3digo:\par
+\par
+#define MSGID_REQUEST_TELEPORT_LISTB                0x0EA09999\par
+vamos a MsgProcess()\par
+\par
+aca es crusial que lo ubiquen bien\par
+\par
+abajo de :\par
+C\'f3digo:\par
+        case DEF_MSGFROM_CLIENT:\par
+            dwpMsgID = (DWORD *)(pData + DEF_INDEX4_MSGID);\par
+            switch (*dwpMsgID) \{\par
+agregamos:\par
+C\'f3digo:\par
+            case MSGID_REQUEST_TELEPORT_LISTB:\par
+                RequestTeleportPJ(iClientH, pData);\par
+                break;\par
+en game.cpp abajo de todo agregamos una funcion\par
+C\'f3digo:\par
+void CGame::RequestTeleportPJ(int iClientH, char *pData)\par
+\{\par
+ char * cp;\par
+ char V1;\par
+ int  iCost, iCurCont, i;\par
+ BOOL bFlag;\par
+ char cMapName[10];\par
+ if (m_pClientList[iClientH] == NULL) return;\par
+ if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;\par
+ cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+ V1 = *cp;\par
+ cp++;\par
+ ZeroMemory(cMapName, sizeof(cMapName));\par
+ iCurCont = iCost = 0;\par
+ bFlag = FALSE;\par
+ switch(V1)\par
+ \{    case 1:  strcpy(cMapName, "aresden");    iCost = 100000; break;\par
+    case 2:  strcpy(cMapName, "arefarm");    iCost = 100000; break;\par
+    case 3:  strcpy(cMapName, "elvine");     iCost = 100000; break;\par
+    case 4:  strcpy(cMapName, "elvfarm");    iCost = 100000; break;\par
+    case 5:  strcpy(cMapName, "2ndmiddle");  iCost = 100000; break;\par
+    case 6:  strcpy(cMapName, "middleland"); iCost = 100000; break;\par
+    case 7:  strcpy(cMapName, "icebound");   iCost = 100000; break;\par
+    case 8:  strcpy(cMapName, "middled1x");  iCost = 100000; break;\par
+    case 9:  strcpy(cMapName, "middled1n");  iCost = 100000; break;\par
+    case 10: strcpy(cMapName, "aresdend1");  iCost = 100000; break;\par
+    case 11: strcpy(cMapName, "elvined1");   iCost = 100000; break;\par
+    case 12: strcpy(cMapName, "dglv2");      iCost = 100000; break;\par
+    case 13: strcpy(cMapName, "dglv3");      iCost = 100000; break;\par
+    case 14: strcpy(cMapName, "dglv4");      iCost = 100000; break;\par
+    case 15: strcpy(cMapName, "areuni");     iCost = 100000; break;\par
+    case 16: strcpy(cMapName, "elvuni");     iCost = 100000; break;\par
+    case 17: strcpy(cMapName, "huntzone1");  iCost = 100000; break;\par
+    case 18: strcpy(cMapName, "huntzone2");  iCost = 100000; break;\par
+    case 19: strcpy(cMapName, "huntzone3");  iCost = 100000; break;\par
+    case 20: strcpy(cMapName, "huntzone4");  iCost = 100000; break;\par
+    case 21: strcpy(cMapName, "toh1");       iCost = 100000; break;\par
+    case 22: strcpy(cMapName, "toh2");       iCost = 100000; break;\par
+    case 23: strcpy(cMapName, "toh3");       iCost = 100000; break;\par
+    default: break;\par
+ \}\par
+ iCurCont = dwGetItemCount(iClientH, "Gold");\par
+ for (i = 0; i < DEF_MAXMAPS; i++)\par
+ \{    if (m_pMapList[i] != NULL)\par
+    \{    if (memcmp(m_pMapList[i]->m_cName, cMapName, 10) == 0)\par
+        \{    bFlag = TRUE;\par
+        \}\par
+    \}\par
+ \}\par
+ if ((iCurCont > iCost) && (bFlag))\par
+ \{ SetItemCount(iClientH, "Gold", (dwGetItemCount(iClientH, "Gold") - iCost));\par
+   switch(V1)\par
+   \{    case 1: RequestTeleportHandler(iClientH, "2", "aresden",    -1, -1);break;\par
+        case 2: RequestTeleportHandler(iClientH, "2", "arefarm",    -1, -1);break;\par
+        case 3: RequestTeleportHandler(iClientH, "2", "elvine",     -1, -1);break;\par
+        case 4: RequestTeleportHandler(iClientH, "2", "elvfarm",    -1, -1);break;\par
+        case 5: RequestTeleportHandler(iClientH, "2", "2ndmiddle",  -1, -1);break;\par
+        case 6: RequestTeleportHandler(iClientH, "2", "middleland", -1, -1);break;\par
+        case 7: RequestTeleportHandler(iClientH, "2", "icebound",   -1, -1);break;\par
+        case 8: RequestTeleportHandler(iClientH, "2", "middled1x",  -1, -1);break;\par
+        case 9: RequestTeleportHandler(iClientH, "2", "middled1n",  -1, -1);break;\par
+        case 10:RequestTeleportHandler(iClientH, "2", "aresdend1",  -1, -1);break;\par
+        case 11:RequestTeleportHandler(iClientH, "2", "elvined1",   -1, -1);break;\par
+        case 12:RequestTeleportHandler(iClientH, "2", "dglv2",      -1, -1);break;\par
+        case 13:RequestTeleportHandler(iClientH, "2", "dglv3",      -1, -1);break;\par
+        case 14:RequestTeleportHandler(iClientH, "2", "dglv4",      -1, -1);break;\par
+        case 15:RequestTeleportHandler(iClientH, "2", "areuni",     -1, -1);break;\par
+        case 16:RequestTeleportHandler(iClientH, "2", "elvuni",     -1, -1);break;\par
+        case 17:RequestTeleportHandler(iClientH, "2", "huntzone1",  -1, -1);break;\par
+        case 18:RequestTeleportHandler(iClientH, "2", "huntzone2",  -1, -1);break;\par
+        case 19:RequestTeleportHandler(iClientH, "2", "huntzone3",  -1, -1);break;\par
+        case 20:RequestTeleportHandler(iClientH, "2", "huntzone4",  -1, -1);break;\par
+        case 21:RequestTeleportHandler(iClientH, "2", "toh1",       -1, -1);break;\par
+        case 22:RequestTeleportHandler(iClientH, "2", "toh2",       -1, -1);break;\par
+        case 23:RequestTeleportHandler(iClientH, "2", "toh3",       -1, -1);break;\par
+        default:break;\par
+    \}\par
+ \}else\{    if (!bFlag) SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Map Offline");\par
+        if (iCurCont < iCost) SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "insufficient Gold(100.000)");\par
+    \}\par
+\}\par
+en game.h declaramos\par
+C\'f3digo:\par
+void RequestTeleportPJ(int iClientH, char *pData);\par
+nada mas... en la funcion hay unas trabas por si el mapa esta caido.. y pide 100.000 de oro... si no lo tienen tira un mensaje.. \par
+lo mismo para el mapa caido..\par
+\par
+espero les guste/sirva.\par
+\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?1664-Teleport-Menu-en-CityHall-by-SabbaT-GM#ixzz2ESzyK3gW\par
+}
+ 

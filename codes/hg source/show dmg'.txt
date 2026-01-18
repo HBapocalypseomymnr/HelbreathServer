@@ -1,0 +1,88 @@
+since you asked so nicely ill post a bit of it, but im going to repeat 1 more time, you will get an error like i just posted with what i put here, if you cant do something as simple as fix that error dont use these codes
+
+in ChatMsgHandler
+
+CODE  
+
+if (memcmp(cp, "/showdmglog", 11) == 0) {
+   AdminOrder_ShowDamageLog(iClientH);
+   return;
+  }
+
+  if (memcmp(cp, "/showdmg", 8) == 0) {
+   AdminOrder_ShowDamage(iClientH);
+   return;
+  } 
+
+
+
+handelers for the above calls
+
+CODE  
+void CGame::AdminOrder_ShowDamage(int iClientH)
+{
+char cStatMessage[80];
+if (m_pClientList[iClientH] == NULL) return;
+if(m_pClientList[iClientH]->m_iShowDamage == 1)
+{
+ m_pClientList[iClientH]->m_iShowDamage = 0;
+ wsprintf(cStatMessage, "Command: ShowDamage Disabled");
+}else{
+ m_pClientList[iClientH]->m_iShowDamage = 1;
+ wsprintf(cStatMessage, "Command: ShowDamage Enabled");
+ 
+}
+ShowClientMsg(iClientH, cStatMessage);
+return;
+}
+
+and the function that uses those varibles
+
+
+
+void CGame::AdminOrder_ShowDamageLog(int iClientH)
+{
+char cStatMessage[80];
+if (m_pClientList[iClientH] == NULL) return;
+if(m_pClientList[iClientH]->m_iShowDamage == 2)
+{
+ m_pClientList[iClientH]->m_iShowDamage = 0;
+ wsprintf(cStatMessage, "Command: ShowDamageLog Disabled");
+}else{
+ m_pClientList[iClientH]->m_iShowDamage = 2;
+ wsprintf(cStatMessage, "Command: ShowDamageLog Enabled");
+}
+
+ShowClientMsg(iClientH, cStatMessage);
+return;
+} 
+
+CODE  
+void CGame::ShowClientDmg(int iClientH,char cTargetType, int iTargetH ,int iDamage){
+ char cInfoString[80];
+
+ if(cTargetType == DEF_OWNERTYPE_PLAYER){
+  ZeroMemory(cInfoString, sizeof(cInfoString));
+  wsprintf(cInfoString, "Player(%s) Level(%i) Damage(%i)",m_pClientList[iTargetH]->m_cCharName, 
+  m_pClientList[iTargetH]->m_iLevel, iDamage);
+ }
+ if(cTargetType == DEF_OWNERTYPE_NPC){
+  ZeroMemory(cInfoString, sizeof(cInfoString));
+  wsprintf(cInfoString, "Npc(%s) Damage(%i)",m_pNpcList[iTargetH]->m_cNpcName, iDamage);
+ }
+ if( m_pClientList[iClientH]->m_iShowDamage == 1)
+ {
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString);
+ }else{
+  ShowClientMsg(iClientH, cInfoString);
+ }
+ return;
+} 
+
+
+
+on a side note, make sure that when this function is called the attackertype is a player, and that they have it enabled (!=0)
+
+you could very easily inline this function, or check if its enabled in it, but i didnt feel like doing either (first because if its not being used it seems like unessecary bloat in the function, and the second for unnessecary functions calls if unused.
+
+anything else, lemme know. theres enough information here to implement this now. 

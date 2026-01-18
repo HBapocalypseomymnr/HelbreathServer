@@ -1,0 +1,155 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\lang11274\f0\fs20 Ah diferencia de las armas como swords, hammers, o axes, se podria decir que no existe el codigo que permita agregar o habilitar el upgrade de bow con majestics points, asique aqui se los dejo:\par
+\par
+ClientSRC:\par
+Game.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+\}else if (  ((iWeaponIndex >= DEF_SPRID_WEAPON_M + 64*37)&&(iWeaponIndex < DEF_SPRID_WEAPON_M + 64*37 + 56)) //MStaff3\par
+\tab\tab || ((iWeaponIndex >= DEF_SPRID_WEAPON_W + 64*37)&&(iWeaponIndex < DEF_SPRID_WEAPON_W + 64*37 + 56)))//WStaff3\par
+\tab\{\tab *iWeaponGlare = 2;\par
+\tab\}\par
+justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - DKBow Upgrade\par
+\tab else if (((iWeaponIndex >= DEF_SPRID_WEAPON_M + 64*42) && (iWeaponIndex < DEF_SPRID_WEAPON_M + 64*42 + 56)) //DKBow\par
+\tab\tab || ((iWeaponIndex >= DEF_SPRID_WEAPON_W + 64*42) && (iWeaponIndex < DEF_SPRID_WEAPON_W + 64*42 + 56)))//DKBow\par
+\tab\{\tab\par
+\tab\tab *iWeaponGlare = 3;\par
+\tab\}\par
+HGSRC:\par
+Game.cpp:\par
+Ir al metodo:\par
+\par
+Buscar 2 veces:\par
+C\'f3digo:\par
+case 3:\par
+y encontraran algo asi:\par
+C\'f3digo:\par
+case 3:\par
+if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute & 0x00F00000) != NULL) \{\par
+\tab\tab\tab dwSWEType  = (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute & 0x00F00000) >> 20;  \par
+\tab\tab\tab if (dwSWEType == 9) \{\par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, NULL, NULL, NULL);\par
+\tab\tab\tab\tab return;\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+\tab\tab iSoX = iSoM = 0;\par
+(...)\par
+justo arriba de:\par
+C\'f3digo:\par
+if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute & 0x00F00000) != NULL) \{\par
+agregar:\par
+C\'f3digo:\par
+//50Cent - DKBow Upgrade\par
+\tab\tab if(m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2006) \{//DarkKnightBow\par
+\tab\tab\tab if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0) \{ \par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);\par
+\tab\tab\tab\tab return; \par
+\tab\tab\tab\}\par
+\tab\tab\tab sItemUpgrade = (iValue*(iValue+6)/8) + 2 ;\par
+\par
+\tab\tab\tab if (( m_pClientList[iClientH]->m_iGizonItemUpgradeLeft - sItemUpgrade ) < 0) \{ \par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);\par
+\tab\tab\tab\tab return; \par
+\tab\tab\tab\}\par
+\tab\tab\tab m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= sItemUpgrade ; \par
+\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL);\par
+\tab\tab\tab if ((iValue == 0) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2006))) \{ //DarkKnightHammer\par
+\tab\tab\tab\tab iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;\par
+\tab\tab\tab\tab iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;\par
+\tab\tab\tab\tab delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;\par
+\tab\tab\tab\tab if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , 2006) == FALSE) \{ //DarkKnightBHammer\par
+\tab\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);\par
+\tab\tab\tab\tab\tab return;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;\par
+\tab\tab\tab\tab iValue += 2;\par
+\tab\tab\tab\tab if (iValue > 15) iValue = 15;\par
+\tab\tab\tab\tab dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;\par
+\tab\tab\tab\tab dwTemp = dwTemp & 0x0FFFFFFF;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);\par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, \par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, \par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute ) ;\par
+\tab\tab\tab\tab _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\} \par
+\tab\tab\tab else if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2006)) \{ //DarkKnightBHammer\par
+\tab\tab\tab\tab iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;\par
+\tab\tab\tab\tab iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;\par
+\tab\tab\tab\tab delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;\par
+\tab\tab\tab\tab if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 2006) == FALSE) \{ //DarkKnightBarHammer\par
+\tab\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);\par
+\tab\tab\tab\tab\tab return;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;\par
+\tab\tab\tab\tab iValue += 2;\par
+\tab\tab\tab\tab if (iValue > 15) iValue = 15;\par
+\tab\tab\tab\tab if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;\par
+\tab\tab\tab\tab dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;\par
+\tab\tab\tab\tab dwTemp = dwTemp & 0x0FFFFFFF;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);\par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, \par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, \par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute ) ;\par
+\tab\tab\tab\tab _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);\tab\tab\tab\tab\par
+\tab\tab\tab\}\par
+\tab\tab\tab else if ((iValue >=\tab 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2006)) \{ //DarkKnightBarHammer \par
+\tab\tab\tab\tab iValue += 2;\par
+\tab\tab\tab\tab if (iValue > 15) iValue = 15;\par
+\tab\tab\tab\tab if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;\par
+\tab\tab\tab\tab dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;\par
+\tab\tab\tab\tab dwTemp = dwTemp & 0x0FFFFFFF;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);\par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);\par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, \par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, \par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,\par
+\tab\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute ) ;\par
+\tab\tab\tab\tab _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);\tab\tab\tab\tab\par
+\tab\tab\tab\}\par
+\tab\tab\tab else \{\par
+\tab\tab\tab\tab iValue += 2;\par
+\tab\tab\tab\tab if (iValue > 15) iValue = 15;\par
+\tab\tab\tab\tab if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;\par
+\tab\tab\tab\tab dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;\par
+\tab\tab\tab\tab dwTemp = dwTemp & 0x0FFFFFFF;\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);\par
+\tab\tab\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);\par
+\tab\tab\tab\tab _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+}
+ 

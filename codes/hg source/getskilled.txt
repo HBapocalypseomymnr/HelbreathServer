@@ -1,0 +1,288 @@
+/*=========In Game.CPP ADD============*/
+
+CODE  
+
+/*============SetSkillAll===========/getskills=======*/
+void CGame::SetSkillAll(int iClientH)
+//an Acidx Productions - Last Updated July 04,2005
+//SetSkillAll Acidx Command,  Added July 04, 2005 INDEPENDENCE BABY Fuck YEA
+{
+if (m_pClientList[iClientH] == NULL) return;
+//Magic
+if  (m_pClientList[iClientH]->m_cSkillMastery[4]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[4] = m_pClientList[iClientH]->m_iMag *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[4] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[4] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iMag > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[4] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 4, m_pClientList[iClientH]->m_cSkillMastery[4], NULL, NULL);
+
+}
+//LongSword
+if  (m_pClientList[iClientH]->m_cSkillMastery[8]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[8] = m_pClientList[iClientH]->m_iDex *2;
+
+ if (m_pClientList[iClientH]->m_cSkillMastery[8] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[8] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iDex > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[8] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 8, m_pClientList[iClientH]->m_cSkillMastery[8], NULL, NULL);
+
+}
+//Hammer
+if  (m_pClientList[iClientH]->m_cSkillMastery[14]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[14] = m_pClientList[iClientH]->m_iDex *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[14] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[14] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iDex > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[14] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 14, m_pClientList[iClientH]->m_cSkillMastery[14], NULL, NULL);
+
+}
+//Axes
+if  (m_pClientList[iClientH]->m_cSkillMastery[10]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[10] = m_pClientList[iClientH]->m_iDex *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[10] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[10] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iDex > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[10] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 10, m_pClientList[iClientH]->m_cSkillMastery[10], NULL, NULL);
+
+}
+//hand attack
+if  (m_pClientList[iClientH]->m_cSkillMastery[5]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[5] = m_pClientList[iClientH]->m_iStr *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[5] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[5] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iStr > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[5] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 5, m_pClientList[iClientH]->m_cSkillMastery[5], NULL, NULL);
+
+}
+//ShortSword
+if  (m_pClientList[iClientH]->m_cSkillMastery[7]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[7] = m_pClientList[iClientH]->m_iDex *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[7] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[7] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iDex > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[7] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 7, m_pClientList[iClientH]->m_cSkillMastery[7], NULL, NULL);
+
+}
+//archery
+if  (m_pClientList[iClientH]->m_cSkillMastery[6]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[6] = m_pClientList[iClientH]->m_iDex *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[6] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[6] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iDex > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[6] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 6, m_pClientList[iClientH]->m_cSkillMastery[6], NULL, NULL);
+
+}
+//Fencing
+if  (m_pClientList[iClientH]->m_cSkillMastery[9]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[9] = m_pClientList[iClientH]->m_iDex *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[9] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[9] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iDex > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[9] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 9, m_pClientList[iClientH]->m_cSkillMastery[9], NULL, NULL);
+
+}
+//Staff Attack
+if  (m_pClientList[iClientH]->m_cSkillMastery[21]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[21] = m_pClientList[iClientH]->m_iInt *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[21] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[21] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iInt > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[21] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 21, m_pClientList[iClientH]->m_cSkillMastery[21], NULL, NULL);
+
+}
+//shield
+if  (m_pClientList[iClientH]->m_cSkillMastery[11]< 100)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[11] = m_pClientList[iClientH]->m_iDex *2;
+ if (m_pClientList[iClientH]->m_cSkillMastery[11] > 100)
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[11] = 100;
+ }
+ if (m_pClientList[iClientH]->m_iDex > 50) 
+ {
+ m_pClientList[iClientH]->m_cSkillMastery[11] = 100;
+ }
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 11, m_pClientList[iClientH]->m_cSkillMastery[11], NULL, NULL);
+
+}
+//mining
+if  (m_pClientList[iClientH]->m_cSkillMastery[0]< 20)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[0] = 20;
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 0, m_pClientList[iClientH]->m_cSkillMastery[0], NULL, NULL);
+
+}
+//fishing
+if  (m_pClientList[iClientH]->m_cSkillMastery[1]< 20)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[1] = 20;
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 1, m_pClientList[iClientH]->m_cSkillMastery[1], NULL, NULL);
+
+}
+//farming
+if  (m_pClientList[iClientH]->m_cSkillMastery[2]< 20)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[2] = 20;
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 2, m_pClientList[iClientH]->m_cSkillMastery[2], NULL, NULL);
+
+}
+//alchemy
+if  (m_pClientList[iClientH]->m_cSkillMastery[12]< 20)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[12] = 20;
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 12, m_pClientList[iClientH]->m_cSkillMastery[12], NULL, NULL);
+
+}
+//manufacturing
+if  (m_pClientList[iClientH]->m_cSkillMastery[13]< 20)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[13] = 20;
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 13, m_pClientList[iClientH]->m_cSkillMastery[13], NULL, NULL);
+
+}
+//poison resistance
+if  (m_pClientList[iClientH]->m_cSkillMastery[23]< 20)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[23] = 20;
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 23, m_pClientList[iClientH]->m_cSkillMastery[23], NULL, NULL);
+
+}
+//pretend corpse
+if  (m_pClientList[iClientH]->m_cSkillMastery[19]< 20)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[19] = 20;
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 19, m_pClientList[iClientH]->m_cSkillMastery[19], NULL, NULL);
+
+}
+//magic resistance
+if  (m_pClientList[iClientH]->m_cSkillMastery[3]< 20)
+{
+ // now we add skills
+ m_pClientList[iClientH]->m_cSkillMastery[3] = 20;
+ //Send a notify to update the client
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 3, m_pClientList[iClientH]->m_cSkillMastery[3], NULL, NULL);
+
+}
+//Acidx (c)
+} 
+
+
+
+
+/*====in Game.CPP at the end of InitPlayerData();====*/
+
+CODE  
+
+//Performs SetSkills on Login so they cant cheat us - acidx
+SetSkillAll(iClientH);
+ 
+
+
+
+
+/*====In Game.h====*/
+
+CODE  
+
+void SetSkillAll(int iClientH);[code]
+
+/*====in Game.CPP inside ChatMsgHandler();====*/
+[code]
+if (memcmp(cp, "/getskills", 10) == 0) {
+  SetSkillAll(iClientH);
+  return;
+ } 
+
+
+
+
+Enjoy! and As always, Post any Additions/Changes if you wanna and share with the community <3
+- Acidx 

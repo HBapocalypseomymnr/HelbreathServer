@@ -1,0 +1,621 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Nuevo Sistema de Manufactura .\par
+Este code aparte de darte lo COMPLETION x% te da item con atributos como PA, MA, EXP+, GOLD+. Etc\par
+\par
+Remplazan lo siguiente .\par
+\par
+\par
+\par
+C\'f3digo:\par
+void CGame::BuildItemHandler(int iClientH, char *pData)\par
+\{\par
+ char * cp, cName[21], cElementItemID[6], cColor;\par
+ int    i, x, z, iMatch, iCount, iPlayerSkillLevel, iResult, iTotalValue, iResultValue, iTemp, iItemCount[DEF_MAXITEMS];\par
+ class  CItem * pItem;\par
+ BOOL   bFlag, bItemFlag[6];\par
+ double dV1, dV2, dV3;\par
+ DWORD  dwTemp, dwTemp2, dwType, dwValue;\par
+ WORD   wTemp;\par
+\par
+   if (m_pClientList[iClientH] == NULL) return;\par
+   m_pClientList[iClientH]->m_iSkillMsgRecvCount++;\par
+\par
+   cp = (char *)(pData + 11);\par
+   ZeroMemory(cName, sizeof(cName));\par
+   memcpy(cName, cp, 20);\par
+   cp += 20;\par
+\par
+\par
+   ZeroMemory(cElementItemID, sizeof(cElementItemID));\par
+   cElementItemID[0] = *cp;\par
+   cp++;\par
+   cElementItemID[1] = *cp;\par
+   cp++;\par
+   cElementItemID[2] = *cp;\par
+   cp++;\par
+   cElementItemID[3] = *cp;\par
+   cp++;\par
+   cElementItemID[4] = *cp;\par
+   cp++;\par
+   cElementItemID[5] = *cp;\par
+   cp++;\par
+   \par
+\par
+   bFlag = TRUE;\par
+   while (bFlag == TRUE) \{\par
+      bFlag = FALSE;\par
+      for (i = 0; i <= 4; i++)\par
+      if ((cElementItemID[i] == -1) && (cElementItemID[i+1] != -1)) \{\par
+         cElementItemID[i] = cElementItemID[i+1];\par
+         cElementItemID[i+1] = -1;\par
+         bFlag = TRUE;\par
+      \}\par
+   \}\par
+\par
+   for (i = 0; i < 6; i++) bItemFlag[i] = FALSE;\par
+\par
+\par
+   iPlayerSkillLevel = m_pClientList[iClientH]->m_cSkillMastery[13];\par
+   iResult = iDice(1, 100);\par
+\par
+   if (iResult > iPlayerSkillLevel) \{\par
+      \par
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_BUILDITEMFAIL, NULL, NULL, NULL, NULL);\par
+      return;\par
+   \}\par
+\par
+   \par
+\par
+   for (i = 0; i < 6; i++)\par
+   if (cElementItemID[i] != -1) \{\par
+      // \'c0\'df\'b8\'f8\'b5\'c8 Item ID\'b0\'aa\'c0\'cc\'b4\'d9. \'b9\'ab\'bd\'c3\par
+      if ((cElementItemID[i] < 0) || (cElementItemID[i] > DEF_MAXITEMS)) return;\par
+      if (m_pClientList[iClientH]->m_pItemList[cElementItemID[i]] == NULL) return;      \par
+   \}\par
+\par
+\par
+\par
+   for (i = 0; i < DEF_MAXBUILDITEMS; i++)\par
+   if (m_pBuildItemList[i] != NULL) \{\par
+      if (memcmp(m_pBuildItemList[i]->m_cName, cName, 20) == 0) \{\par
+\par
+         \par
+\par
+\par
+         if (m_pBuildItemList[i]->m_iSkillLimit > m_pClientList[iClientH]->m_cSkillMastery[13]) return;\par
+                  \par
+         for (x = 0; x < DEF_MAXITEMS; x++)\par
+         if (m_pClientList[iClientH]->m_pItemList[x] != NULL)\par
+             iItemCount[x] = m_pClientList[iClientH]->m_pItemList[x]->m_dwCount;\par
+         else iItemCount[x] = 0;\par
+         \par
+\par
+\par
+         iMatch = 0;\par
+         iTotalValue = 0;\par
+         \par
+         for (x = 0; x < 6; x++) \{\par
+            if (m_pBuildItemList[i]->m_iMaterialItemCount[x] == 0) \{\par
+               iMatch++;\par
+            \}\par
+            else \{\par
+               for (z = 0; z < 6; z++)\par
+               if ((cElementItemID[z] != -1) && (bItemFlag[z] == FALSE)) \{\par
+                                    \par
+                  if ((m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_sIDnum  == m_pBuildItemList[i]->m_iMaterialItemID[x]) &&\par
+                     (m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_dwCount >= m_pBuildItemList[i]->m_iMaterialItemCount[x]) &&\par
+                     (iItemCount[cElementItemID[z]] > 0)) \{\par
+                     // \'c0\'e7\'b7\'e1\'c1\'df \'c7\'cf\'b3\'aa\'b8\'a6 \'c3\'a3\'be\'d2\'b4\'d9.\par
+                     iTemp = m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_sItemSpecEffectValue2;\par
+                     if (iTemp > m_pClientList[iClientH]->m_cSkillMastery[13]) \{\par
+                        // \'c0\'e7\'b7\'e1\'c0\'c7 \'bc\'f8\'b5\'b5\'b0\'a1 \'b3\'bb \'bd\'ba\'c5\'b3 \'bc\'f6\'c1\'d8\'c0\'bb \'bb\'f3\'c8\'b8\'c7\'d1\'b4\'d9\'b8\'e9 \'bc\'f8\'b5\'b5\'b8\'a6 \'b3\'b7\'c3\'e1\'b4\'d9.\par
+                        iTemp = iTemp - (iTemp - m_pClientList[iClientH]->m_cSkillMastery[13])/2;\par
+                     \}\par
+\par
+                     iTotalValue += (iTemp * m_pBuildItemList[i]->m_iMaterialItemValue[x]);\par
+                     iItemCount[cElementItemID[z]] -= m_pBuildItemList[i]->m_iMaterialItemCount[x];\par
+                     iMatch++;\par
+                     bItemFlag[z] = TRUE;\par
+                  \par
+                     goto BIH_LOOPBREAK;\par
+                  \}\par
+               \}\par
+BIH_LOOPBREAK:;\par
+            \}\par
+         \}\par
+\par
+\par
+\par
+         if (iMatch != 6) \{\par
+\par
+            SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_BUILDITEMFAIL, NULL, NULL, NULL, NULL);\par
+            return;\par
+         \}\par
+\par
+         // \'bc\'f8\'b5\'b5 \'b0\'e8\'bb\'ea\par
+         dV2 = (double)m_pBuildItemList[i]->m_iMaxValue;\par
+         if (iTotalValue <= 0)\par
+             dV3 = 1.0f;\par
+         else dV3 = (double)iTotalValue;\par
+         dV1 = (double)(dV3/dV2)*100.0f;\par
+\par
+         // \'b9\'e9\'ba\'d0\'b7\'fc\'b7\'ce \'b9\'d9\'b2\'ef \'b0\'aa.\par
+         iTotalValue = (int)dV1;\par
+\par
+         // \'be\'c6\'c0\'cc\'c5\'db \'bb\'fd\'bc\'ba\par
+         pItem = new class CItem;\par
+         if (_bInitItemAttr(pItem, m_pBuildItemList[i]->m_cName) == FALSE) \{\par
+            delete pItem;\par
+            return;\par
+         \}\par
+\par
+         // \'be\'c6\'c0\'cc\'c5\'db\'c0\'cc Custom-Made\'c0\'d3\'c0\'bb \'b3\'aa\'c5\'b8\'b3\'bb\'b4\'c2 \'c7\'c3\'b7\'a1\'b1\'d7\'b8\'a6 \'c0\'d4\'b7\'c2\par
+         dwTemp = pItem->m_dwAttribute;\par
+         dwTemp = dwTemp & 0xFFFFFFFE;\par
+         dwTemp = dwTemp | 0x00000001;\par
+         pItem->m_dwAttribute = dwTemp;\par
+\par
+         if (pItem->m_cItemType == DEF_ITEMTYPE_MATERIAL) \{\par
+\par
+            iTemp = iDice(1, (iPlayerSkillLevel/2)+1) -1;\par
+            pItem->m_sItemSpecEffectValue2 = (iPlayerSkillLevel/2) + iTemp;\par
+\par
+\par
+            pItem->m_sTouchEffectType   = DEF_ITET_ID;\par
+            pItem->m_sTouchEffectValue1 = iDice(1,100000);\par
+            pItem->m_sTouchEffectValue2 = iDice(1,100000);\par
+            pItem->m_sTouchEffectValue3 = timeGetTime();\par
+\par
+         \}\par
+         else \{\par
+\par
+\par
+            dwTemp = pItem->m_dwAttribute;\par
+            dwTemp = dwTemp & 0x0000FFFF;\par
+\par
+            dwTemp2 = (WORD)m_pBuildItemList[i]->m_wAttribute;\par
+            dwTemp2 = dwTemp2 << 16;\par
+\par
+            dwTemp  = dwTemp | dwTemp2;\par
+            pItem->m_dwAttribute = dwTemp;\par
+\par
+            iResultValue = (iTotalValue - m_pBuildItemList[i]->m_iAverageValue);\par
+\par
+            \par
+\par
+            if (iResultValue > 0) \{\par
+               dV2 = (double)iResultValue;\par
+               dV3 = (double)(100 - m_pBuildItemList[i]->m_iAverageValue);\par
+               dV1 = (dV2/dV3)*100.0f;\par
+               pItem->m_sItemSpecEffectValue2 = (int)dV1;\par
+            \}\par
+            else if (iResultValue < 0) \{\par
+               dV2 = (double)(iResultValue);\par
+               dV3 = (double)(m_pBuildItemList[i]->m_iAverageValue);\par
+               dV1 = (dV2/dV3)*100.0f;\par
+               pItem->m_sItemSpecEffectValue2 = (int)dV1;\par
+            \}\par
+            else pItem->m_sItemSpecEffectValue2 = 0;\par
+\par
+\par
+            dV2 = (double)pItem->m_sItemSpecEffectValue2;\par
+            dV3 = (double)pItem->m_wMaxLifeSpan;\par
+            dV1 = (dV2/100.0f)*dV3;\par
+\par
+            iTemp  = (int)pItem->m_wMaxLifeSpan;\par
+            iTemp += (int)dV1;\par
+\par
+            pItem->m_sTouchEffectType   = DEF_ITET_ID;\par
+            pItem->m_sTouchEffectValue1 = iDice(1,100000);\par
+            pItem->m_sTouchEffectValue2 = iDice(1,100000);\par
+            pItem->m_sTouchEffectValue3 = timeGetTime();\par
+\par
+            if (iTemp <= 0)\par
+                wTemp = 1;\par
+            else wTemp = (WORD)iTemp;\par
+\par
+            if (wTemp <= pItem->m_wMaxLifeSpan*2) \{\par
+\par
+               pItem->m_wMaxLifeSpan = wTemp;\par
+               pItem->m_sItemSpecEffectValue1 = (short)wTemp;\par
+               pItem->m_wCurLifeSpan = pItem->m_wMaxLifeSpan;\par
+            \}\par
+            else pItem->m_sItemSpecEffectValue1 = (short)pItem->m_wMaxLifeSpan;\par
+            \par
+\par
+         \par
+            \par
+   if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK) \{\par
+              \par
+               iResult = iDice(1,10000);\par
+               if ((iResult >= 1) && (iResult <= 299)) \{\par
+                  dwType = 10;\par
+                  cColor = 5;\par
+               \}\par
+               else if ((iResult >= 300) && (iResult <= 999)) \{\par
+                  dwType = 12;\par
+                  cColor = 5;\par
+               \}\par
+               else if ((iResult >= 1000) && (iResult <= 2499)) \{\par
+                  dwType = 7;\par
+                  cColor = 6;\par
+               \}\par
+               else if ((iResult >= 2500) && (iResult <= 4499)) \{\par
+                  dwType = 7;\par
+                  cColor = 6;\par
+               \}\par
+               else if ((iResult >= 4500) && (iResult <= 6499)) \{\par
+                  dwType = 7;\par
+                  cColor = 6;\par
+               \}\par
+               else if ((iResult >= 6500) && (iResult <= 8099)) \{\par
+                  dwType = 7;\par
+                  cColor = 6;\par
+               \}\par
+               else if ((iResult >= 8100) && (iResult <= 9699)) \{\par
+                  dwType = 9;\par
+                  cColor = 8;\par
+               \}\par
+               else if ((iResult >= 9700) && (iResult <= 10000)) \{\par
+                  dwType = 9;\par
+                  cColor = 8;\par
+               \}\par
+\par
+               \par
+               pItem->m_cItemColor = cColor;\par
+\par
+\par
+               iResult = iDice(1, 30000);\par
+               if ((iResult >= 1) && (iResult < 10000))           dwValue = 2;  // 10000/29348 = 34%\par
+               else if ((iResult >= 10000) && (iResult < 17400))  dwValue = 2;  // 6600/29348 = 22.4%\par
+               else if ((iResult >= 17400) && (iResult < 22400))  dwValue = 2;  // 4356/29348 = 14.8%\par
+               else if ((iResult >= 22400) && (iResult < 25400))  dwValue = 4;  // 2874/29348 = 9.7%\par
+               else if ((iResult >= 25400) && (iResult < 27400))  dwValue = 4;  // 1897/29348 = 6.4%\par
+               else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 4;  // 1252/29348 = 4.2%\par
+               else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 8;  // 826/29348 = 2.8%\par
+               else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 8;  // 545/29348 = 1.85%\par
+               else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 8;  // 360/29348 = 1.2%\par
+               else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 10; // 237/29348 = 0.8%\par
+               else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 11; // 156/29348 = 0.5%\par
+               else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 12; // 103/29348 = 0.3%\par
+               else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 13; // 68/29348 = 0.1%\par
+               else dwValue = 1; // v2.03 906\par
+\par
+            \par
+               switch (dwType) \{\par
+               case 1: \par
+                  if (dwValue <= 5) dwValue = 5;\par
+                  break;\par
+               case 2: \par
+                  if (dwValue <= 4) dwValue = 4;\par
+                  break;\par
+               case 6: \par
+                  if (dwValue <= 4) dwValue = 4;\par
+                  break;\par
+               case 8: \par
+                  if (dwValue <= 2) dwValue = 2;\par
+                  break;\par
+               \}\par
+               \par
+               if (dwValue > 7) dwValue = 7;\par
+\par
+              \par
+               pItem->m_dwAttribute = NULL;\par
+               dwType  = dwType << 20;\par
+               dwValue = dwValue << 16;\par
+               pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;\par
+         \}\par
+\par
+   if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE) \{\par
+             \par
+\par
+               \par
+               iResult = iDice(1,10000);//AQUI OGEID\par
+               if ((iResult >= 1) && (iResult <= 5999))          dwType = 8;\par
+               else if ((iResult >= 6000) && (iResult <= 8999))  dwType = 6;\par
+               else if ((iResult >= 9000) && (iResult <= 9554))  dwType = 11; //dwType = 11;\par
+               else if ((iResult >= 9555) && (iResult <= 10000)) dwType = 12; //dwType = 12;\par
+\par
+             \par
+               iResult = iDice(1, 30000);\par
+               if ((iResult >= 1) && (iResult < 10000))           dwValue = 1;  // 10000/29348 = 34%\par
+               else if ((iResult >= 10000) && (iResult < 17400))  dwValue = 1;  // 6600/29348 = 22.4%\par
+               else if ((iResult >= 17400) && (iResult < 22400))  dwValue = 1;  // 4356/29348 = 14.8%\par
+               else if ((iResult >= 22400) && (iResult < 25400))  dwValue = 2;  // 2874/29348 = 9.7%\par
+               else if ((iResult >= 25400) && (iResult < 27400))  dwValue = 2;  // 1897/29348 = 6.4%\par
+               else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 2;  // 1252/29348 = 4.2%\par
+               else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 4;  // 826/29348 = 2.8%\par
+               else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 4;  // 545/29348 = 1.85%\par
+               else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 4;  // 360/29348 = 1.2%\par
+               else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 6; // 237/29348 = 0.8%\par
+               else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 6; // 156/29348 = 0.5%\par
+               else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 10; // 103/29348 = 0.3%\par
+               else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 10; // 68/29348 = 0.1%\par
+               else dwValue = 1; // v2.03 906\par
+\par
+               // \'c2\'b9\'c3\'a6\'c2\'be\'c3\'ae\'c2\'b1\'c2\'b8\'c3\'80\'c3\'87 Main \'c3\'86\'c2\'af\'c2\'bc\'c2\'ba\'c3\'84\'c2\'a1\'c2\'bf\'c2\'a1 \'c2\'b5\'c3\'bb\'c2\'b6\'c3\'b3 \'c2\'bc\'c3\'b6\'c3\'84\'c2\'a1 \'c2\'ba\'c2\'b8\'c3 \'c2\'a4\par
+               switch (dwType) \{\par
+               case 6: // \'c2\'b0\'c3\'a6\'c2\'b7\'c2\'ae\'c3\'88\'c2* \'c3\'83\'c3\endash\'c3\'80\'c3\'ba +16%\par
+                  if (dwValue <= 4) dwValue = 4;\par
+                  break;\par
+               case 8: // \'c2\'bc\'c3\'b6\'c2\'b8\'c3* \'c3\'83\'c3\endash\'c3\'80\'c3\'ba +14%\par
+                  if (dwValue <= 2) dwValue = 2;\par
+                  break;\par
+\par
+               case 11:\par
+               case 12:\par
+                  // v2.04\par
+                  dwValue = (dwValue+1) / 2;\par
+                  if (dwValue < 1) dwValue = 1;\par
+                  if (dwValue > 2) dwValue = 2;\par
+                  break;\par
+               \}\par
+             \par
+               if (dwValue > 7) dwValue = 7;\par
+\par
+\par
+               pItem->m_dwAttribute = NULL;\par
+               dwType  = dwType << 20;\par
+               dwValue = dwValue << 16;\par
+               pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;\par
+\par
+\par
+               if (iDice(1,10000) >= 3000) \{\par
+\par
+\par
+\par
+                  iResult = iDice(1,10000);\par
+                  if ((iResult >= 1) && (iResult <= 999)) \{         \par
+                     dwType = 8;\par
+                     cColor = 15;\par
+                     \}\par
+                  else if ((iResult >= 1000) && (iResult <= 3999)) \{\par
+                     dwType = 8;\par
+                     cColor = 15;\par
+                     \}\par
+                  else if ((iResult >= 4000) && (iResult <= 5499))  \{\par
+                     dwType = 8;\par
+                     cColor = 15;\par
+                     \}\par
+                  else if ((iResult >= 5500) && (iResult <= 6499))  \{\par
+                     dwType = 9;\par
+                     cColor = 10;\par
+                     \}\par
+                  else if ((iResult >= 6500) && (iResult <= 7499))  \{\par
+                     dwType = 9;\par
+                     cColor = 10;\par
+                     \}\par
+                  else if ((iResult >= 7500) && (iResult <= 9399))  \{\par
+                     dwType = 9;\par
+                     cColor = 10;\par
+                     \}\par
+                  else if ((iResult >= 9400) && (iResult <= 9799))  \{\par
+                     dwType = 8;\par
+                     cColor = 15;\par
+                     \}\par
+                  else if ((iResult >= 9800) && (iResult <= 10000)) \{\par
+                     dwType = 9;\par
+                     cColor = 10;\par
+                     \}\par
+\par
+                  pItem->m_cItemColor = cColor;\par
+\par
+                  iResult = iDice(1, 30000);\par
+                  if ((iResult >= 1) && (iResult < 10000))           dwValue = 1;  // 10000/29348 = 34%\par
+                  else if ((iResult >= 10000) && (iResult < 17400))  dwValue = 1;  // 6600/29348 = 22.4%\par
+                  else if ((iResult >= 17400) && (iResult < 22400))  dwValue = 1;  // 4356/29348 = 14.8%\par
+                  else if ((iResult >= 22400) && (iResult < 25400))  dwValue = 2;  // 2874/29348 = 9.7%\par
+                  else if ((iResult >= 25400) && (iResult < 27400))  dwValue = 2;  // 1897/29348 = 6.4%\par
+                  else if ((iResult >= 27400) && (iResult < 28400))  dwValue = 2;  // 1252/29348 = 4.2%\par
+                  else if ((iResult >= 28400) && (iResult < 28900))  dwValue = 2;  // 826/29348 = 2.8%\par
+                  else if ((iResult >= 28900) && (iResult < 29300))  dwValue = 4;  // 545/29348 = 1.85%\par
+                  else if ((iResult >= 29300) && (iResult < 29600))  dwValue = 6;  // 360/29348 = 1.2%\par
+                  else if ((iResult >= 29600) && (iResult < 29800))  dwValue = 6; // 237/29348 = 0.8%\par
+                  else if ((iResult >= 29800) && (iResult < 29900))  dwValue = 8; // 156/29348 = 0.5%\par
+                  else if ((iResult >= 29900) && (iResult < 29970))  dwValue = 8; // 103/29348 = 0.3%\par
+                  else if ((iResult >= 29970) && (iResult <= 30000))  dwValue = 8; // 68/29348 = 0.1%\par
+                  else dwValue = 1; // v2.03 906\par
+\par
+                                   switch (dwType) \{\par
+                  case 1: // +21%\par
+                  case 3: // +21%\par
+                  case 7: // +21%\par
+                  case 8: // +9%\par
+                  case 9: // +9%\par
+                     if (dwValue <= 3) dwValue = 3;\par
+                     break;\par
+                  \}\par
+                                    if (dwValue > 7) dwValue = 7;\par
+\par
+\par
+                  dwType  = dwType << 12;\par
+                  dwValue = dwValue << 8;\par
+                  pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;\par
+               \}\par
+   \}\par
+   \}\par
+         //testcode\par
+         wsprintf(G_cTxt, "Custom-Item(%s) Value(%d) Life(%d/%d)", pItem->m_cName, pItem->m_sItemSpecEffectValue2, pItem->m_wCurLifeSpan, pItem->m_wMaxLifeSpan);\par
+         PutLogList(G_cTxt);\par
+      \par
+\par
+         bAddItem(iClientH, pItem, NULL);\par
+         SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_BUILDITEMSUCCESS, pItem->m_sItemSpecEffectValue2, pItem->m_cItemType, NULL, NULL); // Integer\'b8\'a6 \'c0\'fc\'b4\'de\'c7\'cf\'b1\'e2 \'c0\'a7\'c7\'d8\par
+\par
+#ifdef DEF_TAIWANLOG\par
+\par
+         _bItemLog(DEF_ITEMLOG_MAKE, iClientH, (int) -1, pItem);\par
+#endif   \par
+\par
+\par
+         for (x = 0; x < 6; x++)\par
+         if (cElementItemID[x] != -1) \{\par
+            if (m_pClientList[iClientH]->m_pItemList[cElementItemID[x]] == NULL) \{\par
+               \par
+\tab   wsprintf(G_cTxt, "(?) Char(%s) ElementItemID(%d)", m_pClientList[iClientH]->m_cCharName, cElementItemID[x]);\par
+               PutLogFileList(G_cTxt);\par
+            \}\par
+            else \{\par
+               iCount = m_pClientList[iClientH]->m_pItemList[cElementItemID[x]]->m_dwCount - m_pBuildItemList[i]->m_iMaterialItemCount[x];\par
+               if (iCount < 0) iCount = 0;\par
+               SetItemCount(iClientH, cElementItemID[x], iCount);\par
+            \}\par
+         \}\par
+\par
+         if (m_pBuildItemList[i]->m_iMaxSkill > m_pClientList[iClientH]->m_cSkillMastery[13])\par
+            CalculateSSN_SkillIndex(iClientH, 13, 1);\par
+\par
+\par
+         GetExp(iClientH, iDice(1, (m_pBuildItemList[i]->m_iSkillLimit/4))); //m_pClientList[iClientH]->m_iExpStock += iDice(1, (m_pBuildItemList[i]->m_iSkillLimit/4));\par
+\par
+         return;\par
+      \}\par
+   \}\par
+\par
+   \par
+\par
+   for (i = 0; i < DEF_MAXBUILDITEMS; i++)\par
+   if (m_pBuildItemList[i] != NULL) \{\par
+      if (memcmp(m_pBuildItemList[i]->m_cName, cName, 20) == 0) \{\par
+\par
+         \par
+\par
+         if (m_pBuildItemList[i]->m_iSkillLimit > m_pClientList[iClientH]->m_cSkillMastery[13]) return;\par
+            \par
+         iMatch = 0;\par
+\par
+\par
+         for (x = 0; x < 6; x++) m_pBuildItemList[i]->m_iIndex[x] = -1;\par
+         for (x = 0; x < DEF_MAXITEMS; x++) bItemFlag[x] = FALSE;\par
+\par
+\par
+         iTotalValue = 0;\par
+         for (x = 0; x < 6; x++)\par
+         if (m_pBuildItemList[i]->m_iMaterialItemCount[x] == 0) iMatch++; // \'b0\'b9\'bc\'f6\'b0\'a1 0\'c0\'b8\'b7\'ce \'bc\'b3\'c1\'a4\'b5\'c7\'be\'ee \'c0\'d6\'b4\'c2 \'b0\'cd\'c0\'ba \'b9\'ab\'bd\'c3\'c7\'cf\'b4\'c2 \'c7\'c3\'b7\'a1\'b1\'d7\'c0\'cc\'b4\'d9.\par
+         else \{\par
+            bFlag = FALSE;\par
+            for (z = 0; z < DEF_MAXITEMS; z++)\par
+            if ((m_pClientList[iClientH]->m_pItemList[z] != NULL)) \{\par
+               if ((m_pClientList[iClientH]->m_pItemList[z]->m_sIDnum  == m_pBuildItemList[i]->m_iMaterialItemID[x]) &&\par
+                  (m_pClientList[iClientH]->m_pItemList[z]->m_dwCount >= m_pBuildItemList[i]->m_iMaterialItemCount[x]) &&\par
+                  (bItemFlag[z] == FALSE)) \{\par
+                  \par
+                  m_pBuildItemList[i]->m_iIndex[x] = z;\par
+                  bItemFlag[z] = TRUE;\par
+                  iTotalValue += (m_pClientList[iClientH]->m_pItemList[z]->m_sItemSpecEffectValue1 * m_pBuildItemList[i]->m_iMaterialItemValue[x]);\par
+                  \par
+                  bFlag = TRUE;\par
+                  goto BIH_LOOPBREAK;\par
+               \}\par
+            \}\par
+            \par
+BIH_LOOPBREAK:;\par
+\par
+            if (bFlag == TRUE) iMatch++;\par
+         \}\par
+         \par
+         if (iMatch != 6) \{\par
+            SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_BUILDITEMFAIL, NULL, NULL, NULL, NULL);\par
+            return;\par
+         \}\par
+\par
+         //testcode\par
+         wsprintf(G_cTxt, "iTotalValue(%d) MaxValue(%d)", iTotalValue, m_pBuildItemList[i]->m_iMaxValue);\par
+         PutLogList(G_cTxt);\par
+\par
+\par
+         dV2 = (double)m_pBuildItemList[i]->m_iMaxValue;\par
+         if (iTotalValue <= 0)\par
+             dV3 = 1.0f;\par
+         else dV3 = (double)iTotalValue;\par
+         dV1 = (double)(dV3/dV2)*100.0f;\par
+\par
+\par
+         iTotalValue = (int)dV1;\par
+\par
+         //testcode\par
+         wsprintf(G_cTxt, "iTotalValue(%d)", iTotalValue);\par
+         PutLogList(G_cTxt);\par
+      \par
+         \par
+         for (x = 0; x < 6; x++)\par
+         if (m_pBuildItemList[i]->m_iIndex[x] != -1) \{\par
+            iIndex = m_pBuildItemList[i]->m_iIndex[x];\par
+            iCount = m_pClientList[iClientH]->m_pItemList[iIndex]->m_dwCount - m_pBuildItemList[i]->m_iMaterialItemCount[x];\par
+            if (iCount < 0) iCount = 0;\par
+            SetItemCount(iClientH, iIndex, iCount);\par
+         \}\par
+\par
+         pItem = new class CItem;\par
+         if (_bInitItemAttr(pItem, m_pBuildItemList[i]->m_cName) == FALSE) \{\par
+            delete pItem;\par
+            return;\par
+         \}\par
+\par
+         if (pItem->m_cItemType == DEF_ITEMTYPE_MATERIAL) \{\par
+            pItem->m_sItemSpecEffectValue1 = iDice(1, iPlayerSkillLevel);\par
+            if (pItem->m_sItemSpecEffectValue1 < (iPlayerSkillLevel/2))\par
+               pItem->m_sItemSpecEffectValue1 = (iPlayerSkillLevel/2);\par
+         \}\par
+         else \{\par
+            \par
+\par
+            \par
+            dwTemp = pItem->m_dwAttribute;\par
+            dwTemp = dwTemp | 0x00000001;\par
+            pItem->m_dwAttribute = dwTemp;\par
+\par
+            iResultValue = (iTotalValue - m_pBuildItemList[i]->m_iAverageValue);\par
+            \par
+            \par
+            //testcode\par
+            wsprintf(G_cTxt, "iResultValue(%d) %d %d", iResultValue, iTotalValue, m_pBuildItemList[i]->m_iAverageValue);\par
+            PutLogList(G_cTxt);\par
+      \par
+            \par
+            if (iResultValue == 0)\par
+                dV2 = 1.0f;\par
+            else dV2 = (double)iResultValue;\par
+            dV3 = (double)pItem->m_wMaxLifeSpan;\par
+            dV1 = (dV2/100.0f)*dV3;\par
+\par
+            iTemp  = (int)pItem->m_wMaxLifeSpan;\par
+            iTemp += (int)dV1;\par
+\par
+            if (iTemp <= 0)\par
+                wTemp = 1;\par
+            else wTemp = (WORD)iTemp;\par
+\par
+            if (wTemp <= pItem->m_wMaxLifeSpan*2) \{\par
+               // \'bf\'a1\'b7\'af\'b7\'ce \'c0\'ce\'c7\'d8 \'b3\'ca\'b9\'ab \'b8\'b9\'c0\'ba \'bc\'f6\'b8\'ed\'b0\'aa\'c0\'cc \'b3\'aa\'bf\'c8\'c0\'bb \'b8\'b7\'b1\'e2\'c0\'a7\'c7\'d4\par
+               pItem->m_wMaxLifeSpan = wTemp;\par
+               pItem->m_wCurLifeSpan = wTemp;\par
+               pItem->m_sItemSpecEffectValue1 = (short)wTemp;\par
+            \}\par
+            else pItem->m_sItemSpecEffectValue1 = (short)pItem->m_wMaxLifeSpan;\par
+            \par
+            \par
+            if (iResultValue > 0) \{\par
+               dV2 = (double)iResultValue;\par
+               dV3 = (double)(100 - m_pBuildItemList[i]->m_iAverageValue);\par
+               dV1 = (dV2/dV3)*100.0f;\par
+               pItem->m_sItemSpecEffectValue2 = (int)dV1;\par
+            \}\par
+            else if (iResultValue < 0) \{\par
+               dV2 = (double)abs(iResultValue);\par
+               dV3 = (double)(m_pBuildItemList[i]->m_iAverageValue);\par
+               dV1 = (dV2/dV3)*100.0f;\par
+               pItem->m_sItemSpecEffectValue2 = -1*abs(100 - (int)dV1);\par
+            \}\par
+            else pItem->m_sItemSpecEffectValue2 = 0;\par
+         \}\par
+\par
+         //testcode\par
+         wsprintf(G_cTxt, "Custom-Item(%s) Value(%d)", pItem->m_cName, pItem->m_sItemSpecEffectValue2);\par
+         PutLogList(G_cTxt);\par
+      \par
+         \par
+         bAddItem(iClientH, pItem, NULL);\par
+         SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_BUILD\par
+}
+ 

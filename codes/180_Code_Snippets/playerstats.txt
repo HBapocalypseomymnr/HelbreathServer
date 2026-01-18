@@ -1,0 +1,100 @@
+Ok as promised here is another snippet i released a while back..
+Now this one is pretty damn helpfull but No one would let me add it in there server.. its an admin command that displays just about everything about the character you need...
+
+In example:
+Admin types /playerstatus Charlie
+Server: The Player Charlie Account: charlieftw Password: unadvised<3 IP: 91.66.93.255 Level: 180 Str: 200 Dex: 200 Vit: 150 Int: 59 Mag: 10 Chr:10 Exp: 452052459 EKs: 340
+
+This is a very informative command for Admins to use..
+This breaks the use of having to check player files to see stats or eks or anything like that.... its pretty usefull imo.
+
+Well heres the snippet!
+hope you enjoy...
+
+/* ======IN GAME.CPP ADD====*/
+
+CODE  
+
+/*=========CHECKPLAYER====By-Acidx====/playerstatus ===*/
+void CGame::AdminOrder_CheckPlayer(int iClientH, char* pData, DWORD dwMsgSize)
+{/*An Acidx Production - CheckPlayer Last updated April 04, 2005 - Acidx*/
+class  CStrTok * pStrTok;
+short m_iRating;
+char   * token, cName[11], cTargetName[11], cPlayerInfoMessage[256], cTemp[256], seps[] = "= \t\n", cBuff[256];
+register int i;
+if (m_pClientList[iClientH]->m_iAdminUserLevel < 1) { 
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL); 
+return; 
+} 
+
+if ((dwMsgSize) <= 0) return;
+ZeroMemory(cTargetName, sizeof(cTargetName));
+ZeroMemory(cBuff, sizeof(cBuff));
+memcpy(cBuff, pData, dwMsgSize);
+
+pStrTok = new class CStrTok(cBuff, seps);
+token = pStrTok->pGet();
+
+token = pStrTok->pGet();
+
+if (token != NULL) {
+ ZeroMemory(cName, sizeof(cName));
+ strcpy(cName, token);
+} 
+else {
+ ZeroMemory(cName, sizeof(cName));
+ strcpy(cName, "null");
+}
+
+token = pStrTok->pGet();
+
+if (token != NULL) {
+ m_iRating = atoi(token);
+} 
+
+if (token == NULL) { 
+ token = "null"; 
+}
+
+ if (cName != NULL) {
+ token = cName;
+
+  if (strlen(token) > 10) 
+     memcpy(cTargetName, token, 10);
+  else memcpy(cTargetName, token, strlen(token));
+
+  for (i = 1; i < DEF_MAXCLIENTS; i++) 
+     if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cTargetName, 10) == 0)) {
+    wsprintf(cPlayerInfoMessage, "The Player %s  Account: %s Password: %s IP: %s Level: %i Str: %i Dex: %i Vit: %i Int: %i Mag: %i Chr: %i Exp: %i EKs: %i", m_pClientList[i]->m_cCharName, m_pClientList[i]->m_cAccountName, m_pClientList[i]->m_cAccountPassword,m_pClientList[i]->m_cIPaddress,m_pClientList[i]->m_iLevel, m_pClientList[i]->m_iStr,m_pClientList[i]->m_iDex,m_pClientList[i]->m_iVit,m_pClientList[i]->m_iInt,m_pClientList[i]->m_iMag,m_pClientList[i]->m_iCharisma, m_pClientList[i]->m_iExpStock,m_pClientList[i]->m_iEnemyKillCount );
+    ShowClientMsg(iClientH, cPlayerInfoMessage);
+   }
+ }
+} 
+
+
+
+
+/*=====in Game.h====*/
+
+CODE  
+void AdminOrder_CheckPlayer(int iClientH, char* pData, DWORD dwMsgSize); 
+
+
+
+/*======in Game.cpp inside ChatMsghandler();=====*/
+
+
+CODE  
+
+  if (memcmp(cp, "/playerstatus ", 14) == 0) {
+ AdminOrder_CheckPlayer(iClientH, cp, dwMsgSize -21);
+ return;
+}
+ 
+
+
+
+
+Enjoy.. and post any additions/changes you made and share with our great community <3
+
+-Acidx 

@@ -1,0 +1,153 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\lang11274\f0\fs20\par
+Bueno varios me habian pedido el code de poner mas armas para upgradearlas a +15 ya que los codes que estan por el foro estan bugeados, tienen cosas de mas o no da el "brillo" caracteristico del +15.\par
+\par
+Primero ir a los src de su hg y buscar:\par
+\par
+Code:\par
+C\'f3digo:\par
+\par
+case 703: // SangAhFlameberge\par
+case 709: // DarkKnightFlameberge\par
+case 718: // DarkKnightGreatSword\par
+case 727: // DarkKnightFlamebergW\par
+case 736: // SangAhGiantSword\par
+case 737: // DarkKnightGiantSword\par
+case 745: // BlackKnightTemple\par
+\par
+\par
+y justo despues de eso agregar:\par
+\par
+Code:\par
+\par
+C\'f3digo:\par
+\par
+//50Cent - New DKHammer Upgrade\par
+case 2000://BlackKnightHammer\par
+case 2001://BlackKnightBHammer\par
+case 2002://BlackKnightBarHammer\par
+\par
+Luego buscan:\par
+\par
+Code:\par
+\par
+C\'f3digo:\par
+\par
+else \{\par
+iValue += 2;\par
+if (iValue > 15) iValue = 15;\par
+dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;\par
+dwTemp = dwTemp & 0x0FFFFFFF;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);\par
+_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);\par
+\}\par
+break;\par
+\par
+y justo arriba de eso agregan:\par
+\par
+Code:\par
+\par
+C\'f3digo:\par
+\par
+//50Cent - New DKHammer Upgrade\par
+else if ((iValue == 0) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2000))) \{ // BlackKnightHammer\par
+iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;\par
+iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;\par
+delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;\par
+m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;\par
+if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , 2001) == FALSE) \{ // BlackKnightBHammer\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);\par
+return;\par
+\}\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;\par
+iValue += 2;\par
+if (iValue > 15) iValue = 15;\par
+dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;\par
+dwTemp = dwTemp & 0x0FFFFFFF;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, \par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, \par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute );\par
+_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);\par
+break;\par
+\} \par
+else if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2001)) \{ // BlackKnightBHammer\par
+iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;\par
+iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;\par
+delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;\par
+m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;\par
+if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 2002) == FALSE) \{ // BlackKnightBarHammer \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);\par
+return;\par
+\}\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;\par
+iValue += 2;\par
+if (iValue > 15) iValue = 15;\par
+dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;\par
+dwTemp = dwTemp & 0x0FFFFFFF;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, \par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, \par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute );\par
+_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+\}\par
+else if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2002)) \{ // BlackKnightBarHammer \par
+iValue += 2;\par
+if (iValue > 15) iValue = 15;\par
+if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;\par
+dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;\par
+dwTemp = dwTemp & 0x0FFFFFFF;\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, \par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, \par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,\par
+m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute );\par
+_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) -1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+\}\par
+\par
+y listo, solo agreguen esos 3 items a su item3.cfg y ya podran tener su dkhammer+15\par
+\par
+Code:\par
+\par
+C\'f3digo:\par
+\par
+Item = 2000 BlackKnightHammer 1 9 1 3 7 0 3 9 0 30000 0 15 7 6000 9000 30 12 180 0 0 0 14 1 6\par
+Item = 2001 BlackKnightBHammer 1 9 1 3 7 2 3 9 2 30000 0 15 8 9000 12000 31 14 180 0 0 0 14 1 6\par
+Item = 2002 BlackKnightBarHammer 1 9 1 3 9 2 3 10 2 30000 0 15 10 15000 20000 32 15 180 0 0 0 14 1 6\par
+\par
+\par
+\par
+Si envez de un hammer quieren una axe solo editen los IDs del code...\par
+}
+ 

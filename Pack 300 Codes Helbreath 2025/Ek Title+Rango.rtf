@@ -1,0 +1,285 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 [CODE] EK Title / Rango\par
+Exclusivamente para MundoHelbreath.com\par
+\par
+50Cent tambien habia hecho este mismo code, nunca supe por que pero en algunos sources funcionaba y en otros no o aveces no aparecia despues de ciertas veces que logiabas era re raro, ahora rescate el code de KaoZureS que tenia dentro de los sources del Helbreath Cordoba.\par
+\par
+Nos vamos a los Sources del HGServer:\par
+\par
+Dentro de estos al Game.cpp:\par
+\par
+Buscamos el siguiente Case:\par
+\par
+case DEF_COMMONTYPE_REQGUILDNAME:\par
+Justo despues del Break Agregamos:\par
+\par
+case DEF_COMMONTYPE_REQRANGO: // MORLA 2.2 - Llama al rango del pj\par
+//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQGUILDNAME");\par
+RequestRango(iClientH, iV1);\par
+break;\par
+Buscamos este Case:\par
+\par
+case DEF_NOTIFY_QUESTCOUNTER:\par
+Justo despues del Break Agregamos:\par
+\par
+case DEF_NOTIFY_REQRANGO: // Morla2.2 - Notify Rango\par
+ip = (int *)cp;\par
+*ip = sV1;\par
+cp += 4;\par
+\par
+ip = (int *)cp;\par
+*ip = sV2;\par
+cp += 4;\par
+\par
+iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 24);\par
+break;\par
+Ahora al final del Game.cpp Agregamos:\par
+\par
+// MORLA2.2 - Para determinar el Rango devuelve los EKs y PKs del user\par
+void CGame::RequestRango(int iClientH, int iObjectID)\par
+\{\par
+if (m_pClientList[iClientH] == NULL) return;\par
+if ((iObjectID <= 0) || (iObjectID >= DEF_MAXCLIENTS)) return;\par
+\par
+if (m_pClientList[iObjectID] == NULL) \{\par
+// \'bf\'e4\'c3\'bb \'b9\'de\'c0\'ba Object\'b0\'a1 \'be\'f8\'b4\'d9.\par
+\par
+\}\par
+else \{\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_REQRANGO, m_pClientList[iObjectID]->m_iEnemyKillCount, m_pClientList[iObjectID]->m_iRating, NULL, NULL);\par
+\}\par
+\}\par
+Nos vamos al Netmessage.h y alfinal Agregamos:\par
+\par
+#define DEF_NOTIFY_REQRANGO\tab  0x0F02\par
+#define DEF_COMMONTYPE_REQRANGO\tab  0x0F03\par
+Ahora terminando la parte del HG nos vamos al Game.h y alfinal Agregamos:\par
+\par
+void RequestRango(int iClientH, int iObjectID); // Morla2.2 - Pide EK y PK\par
+Ahora nos vamos a los Sources del Cliente:\par
+\par
+Dentro de estos al Netmessage.h y Agregamos al final:\par
+\par
+#define DEF_NOTIFY_REQRANGO\tab  0x0F02\par
+#define DEF_COMMONTYPE_REQRANGO\tab  0x0F03\par
+Ahora seguimos en los sources del cliente:\par
+\par
+y nos vamos al Lang_eng.h\par
+\par
+Dentro de este alfinal agregamos:\par
+\par
+#define DEF_MSG_RANGOEK1 "First Lieutenant"\par
+#define DEF_MSG_RANGOEK2 "Captain"\par
+#define DEF_MSG_RANGOEK3 "Major"\par
+#define DEF_MSG_RANGOEK4 "Lieutenant Colonel"\par
+#define DEF_MSG_RANGOEK5 "Colonel"\par
+#define DEF_MSG_RANGOEK6 "Knight"\par
+#define DEF_MSG_RANGOEK7 "Holy Knight"\par
+#define DEF_MSG_RANGOEK8 "Dark Knight"\par
+#define DEF_MSG_RANGOEK9 "Knight of the Crusade"\par
+#define DEF_MSG_RANGOEK10 "WarLord of the Crusade"\par
+Ahora remplazamos la funcion:\par
+\par
+DrawObjectName\par
+Por:\par
+\par
+void CGame::DrawObjectName(short sX, short sY, char * pName, int iStatus)\par
+\{\tab char cTxt[64], cTxt2[64];\par
+short sR, sG, sB;\par
+int i, iGuildIndex, iFOE, iAddY=0;\par
+BOOL bPK, bCitizen, bAresden, bHunter;\par
+iFOE = _iGetFOE(iStatus);\par
+if( iFOE < 0 )\par
+\{\tab sR = 255; sG = 0; sB = 0;\par
+\}else if( iFOE == 0 )\par
+\{\tab sR = 50; sG = 50; sB = 255;\par
+\}else\par
+\{\tab sR = 30; sG = 200; sB = 30;\par
+\}\par
+ZeroMemory(cTxt, sizeof(cTxt));\par
+ZeroMemory(cTxt2, sizeof(cTxt2));\par
+\par
+if (m_iIlusionOwnerH == NULL)\par
+\{\tab if (m_bIsCrusadeMode == FALSE) wsprintf(cTxt, "%s", pName);\par
+else\par
+\{\tab if (_tmp_wObjectID >= 10000) strcpy(cTxt, NPC_NAME_MERCENARY); //"Mercenary"\par
+else\par
+\{\tab if( iFOE == -1 ) wsprintf(cTxt, "%d", _tmp_wObjectID);\par
+else strcpy(cTxt, pName);\par
+\}\tab\}\par
+if (m_iPartyStatus != NULL)\par
+\{\tab for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\{\tab if (strcmp(m_stPartyMemberNameList[i].cName, pName) == 0)\par
+\{\tab strcat(cTxt, BGET_NPC_NAME23); // ", Party Member"\par
+break;\par
+\}\tab\}\tab\}\par
+\}else strcpy(cTxt, "?");\par
+\par
+if ((iStatus & 0x20) != 0) strcat(cTxt, DRAW_OBJECT_NAME50);//" Berserk"\par
+if ((iStatus & 0x40) != 0) strcat(cTxt, DRAW_OBJECT_NAME51);//" Frozen"\par
+\par
+PutString2(sX, sY, cTxt, 255,255,255);\par
+ZeroMemory(cTxt, sizeof(cTxt));\par
+\par
+if( memcmp(m_cPlayerName, pName, 10) == 0 )\par
+\{\tab if( m_iGuildRank == 0 )\par
+\{\tab wsprintf( G_cTxt, DEF_MSG_GUILDMASTER, m_cGuildName );//" Guildmaster)"\par
+PutString2(sX, sY+14, G_cTxt, 101,153,242);\par
+iAddY = 14;\par
+\}\par
+if( m_iGuildRank > 0 )\par
+\{\tab wsprintf( G_cTxt, DEF_MSG_GUILDSMAN, m_cGuildName );//" Guildsman)"\par
+PutString2(sX, sY+14, G_cTxt, 101,153,242);\par
+iAddY = 14;\par
+\}\par
+if( m_iPKCount != 0 )\par
+\{\tab bPK = TRUE;\par
+sR = 255; sG = 0; sB = 0;\par
+\}else\par
+\{\tab bPK = FALSE;\par
+sR = 30; sG = 200; sB = 30;\par
+\}\par
+bCitizen = m_bCitizen;\par
+bAresden = m_bAresden;\par
+bHunter = m_bHunter;\par
+\}else\par
+\{\tab // CLEROTH - CRASH BUG ( STATUS )\par
+if( iStatus & 0x80000000 ) bPK = TRUE;\par
+else bPK = FALSE;\par
+if( iStatus & 0x40000000 ) bCitizen = TRUE;\par
+else bCitizen = FALSE;\par
+if( iStatus & 0x20000000 ) bAresden = TRUE;\par
+else bAresden = FALSE;\par
+if( iStatus & 0x10000000 ) bHunter = TRUE;\par
+else bHunter = FALSE;\par
+if( m_bIsCrusadeMode==FALSE || iFOE>=0 )\par
+\{\tab if( FindGuildName(pName, &iGuildIndex) == TRUE )\par
+\{\tab if (m_stGuildName[iGuildIndex].cGuildName[0] != NULL)\par
+\{\tab if( strcmp(m_stGuildName[iGuildIndex].cGuildName, "NONE" )!=0 )\par
+\{\tab if( m_stGuildName[iGuildIndex].iGuildRank == 0 )\par
+\{\tab wsprintf( G_cTxt, DEF_MSG_GUILDMASTER, m_stGuildName[iGuildIndex].cGuildName );//\par
+PutString2(sX, sY+14, G_cTxt, 101,153,242);\par
+m_stGuildName[iGuildIndex].dwRefTime = m_dwCurTime;\par
+iAddY = 14;\par
+\}else if( m_stGuildName[iGuildIndex].iGuildRank > 0 )\par
+\{\tab wsprintf( G_cTxt, DEF_MSG_GUILDSMAN, m_stGuildName[iGuildIndex].cGuildName );//"\par
+PutString2(sX, sY+14, G_cTxt, 101,153,242);\par
+m_stGuildName[iGuildIndex].dwRefTime = m_dwCurTime;\par
+iAddY = 14;\par
+\}\par
+\}else\par
+\{\tab m_stGuildName[iGuildIndex].dwRefTime = 0;\par
+\}\tab\}\par
+\}else bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQGUILDNAME, NULL, _tmp_wObjectID, iGuildIndex, NULL, NULL);\par
+\}\tab\}\par
+if ( memcmp(pName, m_cRango, 10) != 0 )\par
+\{\par
+m_iRango_EK = 0;\par
+m_iRango_REP = 0;\par
+bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQRANGO, NULL, _tmp_wObjectID, NULL, NULL, NULL); // MORLA2.2 - Pregunta EK y REP del player\par
+ZeroMemory(m_cRango, sizeof(m_cRango)); \par
+memcpy (m_cRango, pName, 10);\par
+\}\par
+else\par
+\{\tab if( bAresden )\par
+\{\tab if( bHunter == TRUE ) strcpy(cTxt, DEF_MSG_ARECIVIL); // "Aresden Civilian"\par
+else strcpy(cTxt, DEF_MSG_ARESOLDIER); // "Aresden Combatant"\par
+\}else\par
+\{\tab if( bHunter == TRUE ) strcpy(cTxt, DEF_MSG_ELVCIVIL);// "Elvine Civilian"\par
+else strcpy(cTxt, DEF_MSG_ELVSOLDIER);\tab // "Elvine Combatant"\par
+\}\tab\}\par
+if( bPK == TRUE )\par
+\{\tab if( bCitizen == FALSE ) strcpy( cTxt, DEF_MSG_PK );\tab //"Criminal"\par
+else\par
+\{\tab if( bAresden ) strcpy( cTxt, DEF_MSG_AREPK );// "Aresden Criminal"\par
+else strcpy( cTxt, DEF_MSG_ELVPK ); // "Elvine Criminal"\par
+\}\tab\}\par
+PutString2(sX, sY+14 +iAddY, cTxt, sR, sG, sB);\par
+\par
+\par
+//MORLA 2.2 - Determina el rango del pj\par
+if((m_iRango_EK >= 250) && (m_iRango_REP >=0 ))\par
+\{\par
+if(((m_iRango_EK >= 250) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 500) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK1);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 32, dwTime);\par
+\}\tab\par
+else if(((m_iRango_EK >= 500) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 750) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK2);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 33, dwTime);\par
+\}\par
+else if(((m_iRango_EK >= 750) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 1000) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK3);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 34, dwTime);\par
+\}\par
+else if(((m_iRango_EK >= 1000) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 1250) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK4);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 36, dwTime);\par
+\}\par
+else if(((m_iRango_EK >= 1250) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 1500) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK5);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 35, dwTime);\par
+\}\par
+else if(((m_iRango_EK >= 1500) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 1750) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK6);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 29, dwTime);\par
+\}\par
+else if(((m_iRango_EK >= 1750) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 2500) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK7);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105-34, sY+32+9, 30, dwTime);\par
+\}\par
+else if(((m_iRango_EK >= 2500) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 3000) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK8);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 31, dwTime);\par
+\}\par
+else if(((m_iRango_EK >= 3000) && (m_iRango_REP < 0 )) || ((m_iRango_EK < 4000) && (m_iRango_REP >= 0 )))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK9);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 37, dwTime);\par
+\}\par
+else if( (m_iRango_EK >= 7000) && (m_iRango_REP >= 0 ))\par
+\{\tab strcpy(cTxt, DEF_MSG_RANGOEK10);\par
+m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX+105, sY+32, 38, dwTime);\par
+\}\par
+PutString2(sX, sY+28 +iAddY, cTxt, 255, 215, 0);\par
+\}\tab\par
+\par
+#ifdef _DEBUG\par
+wsprintf(cTxt2,"Status: 0x%.8X ",iStatus);\par
+PutString2(sX, sY+52, cTxt2, 30,255,30);\par
+ZeroMemory(cTxt2, sizeof(cTxt2));\par
+#endif\par
+\}\par
+\par
+Ahora en el Game.cpp buscamos lo siguiente:\par
+\par
+WORD _tmp_wObjectID;\par
+Justo despues de eso Agregamos:\par
+\par
+int m_iRango_EK = 0;\par
+int m_iRango_REP = 0;\par
+char m_cRango[10];\par
+int m_iPlayerRep = 0;\par
+Ahora buscamos el siguiente Case:\par
+\par
+case DEF_NOTIFY_QUESTCOUNTER:\par
+Justo despues de eso agregamos:\par
+\par
+case DEF_NOTIFY_REQRANGO: // Morla2.2 - Recibe mensaje\par
+cp = (char *)(pData\tab + DEF_INDEX2_MSGTYPE + 2);\par
+ip = (int *)cp;\par
+m_iRango_EK = *ip;\par
+cp += 4;\par
+ip = (int *)cp;\par
+m_iRango_REP = *ip;\par
+cp += 4;\par
+break;\par
+Bueno y eso seria el code, como se puede ver el code estaba hecho con la intencion de pedir EKs y tambien Rep, aca esta modificado para que solo pida EKs.\par
+Se pueden modificar los nombres de los titulos como tambien los requerimientos.\par
+\par
+Eso seria...\par
+\par
+By KaoZureS\par
+\par
+Rescatado por darmart123\par
+}
+ 

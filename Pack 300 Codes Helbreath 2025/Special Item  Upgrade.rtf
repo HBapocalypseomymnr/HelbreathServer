@@ -1,0 +1,682 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 bueno este sistema que flashe durante estas 2 seamanas....\par
+lo que ase es dar atributos a los items de categoria 98\par
+\par
+lo que hice fue separar todo del upgrade item normal.. por q?? por q sino me iva a vovler loco xD ...\par
+\par
+tenemos 5 joyas xelimas y 5 meriens..... \par
+\par
+si tenemos entre todas las xelimas mas de 300 joyas. nos sale un atributo:\par
+\par
+ancient hit pro para las armas...\par
+sino un stat aleatorio.\par
+\par
+special cast pro gold/exp +x% ...para los cetros.\par
+\par
+para las armor si tenemos mas de 400 joyas merien...\par
+no sale pa o ma los stats. con stat "strong y endurance + x%"\par
+\par
+sino no tira defense rato y magic resistance....\par
+\par
+use una peque\'f1a base de Snoppy para el cambio de atributo por que sinseramente no\par
+tenia idea como meirda aserlo xD...\par
+\par
+si les sale alg\'fan \'edtem+1 con alg\'fan stat al 0% no se asusten es asi\'85 el hg trabaja con enteros\par
+\par
+del tipo int.. use un par de floats para q aga un calculo mas esacto si no no sal\'eda.\par
+\par
+YA TESTIE TODO EN ESTAS 2 SEMANAS Y MEDIA. ANDA TODO BIEN.\par
+\par
+edito :\par
+\par
+aca les dejo el link dnd lo subi por que andap ara el orto :s \par
+\par
+las etiqueta "[code]" no anda casi.\par
+\par
+http://www.mediafire.com/?7kpk5o2k2rms2ma\par
+EMPESEMOS.\par
+\par
+item.cfg\par
+C\'f3digo:\par
+Item = 1610 MitrylPlateMail(M)    1 2 2 40 42 0 0  0   0 3500 0 9  3 6000 10000 4 0 200 1 -10 -10 0 98 11\par
+Item = 1611 MitrylPlateMail(W)    1 2 2 40 42 0 0  0   0 3500 0 13 5 6000 10000 6 0 200 2 -10 -10 0 98 11\par
+Item = 1612 MitrylPlateLeg(M)     1 4 2 15 22 1 1  1   1 1100 0 8  3 3000 2000  4 0 200 1 -6  -6  0 98 11\par
+Item = 1613 MitrylPlateLeg(W)     1 4 2 15 22 1 1  1   1 1100 0 12 4 3000 2000  5 0 200 2 -6  -6  0 98 11\par
+Item = 1614 MitrylPlateHelm(M)    1 1 2 12 22 0 0  0   0 2000 0 21 1 3500 8500  1 0 200 1 -7  -7 -1 98 11\par
+Item = 1615 MitrylPlateHelm(W)    1 1 2 12 22 0 0  0   0 2000 0 21 1 3500 8500  1 0 200 2 -7  -7 -1 98 11\par
+Item = 1616 MitrylHornedHelm(W)   1 1 2 17 24 0 0  0   0 3500 0 21 2 4000 16000 5 0 200 2 -7  -7 -1 98 11\par
+Item = 1617 MitrylWingsHelm(W)    1 1 2 15 22 0 0  0   0 2500 0 21 3 5000 13000 6 0 200 2 -7  -7 -1 98 11\par
+Item = 1618 MitrylPlateHauberk(M) 1 3 2 12 12 0 11 100 0 1000 0 7  1 2400 1200  2 0 200 1 -3  -3  0 98 11\par
+Item = 1619 MitrylPlateHauberk(W) 1 3 2 12 12 0 11 100 0 1000 0 11 2 2400 1200  3 0 200 2 -3  -3  0 98 11\par
+Item = 1620 MitrylHornedHelm(M)   1 1 2 17 24 0 0  0   0 3500 0 21 2 4000 16000 5 0 200 1 -7  -7 -1 98 11\par
+Item = 1621 MitrylWingsHelm(M)    1 1 2 15 22 0 0  0   0 2500 0 21 3 5000 13000 6 0 200 1 -7  -7 -1 98 11\par
+Item = 1630 MasterPlateMail(M)    1 2 2 40 42 0 0  0   0 3500 0 9  3 6000 10000 4 0 280 1 -10 -10 0 98 11\par
+Item = 1631 MasterPlateMail(W)    1 2 2 40 42 0 0  0   0 3500 0 13 5 6000 10000 6 0 280 2 -10 -10 0 98 11\par
+Item = 1632 MasterPlateLeg(M)     1 4 2 15 22 1 1  1   1 1100 0 8  3 3000 2000  4 0 280 1 -6  -6  0 98 11\par
+Item = 1633 MasterPlateLeg(W)     1 4 2 15 22 1 1  1   1 1100 0 12 4 3000 2000  5 0 280 2 -6  -6  0 98 11\par
+Item = 1634 MasterPlateHelm(M)    1 1 2 12 22 0 0  0   0 2000 0 21 1 3500 8500  1 0 280 1 -7  -7 -1 98 11\par
+Item = 1635 MasterPlateHelm(W)    1 1 2 12 22 0 0  0   0 2000 0 21 1 3500 8500  1 0 280 2 -7  -7 -1 98 11\par
+Item = 1636 MasterHornedHelm(W)   1 1 2 17 24 0 0  0   0 3500 0 21 2 4000 16000 5 0 280 2 -7  -7 -1 98 11\par
+Item = 1637 MasterWingsHelm(W)    1 1 2 15 22 0 0  0   0 2500 0 21 3 5000 13000 6 0 280 2 -7  -7 -1 98 11\par
+Item = 1638 MasterPlateHauberk(M) 1 3 2 12 12 0 11 100 0 1000 0 7  1 2400 1200  2 0 280 1 -3  -3  0 98 11\par
+Item = 1639 MasterPlateHauberk(W) 1 3 2 12 12 0 11 100 0 1000 0 11 2 2400 1200  3 0 280 2 -3  -3  0 98 11\par
+Item = 1640 MasterHornedHelm(M)   1 1 2 17 24 0 0  0   0 3500 0 21 2 4000 16000 5 0 280 1 -7  -7 -1 98 11\par
+Item = 1641 MasterWingsHelm(M)    1 1 2 15 22 0 0  0   0 2500 0 21 3 5000 13000 6 0 280 1 -7  -7 -1 98 11\par
+Item = 1622 WizMitrylHauberk(M)   1 3 2 12 12 0 14 100 0 1000 0 7  1 2400 1200  2 0 200 1 -3  -3  0 98 11\par
+Item = 1623 WizMitrylHauberk(W)   1 3 2 12 12 0 14 100 0 1000 0 11 2 2400 1200  3 0 200 2 -3  -3  0 98 11\par
+Item = 1624 WizMitrylRobe(M)      1 2 2 12 1  0 14 100 0 3000 0 9  5 3000 1000  6 0 200 1  0   0  0 98 11\par
+Item = 1625 WizMitrylRobe(W)      1 2 2 12 1  0 14 100 0 3000 0 13 6 3000 1000  7 0 200 2  0   0  0 98 11\par
+Item = 1626 WizMitrylCap(M)       1 1 2 5  10 0 14 110 0 500  0 21 4 1500 1500  7 0 200 1 -7  -7 -1 98 11\par
+Item = 1627 WizMitrylHat(M)       1 1 2 10 15 0 14 130 0 800  0 21 5 3000 1500  8 0 200 1 -7  -7 -1 98 11\par
+Item = 1628 WizMitrylCap(W)       1 1 2 5  10 0 14 110 0 500  0 21 4 1500 1500  7 0 200 2 -7  -7 -1 98 11\par
+Item = 1629 WizMitrylHat(W)       1 1 2 10 15 0 14 130 0 800  0 21 5 3000 1500  8 0 200 2 -7  -7 -1 98 11\par
+Item = 1642 WizMasterHauberk(M)   1 3 2 12 12 0 14 100 0 1000 0 7  1 2400 1200  2 0 280 1 -3  -3  0 98 11\par
+Item = 1643 WizMasterHauberk(W)   1 3 2 12 12 0 14 100 0 1000 0 11 2 2400 1200  3 0 280 2 -3  -3  0 98 11\par
+Item = 1644 WizMasterRobe(M)      1 2 2 12 1  0 14 100 0 3000 0 9  5 3000 1000  6 0 280 1  0   0  0 98 11\par
+Item = 1645 WizMasterRobe(W)      1 2 2 12 1  0 14 100 0 3000 0 13 6 3000 1000  7 0 280 2  0   0  0 98 11\par
+Item = 1646 WizMasterCap(M)       1 1 2 5  10 0 14 110 0 500  0 21 4 1500 1500  7 0 280 1 -7  -7 -1 98 11\par
+Item = 1647 WizMasterHat(M)       1 1 2 10 15 0 14 130 0 800  0 21 5 3000 1500  8 0 280 1 -7  -7 -1 98 11\par
+Item = 1648 WizMasterCap(W)       1 1 2 5  10 0 14 110 0 500  0 21 4 1500 1500  7 0 280 2 -7  -7 -1 98 11\par
+Item = 1649 WizMasterHat(W)       1 1 2 10 15 0 14 130 0 800  0 21 5 3000 1500  8 0 280 2 -7  -7 -1 98 11\par
+ \par
+Item = 1650 MitrylWand(MS50)      1 8 13 2 4  0  50 0   0 3600 0 17 1  5000  1000  36 3  210 0  0 0 21 98 11\par
+Item = 1651 MitrylWand(MS60)      1 8 13 2 4  0  60 0   0 2400 0 17 1  2500  1000  36 3  220 0  0 0 21 98 11\par
+Item = 1652 MasterWand(MS50)      1 8 13 2 4  0  50 0   0 3600 0 17 1  5000  1000  36 3  280 0  0 0 21 98 11\par
+Item = 1653 MasterWand(MS60)      1 8 13 2 4  0  60 0   0 2400 0 17 1  2500  1000  36 3  290 0  0 0 21 98 11\par
+Item = 1654 MitrylExec            1 9 1 12 12 12 12 12 12 3000 0 1  24 14000 20000 16 13 210 0  0 0 8  98 11\par
+Item = 1655 MasterExec            1 9 1 12 12 12 12 12 12 3000 0 1  24 14000 20000 16 13 290 0  0 0 8  98 11\par
+Item = 1670 XelimaDiamond   5 0 0 0 0 0 0 0 0 1 0 16 42 -3000 200 1 0 0 0 0 0 -1 46 1\par
+Item = 1671 XelimaRuby        5 0 0 0 0 0 0 0 0 1 0 16 43 -2000 200 1 0 0 0 0 0 -1 46 1\par
+Item = 1672 XelimaSapphire   5 0 0 0 0 0 0 0 0 1 0 16 44 -2000 200 1 0 0 0 0 0 -1 46 1\par
+Item = 1673 XelimaEmerald    5 0 0 0 0 0 0 0 0 1 0 16 45 -2000 200 1 0 0 0 0 0 -1 46 1\par
+Item = 1674 XelimaCrystal     5 0 0 0 0 0 0 0 0 1 0 16 46 -300  200 1 0 0 0 0 0 -1 46 1\par
+ \par
+Item = 1675 MerienDiamond   5 0 0 0 0 0 0 0 0 1 0 16 42 -3000 200 1 0 0 0 0 0 -1 46 0\par
+Item = 1676 MerienRuby        5 0 0 0 0 0 0 0 0 1 0 16  43 -2000 200 1 0 0 0 0 0 -1 46 0\par
+Item = 1677 MerienSapphire   5 0 0 0 0 0 0 0 0 1 0 16 44 -2000 200 1 0 0 0 0 0 -1 46 0\par
+Item = 1678 MerienEmerald    5 0 0 0 0 0 0 0 0 1 0 16 45 -2000 200 1 0 0 0 0 0 -1 46 0\par
+Item = 1679 MerienCrystal     5 0 0 0 0 0 0 0 0 1 0 16 46 -300  200 1 0 0 0 0 0 -1 46 0\par
+HG\par
+\par
+abajo de :\par
+C\'f3digo:\par
+case DEF_COMMONTYPE_UPGRADEITEM:\par
+RequestItemUpgradeHandler(iClientH,iV1);\par
+break;\par
+agreguen:\par
+C\'f3digo:\par
+case DEF_COMMONTYPE_UPGRADEITEMSPE:\par
+RequestItemUpgradeSpeHandler(iClientH,iV1);\par
+break;\par
+abajo de:\par
+C\'f3digo:\par
+void RequestItemUpgradeHandler(int iClientH, int iItemIndex);\par
+agreguen:\par
+C\'f3digo:\par
+void RequestItemUpgradeSpeHandler(int iClientH, int iItemIndex);\par
+agregar funcion nueva al game.cpp\par
+C\'f3digo:\par
+void CGame::RequestItemUpgradeSpeHandler(int iClientH, int iItemIndex)\par
+\{int sItemUpgrade = 15;\par
+ int i, iX = 0, iM = 0;\par
+ int iItemX = 0, iItemY = 0;\par
+ int iValue;\par
+ int ItemID = 0;\par
+ int dwType = 0;\par
+ int dwValue = 0;\par
+ int dwType2 = 0;\par
+ int dwValue2 = 0;\par
+ if (m_pClientList[iClientH] == NULL) return; \par
+ if ((iItemIndex < 0) || (iItemIndex >= DEF_MAXITEMS)) return; \par
+ if (m_pClientList[iClientH]->m_pItemList[iItemIndex] == NULL) return;\par
+ if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cCategory) != 98)\{\par
+         SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 1, NULL, NULL, NULL);\par
+         return;\par
+         \}\par
+         switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cCategory)\par
+         \{        case 98:\par
+                            switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum)\par
+                            \{        case 1610:case 1611:case 1612:case 1613:case 1614:case 1615:case 1616:case 1617:case 1618:case 1619:\par
+                                      case 1620:case 1621:case 1622:case 1623:case 1624:case 1625:case 1626:case 1627:case 1628:case 1629:\par
+                                      case 1630:case 1631:case 1632:case 1633:case 1634:case 1635:case 1636:case 1637:case 1638:case 1639:\par
+                                      case 1640:case 1641:case 1642:case 1643:case 1644:case 1645:case 1646:case 1647:case 1648:case 1649:\par
+                                               if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0) \{\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);\par
+                                                        return;\par
+                                                        \}\par
+                                               iValue = (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute & 0xF0000000) >> 28; \par
+                                               sItemUpgrade = (15*iValue +15);\par
+                                               if ((m_pClientList[iClientH]->m_iGizonItemUpgradeLeft - sItemUpgrade ) < 0) \{\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);\par
+                                                        return;\par
+                                                        \}\par
+                                               for (i = 0; i < DEF_MAXITEMS; i++)\par
+                                                        \{        if ((m_pClientList[iClientH]->m_pItemList[i] != NULL) && (m_pClientList[iClientH]->m_pItemList[i]->m_dwCount > 0))\par
+                                                                  \{        switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) \{\par
+                                                                                              case 1670: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1671: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1672: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1673: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1674: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1675: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1676: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1677: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1678: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1679: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              \}\par
+                                                                           \}\par
+                                                        \}\par
+                                               if ((iX == 0) && (iM == 0))\{\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 4, NULL, NULL, NULL);\par
+                                                        return;\par
+                                                \}\par
+                                               if ((iValue == 10))\{\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 5, NULL, NULL, NULL);\par
+                                                        return;\par
+                                               \}// end of cancel part.\par
+                                               if ( ((iValue >= 0) && (iValue < 10)) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum >= 1610) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum <= 1649)) )\par
+                                               \{        m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= sItemUpgrade;\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL); \par
+                                                        for (i = 0; i < DEF_MAXITEMS; i++)\par
+                                                        \{        if ((m_pClientList[iClientH]->m_pItemList[i] != NULL) && \par
+                                                                           (m_pClientList[iClientH]->m_pItemList[i]->m_dwCount > 0))\par
+                                                                  \{        switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) \{\par
+                                                                                              case 1675: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              case 1676: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              case 1677: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              case 1678: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              case 1679: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              \}//s\par
+                                                                           \}//i\par
+                                                                  \}//f\par
+                                                        if ((iM > 0))\par
+                                                        \{        if ((iM >= 400))// caso estricto ma y pa\par
+                                                                  \{        ItemID = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum;\par
+                                                                           iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;\par
+                                                                           iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;\par
+                                                                           delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+                                                                           m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX ;\par
+                                                                           m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY ;\par
+                                                                           if ((_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , ItemID) == FALSE))\{\par
+                                                                           SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL); \par
+                                                                           return;\par
+                                                                           \}\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+                                                                           iValue += 1;\par
+                                                                           dwType = 8;\par
+                                                                           dwValue = 1*iValue;\par
+                                                                           if (iDice(8,9) == 8)dwType2 = 9;else dwType2 = 8;\par
+                                                                           dwValue2 = ((float)(1.5))*iValue;\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = (dwType  << 20) + (dwValue << 16) + (dwType2  << 12) + (dwValue2 << 8) + (iValue << 28);\par
+                                                                           SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);\par
+                                                                           _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int)-1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+                                                                  \} else  \{//caso normal aleatorio.\par
+                                                                                     ItemID = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum;\par
+                                                                                     iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x ;\par
+                                                                                     iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y ;\par
+                                                                                     delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+                                                                                     m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+                                                                                     m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+                                                                                     m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX ;\par
+                                                                                     m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY ;\par
+                                                                                     if ((_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , ItemID) == FALSE))\{\par
+                                                                                     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL); \par
+                                                                                     return;\par
+                                                                                     \}\par
+                                                                                     m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+                                                                                     m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+                                                                                     m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+                                                                                     m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+                                                                                     iValue += 1;\par
+                                                                                     dwType = 8;\par
+                                                                                     dwValue = iDice(1,7);\par
+                                                                                     if (iDice(8,9) == 8) dwType2 = 3; else dwType2 = 7;\par
+                                                                                     dwValue2 = 1*iValue;\par
+                                                                                     m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute += (dwType  << 20) + (dwValue << 16) + (dwType2  << 12) + (dwValue2 << 8) + (iValue << 28);\par
+                                                                                     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);\par
+                                                                                     _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int)-1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+                                                                                     \}       \par
+                                                        \}\par
+                                               \}\par
+                                               break; // armors\par
+                                      case 1650:case 1651:case 1652:case 1653:case 1654:case 1655:\par
+                                               if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0) \{\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);\par
+                                                        return;\par
+                                                        \}\par
+                                               iValue = (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute & 0xF0000000) >> 28; \par
+                                               sItemUpgrade = (15*iValue +15);\par
+                                               if ((m_pClientList[iClientH]->m_iGizonItemUpgradeLeft - sItemUpgrade ) < 0) \{\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL);\par
+                                                        return;\par
+                                                        \}\par
+                                               for (i = 0; i < DEF_MAXITEMS; i++)\par
+                                                        \{        if ((m_pClientList[iClientH]->m_pItemList[i] != NULL) && (m_pClientList[iClientH]->m_pItemList[i]->m_dwCount > 0))\par
+                                                                  \{        switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) \{\par
+                                                                                              case 1670: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1671: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1672: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1673: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1674: iX += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1675: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1676: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1677: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1678: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              case 1679: iM += m_pClientList[iClientH]->m_pItemList[i]->m_dwCount;break;\par
+                                                                                              \}\par
+                                                                           \}\par
+                                                        \}\par
+                                               if ((iX == 0) && (iM == 0))\{\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 4, NULL, NULL, NULL);\par
+                                                        return;\par
+                                                \}\par
+                                               if ((iValue == 10))\{\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 5, NULL, NULL, NULL);\par
+                                                        return;\par
+                                               \}// end of cancel part.\par
+                                               if ( ((iValue >= 0) && (iValue < 10)) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 1654) || (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 1655)) )\par
+                                               \{        m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= sItemUpgrade;\par
+                                                        SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL); \par
+                                                        for (i = 0; i < DEF_MAXITEMS; i++)\par
+                                                        \{        if ((m_pClientList[iClientH]->m_pItemList[i] != NULL) && \par
+                                                                           (m_pClientList[iClientH]->m_pItemList[i]->m_dwCount > 0))\par
+                                                                  \{        switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) \{\par
+                                                                                              case 1670: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              case 1671: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              case 1672: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              case 1673: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              case 1674: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                              \}//s\par
+                                                                           \}//i\par
+                                                                  \}//f\par
+                                                        if ((iX > 0))\par
+                                                        \{        if ((iX >= 300))// caso estricto\par
+                                                                  \{        ItemID = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum;\par
+                                                                           iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;\par
+                                                                           iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;\par
+                                                                           delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+                                                                           m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX ;\par
+                                                                           m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY ;\par
+                                                                           if ((_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , ItemID) == FALSE))\{\par
+                                                                           SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL); \par
+                                                                           return;\par
+                                                                           \}\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+                                                                           iValue += 1;\par
+                                                                           dwType = 9;\par
+                                                                           dwValue = iDice(1,7);\par
+                                                                           dwType2 = 2;\par
+                                                                           dwValue2 = 1*iValue;\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute += (dwType  << 20) + (dwValue << 16) + (dwType2  << 12) + (dwValue2 << 8) + (iValue << 28);\par
+                                                                           SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);\par
+                                                                           _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int)-1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+                                                                  \} else  \{//caso normal aleatorio.\par
+                                                                           ItemID = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum;\par
+                                                                           iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x ;\par
+                                                                           iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y ;\par
+                                                                           delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+                                                                           m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX ;\par
+                                                                           m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY ;\par
+                                                                           if ((_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , ItemID) == FALSE))\{\par
+                                                                           SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL); \par
+                                                                           return;\par
+                                                                           \}\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+                                                                           iValue += 1;\par
+                                                                           dwType = iDice(1, 9);        //agile ancient strong etc\par
+                                                                           dwValue = iDice(1,7);        //anda a saber\par
+                                                                           dwType2 = 2;\par
+                                                                           dwValue2 = ((float)(0.5))*iValue;\par
+                                                                           m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute += (dwType  << 20) + (dwValue << 16) + (dwType2  << 12) + (dwValue2 << 8) + (iValue << 28);\par
+                                                                           SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);\par
+                                                                           _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int)-1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+                                                                           \}// else  \{\par
+                                                                  \} //if ((iX > 0))\par
+                                                        \} else \{//if madre\par
+                                                                           if ( ((iValue >= 0) && (iValue < 10)) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum >= 1650)  &&  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum <= 1653)) )\par
+                                                                           \{        m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= sItemUpgrade;\par
+                                                                                     SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL); \par
+                                                                                     for (i = 0; i < DEF_MAXITEMS; i++)\par
+                                                                                     \{        if ((m_pClientList[iClientH]->m_pItemList[i] != NULL) && \par
+                                                                                                       (m_pClientList[iClientH]->m_pItemList[i]->m_dwCount > 0))\par
+                                                                                              \{        switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) \{\par
+                                                                                                                          case 1670: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                                                          case 1671: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                                                          case 1672: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                                                          case 1673: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                                                          case 1674: ItemDepleteHandler(iClientH, i, FALSE);//chau MP's y todas las joyas.x\par
+                                                                                                                          \}//s\par
+                                                                                                       \}//i\par
+                                                                                              \}//f\par
+                                                                           if ((iX > 0))\par
+                                                                                     \{        if ((iX >= 300))// caso estricto\par
+                                                                                              \{        ItemID = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum;\par
+                                                                                                       iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;\par
+                                                                                                       iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;\par
+                                                                                                       delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+                                                                                                       m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+                                                                                                       m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+                                                                                                       m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX ;\par
+                                                                                                       m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY ;\par
+                                                                                                       if ((_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , ItemID) == FALSE))\{\par
+                                                                                                       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL); \par
+                                                                                                        return;\par
+                                                                                                       \}\par
+                                                                                                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+                                                                                                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+                                                                                                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+                                                                                                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+                                                                                                       iValue += 1;\par
+                                                                                                       dwType = 10;\par
+                                                                                                       dwValue = ((float)(1.5))*iValue;\par
+                                                                                                       dwType2 = 11;\par
+                                                                                                       dwValue2 = 1*iValue;\par
+                                                                                                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute += (dwType  << 20) + (dwValue << 16) + (dwType2  << 12) + (dwValue2 << 8) + (iValue << 28);\par
+                                                                                                       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);\par
+                                                                                                       _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int)-1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+                                                                                              \} else  \{//caso normal aleatorio.\par
+                                                                                                                 ItemID = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum;\par
+                                                                                                                 iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x ;\par
+                                                                                                                 iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y ;\par
+                                                                                                                 delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+                                                                                                                 m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+                                                                                                                 m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+                                                                                                                 m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX ;\par
+                                                                                                                 m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY ;\par
+                                                                                                                 if ((_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , ItemID) == FALSE))\{\par
+                                                                                                                SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL); \par
+                                                                                                                 return;\par
+                                                                                                                 \}\par
+                                                                                                                 m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+                                                                                                                 m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+                                                                                                                 m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+                                                                                                                 m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+                                                                                                                 iValue += 1;\par
+                                                                                                                 dwType = 10;\par
+                                                                                                                 dwValue = ((float)(0.5))*iValue;\par
+                                                                                                                 dwType2 = 12;\par
+                                                                                                                 dwValue2 = 1*iValue;\par
+                                                                                                                 m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute += (dwType  << 20) + (dwValue << 16) + (dwType2  << 12) + (dwValue2 << 8) + (iValue << 28);\par
+                                                                                                                SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);\par
+                                                                                                                _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int)-1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+                                                                                                                 \}\par
+                                                                                     \}\par
+                                                                           \}\par
+                                                                  \}\par
+                                      break;\par
+                            \}\par
+         \}\par
+\}\par
+CLIENTE\par
+\par
+en DrawDialogBox_ItemUpgrade:\par
+\par
+abajo de:\par
+C\'f3digo:\par
+switch (m_stDialogBoxInfo[34].cMode) \{\par
+agregamos:\par
+C\'f3digo:\par
+case 98: // in progress\par
+                   PutAlignedString(sX + 24, sX + 248, sY + 55 + 30 + 282 -117 -170, DRAW_DIALOGBOX_ITEMUPGRADE5);\par
+                   PutAlignedString(sX + 24, sX + 248, sY + 55 + 45 + 282 -117 -170, DRAW_DIALOGBOX_ITEMUPGRADE6);\par
+                   if (m_stDialogBoxInfo[34].sV1 != -1)\par
+                   \{        DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME3, sX, sY, 3);\par
+                            i = m_stDialogBoxInfo[34].sV1;\par
+                            cItemColor = m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cItemColor;\par
+                            if (   (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_LHAND)\par
+                                      || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_RHAND)\par
+                                      || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_TWOHAND))\par
+                            \{        m_pSprite[DEF_SPRID_ITEMPACK_PIVOTPOINT + m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSprite]->PutSpriteRGB(sX + 134, sY +182\par
+                                               , m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSpriteFrame, m_wWR[cItemColor] -m_wR[0], m_wWG[cItemColor] -m_wG[0], m_wWB[cItemColor] -m_wB[0], dwTime);\par
+                            \}else\par
+                            \{        m_pSprite[DEF_SPRID_ITEMPACK_PIVOTPOINT + m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSprite]->PutSpriteRGB(sX + 134, sY +182\par
+                                               , m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSpriteFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], dwTime);\par
+                            \}\par
+                            if ((rand() % 5) == 0) m_pSprite[DEF_SPRID_ITEMPACK_PIVOTPOINT + m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSprite]->PutTransSprite25(sX + 134, sY +182, m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSpriteFrame, dwTime);\par
+                            ZeroMemory(cStr1, sizeof(cStr1));\par
+                            ZeroMemory(cStr2, sizeof(cStr2));\par
+                            ZeroMemory(cStr3, sizeof(cStr3));\par
+                            GetItemName(m_pItemList[m_stDialogBoxInfo[34].sV1], cStr1, cStr2, cStr3);\par
+                            PutAlignedString(sX + 24, sX + 248, sY +230 +20, cStr1);\par
+                            PutAlignedString(sX + 24, sX + 248, sY +245 +20, cStr2);\par
+                            PutAlignedString(sX + 24, sX + 248, sY +260 +20, cStr3);\par
+                   \}\par
+                   if (((dwTime - m_stDialogBoxInfo[34].dwV1)/1000 > 4) && (m_stDialogBoxInfo[34].dwV1 != NULL))\par
+                   \{        m_stDialogBoxInfo[34].dwV1 = NULL;\par
+                            bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_UPGRADEITEMSPE, NULL, m_stDialogBoxInfo[34].sV1, NULL, NULL, NULL);\par
+                   \}\par
+                   break;\par
+case 99:\par
+                   DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME3, sX, sY, 3);\par
+                   PutAlignedString(sX + 0, sX + 248, sY + 20 + 10, "Aqui Mejoraras Armas/Armors"); // "After bring a normal item to"\par
+                   PutAlignedString(sX + 0, sX + 248, sY + 20 + 30, "Con Majestics Points y Holy Stones"); // "After bring a normal item to"\par
+                   PutAlignedString(sX + 0, sX + 248, sY + 20 + 50, "De las Xelimas y las Meriens"); // "After bring a normal item to"\par
+                   DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 46);\par
+                   wsprintf(G_cTxt, DRAW_DIALOGBOX_ITEMUPGRADE11, m_iGizonItemUpgradeLeft);           // "Item upgrade point : %d"\par
+                   PutAlignedString(sX + 24, sX + 248, sY + 90, G_cTxt);\par
+                   if (m_stDialogBoxInfo[34].sV1 != -1)\par
+                   \{        DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME3, sX, sY, 3);\par
+                            iValue = (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_dwAttribute & 0xF0000000) >> 28;\par
+                            iValue = ((15*iValue)+15);\par
+                            wsprintf( G_cTxt, DRAW_DIALOGBOX_ITEMUPGRADE12, iValue );\par
+                            if( m_iGizonItemUpgradeLeft < iValue )\par
+                                       PutAlignedString(sX + 24, sX + 248, sY + 110, G_cTxt, 195,25,25);\par
+                            else PutAlignedString(sX + 24, sX + 248, sY + 110, G_cTxt);\par
+                            i = m_stDialogBoxInfo[34].sV1;\par
+                            cItemColor = m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cItemColor;\par
+                            if (   (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_LHAND)\par
+                                      || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_RHAND)\par
+                                      || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_TWOHAND))\par
+                            \{        m_pSprite[DEF_SPRID_ITEMPACK_PIVOTPOINT + m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSprite]->PutSpriteRGB(sX + 134, sY +182\par
+                                               , m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSpriteFrame, m_wWR[cItemColor] -m_wR[0], m_wWG[cItemColor] -m_wG[0], m_wWB[cItemColor] -m_wB[0], dwTime);\par
+                            \}else\par
+                            \{        m_pSprite[DEF_SPRID_ITEMPACK_PIVOTPOINT + m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSprite]->PutSpriteRGB(sX + 134, sY +182\par
+                                               , m_pItemList[m_stDialogBoxInfo[34].sV1]->m_sSpriteFrame, m_wR[cItemColor] -m_wR[0], m_wG[cItemColor] -m_wG[0], m_wB[cItemColor] -m_wB[0], dwTime);\par
+                            \}\par
+ \par
+                   ZeroMemory(cStr1, sizeof(cStr1));\par
+                   ZeroMemory(cStr2, sizeof(cStr2));\par
+                   ZeroMemory(cStr3, sizeof(cStr3));\par
+                   GetItemName(m_pItemList[m_stDialogBoxInfo[34].sV1], cStr1, cStr2, cStr3);\par
+                   PutAlignedString(sX + 24, sX + 248, sY +230 +20, cStr1);\par
+                   PutAlignedString(sX + 24, sX + 248, sY +245 +20, cStr2);\par
+                   PutAlignedString(sX + 24, sX + 248, sY +260 +20, cStr3);\par
+                   if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                                       DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 47);\par
+                            else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 46);\par
+                   \}\par
+                   // Cancel\par
+                   if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                             DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 17);\par
+                   else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 16);\par
+                   break;\par
+case 11: // plus de gizons\par
+                   PutAlignedString(sX + 24, sX + 248, sY + 20 + 130, DRAW_DIALOGBOX_ITEMUPGRADE200);//"A point to upgrade items is not present"\par
+                   // OK\par
+                   if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                             DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 1);\par
+                   else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 0);\par
+                   break;\par
+ \par
+         case 13: // plus de gizons\par
+                   PutAlignedString(sX + 24, sX + 248, sY + 20 + 130, DRAW_DIALOGBOX_ITEMUPGRADE210);//"A point to upgrade items is not present"\par
+                   // OK\par
+                   if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                             DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 1);\par
+                   else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 0);\par
+                   break;\par
+cambiamos el case 5 por este:\par
+C\'f3digo:\par
+case 5: // select Stone/ Gizon\par
+                   PutAlignedString(sX + 10, sX + 248, sY + 20 + 45, DRAW_DIALOGBOX_ITEMUPGRADE13); // "Select which kind of items to upgrade."\par
+                   if ((msX > sX +10) && (msX < sX +248) && (msY > sY +100) && (msY < sY +115))\par
+                   \{        PutAlignedString(sX + 10, sX + 248, sY + 100, DRAW_DIALOGBOX_ITEMUPGRADE14, 255,255,255); // "Normal item upgrade"\par
+                            PutAlignedString(sX + 10, sX + 248, sY + 220, DRAW_DIALOGBOX_ITEMUPGRADE90, 255,255,255); // "Normal item upgrade"\par
+                   \}else PutAlignedString(sX + 10, sX + 248, sY + 100, DRAW_DIALOGBOX_ITEMUPGRADE14, 4,0,50); // "Normal item upgrade"\par
+                   if ((msX > sX +10) && (msX < sX +248) && (msY > sY +120) && (msY < sY +135))\par
+                   \{        PutAlignedString(sX + 10, sX + 248, sY + 120, DRAW_DIALOGBOX_ITEMUPGRADE15, 255,255,255); // "Majestic item upgrade"\par
+                            PutAlignedString(sX + 10, sX + 248, sY + 220, DRAW_DIALOGBOX_ITEMUPGRADE91, 255,255,255); // "Upgrading majestic items."\par
+                   \}else PutAlignedString(sX + 10, sX + 248, sY + 120, DRAW_DIALOGBOX_ITEMUPGRADE15, 4,0,50); // "Majestic item upgrade"\par
+                   if ((msX > sX +10) && (msX < sX +248) && (msY > sY +140) && (msY < sY +155))\par
+                   \{        PutAlignedString(sX + 10, sX + 248, sY + 140, "Special Item Upgrade", 255,255,255);\par
+                            PutAlignedString(sX + 10, sX + 248, sY + 220, "Needed Jewels of Xelima or Merien", 255,255,255);\par
+                   \}else PutAlignedString(sX +10, sX + 248, sY + 140, "Special Item Upgrade", 4,0,50);\par
+                   // Cancel\par
+                   if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                             DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 17);\par
+                   else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 16);\par
+                   break;\par
+en DlgBoxClick_ItemUpgrade:\par
+declaren\par
+C\'f3digo:\par
+int iX, iM;\par
+abajo de:\par
+C\'f3digo:\par
+switch (m_stDialogBoxInfo[34].cMode) \{\par
+agragamos:\par
+C\'f3digo:\par
+case 99:        // Upgrade Majestic, items in the window\par
+                   if ((m_stDialogBoxInfo[34].sV1 != -1) && (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                   \{        int iValue = (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_dwAttribute & 0xF0000000) >> 28;\par
+                            iValue = ((15*iValue) +15);\par
+                            if( m_iGizonItemUpgradeLeft < iValue ) break;\par
+                            PlaySound('E', 14, 5);\par
+                            PlaySound('E', 44, 0);\par
+                            m_stDialogBoxInfo[34].cMode = 98;\par
+                            m_stDialogBoxInfo[34].dwV1 = timeGetTime();\par
+                   \}\par
+                   if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                   \{        // Cancel\par
+                            PlaySound('E', 14, 5);\par
+                            DisableDialogBox(34);\par
+                  \}\par
+                   break;\par
+\par
+\par
+case 11:\par
+case 13:\par
+                   if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                   \{        // OK\par
+                            PlaySound('E', 14, 5);\par
+                            DisableDialogBox(34);\par
+                   \}\par
+mas abajo buscamos el case 5..... lo cambiamos entero por este\par
+C\'f3digo:\par
+case 5: // main menu\par
+                   if ((msX > sX +24) && (msX < sX +248) && (msY > sY +100) && (msY < sY +115))\par
+                   \{        PlaySound('E', 14, 5);\par
+                            iSoX = iSoM = 0;\par
+                            for (i = 0; i < DEF_MAXITEMS; i++)\par
+                            if (m_pItemList[i] != NULL)\par
+                            \{        if ((m_pItemList[i]->m_sSprite == 6) && (m_pItemList[i]->m_sSpriteFrame == 128)) iSoX++;\par
+                                      if ((m_pItemList[i]->m_sSprite == 6) && (m_pItemList[i]->m_sSpriteFrame == 129)) iSoM++;\par
+                            \}\par
+                            if ((iSoX > 0) || (iSoM > 0))\par
+                            \{        m_stDialogBoxInfo[34].cMode = 6;\par
+                                      m_stDialogBoxInfo[34].sV2 = iSoX;\par
+                                      m_stDialogBoxInfo[34].sV3 = iSoM;\par
+                            \}\par
+                            else AddEventList(DRAW_DIALOGBOX_ITEMUPGRADE30, 10); //"Stone of Xelima or Merien is not present."\par
+                   \}\par
+                   if ((msX > sX +24) && (msX < sX +248) && (msY > sY +120) && (msY < sY +135))\par
+                   \{        if (m_iGizonItemUpgradeLeft > 0)\{\par
+                            m_stDialogBoxInfo[34].cMode = 1;\par
+                            PlaySound('E', 14, 5);\par
+                   \} else AddEventList(DRAW_DIALOGBOX_ITEMUPGRADE80, 10);\par
+                   \}\par
+                   if ((msX > sX +24) && (msX < sX +248) && (msY > sY +140) && (msY < sY +155))\{\par
+                   PlaySound('E', 14, 5);\par
+                   iX = iM = 0;\par
+                   for (i = 0; i < DEF_MAXITEMS; i++)\{\par
+                            if (m_pItemList[i] != NULL)\{\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "XelimaDiamond",  13)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 42)) iX++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "XelimaRuby",     10)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 43)) iX++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "XelimaSapphire", 14)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 44)) iX++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "XelimaEmerald",  13)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 45)) iX++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "XelimaCrystal",  13)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 46)) iX++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "MerienDiamond",  13)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 42)) iM++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "MerienRuby",     10)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 43)) iM++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "MerienSapphire", 14)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 44)) iM++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "MerienEmerald",  13)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 45)) iM++;\par
+                                      if ((memcmp(m_pItemList[i]->m_cName, "MerienCrystal",  13)  == 0) && (m_pItemList[i]->m_sSpriteFrame == 46)) iM++;\par
+                                      \}\par
+                            \}\par
+                   if ((m_iGizonItemUpgradeLeft > 0) && ((iX > 0) || (iM > 0)) ) \{\par
+                                      m_stDialogBoxInfo[34].cMode = 99;\par
+                            \}else AddEventList(DRAW_DIALOGBOX_ITEMUPGRADE55, 10);\par
+                   \}                \par
+                   if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+                   \{        // Cancel\par
+                            PlaySound('E', 14, 5);\par
+                            DisableDialogBox(34);\par
+                   \}\par
+                   break;\par
+en bItemDrop_ItemUpgrade\par
+\par
+abajo de:\par
+C\'f3digo:\par
+switch (m_stDialogBoxInfo[34].cMode) \{\par
+agregamos:\par
+C\'f3digo:\par
+case 99:\par
+         m_bIsItemDisabled[m_stDialogBoxInfo[34].sV1] = FALSE;\par
+         m_stDialogBoxInfo[34].sV1 = cItemID;\par
+         m_bIsItemDisabled[cItemID] = TRUE;\par
+         PlaySound('E', 29, 0);\par
+break;\par
+buscamos el case de:\par
+C\'f3digo:\par
+case DEF_NOTIFY_ITEMUPGRADEFAIL:\par
+lo reemplasamos entero por :\par
+C\'f3digo:\par
+case DEF_NOTIFY_ITEMUPGRADEFAIL:\par
+                   cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);\par
+                   sp  = (short *)cp;\par
+                   sV1 = *sp;\par
+                   cp += 2;\par
+                   if (m_bIsDialogEnabled[34] == FALSE) return ;\par
+                   PlaySound('E', 24, 5);\par
+                   switch(sV1)\{\par
+                   case 1:\par
+                            m_stDialogBoxInfo[34].cMode = 8 ; // Failed\par
+                            break ;\par
+                   case 2:\par
+                            m_stDialogBoxInfo[34].cMode = 9 ; // Failed\par
+                            break ;\par
+                   case 3:\par
+                            m_stDialogBoxInfo[34].cMode = 10 ; // Failed\par
+                            break ;\par
+                   case 4:\par
+                            m_stDialogBoxInfo[34].cMode = 11 ; // Failed\par
+                            break ;\par
+                   case 5:\par
+                            m_stDialogBoxInfo[34].cMode = 13 ; // Failed\par
+                            break ;\par
+                   \}\par
+                   break;\par
+en el netmesg.h del HG y del CLIENT agregamos abajo de:\par
+C\'f3digo:\par
+#define DEF_COMMONTYPE_UPGRADEITEM                                                        0x0A58\par
+esto:\par
+C\'f3digo:\par
+#define DEF_COMMONTYPE_UPGRADEITEMSPE                                          0x0A99\par
+\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?544-Special-Item-Upgrade#ixzz2ESzcJvux\par
+}
+ 

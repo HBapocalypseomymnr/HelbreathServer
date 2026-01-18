@@ -1,0 +1,46 @@
+Recordaran estos tipicos "titles" que saltan al matar a un jugador en algunos servers fast. Lo que hace este code es algo parecido, pero salta el title al ganar un majestic point.
+
+ClientSRC:
+Game.cpp:
+Buscar el case:
+Código:
+case DEF_NOTIFY_GIZONITEMUPGRADELEFT:
+y remplazar tode ese case por:
+Código:
+case DEF_NOTIFY_GIZONITEMUPGRADELEFT: // 0x0BA4// Item upgrade is possible.
+        cp = (char *)(pData    + DEF_INDEX2_MSGTYPE + 2);
+        sp  = (short *)cp;
+        sV1 = *sp;
+        cp += 2;
+        m_iGizonItemUpgradeLeft = sV1;
+        dwp = (DWORD *)cp;
+        switch (*dwp) {
+        case 1: //50Cent - Majestic UP!
+            if((m_sPlayerType >= 1) && (m_sPlayerType <= 3)) PlaySound('C', 21, 0);
+            else if((m_sPlayerType >= 4) && (m_sPlayerType <= 6)) PlaySound('C', 22, 0);
+            _RemoveChatMsgListByObjectID(m_sPlayerObjectID);
+            for(int i = 1; i < DEF_MAXCHATMSGS; i++)
+            {
+                if(m_pChatMsgList[i] == NULL)
+                {
+                    ZeroMemory(cTxt, sizeof(cTxt));
+                    wsprintf(G_cTxt,"Majestic(%d) UP!", m_iGizonItemUpgradeLeft);
+                    m_pChatMsgList[i] = new class CMsg(23, G_cTxt, m_dwCurTime);
+                    m_pChatMsgList[i]->m_iObjectID = m_sPlayerObjectID;
+                    if(m_pMapData->bSetChatMsgOwner(m_sPlayerObjectID, -10, -10, i) == FALSE)
+                    {
+                        delete m_pChatMsgList[i];
+                        m_pChatMsgList[i] = NULL;
+                    }
+                    return;
+                }
+            }
+            AddEventList(NOTIFY_MSG_HANDLER_GIZONITEMUPGRADELEFT1, 10);
+            break;
+        }
+        //wsprintf(G_cTxt,"majesty: %d", m_iGizonItemUpgradeLeft);
+        //DebugLog(G_cTxt);
+        cp += 4;
+        break;
+Ahora cuando obtengan un majestic point saltara el sigueinte mensaje arriba de su cabeza:
+"Majestic(%d) UP!" donde "%d" es el numero de mps que tienen.

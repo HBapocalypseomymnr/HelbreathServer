@@ -1,0 +1,149 @@
+Client Source->Game.cpp 
+
+reemplazar la funcion void CGame:rawDialogBox_GaugePannel() por el siguiente codigo:
+
+Code:
+void CGame::DrawDialogBox_GaugePannel() 
+{ 
+    int iMaxPoint, iBarWidth, iTemp; 
+
+    // Health Gauge 
+    iMaxPoint = m_iVit*3 + m_iLevel*2 + m_iStr/2; 
+    iBarWidth = 101 - (m_iHP*101)/iMaxPoint; 
+    if( iBarWidth <0> 101 ) iBarWidth = 101; 
+    m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFastWidth(23, 437,  12, iBarWidth, m_dwCurTime); 
+    iTemp = m_iHP; 
+    wsprintf(G_cTxt, \\\"%d\\\", iTemp); 
+    if (m_bIsPoisoned) { 
+        PutString_SprNum(85, 441, G_cTxt, m_wR[5]*11, m_wG[5]*11, m_wB[5]*11); 
+        PutString_SprFont3(35, 439, \\\"Poisoned\\\", m_wR[5]*8, m_wG[5]*8, m_wB[5]*8, TRUE, 2); 
+    } 
+    else PutString_SprNum(80, 441, G_cTxt, 200, 100, 100); 
+
+    // Mana Gauge 
+    iMaxPoint = m_iMag*2 + m_iLevel*2 + m_iInt/2; 
+    iBarWidth = 101 - (m_iMP*101)/iMaxPoint; 
+    if( iBarWidth <0> 101 ) iBarWidth = 101; 
+    m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFastWidth(23, 459,  12, iBarWidth, m_dwCurTime); 
+    iTemp = m_iMP; 
+    wsprintf(G_cTxt, \\\"%d\\\", iTemp); 
+    PutString_SprNum(80, 463, G_cTxt, 100, 100, 200); 
+
+
+    // Stamina Gauge 
+    iMaxPoint = m_iStr*2 + m_iLevel*2; 
+    iBarWidth = 167 - (m_iSP*167)/iMaxPoint; 
+    if( iBarWidth <0> 167 ) iBarWidth = 167; 
+    m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFastWidth(147, 434, 13, iBarWidth, m_dwCurTime); 
+    iTemp = m_iSP; 
+    wsprintf(G_cTxt, \\\"%d\\\", iTemp,iMaxPoint); 
+    PutString_SprNum(228, 435, G_cTxt, 100, 100, 200); 
+
+    // Experience Gauge 
+    iMaxPoint = iGetLevelExp(m_iLevel+1) - iGetLevelExp(m_iLevel); 
+    iTemp = m_iExp - iGetLevelExp(m_iLevel); 
+    iBarWidth = 167 - (iTemp*167)/iMaxPoint; 
+    if( iBarWidth <0> 167 ) iBarWidth = 167; 
+    m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFastWidth(147, 434+13, 13, iBarWidth, m_dwCurTime); 
+    iTemp = iTemp - iMaxPoint; 
+    wsprintf(G_cTxt, \\\"%d\\\", iTemp); 
+    PutString_SprNum(228, 435+13, G_cTxt, 100, 100, 200); 
+}Client Source->Game.cpp 
+remplazar la funcion void CGame:rawDialogBox_IconPannel(short msX, short msY) por el siguiente codigo:
+
+Code:
+void CGame::DrawDialogBox_IconPannel(short msX, short msY) 
+{ 
+short sX, sY; 
+DWORD dwTime = m_dwCurTime; 
+    
+    sX = m_stDialogBoxInfo[30].sX; 
+    sY = m_stDialogBoxInfo[30].sY; 
+
+    m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(sX, sY, 14, dwTime); // Icon Pannel Background 
+
+    if((m_iLU_Pool > 0) && (m_bIsDialogEnabled[12] == FALSE)) // Level-Up button 
+        PutString_SprFont2( 557, 392, \\\"Level Up!\\\", (timeGetTime()/3)%255, (timeGetTime()/3)%255, 0); 
+
+    if (m_bIsSafeAttackMode) m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(368, 440, 4, dwTime); // Safe Attack Icon 
+    else if (m_bIsCombatMode) m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(368, 440, 5, dwTime); // Combat Mode Icon 
+    if ((362 <msX> msX) && (434 <msY> msY))  { // Combat Mode Icon 
+        m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(362, 434, 16, dwTime); 
+        if(m_bIsCombatMode) { 
+            if (m_bIsSafeAttackMode) wsprintf(G_cTxt, \\\"Safe Attack\\\"); 
+            else wsprintf(G_cTxt, \\\"Attack\\\"); 
+        } 
+        else wsprintf(G_cTxt, \\\"Peace\\\"); 
+        PutString(msX-10, msY-20, G_cTxt, RGB(250,250,220)); 
+    } 
+
+    if ((m_bIsCrusadeMode) && (m_iCrusadeDuty != 0)) { // Crusade Icon 
+    if (m_bAresden == TRUE) { 
+            if ((322 <msX>= msX) && (434 <msY> msY)) 
+                 m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(322, 434, 1, dwTime); 
+            else m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(322, 434, 2, dwTime); 
+        } 
+        else if (m_bAresden == FALSE) { 
+            if ((322 <msX>= msX) && (434 <msY> msY)) 
+                 m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(322, 434, 0, dwTime); 
+            else m_pSprite[DEF_SPRID_INTERFACE_ND_ICONPANNEL]->PutSpriteFast(322, 434, 15, dwTime); 
+        } 
+    } 
+
+    wsprintf(G_cTxt, \\\"%s(%d,%d)\\\", m_cMapMessage, m_sPlayerX, m_sPlayerY); 
+    PutAlignedString(140, 323, 456+5, G_cTxt, 200,200,120); // Map Message (Center Pannel) 
+
+    if ((msY > 436) && (msY <478> 410) && (msX <447>PutSpriteFast(412, 434, 6, dwTime); 
+            wsprintf(G_cTxt, \\\"Character Menu\\\"); 
+            PutString(msX-10, msY-20, G_cTxt, RGB(250,250,220)); 
+        } 
+        if ((msX > 447) && (msX <484>PutSpriteFast(449, 434, 7, dwTime); 
+            wsprintf(G_cTxt, \\\"Inventory\\\"); 
+            PutString(msX-10, msY-20, G_cTxt, RGB(250,250,220)); 
+        } 
+        if ((msX > 484) && (msX <521>PutSpriteFast(486, 434, 8, dwTime); 
+            wsprintf(G_cTxt, \\\"Spell Book\\\"); 
+            PutString(msX-10, msY-20, G_cTxt, RGB(250,250,220)); 
+        } 
+        if ((msX > 521) && (msX <558>PutSpriteFast(523, 434, 9, dwTime); 
+            wsprintf(G_cTxt, \\\"Skill List\\\"); 
+            PutString(msX-10, msY-20, G_cTxt, RGB(250,250,220)); 
+        } 
+        if ((msX > 558) && (msX <595>PutSpriteFast(560, 434, 10, dwTime); 
+            wsprintf(G_cTxt, \\\"Chat History\\\"); 
+            PutString(msX-10, msY-20, G_cTxt, RGB(250,250,220)); 
+        } 
+        if ((msX > 595) && (msX <631>PutSpriteFast(597, 434, 11, dwTime); 
+            wsprintf(G_cTxt, \\\"Options\\\"); 
+            PutString(msX-20, msY-20, G_cTxt, RGB(250,250,220)); 
+        } 
+    } 
+    // Experience Gauge 
+    if ((msX > 144) && (msX <317> 434+13) && (msY <434>= 100) wsprintf(G_cTxt, DEF_MSG_EXP\\\"%d\\\", m_iExp); 
+        else wsprintf(G_cTxt, DEF_MSG_EXP\\\"%d/%d\\\", m_iExp, iNextExp); 
+        PutString(msX-10, msY-20, G_cTxt, RGB(250,250,220)); 
+    } 
+}bueno una ves hecho esto, buscan \"Level Up\" y lo modifican por el siguiente code:
+
+Code:
+/*if (m_iLU_Point >0) PutString_SprFont(560, 390, \"Level Up\", 250, 250, 0); 
+if (m_cGameModeCount < 6) m_DDraw.DrawShadowBox(0,0,639,479); 
+if (m_cGameModeCount < 2) m_DDraw.DrawShadowBox(0,0,639,479); 
+if (m_bIsObserverMode == TRUE) 
+{m_DDraw.PutPixel(msX, msY,   255,255,255); 
+m_DDraw.PutPixel(msX+1, msY, 255,255,255); 
+m_DDraw.PutPixel(msX-1, msY, 255,255,255); 
+m_DDraw.PutPixel(msX, msY+1, 255,255,255); 
+m_DDraw.PutPixel(msX, msY-1, 255,255,255); 
+}*/
+
+ojo al modificar, asegurense que no sea del code que esta mas arriba 
+una ves hecho esto compilan y listo 
+
+para que se den una idea como queda, quedaria algo asi:
+
+http://img95.imageshack.us/img95/255...5404740vs3.jpg
+
+espero que les sirva 
+
+by Dax

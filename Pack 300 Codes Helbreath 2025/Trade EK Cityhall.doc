@@ -1,0 +1,377 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20\par
+Primero vamos con el cliente, que es el que mas tiempo nos va a llevar.-\par
+*PRIMERA PARTE*\par
+Agregar en NetMessages.h :\par
+C\'f3digo:\par
+#define DEF_COMMONTYPE_REQ_GETTRADEEK\tab 0x0789\par
+Luego, ir a LAN_ENG.H y agregar lo siguiente (consiste en el texto que ir\'e1 dentro del CH): \par
+C\'f3digo:\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU100\tab "Take Trade EK Item" \par
+#define DRAW_DIALOGBOX_CITYHALL_MENU101a "Here are the available items :"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU101\tab "Kloness Blade (EK 800)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU102a\tab "Demon Slayer (EK 900)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU103\tab "Dark Executor (EK 1650)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU104\tab "Lighting Blade (EK 2100)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU105\tab "Storm Bringer (EK 3000)"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU106\tab "The Devastator (EK 3600)"\par
+Ahora vallan al Game.cpp y busquen:\par
+C\'f3digo:\par
+DRAW_DIALOGBOX_CITYHALL_MENU14, 65,65,65);\par
+Y debajo colocan:\par
+C\'f3digo:\par
+  if (m_iEnemyKillCount >= 0)\par
+  \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 280))\par
+     PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU100, 255,255,255);\par
+  \tab else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU100, 4,0,50);\par
+  \}else    PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU100, 65,65,65);\par
+Mas abajo, ver\'e1n que sigen una series de Case, y agregar:\par
+C\'f3digo:\par
+case 12: // Trade EKS x Luqah\par
+  PutAlignedString(sX, sX + szX, sY + 60,  DRAW_DIALOGBOX_CITYHALL_MENU101a, 255,255,255);// Here are Item aivable :\par
+  //KB 800 EKS\par
+  if (m_iEnemyKillCount >= 800)\par
+  \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 110))\par
+     PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU102a, 255,255,255);// On mouse over Mode\par
+  \tab else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU102a, 4,0,50);// Normal Mode\par
+  \}\par
+  else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU102a, 65,65,65);// Disabled Mode\par
+  // Demon Slayer 900EKS\par
+  if (m_iEnemyKillCount >= 900) \par
+  \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 125) && (msY < sY + 140))\par
+     PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU102, 255,255,255);// On mouse over Mode\par
+  \tab else PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU102, 4,0,50);// Normal Mode\par
+  \}\par
+  else PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU102, 65,65,65);// Disabled Mode\par
+  // DARK 1650 EKS\par
+  if (m_iEnemyKillCount >= 1650) \par
+  \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 155) && (msY < sY + 170))\par
+     PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU103, 255,255,255);// On mouse over Mode\par
+  \tab else PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU103, 4,0,50);// Normal Mode\par
+  \}\par
+  else PutAlignedString(sX, sX + szX, sY + 155, DRAW_DIALOGBOX_CITYHALL_MENU103, 65,65,65);// Disabled Mode\par
+  // LB 2100 EKS\par
+  if (m_iEnemyKillCount >= 2100) \par
+  \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 185) && (msY < sY + 200))\par
+     PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU104, 255,255,255);// On mouse over Mode\par
+  \tab else PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU104, 4,0,50);// Normal Mode\par
+  \}\par
+  else PutAlignedString(sX, sX + szX, sY + 185, DRAW_DIALOGBOX_CITYHALL_MENU104, 65,65,65);// Disabled Mode\par
+  // SB 3000 EKS\par
+  if (m_iEnemyKillCount >= 3000) \par
+  \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 215) && (msY < sY + 230))\par
+     PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU105, 255,255,255);// On mouse over Mode\par
+  \tab else PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU105, 4,0,50);// Normal Mode\par
+  \}\par
+  else PutAlignedString(sX, sX + szX, sY + 215, DRAW_DIALOGBOX_CITYHALL_MENU105, 65,65,65);// Disabled Mode\par
+  // Devastator 3600 eks\par
+  if (m_iEnemyKillCount >= 3600) \par
+  \{\tab if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 260))\par
+     PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU106, 255,255,255);// On mouse over Mode\par
+  \tab else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU106, 4,0,50);// Normal Mode\par
+  \}\par
+  else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU106, 65,65,65);// Disabled Mode\par
+    break;\par
+  case 13: //Cartel de Pregunta para adquirir el item escogido - Luqah\par
+  PutAlignedString(sX,sX+szX-1,sY+125,m_cTakeItemName, 255,255,255);\par
+  PutAlignedString(sX+1,sX+szX,sY+125,m_cTakeItemName, 255,255,255);\par
+  PutAlignedString(sX,sX+szX,sY+260,DRAW_DIALOGBOX_CITYHALL_MENU46B, 55,25,25); // would you like..\par
+  if (   (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX)\par
+  \tab && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+     DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);\par
+  else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);\par
+  if (   (msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX)\par
+  \tab && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+     DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);\par
+  else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);\par
+  break;\par
+\tab\}\par
+\}\par
+Ahora busquen:\par
+C\'f3digo:\par
+void CGame::DlgBoxClick_CityhallMenu(short msX, short msY)\par
+Y en el Case 0, antes del break; colocan:\par
+C\'f3digo:\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 280))//Trade EK - Luqah\par
+  \{  \tab m_stDialogBoxInfo[13].cMode = 12;\par
+  \tab PlaySound('E', 14, 5); \par
+  \}\par
+Ahora en la funci\'f3n DlgBoxClick_CityhallMenu, debajo del case 10, donde podran encontrar esto:\par
+C\'f3digo:\par
+\tab\tab if( m_iTeleportMapCount > 0 )\par
+\tab\tab\{\tab for( int i=0 ; i<m_iTeleportMapCount ; i++ )\par
+\tab\tab\tab\{\tab if( (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 130 + i*15) && (msY <= sY + 144 + i*15) )\par
+\tab\tab\tab\tab\{\tab bSendCommand(MSGID_REQUEST_CHARGED_TELEPORT, NULL, NULL, m_stTeleportList[i].iIndex, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab DisableDialogBox(13);\par
+\tab\tab\tab\tab\tab return;\par
+\tab\tab\}\tab\}\tab\}\par
+\tab\tab break;\par
+Agregan: \par
+C\'f3digo:\par
+case 12: //Trade EK - Luqah\par
+  int iReqHeroItemID;\par
+  \tab // KB\par
+  \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 95) && (msY <= sY + 110))\par
+        if (m_iEnemyKillCount >= 799)\par
+  \tab\{\par
+            iReqHeroItemID = 849;//ID DEL ITEM\par
+\tab\tab\tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+\tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU102a,strlen(DRAW_DIALOGBOX_CITYHALL_MENU102a));\par
+            m_stDialogBoxInfo[13].cMode = 13;\par
+  \tab\tab\tab m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+        \}\par
+        // DEMON\par
+  \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 125) && (msY <= sY + 140))\par
+  \tab if (m_iEnemyKillCount >= 899)\par
+        \{\par
+            iReqHeroItemID = 616;//ID DEL ITEM\par
+\tab\tab\tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+\tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU102,strlen(DRAW_DIALOGBOX_CITYHALL_MENU102));\par
+            m_stDialogBoxInfo[13].cMode = 13;\par
+  \tab\tab\tab m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+        \}\par
+  \tab // DARK\par
+  \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 125) && (msY <= sY + 140))\par
+        if (m_iEnemyKillCount >= 1649)\par
+        \{\par
+            iReqHeroItemID = 847;//ID DEL ITEM\par
+\tab\tab\tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+\tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU103,strlen(DRAW_DIALOGBOX_CITYHALL_MENU103));\par
+            m_stDialogBoxInfo[13].cMode = 13;\par
+  \tab\tab\tab m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+        \}\par
+  \tab // LB\par
+  \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 185) && (msY <= sY + 200))\par
+  \tab if (m_iEnemyKillCount >= 2099)\par
+        \{\par
+            iReqHeroItemID = 848;//ID DEL ITEM\par
+\tab\tab\tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\tab\tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU104,strlen(DRAW_DIALOGBOX_CITYHALL_MENU104));\par
+            m_stDialogBoxInfo[13].cMode = 13;\par
+  \tab\tab\tab m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+        \}\par
+  \tab // SB\par
+  \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 215) && (msY <= sY + 230))\par
+ \tab if (m_iEnemyKillCount >= 2999)\par
+        \{\par
+            iReqHeroItemID = 845;//ID DEL ITEM\par
+\tab\tab\tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\par
+\tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU105,strlen(DRAW_DIALOGBOX_CITYHALL_MENU105));\par
+            m_stDialogBoxInfo[13].cMode = 13;\par
+  \tab\tab\tab m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+        \}\par
+  \tab // DEVAS\par
+  \tab if ((msX >= sX + 35) && (msX <= sX + 220) && (msY >= sY + 245) && (msY <= sY + 260))\par
+        if (m_iEnemyKillCount >= 2999)\par
+        \{\par
+            iReqHeroItemID = 846;//ID DEL ITEM\par
+\tab\tab\tab ZeroMemory(m_cTakeItemName,sizeof(m_cTakeItemName));\tab\tab memcpy(m_cTakeItemName,DRAW_DIALOGBOX_CITYHALL_MENU106,strlen(DRAW_DIALOGBOX_CITYHALL_MENU106));\par
+            m_stDialogBoxInfo[13].cMode = 13;\par
+  \tab\tab\tab m_stDialogBoxInfo[13].sV1=iReqHeroItemID;\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+        \} \tab\par
+  break;\par
+     case 13: // TRADE EK - Luqah\par
+   if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+  \{\tab bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETTRADEEK, NULL, m_stDialogBoxInfo[13].sV1, NULL, NULL, NULL);\par
+    \tab m_stDialogBoxInfo[13].cMode = 0;\par
+    \tab PlaySound('E', 14, 5);\par
+  \}\par
+  if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+  \{\tab m_stDialogBoxInfo[13].cMode = 12;\par
+    \tab PlaySound('E', 14, 5);\par
+  \}\par
+  \tab break;\par
+Y en Game.h declarar: \par
+\par
+C\'f3digo:\par
+char m_cTakeItemName[100];\par
+\par
+*SEGUNDA PARTE*\par
+Ahora vamos al HG:\par
+Agregar en NetMessages.h :\par
+\par
+C\'f3digo:\par
+#define DEF_COMMONTYPE_REQ_GETTRADEEK\tab 0x0789\par
+Busquen:\par
+\par
+C\'f3digo:\par
+case DEF_COMMONTYPE_REQ_GETHEROMANTLE:\par
+Agregar debajo esto(despues del break):\par
+\par
+C\'f3digo:\par
+case DEF_COMMONTYPE_REQ_GETTRADEEK: // By Luqah\par
+      GetTradeEKMantleHandler(iClientH, iV1, pString);\par
+      break;\par
+Al final de Game.cpp agregar esto:\par
+C\'f3digo:\par
+void CGame::GetTradeEKMantleHandler(int iClientH,int iItemID,char * pString) // TRADE EK - Luqah\par
+\{\par
+int   i, iNum, iRet, iEraseReq; \par
+char  * cp, cData[256], cItemName[21]; \par
+class CItem * pItem; \par
+DWORD * dwp; \par
+short * sp; \par
+WORD  * wp; \par
+\par
+    if (m_pClientList[iClientH] == NULL) return; \par
+    if (_iGetItemSpaceLeft(iClientH) == 0) \{\par
+        SendItemNotifyMsg(iClientH,    DEF_NOTIFY_CANNOTCARRYMOREITEM, NULL, NULL);\par
+        return;\par
+    \}\par
+    if (m_pItemConfigList[iItemID] == NULL)  return;\par
+\par
+    switch(iItemID)\par
+    \{\par
+        case 616:// Demon\par
+            if(m_pClientList[iClientH]->m_iEnemyKillCount <= 899) return; \par
+            m_pClientList[iClientH]->m_iEnemyKillCount -= 900;\par
+            break; \par
+        case 849://KB\par
+            if(m_pClientList[iClientH]->m_iEnemyKillCount <= 799) return; \par
+            m_pClientList[iClientH]->m_iEnemyKillCount -= 800;\par
+            break; \par
+        case 848://LB\par
+            if(m_pClientList[iClientH]->m_iEnemyKillCount <= 2099) return; \par
+            m_pClientList[iClientH]->m_iEnemyKillCount -= 2100;\par
+            break; \par
+        case 847://DarkExecutor \par
+            if(m_pClientList[iClientH]->m_iEnemyKillCount <= 1649) return; \par
+            m_pClientList[iClientH]->m_iEnemyKillCount -= 1650;\par
+            break; \par
+        case 845://SB\par
+            if(m_pClientList[iClientH]->m_iEnemyKillCount <= 2999) return; \par
+            m_pClientList[iClientH]->m_iEnemyKillCount -= 3000;\par
+            break; \par
+        case 846://devas\par
+            if(m_pClientList[iClientH]->m_iEnemyKillCount <= 3599) return; \par
+            m_pClientList[iClientH]->m_iEnemyKillCount -= 3600;\par
+            break; \par
+            \}\par
+    ZeroMemory(cItemName, sizeof(cItemName)); \par
+    memcpy(cItemName,m_pItemConfigList[iItemID]->m_cName,20); \par
+    iNum = 1;\par
+    for (i = 1; i <= iNum; i++)\par
+    \{\par
+        pItem = new class CItem; \par
+        if (_bInitItemAttr(pItem, cItemName) == FALSE) \par
+        \{\par
+            delete pItem; \par
+        \}\par
+        else\par
+        \{ \par
+            if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE)\par
+            \{ \par
+                if (m_pClientList[iClientH]->m_iCurWeightLoad < 0) m_pClientList[iClientH]->m_iCurWeightLoad = 0; \par
+                wsprintf(G_cTxt, "(*) Get Trade EK Item : Char(%s) Player-EK(%d) Item Obtained(%s)", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_iEnemyKillCount,cItemName); \par
+                PutItemLogFileList(G_cTxt);\tab\par
+                \par
+                dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID); \par
+                *dwp = MSGID_NOTIFY; \par
+                wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE); \par
+                *wp  = DEF_NOTIFY_ITEMOBTAINED; \par
+                cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);\par
+                \par
+                *cp = 1;\par
+                cp++; \par
+\par
+                memcpy(cp, pItem->m_cName, 20); \par
+                cp += 20; \par
+                \par
+                dwp  = (DWORD *)cp;\par
+                *dwp = pItem->m_dwCount; \par
+                cp += 4;\par
+                \par
+                *cp = pItem->m_cItemType; \par
+                cp++; \par
+                \par
+                *cp = pItem->m_cEquipPos; \par
+                cp++; \par
+\par
+                *cp = (char)0;\par
+                cp++; \par
+\par
+                sp  = (short *)cp;\par
+                *sp = pItem->m_sLevelLimit; \par
+                cp += 2; \par
+\par
+                *cp = pItem->m_cGenderLimit; \par
+                cp++; \par
+\par
+                wp = (WORD *)cp;\par
+                *wp = pItem->m_wCurLifeSpan; \par
+                cp += 2; \par
+\par
+                wp = (WORD *)cp; \par
+                *wp = pItem->m_wWeight;\par
+                cp += 2; \par
+\par
+                sp  = (short *)cp; \par
+                *sp = pItem->m_sSprite; \par
+                cp += 2; \par
+\par
+                sp  = (short *)cp; \par
+                *sp = pItem->m_sSpriteFrame; \par
+                cp += 2; \par
+\par
+                *cp = pItem->m_cItemColor; \par
+                cp++; \par
+\par
+                *cp = (char)pItem->m_sItemSpecEffectValue2; \par
+                cp++; \par
+\par
+                dwp = (DWORD *)cp; \par
+                *dwp = pItem->m_dwAttribute; \par
+                cp += 4; \par
+\par
+                if (iEraseReq == 1) delete pItem; \par
+                iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53);\par
+                iCalcTotalWeight(iClientH); \par
+\par
+                switch (iRet)\par
+                \{ \par
+                    case DEF_XSOCKEVENT_QUENEFULL: \par
+                    case DEF_XSOCKEVENT_SOCKETERROR: \par
+                    case DEF_XSOCKEVENT_CRITICALERROR:\par
+                    case DEF_XSOCKEVENT_SOCKETCLOSED: \par
+                    DeleteClient(iClientH, TRUE, TRUE);\par
+                    return; \par
+                \} \par
+                SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ENEMYKILLS, m_pClientList[iClientH]->m_iEnemyKillCount, NULL, NULL, NULL);\par
+            \} \par
+            else \par
+            \{ \par
+                delete pItem; \par
+\par
+                iCalcTotalWeight(iClientH);\par
+                \par
+                dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);\par
+                *dwp = MSGID_NOTIFY; \par
+                wp   = (WORD *)(cData + DEF_INDEX2_MSGTYPE);\par
+                *wp  = DEF_NOTIFY_CANNOTCARRYMOREITEM;\par
+                \par
+                iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6);\par
+                switch (iRet)\par
+                \{ \par
+                    case DEF_XSOCKEVENT_QUENEFULL: \par
+                    case DEF_XSOCKEVENT_SOCKETERROR:\par
+                    case DEF_XSOCKEVENT_CRITICALERROR: \par
+                    case DEF_XSOCKEVENT_SOCKETCLOSED:\par
+                        DeleteClient(iClientH, TRUE, TRUE);\par
+                        return; \par
+                \}    \par
+            \} \par
+        \} \par
+    \}    \par
+\}\par
+Y en Game.h, declarar:\par
+C\'f3digo:\par
+void GetTradeEKMantleHandler(int iClientH,int iItemID,char * pString); // By Luqah\par
+Y Listo, tienen Trade EK por Cityhall.\par
+By Luqah\par
+}
+ 

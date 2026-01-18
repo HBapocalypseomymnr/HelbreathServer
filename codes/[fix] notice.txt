@@ -1,0 +1,127 @@
+Coder : Dax
+
+
+(notice.txt) 
+
+notice_message_1
+notice_message_2
+notice_message_3
+notice_message_4
+notice_message_5
+
+
+--------------------------------
+Notes:
+- 1 Message from notice.txt is sent to every player online every 3 minutes.
+- Any underscore("_") in the message will be displayed as a space.
+- All messages must be 1 line. (Seperate words with "_")
+- The new message displayed will never be the same as the previous.
+- notice.txt is placed in the same location as HGServer.exe
+
+Anyone who has ran a server knows about that notice.txt. Always there to give you an error and if you added it then it didnt do shit beyond that. Well i was reading the code and noticed it was to announce messages to clients from a list of messages inside the txt. 
+
+Well it looked like it was only decoding 1 word as it's message. The code was all over the place and actual timer they used was like 2 timers in 1. Messy as hell code. Anyway i fucked around with it for a few minutes and basically rewrote the loading and syntax of the file.
+---------------------------------
+
+
+HGServer->Game.cpp->Replace bReadNotifyMsgListFile
+
+BOOL CGame::bReadNotifyMsgListFile(char * cFn)
+{
+FILE * pFile;
+HANDLE hFile;
+DWORD  dwFileSize;
+char * cp, * token;
+char seps[] = "=\t\n;";
+class CStrTok * pStrTok;
+int   i;
+BOOL bRead;
+
+bRead = FALSE;
+m_iTotalNoticeMsg = 0;
+hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
+dwFileSize = GetFileSize(hFile, NULL);
+if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);
+pFile = fopen(cFn, "rt");
+if (pFile == NULL) {
+PutLogList("(!) Notify Message list file not found!...");
+return FALSE;
+}
+else 
+{
+PutLogList("(!) Reading Notify Message list file...");
+cp = new char[dwFileSize+2];
+ZeroMemory(cp, dwFileSize+2);
+fread(cp, dwFileSize, 1, pFile);
+
+pStrTok = new class CStrTok(cp, seps);
+token = pStrTok->pGet();
+while( token != NULL )   
+{
+  for (i = 0; i < 1000; i++) if (token[i] == '_') token[i] = ' ';
+  PutLogList(token);
+  if (m_iTotalNoticeMsg < DEF_MAXNOTIFYMSGS) 
+  {
+   if (m_pNoticeMsgList[m_iTotalNoticeMsg] == NULL) 
+    m_pNoticeMsgList[m_iTotalNoticeMsg] = new class CMsg; 
+    m_pNoticeMsgList[m_iTotalNoticeMsg]->bPut(NULL, token, strlen(token), NULL, NULL);
+    m_iTotalNoticeMsg++;
+  }
+  token = pStrTok->pGet();
+}
+delete pStrTok;
+delete cp;
+}
+if (pFile != NULL) fclose(pFile);
+
+return TRUE;
+} 
+
+---------------------------------------------
+
+
+HGServer->Game.cpp->Replace NoticeHandler()
+
+void CGame::NoticeHandler()
+{
+char  cTemp, cBuffer[1000], cKey;
+DWORD dwSize, dwTime = timeGetTime();
+register int i, iMsgIndex, iTemp;
+
+if (m_iTotalNoticeMsg <= 1) return;
+
+do {
+  iMsgIndex = iDice(1, m_iTotalNoticeMsg) - 1;
+} while (iMsgIndex == m_iPrevSendNoticeMsg);
+
+m_iPrevSendNoticeMsg = iMsgIndex;
+
+ZeroMemory(cBuffer, sizeof(cBuffer));
+if (m_pNoticeMsgList[iMsgIndex] != NULL) 
+{
+  m_pNoticeMsgList[iMsgIndex]->Get(&cTemp, cBuffer, &dwSize, &iTemp, &cKey);
+}
+
+for (i = 1; i < DEF_MAXCLIENTS; i++)
+if (m_pClientList[i] != NULL) 
+{
+  SendNotifyMsg(NULL, i, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cBuffer);
+}
+} 
+
+----------------------------------------------
+
+Now we gotta change where NoticeHandler() is called from. STech originaly had this in a timer calling every 3 seconds, then had another timer inside the handler to go off at a later time(can't remember how long). Anyway it sucked. 
+
+In the function OnTimer(char cType) find UpdateHandler(); and delete it. In the same function find if ((dwTime - m_dwGameTime5) > 1000*60*3) {. After that code put UpdateHandler();
+
+Now the server calls UpdateHandler() every 3 minutes to send a new message to every connected player.
+
+Functions:
+bReadNotifyMsgListFile(char * cFn) - Reads the file notice.txt. Each line is read as a notice message. The character "_" is replaced with a space when the file is being read.
+
+UpdateHandler() - Randomly selects a message from the notice messages list. If the message is the same as the previous displayed message then it will select a new message. When the function has found a new message it will send the message to every connected client.
+
+There will be some variables left over which my codes don't use. They will cause warnings. If you don't know how to remove them then just leave them. You deserve them. Plus they won't harm you.
+
+---------------------------------------------

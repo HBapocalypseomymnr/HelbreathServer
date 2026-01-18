@@ -1,0 +1,62 @@
+Author: Jehovah
+Hi, this is nothing hard/spectacular, but in my opinion its just a small update that helps. Tired of ur Screenshots saving like ?
+
+HelShot20080327_185705_Elvine City000
+
+Well heres a small snippet thatll make it "neater":
+
+Find:
+
+Code: Select all
+    void CGame::CreateScreenShot()
+
+
+
+And replace that function with:
+
+Code: Select all
+    void CGame::CreateScreenShot()
+    {
+    int i;
+    FILE * pFile;
+    char cFn[256];
+    char LongMapName[128];
+    char SStime[32];
+    SYSTEMTIME SysTime;
+       GetLocalTime(&SysTime);
+       ZeroMemory(LongMapName, sizeof(LongMapName));
+       GetOfficialMapName(m_cMapName, LongMapName);
+       ZeroMemory(SStime, sizeof(SStime));
+       wsprintf(SStime, "%02d:%02d - %02d:%02d:%02d"
+          , SysTime.wMonth, SysTime.wDay
+          , SysTime.wHour, SysTime.wMinute, SysTime.wSecond
+          , LongMapName);
+
+       for (i = 0; i < 1000; i++)
+       {   ZeroMemory(cFn, sizeof(cFn));
+          wsprintf(cFn, "Save\\%Helbreath Asylum SS #%d.jpg"
+          , i);
+          _mkdir("SAVE");
+          pFile = fopen(cFn, "rb");
+          if (pFile == NULL)
+          {   m_DDraw.Screenshot(cFn, m_DDraw.m_lpBackB4);
+             CxImage  image;
+             image.Load(cFn, CXIMAGE_FORMAT_BMP);
+             if (image.IsValid())
+             {   image.SetJpegQuality(80);
+                 image.Save(cFn,CXIMAGE_FORMAT_JPG);
+             }
+             wsprintf(G_cTxt, NOTIFYMSG_CREATE_SCREENSHOT1, cFn);
+             AddEventList(G_cTxt, 10);
+             return;
+          }
+          fclose(pFile);
+       }
+       AddEventList(NOTIFYMSG_CREATE_SCREENSHOT2, 10);
+    }
+
+
+
+Now your screen shots will save like "Server Name SS# 1", and the next screen shot will go to #2 then #3, and so on. Ive played around with this and im posotive itll go all the way to 200+ ss's. Im sure itd keep on going til a certain amount but 200 ss's is definately enuf :P
+
+P.S. Make sure you change the "Helbreath Asylum SS" to your server name :P

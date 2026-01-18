@@ -1,0 +1,102 @@
+    Coder : XenX
+    Brought To You By Juggalo2
+
+
+
+
+
+ok this is a very small thing i just did cause i cant get friend list to show online offline atm due to lack of time
+
+so anyway adding a couple of lines to the whisper code in HG will allow you to see if someone is offline rarther than the .to command just ignoring you
+
+
+Code: Select all
+    void CGame::ToggleWhisperPlayer(int iClientH, char * pMsg, DWORD dwMsgSize)
+    {
+    char   seps[] = "= \t\n";
+    char   * token, cName[11], cBuff[256];
+    class  CStrTok * pStrTok;
+    register int i;
+    char *cp;
+    WORD *wp;
+
+    if (m_pClientList[iClientH] == NULL) return;
+    if (dwMsgSize <= 0) return;
+
+    ZeroMemory(cName, sizeof(cName));
+    ZeroMemory(cBuff, sizeof(cBuff));
+    memcpy(cBuff, pMsg, dwMsgSize);
+
+    pStrTok = new class CStrTok(cBuff, seps);
+    token = pStrTok->pGet();
+    token = pStrTok->pGet();
+       
+    if (token == NULL) {
+    m_pClientList[iClientH]->m_iWhisperPlayerIndex = -1;
+    ZeroMemory(m_pClientList[iClientH]->m_cWhisperPlayerName, sizeof(m_pClientList[iClientH]->m_cWhisperPlayerName));
+    m_pClientList[iClientH]->m_bIsCheckingWhisperPlayer = FALSE;
+    // Whisper mode enabled
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_WHISPERMODEOFF, NULL, NULL, NULL, cName);
+    }
+    else {
+    if (strlen(token) > 10)
+       memcpy(cName, token, 10);
+    else memcpy(cName, token, strlen(token));
+
+    m_pClientList[iClientH]->m_iWhisperPlayerIndex = -1;
+
+    for (i = 1; i < DEF_MAXCLIENTS; i++)
+      if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cName, 10) == 0)) {
+       if (i == iClientH) {
+        delete pStrTok;
+        // Whisper self XenX
+       SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "You shouldnt talk to yourself!");
+        return;
+       }
+       m_pClientList[iClientH]->m_iWhisperPlayerIndex = i;
+       ZeroMemory(m_pClientList[iClientH]->m_cWhisperPlayerName, sizeof(m_pClientList[iClientH]->m_cWhisperPlayerName));
+       strcpy(m_pClientList[iClientH]->m_cWhisperPlayerName, cName);
+          break;
+      }
+
+    if (m_pClientList[iClientH]->m_iWhisperPlayerIndex == -1) {
+      ZeroMemory(cBuff, sizeof(cBuff));
+      cp = (char *)cBuff;
+      *cp = GSM_REQUEST_FINDCHARACTER;
+      cp++;
+
+      wp = (WORD *)cp;
+      *wp = m_wServerID_GSS;
+      cp += 2;
+
+      wp = (WORD *)cp;
+      *wp = iClientH;
+      cp += 2;
+
+      memcpy(cp, cName, 10);
+      cp += 10;
+
+      memcpy(cp, m_pClientList[iClientH]->m_cCharName, 10);
+      cp += 10;
+
+      bStockMsgToGateServer(cBuff, 25);
+
+      ZeroMemory(m_pClientList[iClientH]->m_cWhisperPlayerName, sizeof(m_pClientList[iClientH]->m_cWhisperPlayerName));
+      strcpy(m_pClientList[iClientH]->m_cWhisperPlayerName, cName);
+      m_pClientList[iClientH]->m_bIsCheckingWhisperPlayer = TRUE;
+    }
+    else{
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_WHISPERMODEON, NULL, NULL, NULL, m_pClientList[iClientH]->m_cWhisperPlayerName);
+    return;
+    }
+    //player not online XenX
+    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "This player is not online!");
+    }
+    delete pStrTok;
+    }
+
+
+
+
+
+this displays "This player is not online" or " you shouldnt talk to yourself" for the 2 instances where the /to command does nothing at all.

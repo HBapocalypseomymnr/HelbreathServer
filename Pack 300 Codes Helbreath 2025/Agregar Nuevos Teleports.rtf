@@ -1,0 +1,226 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Nuevo Teleport (By 50Cent)\par
+Esta prohibido el post de esta informaci\'f3n\par
+cualquier otra comunidad/foro\par
+\par
+Ir al Client y en el Netmessage.h agregar:\par
+\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+//TP USA STYLE\par
+#define MSGID_SEND_TELEPORTUSA1                        0x1F14\par
+#define MSGID_SEND_TELEPORTUSA2                        0x1F15\par
+#define MSGID_SEND_TELEPORTUSA3                        0x1F16\par
+Luego ir al Game.cpp y buscar:\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+case 11: //drajwer - ask for tooking hero mantle\par
+        PutAlignedString(sX,sX+szX-1,sY+125,m_cTakeHeroItemName, 55,25,25);\par
+        PutAlignedString(sX+1,sX+szX,sY+125,m_cTakeHeroItemName, 55,25,25);\par
+        PutAlignedString(sX,sX+szX,sY+260,DRAW_DIALOGBOX_CITYHALL_MENU46A, 55,25,25); // would you like..\par
+        if (   (msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX)\par
+            && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+           DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 19);\par
+        else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 18);\par
+        if (   (msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX)\par
+            && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+           DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 3);\par
+        else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 2);\par
+     break;\par
+y justo despues del break agregar:\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+case 12://TP USA STYLE\par
+        PutString_SprFont(sX+60,sY+35,"Teleport List Menu",1,1,8);\par
+        if (m_bCitizen == TRUE)\par
+        \{    if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 120))\par
+                 PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU78, 255,255,255);    //"\par
+            else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU78, 4,0,50);        //"\par
+        \}else    PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU78, 65,65,65);            //"\par
+        if (m_bCitizen == TRUE)\par
+        \{    if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))\par
+                 PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU79, 255,255,255);    //"\par
+            else PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU79, 4,0,50);        //"\par
+        \}else    PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU79, 65,65,65);            //"\par
+        if (m_bCitizen == TRUE)\par
+        \{    if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 145) && (msY < sY + 170))\par
+                 PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU80, 255,255,255);\par
+            else PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU80, 4,0,50);\par
+        \}else    PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU80, 65,65,65);\par
+\par
+        break;\par
+buscar:\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+//Change crusade role\par
+        if ( m_bIsCrusadeMode && m_bCitizen )\par
+        \{    if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 220) && (msY < sY + 220))\par
+                 PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 255,255,255);//"Change the crusade assignment."\par
+            else PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 4,0,50);//"\par
+        \}else    PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 65,65,65);//"\par
+y justo abajo agregar:\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+//TP USA STYLE\par
+        if (m_iLevel >= 20)\par
+        \{    if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 270))\par
+                 PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU81, 255,255,255);\par
+            else PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU81, 4,0,50);\par
+        \}else    PutAlignedString(sX, sX + szX, sY + 245, DRAW_DIALOGBOX_CITYHALL_MENU100, 65,65,65);\par
+Luego buscar:\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 220) && (msY < sY + 245)) \{\par
+            if (m_bIsCrusadeMode == FALSE) return;\par
+            EnableDialogBox(33, 1, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+y justo despues agregar:\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+//TP USA STYLE\par
+if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 245) && (msY < sY + 270))\par
+        \{\par
+            if (m_iLevel <= 20) return;\par
+            m_stDialogBoxInfo[13].cMode = 12;\par
+            PlaySound('E', 14, 5);\par
+        \}\par
+Luego buscar:\par
+\par
+C\'f3digo:\par
+C\'f3digo:\par
+case 11: // Fix Drawjer\par
+         if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+        \{    bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQ_GETHEROMANTLE, NULL, m_stDialogBoxInfo[13].sV1, NULL, NULL, NULL);\par
+              m_stDialogBoxInfo[13].cMode = 0;\par
+              PlaySound('E', 14, 5);\par
+        \}\par
+        if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + DEF_BTNPOSY) && (msY <= sY + DEF_BTNPOSY + DEF_BTNSZY))\par
+        \{    m_stDialogBoxInfo[13].cMode = 7;\par
+              PlaySound('E', 14, 5);\par
+        \}\par
+         break;\par
+y justo abajo agregar:\par
+\par
+C\'f3digo:\par
+C\'f3digo:\par
+case 12: //TP USA Style\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 120))\par
+        \{    \par
+            bSendCommand(MSGID_SEND_TELEPORTUSA1, NULL, NULL, NULL, NULL, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+            DisableDialogBox(13);\par
+        \}\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))\par
+        \{    \par
+            bSendCommand(MSGID_SEND_TELEPORTUSA2, NULL, NULL, NULL, NULL, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+            DisableDialogBox(13);\par
+        \}\par
+        if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 145) && (msY < sY + 170))\par
+        \{    \par
+            bSendCommand(MSGID_SEND_TELEPORTUSA3, NULL, NULL, NULL, NULL, NULL, NULL, NULL);\par
+            PlaySound('E', 14, 5);\par
+            DisableDialogBox(13);\par
+        \}\par
+        break;\par
+Ahora busquen:\par
+\par
+C\'f3digo:\par
+C\'f3digo:\par
+case DEF_REQUEST_RESURRECTPLAYER_YES: // By snoopy\par
+    case DEF_REQUEST_RESURRECTPLAYER_NO:  // By snoopy\par
+        dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+        *dwp = dwMsgID;\par
+        wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+        *wp = NULL;\par
+        iRet = m_pGSock->iSendMsg(cMsg, 6, cKey);\par
+        break;\par
+y justo arriba agregar:\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+//TP USA Style\par
+    case MSGID_SEND_TELEPORTUSA1:\par
+    case MSGID_SEND_TELEPORTUSA2:\par
+    case MSGID_SEND_TELEPORTUSA3:\par
+        dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+        *dwp = dwMsgID;\par
+        wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+        *wp = NULL;\par
+        ip  = (int *)(cMsg + DEF_INDEX2_MSGTYPE + 2);\par
+        *ip = iV1;\par
+        iRet = m_pGSock->iSendMsg(cMsg, 10, cKey);\par
+        break;\par
+Luego en lan_eng.h agreguen:\par
+\par
+C\'f3digo:\par
+C\'f3digo:\par
+//TP USA Style\par
+#define    DRAW_DIALOGBOX_CITYHALL_MENU78    "Mapa 1"\par
+#define    DRAW_DIALOGBOX_CITYHALL_MENU79    "Mapa 2"\par
+#define    DRAW_DIALOGBOX_CITYHALL_MENU80    "Mapa 3"\par
+#define DRAW_DIALOGBOX_CITYHALL_MENU81    "Teleport List"\par
+Ahora en el hgserver ir al Game.cppy busquen:\par
+\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+default:\par
+                wsprintf(m_msgBuff,"Unknown message received! (0x%.8X) Delete Client",*dwpMsgID);\par
+                PutLogList(m_msgBuff);\par
+                DeleteClient(iClientH, TRUE, TRUE); // v1.4\par
+                break;\par
+y justo arriba agregar:\par
+\par
+C\'f3digo:\par
+C\'f3digo:\par
+//TP Usa Style\par
+            case MSGID_SEND_TELEPORTUSA1:\par
+                RequestTeleportHandler(iClientH, "2   ", "elvine", 50, 50);\par
+                break;\par
+            case MSGID_SEND_TELEPORTUSA2:\par
+                RequestTeleportHandler(iClientH, "2   ", "elvine", 75, 75);\par
+                break;\par
+            case MSGID_SEND_TELEPORTUSA3:\par
+                RequestTeleportHandler(iClientH, "2   ", "elvine", 100, 100);\par
+                break;\par
+Por ultimo en el netmessage.h agreguen:\par
+\par
+C\'f3digo:\par
+C\'f3digo:\par
+//TP USA STYLE\par
+#define MSGID_SEND_TELEPORTUSA1                        0x1F14\par
+#define MSGID_SEND_TELEPORTUSA2                        0x1F15\par
+#define MSGID_SEND_TELEPORTUSA3                        0x1F16\par
+y Listo! despues editen el nombre del mapa aca:\par
+\par
+C\'f3digo:\par
+C\'f3digo:\par
+//TP USA Style\par
+#define    DRAW_DIALOGBOX_CITYHALL_MENU78    "Mapa 1"\par
+#define    DRAW_DIALOGBOX_CITYHALL_MENU79    "Mapa 2"\par
+#define    DRAW_DIALOGBOX_CITYHALL_MENU80    "Mapa 3"\par
+y aca:\par
+C\'f3digo:\par
+\par
+C\'f3digo:\par
+//TP Usa Style\par
+            case MSGID_SEND_TELEPORTUSA1:\par
+                RequestTeleportHandler(iClientH, "2   ", "elvine", 50, 50);\par
+                break;\par
+            case MSGID_SEND_TELEPORTUSA2:\par
+                RequestTeleportHandler(iClientH, "2   ", "elvine", 75, 75);\par
+                break;\par
+            case MSGID_SEND_TELEPORTUSA3:\par
+                RequestTeleportHandler(iClientH, "2   ", "elvine", 100, 100);\par
+                break;\par
+}
+ 

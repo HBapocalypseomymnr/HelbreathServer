@@ -1,0 +1,15 @@
+Este code permite cambiar la fuente del client. Para ello hagan lo siguiente:
+
+En DXC_ddraw.cpp busquen:
+
+Código:
+m_hFontInUse = CreateFont
+
+Una vez que lo hubiquen, al final van a encontrar que dice:
+
+Código:
+m_hFontInUse = CreateFont(16,0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, VARIABLE_PITCH, "Comic Sans MS");
+
+Como ven, donde dice: "Comic Sans MS" es la fuente que utiliza el HB. Modifiquenla por la que quieran.
+
+by ZeroEoyPnk

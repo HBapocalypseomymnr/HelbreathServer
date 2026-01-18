@@ -1,0 +1,86 @@
+BOOL CGame::bCheckLevelUp(int iClientH)
+{
+BOOL bStr, bVit, bDex, bInt, bMag, bChr;
+char cLoopCnt;
+int bobdole;
+
+if (m_pClientList[iClientH] == NULL) return FALSE;
+// ÃÖ´ë ·¹º§ Á¦ÇÑ 
+if (m_pClientList[iClientH]->m_iLevel >= m_iPlayerMaxLevel) return FALSE;
+if (m_pClientList[iClientH]->m_iExp < m_pClientList[iClientH]->m_iNextLevelExp) return FALSE;
+if (m_pClientList[iClientH]->m_iLevel >= 317){
+m_pClientList[iClientH]->m_iLevel -= 1;
+}
+bStr = bVit = bDex = bInt = bMag = bChr = FALSE;
+// ¸¸¾�  Ã¼ÇèÆÇ »ç¿ëÀÚ¶ó¸é ·¹º§ 10ÀÌ»óÀÇ °æÇèÄ¡¸¦ °¡Áú¼ö´Â ¾ø´Ù. Account Status: 1-Ã¼ÇèÆÇ »ç¿ëÀÚ  2-Á¤½Ä »ç¿ëÀÚ 3-Á¤½Ä »ç¿ëÀÚ »ç¿ëÁßÁö 
+cLoopCnt = 0;
+while (1) {
+ if (cLoopCnt++ > 100) return FALSE; // ¹«¾ð°¡ ¿¡·¯°¡ ¹ß»ýÇÑ °Í °°´Ù. ÇØÅ·µî¿¡ ÀÇÇÑ ÆÄÀÏ Á¶ÀÛ 
+ if (m_pClientList[iClientH]->m_iExp >= m_pClientList[iClientH]->m_iNextLevelExp) {
+  // ·¹º§ÀÌ ¿Ã¶ú´Ù.
+  m_pClientList[iClientH]->m_iLevel++;
+  m_pClientList[iClientH]->m_iLU_Pool += 3;
+  // ·¹º§ÀÌ ¿À¸¥°Í¿¡ ´ëÇÑ Æ¯¼ºÄ¡ Æ÷ÀÎÆ®¸¦ Áõ°¡½ÃÄÑ¾ß ÇÑ´Ù. 
+//   if ( (m_pClientList[iClientH]->m_cLU_Str + m_pClientList[iClientH]->m_cLU_Vit + m_pClientList[iClientH]->m_cLU_Dex + 
+//           m_pClientList[iClientH]->m_cLU_Int + m_pClientList[iClientH]->m_cLU_Mag + m_pClientList[iClientH]->m_cLU_Char) <= DEF_TOTALLEVELUPPOINT) {
+   // ·¹º§ ¾÷ ¼¼ÆÃÀÌ 3º¸´Ù °°°Å³ª ÀÛ¾Æ¾ß À¯È¿ÇÏ´Ù. 
+
+/*
+   if (m_pClientList[iClientH]->m_iStr < DEF_CHARPOINTLIMIT) {
+    m_pClientList[iClientH]->m_iStr  += m_pClientList[iClientH]->m_cLU_Str;
+    bStr = TRUE;
+   }
+   if (m_pClientList[iClientH]->m_iVit < DEF_CHARPOINTLIMIT) {
+    m_pClientList[iClientH]->m_iVit  += m_pClientList[iClientH]->m_cLU_Vit;
+    bVit = TRUE;
+   }
+   if (m_pClientList[iClientH]->m_iDex < DEF_CHARPOINTLIMIT) {
+    m_pClientList[iClientH]->m_iDex  += m_pClientList[iClientH]->m_cLU_Dex;
+    bDex = TRUE;
+   }
+   if (m_pClientList[iClientH]->m_iInt < DEF_CHARPOINTLIMIT) {
+    m_pClientList[iClientH]->m_iInt  += m_pClientList[iClientH]->m_cLU_Int;
+    bInt = TRUE;
+   }
+   if (m_pClientList[iClientH]->m_iMag < DEF_CHARPOINTLIMIT) {
+    m_pClientList[iClientH]->m_iMag  += m_pClientList[iClientH]->m_cLU_Mag;
+    bMag = TRUE;
+   }
+   if (m_pClientList[iClientH]->m_iCharisma < DEF_CHARPOINTLIMIT) {
+    m_pClientList[iClientH]->m_iCharisma += m_pClientList[iClientH]->m_cLU_Char;
+    bChr = TRUE;
+   }
+   */
+//   }
+
+  // ¼³Á¤Ä¡¸¦ È®ÀÎÇÑ´Ù. 
+  if (m_pClientList[iClientH]->m_iStr > DEF_CHARPOINTLIMIT)      m_pClientList[iClientH]->m_iStr = DEF_CHARPOINTLIMIT;
+  if (m_pClientList[iClientH]->m_iDex > DEF_CHARPOINTLIMIT)      m_pClientList[iClientH]->m_iDex = DEF_CHARPOINTLIMIT;
+  if (m_pClientList[iClientH]->m_iVit > DEF_CHARPOINTLIMIT)      m_pClientList[iClientH]->m_iVit = DEF_CHARPOINTLIMIT;
+  if (m_pClientList[iClientH]->m_iInt > DEF_CHARPOINTLIMIT)      m_pClientList[iClientH]->m_iInt = DEF_CHARPOINTLIMIT;
+  if (m_pClientList[iClientH]->m_iMag > DEF_CHARPOINTLIMIT)      m_pClientList[iClientH]->m_iMag = DEF_CHARPOINTLIMIT;
+  if (m_pClientList[iClientH]->m_iCharisma > DEF_CHARPOINTLIMIT) m_pClientList[iClientH]->m_iCharisma = DEF_CHARPOINTLIMIT;
+
+  // New 17/05/2004
+  if (m_pClientList[iClientH]->m_iLevel > 100)
+   if (m_pClientList[iClientH]->m_bIsPlayerCivil == TRUE)
+    ForceChangePlayMode(iClientH, TRUE);
+
+  // ·¹º§ÀÌ ¿À¸¥°ÍÀ» Åëº¸ÇÑ´Ù.
+  SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_LEVELUP, NULL, NULL, NULL, NULL);
+
+  // ´ÙÀ½ ·¹º§·ÎÀÇ °æÇèÄ¡°ª °è»ê, ÇÒ´ç.
+  m_pClientList[iClientH]->m_iNextLevelExp = m_iLevelExpTable[m_pClientList[iClientH]->m_iLevel + 1]; //iGetLevelExp(m_pClientList[iClientH]->m_iLevel + 1);
+ 
+  // Æ¯¼ºÄ¡ Àç °è»ê. 
+  CalcTotalItemEffect(iClientH, -1, FALSE);
+
+  //v1.4 ´ÙÀ½ ·¹º§ 
+  wsprintf(G_cTxt, "(!) Level up: Player (%s) Level (%d) Experience(%d) Next Level Experience(%d)", m_pClientList[iClientH]->m_cCharName,m_pClientList[iClientH]->m_iLevel, m_pClientList[iClientH]->m_iExp, m_pClientList[iClientH]->m_iNextLevelExp);
+  PutLogFileList(G_cTxt);
+ }
+ else { return TRUE; }
+}
+bobdole = 3;
+return FALSE;
+}

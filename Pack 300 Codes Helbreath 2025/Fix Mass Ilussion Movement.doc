@@ -1,0 +1,248 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\lang11274\f0\fs20\par
+Bueno comenzemos:\par
+\par
+Vamos al game.cpp de su cliente y buscamos\par
+\par
+C\'f3digo:\par
+void CGame::RestoreSprites()\par
+\par
+Remplazamos toda esa funcion por:\par
+\par
+C\'f3digo:\par
+void CGame::RestoreSprites()\par
+\{\par
+    for (int i = 0; i < DEF_MAXSPRITES; i++)\par
+    if (m_pSprite[i] != NULL) m_pSprite[i]->iRestore();\par
+\}\par
+char _tmp_cTmpDirX[9] = \{ 0,0,1,1,1,0,-1,-1,-1 \};\par
+char _tmp_cTmpDirY[9] = \{ 0,-1,-1,0,1,1,1,0,-1 \};\par
+char CGame::cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck, BOOL bMIM)\par
+\{\par
+ char  cDir, cTmpDir;\par
+ //int   aX, aY, aX2, aY2, dX, dY;\par
+ int   aX, aY, dX, dY;\par
+ int   i;\par
+    if ((sX == dstX) && (sY == dstY)) return 0;\par
+    dX = sX;\par
+    dY = sY;\par
+    if (bMIM == FALSE) // MIM Fix\par
+         cDir = m_Misc.cGetNextMoveDir(dX, dY, dstX, dstY);\par
+    else cDir = m_Misc.cGetNextMoveDir(dstX, dstY, dX, dY);\par
+\par
+    if (m_cPlayerTurn == 0)\par
+    for (i = cDir; i <= cDir + 2;i++)\par
+    \{    cTmpDir = i;\par
+        if (cTmpDir > 8) cTmpDir -= 8;\par
+        aX = _tmp_cTmpDirX[cTmpDir];\par
+        aY = _tmp_cTmpDirY[cTmpDir];\par
+        if (((dX + aX) == m_iPrevMoveX) && ((dY + aY) == m_iPrevMoveY) && (m_bIsPrevMoveBlocked == TRUE) && (bMoveCheck == TRUE))\par
+        \{    m_bIsPrevMoveBlocked = FALSE;\par
+        \}else if (m_pMapData->bGetIsLocateable(dX + aX, dY + aY) == TRUE)\par
+        \{    if( m_pMapData->bIsTeleportLoc(dX + aX, dY + aY) == TRUE )\par
+            \{    if( _bCheckMoveable(dX + aX, dY + aY) == TRUE ) return cTmpDir;\par
+                else\par
+                \{    SetTopMsg( DEF_MSG_GETNEXTMOVEDIR, 5 );\par
+                \}\par
+            \}else return cTmpDir;\par
+    \}    \}\par
+\par
+    if (m_cPlayerTurn == 1)\par
+    for (i = cDir; i >= cDir - 2;i--)\par
+    \{    cTmpDir = i;\par
+        if (cTmpDir < 1) cTmpDir += 8;\par
+        aX = _tmp_cTmpDirX[cTmpDir];\par
+        aY = _tmp_cTmpDirY[cTmpDir];\par
+        if (((dX + aX) == m_iPrevMoveX) && ((dY + aY) == m_iPrevMoveY) && (m_bIsPrevMoveBlocked == TRUE) && (bMoveCheck == TRUE))\par
+        \{    m_bIsPrevMoveBlocked = FALSE;\par
+        \}else if (m_pMapData->bGetIsLocateable(dX + aX, dY + aY) == TRUE)\par
+        \{    if( m_pMapData->bIsTeleportLoc(dX + aX, dY + aY) == TRUE )\par
+            \{    if( _bCheckMoveable(dX + aX, dY + aY) == TRUE ) return cTmpDir;\par
+                else\par
+                \{    SetTopMsg( DEF_MSG_GETNEXTMOVEDIR, 5 );\par
+                \}\par
+            \}else return cTmpDir;\par
+    \}    \}\par
+    return 0;\par
+\}\par
+\par
+Ahora buscan:\par
+\par
+C\'f3digo:\par
+MOTION_COMMAND_PROCESS:;\par
+\par
+Y tienen que modificar esto:\par
+\par
+C\'f3digo:\par
+if (m_sDamageMove != 0) \{\par
+            m_cCommand = DEF_OBJECTDAMAGEMOVE;\par
+            m_sCommX = m_sPlayerX;\par
+            m_sCommY = m_sPlayerY;\par
+\par
+            switch (m_sDamageMove) \{\par
+            case 1: m_sCommY--; break;\par
+            case 2: m_sCommX++; m_sCommY--; break;\par
+            case 3: m_sCommX++; break;\par
+            case 4: m_sCommX++; m_sCommY++; break;\par
+            case 5: m_sCommY++; break;\par
+            case 6: m_sCommX--; m_sCommY++; break;\par
+            case 7: m_sCommX--; break;\par
+            case 8: m_sCommX--; m_sCommY--; break;\par
+            \}\par
+\par
+Por esto:\par
+\par
+C\'f3digo:\par
+if (m_sDamageMove != 0)\par
+        \{    m_cCommand = DEF_OBJECTDAMAGEMOVE;\par
+            m_sCommX = m_sPlayerX;\par
+            m_sCommY = m_sPlayerY;\par
+            if (m_bIllusionMVT == TRUE) \{\par
+            switch (m_sDamageMove) \{\par
+            case 1: m_sCommY++; break;\par
+            case 2: m_sCommX--; m_sCommY++; break;\par
+            case 3: m_sCommX--; break;\par
+            case 4: m_sCommX--; m_sCommY--; break;\par
+            case 5: m_sCommY--; break;\par
+            case 6: m_sCommX++; m_sCommY--; break;\par
+            case 7: m_sCommX++; break;\par
+            case 8: m_sCommX++; m_sCommY++; break;\par
+            \}\par
+\par
+            \}\par
+            else \{\par
+            switch (m_sDamageMove) \{\par
+            case 1: m_sCommY--; break;\par
+            case 2: m_sCommX++; m_sCommY--; break;\par
+            case 3: m_sCommX++; break;\par
+            case 4: m_sCommX++; m_sCommY++; break;\par
+            case 5: m_sCommY++; break;\par
+            case 6: m_sCommX--; m_sCommY++; break;\par
+            case 7: m_sCommX--; break;\par
+            case 8: m_sCommX--; m_sCommY--; break;\par
+            \}\par
+            \}\par
+\par
+En la funcion:\par
+\par
+C\'f3digo:\par
+void CGame::InitDataResponseHandler(char * pData)\par
+\par
+Abajo de esto:\par
+\par
+C\'f3digo:\par
+// CLEROTH - BLACK FIX\par
+    ip = (int *)cp;\par
+    m_iPlayerStatus = *ip;\par
+    cp += 4;\par
+\par
+Agreguen esto:\par
+\par
+C\'f3digo:\par
+//Snoopy MIM fix\par
+    if ((m_iPlayerStatus & 0x00200000) == 0x00200000) \par
+    \{    m_bIllusionMVT = TRUE;    \par
+    \}else\par
+    \{    m_bIllusionMVT = FALSE;\par
+    \}\par
+\par
+En Game.H del cliente tambien busquen:\par
+\par
+C\'f3digo:\par
+char cGetNextMoveDir\par
+\par
+Y remplazen toda la declaracion por :\par
+\par
+C\'f3digo:\par
+char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck = FALSE, BOOL bMIM = FALSE);\par
+\par
+\par
+Ahora busquen:\par
+\par
+C\'f3digo:\par
+cDir = cGetNextMoveDir(m_sPlayerX, m_sPlayerY, m_sCommX, m_sCommY, TRUE);\par
+\par
+Y abajo ponen en lugar de esto:\par
+\par
+\par
+C\'f3digo:\par
+// Snoopy: Illusion Movement\par
+            /*    if ((m_bIllusionMVT == TRUE)&&(m_cCommand != DEF_OBJECTDAMAGEMOVE))\par
+            \{   cDir +=4;\par
+               if (cDir >8) cDir -=8;\par
+            \}*/\par
+\par
+Que lo desactive como ven ahi, entonces quedaria abajo de eso desactivado esto:\par
+\par
+\par
+C\'f3digo:\par
+// Snoopy: Illusion Movement\par
+                if ((m_bIllusionMVT == TRUE) && (m_cCommand != DEF_OBJECTDAMAGEMOVE))\par
+                \{    cDir = cGetNextMoveDir(m_sPlayerX, m_sPlayerY, m_sCommX, m_sCommY, TRUE, TRUE);\par
+                \}\par
+\par
+Ahora buscan de vuelta:\par
+\par
+\par
+C\'f3digo:\par
+cDir = cGetNextMoveDir(m_sPlayerX, m_sPlayerY, m_sCommX, m_sCommY, TRUE);\par
+\par
+Y hacen lo mismo en lugar de esto:\par
+\par
+C\'f3digo:\par
+// Snoopy: Illusion mvt\par
+                /*if (m_bIllusionMVT == TRUE)\par
+                \{    cDir +=4;\par
+                    if (cDir >8) cDir -=8;\par
+                \}*/\par
+\par
+Que lo desactive tambien como ven ahi abajo ponen esto:\par
+\par
+C\'f3digo:\par
+if (m_bIllusionMVT == TRUE)\par
+                \{    cDir = cGetNextMoveDir(m_sPlayerX, m_sPlayerY, m_sCommX, m_sCommY, TRUE, TRUE);\par
+            \}\par
+\par
+\par
+Parte HG:\par
+\par
+Buscan:\par
+\par
+C\'f3digo:\par
+Case 4 : // Ilusion Movement\par
+\par
+Y remplazan todo el case por este:\par
+\par
+C\'f3digo:\par
+case 4: // Ilusion Movement\par
+                            if (m_pClientList[iClientH]->m_cMagicEffectStatus[DEF_MAGICTYPE_INVISIBILITY] != 0) break;\par
+                            for (iy = dY - m_pMagicConfigList[sType]->m_sValue3; iy <= dY + m_pMagicConfigList[sType]->m_sValue3; iy++)\par
+                            for (ix = dX - m_pMagicConfigList[sType]->m_sValue2; ix <= dX + m_pMagicConfigList[sType]->m_sValue2; ix++) \{\par
+                                m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);\par
+                                if (cOwnerType == DEF_OWNERTYPE_PLAYER) \{\par
+                                        if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;\par
+                                        if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) \{\par
+                                            if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ] != 0) break;\par
+                                            m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ] = (char)m_pMagicConfigList[sType]->m_sValue4;\par
+                                            \par
+                                            switch (m_pMagicConfigList[sType]->m_sValue4) \{\par
+                                            case 4:\par
+                                                //para que los del mismo pueblo no se den con illusion movement by KahBur\par
+                                                if ((strcmp(m_pClientList[sOwnerH]->m_cLocation, m_pClientList[iClientH]->m_cLocation)) == 0) goto MAGIC_NOEFFECT;\par
+                                                if ((m_pClientList[iClientH]->m_bIsPlayerCivil == FALSE) && (m_pClientList[sOwnerH]->m_bIsPlayerCivil == TRUE)) goto MAGIC_NOEFFECT;\par
+                                                SetIllusionMovementFlag(sOwnerH, DEF_OWNERTYPE_PLAYER, TRUE);\par
+                                                break;\par
+                                            \}\par
+\par
+                                            bRegisterDelayEvent(DEF_DELAYEVENTTYPE_MAGICRELEASE, DEF_MAGICTYPE_CONFUSE, dwTime + (m_pMagicConfigList[sType]->m_dwLastTime*1000), \par
+                                                sOwnerH, cOwnerType, NULL, NULL, NULL, m_pMagicConfigList[sType]->m_sValue4, NULL, NULL);\par
+\par
+                                            SendNotifyMsg(NULL, sOwnerH, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_CONFUSE, m_pMagicConfigList[sType]->m_sValue4, iClientH, NULL);\par
+                                        \}\par
+                                    \}\par
+                                \}\par
+                                break;\par
+                    \}\par
+                    break;\par
+}
+ 

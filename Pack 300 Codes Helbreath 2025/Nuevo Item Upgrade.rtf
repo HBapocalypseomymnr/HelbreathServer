@@ -1,0 +1,150 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 bueno no sabia como mierda ponerle al titulo... pero explico cortito...\par
+\par
+esto vi que un flaco lo estaba pidiendo... asiq...\par
+\par
+digamos tenemos 3 items..\par
+\par
+AHA(M)\par
+AAHA(M)\par
+AAAHA(M)\par
+\par
+son armos hero de aresden.\par
+\par
+CADA 5 UPGRADES EL ITEM CAMBIA...\par
+\par
+el upgrade es progresivo de a 1 en 1 ...\par
+ise el code basico y desp lo profundice con mas checkings\par
+\par
+items.cfg\par
+C\'f3digo:\par
+Item = 1752 AHA(M)     1 2  2 75 48 0 0 0 0 5000 0 9  8  -40000 10000 9  0 0 1 -5 -5 0 60 0\par
+Item = 1753 AAHA(M)     1 2  2 75 48 0 0 0 0 5000 0 9  8  -40000 10000 9  0 0 1 -5 -5 0 60 0\par
+Item = 1754 AAAHA(M)     1 2  2 75 48 0 0 0 0 5000 0 9  8  -40000 10000 9  0 0 1 -5 -5 0 60 0\par
+Item = 1755 AHA(W)     1 2  2 75 48 0 0 0 0 5000 0 13 9  -40000 10000 10 0 0 2 -5 -5 0 60 0\par
+Item = 1756 AAHA(W)     1 2  2 75 48 0 0 0 0 5000 0 13 9  -40000 10000 10 0 0 2 -5 -5 0 60 0\par
+Item = 1757 AAAHA(W)     1 2  2 75 48 0 0 0 0 5000 0 13 9  -40000 10000 10 0 0 2 -5 -5 0 60 0\par
+Item = 1758 EHA(M)     1 2  2 75 48 0 0 0 0 5000 0 9  7  -40000 10000 8  0 0 1 -5 -5 0 60 0\par
+Item = 1759 EEHA(M)     1 2  2 75 48 0 0 0 0 5000 0 9  7  -40000 10000 8  0 0 1 -5 -5 0 60 0\par
+Item = 1760 EEEHA(M)     1 2  2 75 48 0 0 0 0 5000 0 9  7  -40000 10000 8  0 0 1 -5 -5 0 60 0\par
+Item = 1761 EHA(W)     1 2  2 75 48 0 0 0 0 5000 0 13 8  -40000 10000 9  0 0 2 -5 -5 0 60 0\par
+Item = 1762 EEHA(W)     1 2  2 75 48 0 0 0 0 5000 0 13 8  -40000 10000 9  0 0 2 -5 -5 0 60 0\par
+Item = 1763 EEEHA(W)     1 2  2 75 48 0 0 0 0 5000 0 13 8  -40000 10000 9  0 0 2 -5 -5 0 60 0\par
+en RequestItemUpgradeHantler\par
+\par
+declaramos arriba de todo:\par
+C\'f3digo:\par
+int ItemID2, ItemID;\par
+ahora atencion... inicialisamos las variables de recien. prestennnnnnnnn atencion\par
+\par
+ARRIBA DE \par
+C\'f3digo:\par
+switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cCategory) \{\par
+agregamos:\par
+C\'f3digo:\par
+ItemID2 = 0;\par
+ItemID = 0;\par
+ahora si... abajo de :\par
+C\'f3digo:\par
+switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cCategory) \{\par
+colocamos la nueva seleccion de categoria 60 ...\par
+C\'f3digo:\par
+case 60:\par
+        switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum)\par
+        \{    case 1752:case 1753:case 1754:case 1755:case 1756:case 1757:\par
+            case 1758:case 1759:case 1760:case 1761:case 1762:case 1763:\par
+                if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0)\par
+                \{    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL); \par
+                    return;\par
+                \}\par
+                sItemUpgrade = (iValue*(iValue+6)/8) + 2;\par
+                if (( m_pClientList[iClientH]->m_iGizonItemUpgradeLeft - sItemUpgrade ) < 0)\par
+                \{    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, NULL, NULL, NULL); \par
+                    return;\par
+                \}\par
+                m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= sItemUpgrade;\par
+                SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL); \par
+                if ( ((iValue >= 0) && (iValue < 15)) &&\par
+                     ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum >= 1752) &&\par
+                      (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum <= 1763)) )\par
+                \{    if (memcmp(m_pClientList[iClientH]->m_cLocation, "aresden", strlen("aresden")) == 0)\par
+                    \{    switch(m_pClientList[iClientH]->m_cSex)\par
+                        \{    case 1:\par
+                                if ((iValue >= 0) && (iValue < 5))   ItemID2 = 1752;\par
+                                if ((iValue >= 5) && (iValue < 10))  ItemID2 = 1753;\par
+                                if ((iValue >= 10) && (iValue < 15)) ItemID2 = 1754;\par
+                            break;\par
+                            case 2:\par
+                                if ((iValue >= 0) && (iValue < 5))   ItemID2 = 1755;\par
+                                if ((iValue >= 5) && (iValue < 10))  ItemID2 = 1756;\par
+                                if ((iValue >= 10) && (iValue < 15)) ItemID2 = 1757;\par
+                            break;\par
+                        \}\par
+                    \}else\{    if (memcmp(m_pClientList[iClientH]->m_cLocation, "elvine", strlen("elvine")) == 0)\par
+                            \{    switch(m_pClientList[iClientH]->m_cSex)\par
+                                \{    case 1:\par
+                                        if ((iValue >= 0) && (iValue < 5))   ItemID2 = 1758;\par
+                                        if ((iValue >= 5) && (iValue < 10))  ItemID2 = 1759;\par
+                                        if ((iValue >= 10) && (iValue < 15)) ItemID2 = 1760;\par
+                                    break;\par
+                                    case 2:\par
+                                        if ((iValue >= 0) && (iValue < 5))   ItemID2 = 1761;\par
+                                        if ((iValue >= 5) && (iValue < 10))  ItemID2 = 1762;\par
+                                        if ((iValue >= 10) && (iValue < 15)) ItemID2 = 1763;\par
+                                    break;\par
+                                \}\par
+                            \}\par
+                    \}\par
+                    ItemID = ItemID2;\par
+                    iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;\par
+                    iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;\par
+                    delete m_pClientList[iClientH]->m_pItemList[iItemIndex];\par
+                    m_pClientList[iClientH]->m_pItemList[iItemIndex] = NULL;\par
+                    m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;\par
+                    m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;\par
+                    m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;\par
+                    if ((_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex] , ItemID) == FALSE))\par
+                    \{    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL); \par
+                        return;\par
+                    \}\par
+                    m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER; \par
+                    m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1; \par
+                    m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2; \par
+                    m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3; \par
+                    iValue += 1;\par
+                    dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute; \par
+                    dwTemp = dwTemp & 0x0FFFFFFF;\par
+                    m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28); \par
+                    SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMCHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType, \par
+                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, \par
+                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName, \par
+                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite, \par
+                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame, \par
+                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor, \par
+                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2, \par
+                       m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute) ; \par
+                    _bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int)-1, m_pClientList[iClientH]->m_pItemList[iItemIndex]); \par
+                \}\par
+            break;\par
+        \}\par
+        break;\par
+el color rojo marca q el upgrade es de uno en uno.\par
+el color asul marca los rangos de entre q value y q value va a qdar el items.\par
+\par
+en este caso cada 5 upgrades el item cambia.\par
+\par
+lo unico que recomiendo es q cambien el nombre de los items, yo le mande cualqier cosa xD jaja\par
+\par
+esta es la base perfecta y ordenada para el upgrade de items para las ciudades.\par
+\par
+el primero checkeo diferencia las ciudades y el segunda el sexo.. ya q las armor las ay para macho y embra....\par
+\par
+leanlo bien si quieren implementarlo en otra cosa..\par
+\par
+de ultima si no les sale. me chiflan..asemos team veawer y vemos que nesesitan.\par
+\par
+saludos!\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?1730-Upgrade-de-items-cambiante#ixzz2ET07DWL2\par
+}
+ 

@@ -1,0 +1,112 @@
+m_iLevel
+m_iStr
+m_iInt
+m_iVit
+m_iDex
+m_iMag
+m_iCharisma;
+
+
+if (cEquipPos == DEF_EQUIPPOS_RHAND) {
+			// MagicalWand
+			if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 1101) {
+				if(m_pClientList[iClientH]->m_iInt <= 400){
+					SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iClientH]->m_iSpecialAbilityEquipPos, sItemIndex, NULL, NULL);
+					ReleaseItemHandler(iClientH, sItemIndex , TRUE);
+					return FALSE;
+				}
+			}
+		}
+
+			if (cEquipPos == DEF_EQUIPPOS_TWOHAND) {
+			// MagicalHammer
+			if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 1100) {
+				if(m_pClientList[iClientH]->m_iStr <= 400){
+					SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iClientH]->m_iSpecialAbilityEquipPos, sItemIndex, NULL, NULL);
+					ReleaseItemHandler(iClientH, sItemIndex , TRUE);
+					return FALSE;
+				}
+			}
+		}
+					if (cEquipPos == DEF_EQUIPPOS_TWOHAND) {
+			// MagicalSword
+			if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 1102) {
+				if(m_pClientList[iClientH]->m_iStr <= 400){
+					SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iClientH]->m_iSpecialAbilityEquipPos, sItemIndex, NULL, NULL);
+					ReleaseItemHandler(iClientH, sItemIndex , TRUE);
+					return FALSE;
+				}
+			}
+		}
+	sAbsX = abs(sX - dX);
+	sAbsY = abs(sY - dY);
+	if ((wType != 2) && (wType < 20)) {
+		if (var_AC == FALSE) {
+	sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ];
+			if (sItemIndex != -1) {
+				if (m_pClientList[iClientH]->m_pItemList[sItemIndex] == NULL) return 0;
+				if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 1100) {
+					if ((sAbsX > 4) || (sAbsY > 4)) wType = 0;
+				}
+				else{
+					if ((sAbsX > 1) || (sAbsY > 1)) wType = 0;
+				}
+			}
+			else{
+				if ((sAbsX > 1) || (sAbsY > 1)) wType = 0;
+			}
+		}
+		else{
+			cDir = m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
+			if ((m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bCheckFlySpaceAvailable(sX, sY, cDir, sOwner)) != FALSE)
+				wType = 0;
+		}
+	}
+	sAbsX = abs(sX - dX);
+	sAbsY = abs(sY - dY);
+	if ((wType != 2) && (wType < 20)) {
+		if (var_AC == FALSE) {
+sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ];
+			if (sItemIndex != -1) {
+				if (m_pClientList[iClientH]->m_pItemList[sItemIndex] == NULL) return 0;
+				if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 1102) {
+					if ((sAbsX > 4) || (sAbsY > 4)) wType = 0;
+				}
+				else{
+					if ((sAbsX > 1) || (sAbsY > 1)) wType = 0;
+				}
+			}
+			else{
+				if ((sAbsX > 1) || (sAbsY > 1)) wType = 0;
+			}
+		}
+		else{
+			cDir = m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
+			if ((m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bCheckFlySpaceAvailable(sX, sY, cDir, sOwner)) != FALSE)
+				wType = 0;
+		}
+	}
+	sAbsX = abs(sX - dX);
+	sAbsY = abs(sY - dY);
+	if ((wType != 2) && (wType < 20)) {
+		if (var_AC == FALSE) {
+	sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_RHAND ];
+			if (sItemIndex != -1) {
+				if (m_pClientList[iClientH]->m_pItemList[sItemIndex] == NULL) return 0;
+				if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 1101) {
+					if ((sAbsX > 4) || (sAbsY > 4)) wType = 0;
+				}
+				else{
+					if ((sAbsX > 1) || (sAbsY > 1)) wType = 0;
+				}
+			}
+			else{
+				if ((sAbsX > 1) || (sAbsY > 1)) wType = 0;
+			}
+		}
+		else{
+			cDir = m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
+			if ((m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bCheckFlySpaceAvailable(sX, sY, cDir, sOwner)) != FALSE)
+				wType = 0;
+		}
+	}

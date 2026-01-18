@@ -1,0 +1,65 @@
+Summon Guildmembers [Same HG only]
+Author -Drawjer
+
+
+
+Command coded by Drawjer this will summon all players logged on the same HGserver next to the guildmaster, with a cost.
+
+Will only summon players on same HG and as default has 5000 gold cost. If you have on your sources anything related to SummonGuild on GAME.CPP or GAME.H must delete or comment it out.
+
+OPEN GAME.CPP
+
+ADD AT THE END
+void CGame::AdminOrder_SummonGuild(int iClientH, char *pData, DWORD dwMsgSize) {
+char seps[] = "= ";
+char * cBuff[256], cLocation[11];
+int pX, pY, i;
+char buff [100];
+if (m_pClientList[iClientH] == NULL) return;
+if ((dwMsgSize) <= 0) return;
+
+ZeroMemory(cBuff, sizeof(cBuff));
+memcpy(cBuff, pData, dwMsgSize);
+
+pX = m_pClientList[iClientH]->m_sX;
+pY = m_pClientList[iClientH]->m_sY;
+memcpy(cLocation, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 11);
+wsprintf(buff,"Summon-Guild: %s (%s) %s %d %d",m_pClientList[iClientH]->m_cCharName,m_pClientList[iClientH]->m_cGuildName,cLocation,pX,pY);
+PutLogList(buff);
+for (i = 0; i < DEF_MAXCLIENTS; i++)
+
+if ((m_pClientList[i] != NULL) && (strcmp(m_pClientList[i]->m_cGuildName,m_pClientList[iClientH]->m_cGuildName) == 0) && (i != iClientH)) {
+RequestTeleportHandler(i, "2 ", cLocation, pX, pY);
+}
+}
+
+
+FIND
+if (memcmp(cp, "/version", 8) == 0) {
+ShowVersion(iClientH);
+return;
+}
+
+
+AFTER ADD
+if (memcmp(cp, "/summonguild", 12) == 0) {
+if ((!m_bIsCrusadeMode) || (m_pClientList[iClientH]->m_iGuildRank == 0)) {
+if (m_pClientList[iClientH]->m_iGuildRank == 0) {
+if (dwGetItemCount(iClientH, "Gold") >= 5000) {
+SetItemCount(iClientH, "Gold", dwGetItemCount(iClientH, "Gold") - 5000);
+AdminOrder_SummonGuild(iClientH, cp, dwMsgSize - 21);
+return;
+}
+}
+}
+}
+
+
+OPEN GAME.H
+
+FIND
+};
+
+
+BEFORE ADD
+void AdminOrder_SummonGuild(int iClientH, char *pData, DWORD dwMsgSize);

@@ -1,0 +1,296 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\lang11274\f0\fs20\par
+Code by Shetar.\par
+\par
+~~~At Client.cpp add: \par
+m_iBallPoints = 0; \par
+~~~At Client.h add: \par
+int m_iBallPoints; \par
+~~~At Item.h add: \par
+#define DEF_ITEMEFFECTTYPE_ADDBALLPOINTS 33 \par
+\par
+~~~At Game.cpp multiple snippets must be added. \par
+~~~To start look for: \par
+wsprintf(cTxt, "gizon-item-upgade-left = %d", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft); \par
+strcat(pData, cTxt \par
+strcat(pData,"\\n"); \par
+~~~~~And underneath that place this: \par
+wsprintf(cTxt, "character-ball-points = %d", m_pClientList[iClientH]->m_iBallPoints); \par
+strcat(pData, cTxt); \par
+strcat(pData,"\\n"); \par
+~~~~~Then look for these few lines \par
+m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = atoi(token); \par
+cReadModeA = 0; \par
+break; \par
+~~~~~and again underneath it place: \par
+case 81: \par
+if (_bGetIsStringIsNumber(token) == FALSE) \{ \par
+wsprintf(cTxt, "(!!!) Player(%s) data file error! (BallPoints) - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+PutLogList(cTxt); \par
+delete pContents; \par
+delete pStrTok; \par
+return FALSE; \par
+\} \par
+m_pClientList[iClientH]->m_iBallPoints = atoi(token); \par
+cReadModeA = 0; \par
+break; \par
+then under.. \par
+if (memcmp(token, "gizon-item-upgade-left", 22) == 0) cReadModeA = 80; \par
+place: \par
+if (memcmp(token, "character-ball-points", 21) == 0) cReadModeA = 81; \par
+~~~Then we go to the part which is giving balls the power to give Ball Points. \par
+~~~Look for: \par
+case DEF_ITEMEFFECTTYPE_STUDYMAGIC: \par
+iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1; \par
+if (m_pMagicConfigList[iV1] != NULL) \par
+RequestStudyMagicHandler(iClientH, m_pMagicConfigList[iV1]->m_cName, FALSE); \par
+break; \par
+~~~~and underneath it place: \par
+case DEF_ITEMEFFECTTYPE_ADDBALLPOINTS: \par
+iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1; \par
+m_pClientList[iClientH]->m_iBallPoints += iV1; \par
+wsprintf(cInfoString,"%d Ball Points added. Total Amount: %d ", iV1, m_pClientList[iClientH]->m_iBallPoints); \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString); \par
+break; \par
+~~~Then we're heading to the part which lets the HGServer read the special item file in which items are named which are buyable with Ball Points. Place this underneath the pieces of code which are loading the other CFG's: \par
+if (bReadBallSystemConfigFile("..\\\\GameConfigs\\\\BallI tems.cfg") == FALSE) \{ \par
+PutLogList(" "); \par
+PutLogList("(!!!) CRITICAL ERROR! Cannot execute server! AdminSettings.cfg file contents error!"); \par
+return FALSE; \par
+\} \par
+~~~At the bottom of Game.cpp add the function which actually reads the file: \par
+BOOL CGame::bReadBallSystemConfigFile(char * cFn) \par
+\{ \par
+FILE * pFile; \par
+HANDLE hFile; \par
+DWORD dwFileSize; \par
+char * cp, * token, cReadModeA, cReadModeB; \par
+char seps[] = "= \\t\\n"; \par
+int iIndex; \par
+class CStrTok * pStrTok; \par
+char cTxt[41]; \par
+cReadModeA = 0; \par
+cReadModeB = 0; \par
+hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL); \par
+dwFileSize = GetFileSize(hFile, NULL); \par
+if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile); \par
+pFile = fopen(cFn, "rt"); \par
+if (pFile == NULL) \{ \par
+PutLogList("(!) Cannot open Ball System configuration file."); \par
+return FALSE; \par
+\} \par
+else \{ \par
+PutLogList("(!) Reading Ball System configuration file..."); \par
+cp = new char[dwFileSize+2]; \par
+ZeroMemory(cp, dwFileSize+2); \par
+fread(cp, dwFileSize, 1, pFile); \par
+iIndex = 0; \par
+pStrTok = new class CStrTok(cp, seps); \par
+token = pStrTok->pGet(); \par
+while( token != NULL ) \{ \par
+if (cReadModeA != 0) \{ \par
+switch (cReadModeA) \{ \par
+case 1: \par
+switch (cReadModeB) \{ \par
+case 1: \par
+if (_bGetIsStringIsNumber(token) == FALSE) \{ \par
+PutLogList("(!!!) CRITICAL ERROR! Ball System configuration file error - Wrong Data format(1)."); \par
+delete cp; \par
+delete pStrTok; \par
+return FALSE; \par
+\} \par
+iIndex = atoi(token); \par
+if (m_pBallItemConfigList[iIndex] != NULL) \{ \par
+wsprintf(cTxt, "(!!!) CRITICAL ERROR! Duplicate Ball Item ID (%d)", iIndex); \par
+PutLogList(cTxt); \par
+delete pStrTok; \par
+return FALSE; \par
+\} \par
+m_pBallItemConfigList[iIndex] = new class CBallSystem; \par
+m_pBallItemConfigList[iIndex]->m_sBS_ID = iIndex; \par
+cReadModeB = 2; \par
+break; \par
+case 2: \par
+ZeroMemory(m_pBallItemConfigList[iIndex]->m_cName, sizeof(m_pBallItemConfigList[iIndex]->m_cName)); \par
+memcpy(m_pBallItemConfigList[iIndex]->m_cName, token, strlen(token)); \par
+cReadModeB = 3; \par
+break; \par
+case 3: \par
+m_pBallItemConfigList[iIndex]->m_iReqPoints = atoi(token); \par
+cReadModeA = 0; \par
+cReadModeB = 0; \par
+\} \par
+break; \par
+default: \par
+break; \par
+\} \par
+\} \par
+else \{ \par
+if (memcmp(token, "Ball-Item", 9) == 0) \{ \par
+cReadModeA = 1; \par
+cReadModeB = 1; \par
+\} \par
+\} \par
+token = pStrTok->pGet(); \par
+\} \par
+delete pStrTok; \par
+delete cp; \par
+if ((cReadModeA != 0) || (cReadModeB != 0)) \{ \par
+PutLogList("(!!!) CRITICAL ERROR! Ball System configuration file contents error!"); \par
+return FALSE; \par
+\} \par
+\} \par
+if (pFile != NULL) fclose(pFile); \par
+return TRUE; \par
+\} \par
+\par
+~~~~Now the command which lets a player obtain items! \par
+if (memcmp(cp, "/trade ", 7) == 0) \{ \par
+RequestBallItem(iClientH, cp, dwMsgSize - 21); \par
+return; \par
+\} \par
+\par
+~~~~Function which gets to be actived: \par
+void CGame::RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize) \par
+\{ \par
+char seps[] = "= \\t\\n"; \par
+char * cp, * token, cBuff[256], cWantedItemName[256], cData[256], cInfoString[56]; \par
+class CStrTok * pStrTok; \par
+class CItem * pItem; \par
+short * sp, sCounter; \par
+int i, iRet, iEraseReq; \par
+DWORD * dwp; \par
+WORD * wp; \par
+if (m_pClientList[iClientH] == NULL) return; \par
+if ((dwMsgSize) <= 0) return; \par
+ZeroMemory(cBuff, sizeof(cBuff)); \par
+memcpy(cBuff, pData, dwMsgSize); \par
+pStrTok = new class CStrTok(cBuff, seps); \par
+token = pStrTok->pGet(); \par
+token = pStrTok->pGet(); \par
+if (token != NULL) \{ \par
+ZeroMemory(cWantedItemName, sizeof(cWantedItemName)); \par
+strcpy(cWantedItemName, token); \par
+\} \par
+sCounter = 1; \par
+for (i = 0, i < DEF_MAXBALLITEMS; i++ \{ \par
+if (sCounter == 1) \{ \par
+if (m_pBallItemConfigList[i] != NULL) \{ \par
+if (strcmp(cWantedItemName, m_pBallItemConfigList[i]->m_cName) == 0) \{ \par
+if (m_pClientList[iClientH]->m_iBallPoints < m_pBallItemConfigList[i]->m_iReqPoints) \{ \par
+wsprintf(cInfoString,"Item (%s) cannot be traded, not enough points. ", cWantedItemName); \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString); \par
+return; \par
+\} \par
+m_pClientList[iClientH]->m_iBallPoints -= m_pBallItemConfigList[i]->m_iReqPoints; \par
+pItem = new class CItem; \par
+if (_bInitItemAttr(pItem, cWantedItemName) == FALSE) \{ \par
+delete pItem; \par
+return; \par
+\} \par
+ZeroMemory(cData, sizeof(cData)); \par
+if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) \{ \par
+dwp = (DWORD *)(cData + DEF_INDEX4_MSGID); \par
+*dwp = MSGID_NOTIFY; \par
+wp = (WORD *)(cData + DEF_INDEX2_MSGTYPE); \par
+*wp = DEF_NOTIFY_ITEMOBTAINED; \par
+cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2); \par
+*cp = 1; \par
+cp++; \par
+memcpy(cp, pItem->m_cName, 20); \par
+cp += 20; \par
+dwp = (DWORD *)cp; \par
+*dwp = pItem->m_dwCount; \par
+cp += 4; \par
+*cp = pItem->m_cItemType; \par
+cp++; \par
+*cp = pItem->m_cEquipPos; \par
+cp++; \par
+*cp = (char)0; \par
+cp++; \par
+sp = (short *)cp; \par
+*sp = pItem->m_sLevelLimit; \par
+cp += 2; \par
+*cp = pItem->m_cGenderLimit; \par
+cp++; \par
+wp = (WORD *)cp; \par
+*wp = pItem->m_wCurLifeSpan; \par
+cp += 2; \par
+wp = (WORD *)cp; \par
+*wp = pItem->m_wWeight; \par
+cp += 2; \par
+sp = (short *)cp; \par
+*sp = pItem->m_sSprite; \par
+cp += 2; \par
+sp = (short *)cp; \par
+*sp = pItem->m_sSpriteFrame; \par
+cp += 2; \par
+*cp = pItem->m_cItemColor; \par
+cp++; \par
+*cp = (char)pItem->m_sItemSpecEffectValue2; \par
+cp++; \par
+dwp = (DWORD *)cp; \par
+*dwp = pItem->m_dwAttribute; \par
+cp += 4; \par
+if (iEraseReq == 1) \{ \par
+delete pItem; \par
+pItem = NULL; \par
+\} \par
+iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53); \par
+sCounter = 0; \par
+return; \par
+\} \par
+else \{ \par
+sCounter = 0; \par
+delete pItem; \par
+return; \par
+\} \par
+\} \par
+\} \par
+\} \par
+\} \par
+\} \par
+\par
+~~~~And at last.. a command which shows a player his amount of Ball Points: \par
+if (memcmp(cp, "/ballpoint", 10) == 0) \{ \par
+char cInfoString[50]; \par
+wsprintf(cInfoString," Amount of Ball Points: (%d) ", m_pClientList[iClientH]->m_iBallPoints); \par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_IPACCOUNTINFO, NULL, NULL, NULL, cInfoString); \par
+return; \par
+\} \par
+~~~~~ADD to Game.h Search DEF_MAXBANNED add this under it: \par
+#define DEF_MAXBALLITEMS 50 \par
+~~~~~Search \par
+class CDelayEvent * m_pDelayEventList[DEF_MAXDELAYEVENTS]; \par
+~~~~~add under it \par
+class CBallSystem * m_pBallItemConfigList[DEF_MAXBALLITEMS]; \par
+~~~~~also add \par
+void RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize); \par
+BOOL bReadBallSystemConfigFile(char * cFn); \par
+~~~befor \par
+\}; \par
+#endif // !defined(AFX_GAME_H__C3D29FC5_755B_11D2_A8E6_00001 C7030A6__INCLUDED_) \par
+~~~IN item.h \par
+~~~befor \par
+#endif // !defined(AFX_ITEM_H__211A1360_91B9_11D2_B143_00001 C7030A6__INCLUDED_) \par
+~~~ADD \par
+//ball trade \par
+class CBallSystem \par
+\{ \par
+public: \par
+\par
+short m_sBS_ID; \par
+char m_cName[20]; \par
+int m_iReqPoints; \par
+\}; \par
+~~~~~ missing a char under case DEF_ITEMEFFECTTYPE_ADDBALLPOINTS \par
+~~~~~ search case DEF_ITEMEFFECTTYPE_ADDBALLPOINTS \par
+~~~~~ add under it \par
+char cInfoString[56]; \par
+\par
+\par
+Ball-Item = 1 Devastator 100 \par
+Ball-Item = 2 KlonessAxe 60 \par
+Ball-Item = 3 CancelManual 100\par
+}
+ 

@@ -1,0 +1,233 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Crear los npc nuevos (By SabbaT[GM])\par
+bueno hola!!! tube una iluminacion muy feliz hoy biendo como hacer para poner un npc nuevo...\par
+\par
+aca les dejo una base explicada de como agregar un nc nuevo con un pack defauld..\par
+\par
+explico que es.. tnego un unicorn comun no ? bueno... qiero un unicorn color negro..\par
+\par
+agarro el pack del uni comun un poco de foto shop y listo.. ya lo tenesmo del color q se les ocurra. obiamente cambien el nombre del pack.\par
+\par
+\par
+vamos a codear el client.\par
+\par
+Client Side\par
+en la funcion UpdateScreen_OnLoading case 28 \par
+\par
+agreguen :\par
+C\'f3digo:\par
+MakeSprite( "DarkUnicorn",\tab DEF_SPRID_MOB   + 7*8*89, 40, TRUE);// DarkUnicorn (Type: 99)\par
+lo que esta entre comillas es el nombre del pack.. por favor no le herren a las mayusculas cuando lo pongan por que sino no lo lee..\par
+algo muy importante a tener en cuenta.\par
+\par
+"7*8*89" >>>>>>> el 7 y el 8 no lo toquen !! el ultimo numero.. siempre es el id del bicho menos 10..\par
+\par
+si tiene id =50 supongan.. el numero es 40 ... (50 - 10 = 40)\par
+\par
+unos reniegues me pegue hasta q lo descubri !! :D ....\par
+\par
+en la funcion GetNpcName(short sType, char *pName)\par
+\par
+agreguen el nuevo nombre del bicho..les repito.. el N\'ba del case es el id del bicho ...\par
+\par
+C\'f3digo:\par
+case 99: strcpy(pName, NPC_NAME_UNICORNB); break;\par
+el macro que va en lan.h\par
+C\'f3digo:\par
+#define\tab NPC_NAME_UNICORNB            "Dark Unicorn"\par
+en MapData.cpp agreguen :\par
+\par
+C\'f3digo:\par
+        m_stFrame[99][DEF_OBJECTSTOP].m_sFrameTime\tab\tab = 250;\par
+\tab m_stFrame[99][DEF_OBJECTSTOP].m_sMaxFrame\tab\tab = 3;\par
+\tab m_stFrame[99][DEF_OBJECTMOVE].m_sFrameTime\tab\tab = 100;\par
+\tab m_stFrame[99][DEF_OBJECTATTACK].m_sFrameTime\tab = 120;\par
+\tab m_stFrame[99][DEF_OBJECTATTACK].m_sMaxFrame\tab\tab = 7;\par
+\tab m_stFrame[99][DEF_OBJECTDAMAGE].m_sFrameTime\tab = 120;\par
+\tab m_stFrame[99][DEF_OBJECTDAMAGE].m_sMaxFrame\tab\tab = 3 +4;\par
+\tab m_stFrame[99][DEF_OBJECTDYING].m_sFrameTime\tab\tab = 100;\par
+\tab m_stFrame[99][DEF_OBJECTDYING].m_sMaxFrame\tab\tab = 11;\par
+el numero entre corchetes es el id !!!!\par
+\par
+ahora... vamos a hacer una busqueda rapida ....\par
+\par
+coloquen en el motor de busqueda de su compilador "case 32" ....\par
+\par
+... ya lo pusieron ?... xD ... bueno sigamos ... (aparesera unas 24 veces.. las ultimas 4 no petenecen al src del jeugo son de las otras carpetas... no les den bola)\par
+\par
+funcion DrawObjects \par
+\par
+buscar :\par
+C\'f3digo:\par
+\tab\tab if ( (_tmp_cAction != DEF_OBJECTDEAD) && (_tmp_cFrame < 0) ) return;\par
+\tab\tab switch (_tmp_cAction) \{\par
+\tab\tab case DEF_OBJECTSTOP:\par
+\tab\tab\tab DrawObject_OnStop(m_sMCX, m_sMCY, sFocusX, sFocusY, TRUE, dwTime, msX, msY);\par
+\tab\tab\tab break;\par
+\tab\tab case DEF_OBJECTMOVE:\par
+\tab\tab\tab switch (_tmp_sOwnerType) \{\par
+agregar abajo del case 32\par
+case 99:\par
+\par
+en la funcion DrawObject_OnDead\par
+\par
+en el segundo Swicht tenemos esto :\par
+C\'f3digo:\par
+\tab\tab switch (_tmp_sOwnerType) \{\par
+\tab\tab case 28: // Troll\par
+\tab\tab case 29: // Ogre\par
+\tab\tab case 30: // Liche\par
+\tab\tab case 31: // DD\tab\tab // les 2 dernieres sont pas bonnes pour un mort !\par
+\tab\tab case 63: // Frost\tab // les 2 dernieres sont pas bonnes pour un mort !\par
+\tab\tab\tab iFrame = 5;\par
+\tab\tab\tab iBodyIndex =  DEF_SPRID_MOB  +  (_tmp_sOwnerType - 10 )*8*7 + (4 * 8);\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case 32: // Uni\par
+abajo del case 32 agreguen "case 99:"\par
+\par
+en DrawObject_OnMove \par
+\par
+busquen el tercer Swicht..\par
+\par
+abajo del case 32 adivinenque ...\par
+\par
+agreguen "case 99:"\par
+\par
+en iObjectFrameCounter del archivo "MapData.cpp" busquen los case 32 y agreguen tbm abajo del case 32 "case 99:"\par
+\par
+estan estas :\par
+C\'f3digo:\par
+case 32: // Uni\par
+case 45: // GHKABS\par
+if ( (m_pData[dX][dY].m_cOwnerFrame == 1) )\par
+m_pGame->PlaySound('M', 63, sDist, lPan);\par
+break;\par
+\par
+case 32: // Uni\par
+\tab if (m_pData[dX][dY].m_cOwnerFrame == 1)\par
+\tab m_pGame->PlaySound('M', 64, sDist, lPan);\par
+\tab break;\par
+\par
+case 32: // Uni\par
+if (m_pData[dX][dY].m_cOwnerFrame == 5) \par
+m_pGame->PlaySound('M', 65, sDist, lPan);\par
+break;\par
+\par
+case 32: // Uni\par
+if (m_pData[dX][dY].m_cOwnerFrame == 2)\par
+m_pGame->PlaySound('M', 65, sDist, lPan);\par
+break;\par
+\par
+case 32: // Uni\par
+if (m_pData[dX][dY].m_cOwnerFrame == 5)\par
+m_pGame->PlaySound('M', 66, sDist, lPan);\par
+break;\par
+HG Side\par
+\par
+hacemos una busqueda rapida... ponemos case 32 en el motor de busqueda y nos va a saltar un par nomas.. no es tan extenso.\par
+\par
+en la funion :\par
+\par
+NpcKilledHandler\par
+\par
+tenemos el case 32 q nos dise q si matamo un unicornio comun nos saca rep..\par
+\par
+nosotros tenemos un unicor nuevo q se llama DarkUnicorn ...\par
+\par
+por lo tanto si una bueno nos saca.. uno malo nos da!! :D ...\par
+busquen :\par
+C\'f3digo:\par
+if (cAttackerType == DEF_OWNERTYPE_PLAYER) \{\par
+\tab\tab switch (m_pNpcList[iNpcH]->m_sType) \{\par
+\tab\tab case 32:\par
+\tab\tab\tab m_pClientList[sAttackerH]->m_iRating -= 5;\par
+\tab\tab\tab if (m_pClientList[sAttackerH]->m_iRating < -10000) m_pClientList[sAttackerH]->m_iRating = 0;\par
+\tab\tab\tab if (m_pClientList[sAttackerH]->m_iRating >  10000) m_pClientList[sAttackerH]->m_iRating = 0;\par
+\tab\tab\tab break;\par
+\tab\tab\}\par
+\tab\}\par
+ESTO ES OPCIONAL. si qien no lo pongan o pongan otros atributos... si qieren reemplasenlo por : \par
+\par
+C\'f3digo:\par
+if (cAttackerType == DEF_OWNERTYPE_PLAYER) \{\par
+\tab\tab switch (m_pNpcList[iNpcH]->m_sType) \{\par
+\tab\tab case 32:\par
+\tab\tab\tab m_pClientList[sAttackerH]->m_iRating -= 5;\par
+\tab\tab\tab if (m_pClientList[sAttackerH]->m_iRating < -10000) m_pClientList[sAttackerH]->m_iRating = 0;\par
+\tab\tab\tab if (m_pClientList[sAttackerH]->m_iRating >  10000) m_pClientList[sAttackerH]->m_iRating = 0;\par
+\tab\tab\tab break;\par
+\tab\tab case 99:\par
+\tab\tab\tab m_pClientList[sAttackerH]->m_iRating += 5;\par
+\tab\tab\tab if (m_pClientList[sAttackerH]->m_iRating < -10000) m_pClientList[sAttackerH]->m_iRating = 0;\par
+\tab\tab\tab if (m_pClientList[sAttackerH]->m_iRating >  10000) m_pClientList[sAttackerH]->m_iRating = 0;\par
+\tab\tab\tab break;\par
+\par
+\tab\tab\}\par
+\tab\}\par
+en la funcion MobGenerator va a estar esto :\par
+\par
+C\'f3digo:\par
+case 32: iTotalMob = 1; break;\par
+agreguen :\par
+\par
+C\'f3digo:\par
+case 99: iTotalMob = 1; break;\par
+mas abajo de esso esta esto :\par
+\par
+C\'f3digo:\par
+\tab\tab\tab if (iTotalMob > 2) \{\par
+\tab\tab\tab\tab switch (iResult) \{\par
+\tab\tab\tab\tab case 1:  // Slime \par
+\tab\tab\tab\tab case 2:  // Giant-Ant\par
+busquen el case 32 y abajo pongan el "case 99:" ....\par
+\par
+mas abajo esta esto :\par
+\par
+C\'f3digo:\par
+if ( (m_pMapList[i] != NULL) && ((m_pMapList[i]->m_iMaximumObject) > m_pMapList[i]->m_iTotalActiveObject) ) \{\par
+\tab\tab\tab for (j = 1; j < DEF_MAXSPOTMOBGENERATOR; j++)\par
+\tab\tab\tab\tab if ( (iDice(1,3) == 2) && (m_pMapList[i]->m_stSpotMobGenerator[j].bDefined == TRUE) &&\par
+\tab\tab\tab\tab\tab (m_pMapList[i]->m_stSpotMobGenerator[j].iMaxMobs > m_pMapList[i]->m_stSpotMobGenerator[j].iCurMobs) ) \{\par
+\tab\tab\tab\tab\tab\tab iNamingValue = m_pMapList[i]->iGetEmptyNamingValue();\par
+\tab\tab\tab\tab\tab\tab if (iNamingValue != -1) \{\par
+\tab\tab\tab\tab\tab\tab\tab ZeroMemory(cNpcName, sizeof(cNpcName));\par
+\tab\tab\tab\tab\tab\tab\tab switch (m_pMapList[i]->m_stSpotMobGenerator[j].iMobType) \{\par
+\tab\tab\tab\tab\tab\tab\tab\tab // spot-mob-generator\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab case 10:  strcpy(cNpcName,"Slime");\tab\tab\tab\tab iProbSA = 5;  iKindSA = 1;  break;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab case 16:  strcpy(cNpcName,"Giant-Ant");\tab\tab\tab iProbSA = 10; iKindSA = 2;  break;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab case 14:  strcpy(cNpcName,"Orc");\tab\tab\tab\tab iProbSA = 15; iKindSA = 1;  break;\par
+abajo del case 32 pongan "case 99:" ...\par
+\par
+bueno terminando en las funciones\par
+\par
+C\'f3digo:\par
+DeleteNpc\par
+_TamingHandler\par
+NpcDeadItemGenerator\par
+bGetItemNameWhenDeleteNpc (aca aparrese 2 veces)\par
+bueno en esas funciones abajo del case 32 pongan "case 99:" ..\par
+\par
+npc.cfg\par
+C\'f3digo:\par
+Npc = DarkUnicorn 99 340 450 500 100 2066000 2165000 17200 33000 10 10 1 0 0 700 100 8 10 0 7 60000 2 75 2000 250 4 0\par
+ya tenesmos nuestro nuevo npc rompiendonos las .............. ! :D\par
+\par
+ya tienen la base bien explicada !! ... dejan bolar la imaginacion y hagan maravillas creativas !!!..\par
+\par
+posdata : no pongo el pack.. por q no me gusta el fotoshop !!.. xD ...\par
+\par
+\par
+espero q les guste !!\par
+\par
+dedicado a ZeroEoyPnk que me dijo \par
+C\'f3digo:\par
+sabes la cantidad de cosas que te faltan :S.... de onda pero sentate, calenta un poco la silla, y leete el codigo de fuente de pin a pan XD\par
+sin tus cagadas a pedo no podria haber echo muchos de los codes que ise xD ...\par
+\par
+gracias locaso ! :D\par
+\par
+\par
+saludos a los pibes :D\par
+}
+ 

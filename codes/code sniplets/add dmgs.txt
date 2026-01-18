@@ -1,0 +1,30 @@
+If your Demonslayer's ID isn't 616, you'll have to change it in this code. Demonslayer will now make 5 more Dmg points when attacking a Demon.
+
+
+in function iCalculateAttackEffect
+
+Find :
+
+
+CODE  
+  if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 847) && 
+   (m_cDayOrNight == 2)) {
+    iAP_SM += 4;
+    iAP_L += 4;
+  }
+  if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 848) && 
+   (m_cDayOrNight == 1)) {
+    iAP_SM += 4;
+    iAP_L += 4;
+  } 
+
+
+
+Right after, add :
+
+
+CODE  
+  // Add Damage to DemonSlayer when attacking Demon
+  if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 616) && (m_pNpcList[sTargetH]->m_sType == 31)){
+   iAP_L += 5;
+  } 

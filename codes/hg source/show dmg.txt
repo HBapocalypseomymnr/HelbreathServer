@@ -1,0 +1,48 @@
+void CGame::AdminOrder_ShowDamage(int iClientH)
+{
+char cStatMessage[80];
+if (m_pClientList[iClientH] == NULL) return;
+if(m_pClientList[iClientH]->m_iShowDamage == 1)
+{
+ m_pClientList[iClientH]->m_iShowDamage = 0;
+ wsprintf(cStatMessage, "Command: ShowDamage Disabled");
+}else{
+ m_pClientList[iClientH]->m_iShowDamage = 1;
+ wsprintf(cStatMessage, "Command: ShowDamage Enabled");
+ 
+}
+ShowClientMsg(iClientH, cStatMessage);
+return;
+}
+
+
+void CGame::AdminOrder_ShowDamageLog(int iClientH)
+{
+char cStatMessage[80];
+if (m_pClientList[iClientH] == NULL) return;
+if(m_pClientList[iClientH]->m_iShowDamage == 2)
+{
+ m_pClientList[iClientH]->m_iShowDamage = 0;
+ wsprintf(cStatMessage, "Command: ShowDamageLog Disabled");
+}else{
+ m_pClientList[iClientH]->m_iShowDamage = 2;
+ wsprintf(cStatMessage, "Command: ShowDamageLog Enabled");
+}
+
+ShowClientMsg(iClientH, cStatMessage);
+return;
+} 
+
+
+
+
+CODE  
+if (memcmp(cp, "/showdmglog", 11) == 0) {
+   AdminOrder_ShowDamageLog(iClientH);
+   return;
+  }
+
+  if (memcmp(cp, "/showdmg", 8) == 0) {
+   AdminOrder_ShowDamage(iClientH);
+   return;
+  } 

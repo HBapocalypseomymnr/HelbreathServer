@@ -1,0 +1,61 @@
+Server side:
+client.h 
+
+add new variable:
+int m_iClass;
+
+client.cpp
+give value 0:
+
+m_iClass = 0;
+
+game.cpp
+go to _bDecodePlayerDataFileContents
+find 
+
+case 80:
+if (_bGetIsStringIsNumber(token) == FALSE) {
+wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); 
+PutLogList(cTxt);
+delete pContents;
+delete pStrTok;
+return FALSE;
+}
+
+m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = atoi(token);
+cReadModeA = 0;
+break;
+
+after add
+
+case 81:
+if (_bGetIsStringIsNumber(token) == FALSE) {
+wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); 
+PutLogList(cTxt);
+delete pContents;
+delete pStrTok;
+return FALSE;
+}
+m_pClientList[iClientH]->m_iClass = atoi(token);
+cReadModeA = 0;
+break;
+
+find
+if (memcmp(token, "gizon-item-upgade-left", 22) == 0) cReadModeA = 80;
+
+after add
+if(memcmp(token, "character-class", 16) == 0) cReadModeA = 81;
+
+go to function _iComposePlayerDataFileContents and find
+
+wsprintf(cTxt, "gizon-item-upgade-left = %d", m_pClientList[iClientH]->m_iGizonItemUpgradeLeft);
+strcat(pData, cTxt);
+strcat(pData,"\n");
+
+after add
+
+wsprintf(cTxt, "character-class = %d", m_pClientList[iClientH]->m_iClass);
+strcat(pData, cTxt);
+strcat(pData,"\n");
+
+Class saving and reading installed :)

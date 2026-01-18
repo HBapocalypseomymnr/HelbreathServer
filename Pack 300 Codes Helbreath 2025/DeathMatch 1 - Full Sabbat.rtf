@@ -1,0 +1,1059 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 DeathMach Update Auto-Inicio (POST -- 3 DEBERIA ESTAR FIX; CUIDADO CON LOS REPLY)\par
+Con esto se activa el inicio automatico a las 0 am y a las 1 pm .\par
+se desactiva a las 1 am y a las 2 pm. \par
+\par
+dura una hora\par
+\par
+habisen por errores.\par
+\par
+\par
+en ontimer declaren:\par
+C\'f3digo:\par
+int x;\par
+SYSTEMTIME SysTime;\par
+char DM[100]\par
+en ontimer agreguen :\par
+C\'f3digo:\par
+if (bGladiatorEvent == FALSE)\par
+\tab\tab\{\tab if ((0 == SysTime.wHour) || (12 == SysTime.wHour))\par
+\tab\tab\tab\tab\{\tab STARTERENDERDEATHMACH();\par
+\tab\tab\tab\tab\tab wsprintf(DM, "Auto start Deathmatch.!");\par
+\tab\tab\tab\tab\tab PutLogList(DM);\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\}\tab\tab\tab\par
+\tab\tab\}else\par
+\tab\tab\tab\{\tab if ((1 == SysTime.wHour) || (13 == SysTime.wHour))\par
+\tab\tab\tab\tab\tab\{\tab STARTERENDERDEATHMACH();\par
+\tab\tab\tab\tab\tab\tab wsprintf(DM, "Auto Stop Deathmatch.!");\par
+\tab\tab\tab\tab\tab\tab PutLogList(DM);\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+reemplasen la anterior STARTERENDERDEATHMACH\par
+\par
+por esta :\par
+C\'f3digo:\par
+void CGame::STARTERENDERDEATHMACH()\par
+\{ int aux1, aux2, j, i, a;\par
+  char Name[12];\par
+\tab if (bGladiatorEvent == FALSE)\par
+\tab\tab\tab\tab\{\tab\tab bGladiatorEvent = TRUE;\par
+\tab\tab\tab\tab\tab\tab for (i = 0; i < DEF_MAXCLIENTS; i++)//este ciclo es para informar a todos...\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_GLADIATOREVENTON, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_DEATHMACHCONFIRMSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\}\tab\}\par
+\tab\tab\tab\tab\tab\tab for (i = 0; i <= DEF_MAXCLIENTS; i++)//este ciclo llena la matris con todos los online.\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[i]->m_iLevel > 1))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab memcpy(VectorRanking[i], m_pClientList[i]->m_cCharName, 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][1] = m_pClientList[i]->m_iDeathmachKills;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][2] = m_pClientList[i]->m_iDeathmachDeaths;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab //RequestTeleportHandler(i, "2", "fightzone1", -1, -1);\par
+\tab\tab\tab\tab\tab\tab\tab\}\tab\tab\}\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab for (a = 1; a < DEF_MAXCLIENTS; a++)\{//ordeno de mayor a menor xD y 2000 mil pasadas XD\par
+\tab\tab\tab\tab\tab\tab for (i = 1; i <= 1999; i++)//si tenemos el vector y la matris lelna.. 2000 pasadas para q el q mas tiene llegue al primer puesto xD\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab if (((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] > MatrizForra[i+1][2])) ||\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] < MatrizForra[i+1][2])) ||\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] == MatrizForra[i+1][1]) && (MatrizForra[i][2] > MatrizForra[i+1][2])))\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab aux1 = MatrizForra[i][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab aux2 = MatrizForra[i][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(Name, VectorRanking[i], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][1] = MatrizForra[i+1][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][2] = MatrizForra[i+1][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(VectorRanking[i], VectorRanking[i+1], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i+1][1] = aux1;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i+1][2] = aux2;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(VectorRanking[i+1], Name, 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab for (j = 0;j <= DEF_MAXCLIENTS; j++)///despues de juntar los pj mando la info a todos ....\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[j] != NULL) && (m_pClientList[j]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, j, VectoresYMatrices, MatrizForra[j][1], MatrizForra[j][2], j, VectorRanking[j], NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\}\tab\tab\}\par
+\tab\}else \{\tab\tab\tab bGladiatorEvent = FALSE;\par
+\tab\tab\tab\tab\tab for (i = 1; i < DEF_MAXCLIENTS; i++)\par
+\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_GLADIATOREVENTOFF, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_DEATHMACHCONFIRMSTATUSCLOSE, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab\tab\tab if (memcmp(m_pClientList[i]->m_cMapName, "fightzone1", 10) == 0)\par
+\tab\tab\tab\tab\tab\tab\tab RequestTeleportHandler(i, "1");//todo el mundo a sus citys y se blokean las funcion del cleinte\par
+\tab\tab\tab\tab\tab\tab\tab for (i = 0; i <= 2000; i++)//borro la matris, la reseteo\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab ZeroMemory(VectorRanking[i], sizeof(VectorRanking[i]));\par
+\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][1] = 0;\par
+\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][2] = 0;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\}\par
+reemplasen el anterior comando de activacion por este :\par
+C\'f3digo:\par
+if (memcmp(cp, "/deathmach", 10) == 0)\par
+\tab\tab\{\tab if (m_pClientList[iClientH]->m_iAdminUserLevel > 0)\par
+\tab\tab\tab STARTERENDERDEATHMACH();\par
+\tab\tab\tab return;\par
+\tab\tab\}\par
+\par
+\par
+---\par
+\par
+\par
+ DeathMach HG part.\par
+encontre muchos bugs LOGICOS. por lo tanto los arregle..\par
+aca dejo los fixes de todo .. simplemente reemplasen por esto lo q \par
+ya pusieron.\par
+\par
+cambiamos esta funcion STARTERENDERDEATHMACH\par
+por esta:\par
+C\'f3digo:\par
+void CGame::STARTERENDERDEATHMACH()\par
+\{ int aux1, aux2, i, a, b;\par
+  char Name[12];\par
+\tab if (bGladiatorEvent == FALSE)\par
+\tab\tab\tab\tab\{\tab\tab bGladiatorEvent = TRUE;\par
+\tab\tab\tab\tab\tab\tab for (i = 0; i < DEF_MAXCLIENTS; i++)//este ciclo es para informar a todos...\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_GLADIATOREVENTON, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_DEATHMACHCONFIRMSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\}\tab\}\par
+\tab\tab\tab\tab\tab\tab for (i = 0; i < 500; i++)//este ciclo llena la matris con todos los online.\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[i]->m_iLevel > 350))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab memcpy(VectorRanking[i], m_pClientList[i]->m_cCharName, 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][1] = m_pClientList[i]->m_iDeathmachKills;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][2] = m_pClientList[i]->m_iDeathmachDeaths;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab RequestTeleportHandler(i, "2", "fightzone1", -1, -1);\par
+\tab\tab\tab\tab\tab\tab\tab\}\tab\tab\}\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab for (a = 0; a < 500; a++)\{//ordeno de mayor a menor xD y 2000 mil pasadas XD\par
+\tab\tab\tab\tab\tab\tab for (i = 0; i < 500; i++)//si tenemos el vector y la matris lelna.. 2000 pasadas para q el q mas tiene llegue al primer puesto xD\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab if (((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] > MatrizForra[i+1][2])) ||\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] < MatrizForra[i+1][2])) ||\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] == MatrizForra[i+1][1]) && (MatrizForra[i][2] > MatrizForra[i+1][2]))||\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] == MatrizForra[i+1][2])))\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab aux1 = MatrizForra[i][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab aux2 = MatrizForra[i][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(Name, VectorRanking[i], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][1] = MatrizForra[i+1][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][2] = MatrizForra[i+1][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(VectorRanking[i], VectorRanking[i+1], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i+1][1] = aux1;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i+1][2] = aux2;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(VectorRanking[i+1], Name, 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab for (a = 0; a < 20; a++)// a todos\par
+\tab\tab\tab\tab\tab\tab\{\tab for (b = 0; b < DEF_MAXCLIENTS; b++)\{ // los primeros 50 puestos\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab if ((m_pClientList[b] != NULL) && (m_pClientList[b]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, b, VectoresYMatrices, MatrizForra[a][1], MatrizForra[a][2], a, VectorRanking[a], NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\}\tab\}\par
+\tab\}else \{\tab\tab\tab bGladiatorEvent = FALSE;\par
+\tab\tab\tab\tab\tab for (i = 0; i <= 2000; i++)\par
+\tab\tab\tab\tab\tab\{\tab ZeroMemory(VectorRanking[i], sizeof(VectorRanking[i]));\par
+\tab\tab\tab\tab\tab\tab MatrizForra[i][1] = -1;\par
+\tab\tab\tab\tab\tab\tab MatrizForra[i][2] = -1;\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab for (i = 0; i < DEF_MAXCLIENTS; i++)\par
+\tab\tab\tab\tab\tab\{\tab if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_GLADIATOREVENTOFF, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, i, DEF_NOTIFY_DEATHMACHCONFIRMSTATUSCLOSE, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab\tab\tab if (memcmp(m_pClientList[i]->m_cMapName, "fightzone1", 10) == 0)\par
+\tab\tab\tab\tab\tab\tab\tab RequestTeleportHandler(i, "1");//todo el mundo a sus citys y se blokean las funcion del cleinte\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\}\par
+en RequestInitDataHandler\par
+declaren por si las dudas\par
+int i, Z, a, b, c;\par
+si les tira redefinition borren las q esten ya declaradas.\par
+C\'f3digo:\par
+if (bGladiatorEvent == TRUE)//si el event esta on..\par
+\tab\{\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GLADIATOREVENTON, NULL, NULL, NULL, NULL);\par
+\tab\tab SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_DEATHMACHCONFIRMSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab Z = 0;\par
+\tab\tab for (a = 0; a < 500; a++)\par
+\tab\tab\tab\tab\{\tab if ((MatrizForra[a][1] + MatrizForra[a][2]) < 0)\par
+\tab\tab\tab\tab\tab\tab\{\tab if ((Z != 1))//me meto a la matris.\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab memcpy(VectorRanking[a], m_pClientList[iClientH]->m_cCharName, 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[a][1] = m_pClientList[iClientH]->m_iDeathmachKills;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[a][2] = m_pClientList[iClientH]->m_iDeathmachDeaths;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab Z = 1;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab for (a = 0; a < 20; a++)// a todos\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab for (b = 0; b < DEF_MAXCLIENTS; b++)\{ // los primeros 50 puestos\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab if ((m_pClientList[b] != NULL) && (m_pClientList[b]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, b, VectoresYMatrices, MatrizForra[a][1], MatrizForra[a][2], a, VectorRanking[a], NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\}\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}//si ta off recall a todos!\par
+\tab\}else \{\tab if ((memcmp(m_pClientList[iClientH]->m_cMapName, "fightzone1", 10) == 0) && (bGladiatorEvent == FALSE))\par
+\tab\tab\tab\tab\{\tab RequestTeleportHandler(iClientH, "1");\par
+\tab\tab\tab\tab\}\par
+\tab\}\par
+en DeleteClient\par
+declaren por si las dudas\par
+int i, a, b;\par
+C\'f3digo:\par
+if ((memcmp(m_pClientList[iClientH]->m_cMapName, "fightzone1", 10) == 0) && (bGladiatorEvent == TRUE))\par
+\tab\tab\{\tab for (a = 0; a <= DEF_MAXCLIENTS; a++)//si nos vamos del juego actualisamos la matris de q nos fuimos\par
+\tab\tab\tab\tab\{\tab if ((memcmp(VectorRanking[a], m_pClientList[iClientH]->m_cCharName, 12) == 0))\par
+\tab\tab\tab\tab\tab\tab\{\tab ZeroMemory(VectorRanking[a], sizeof(VectorRanking[a]));\par
+\tab\tab\tab\tab\tab\tab\tab MatrizForra[a][1] = -1;\par
+\tab\tab\tab\tab\tab\tab\tab MatrizForra[a][2] = -1;\par
+\tab\tab\tab\tab\tab\tab\tab for (b = a; b < 500; b++)// a partir de "a"\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab memcmp(VectorRanking[b], VectorRanking[b+1], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[b][1] = MatrizForra[b+1][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[b][2] = MatrizForra[b+1][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab for (a = 0; a < 20; a++)// a todos\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab for (b = 0; b < DEF_MAXCLIENTS; b++)\{ // los primeros 50 puestos\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab if ((m_pClientList[b] != NULL) && (m_pClientList[b]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, b, VectoresYMatrices, MatrizForra[a][1], MatrizForra[a][2], a, VectorRanking[a], NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\}\par
+en case '1' de RequestTeleportHandler\par
+por si las dudas\par
+int i, b, j, a;\par
+C\'f3digo:\par
+if ((memcmp(m_pClientList[iClientH]->m_cMapName, "fightzone1", 10) == 0) && (bGladiatorEvent == TRUE))\par
+\tab\tab\tab\{\tab for (a = 0; a < 500; a++)\par
+\tab\tab\tab\tab\tab\{\tab if (m_pClientList[a] != NULL)\par
+\tab\tab\tab\tab\tab\tab if ((memcmp(VectorRanking[a], m_pClientList[iClientH]->m_cCharName, 12) == 0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab ZeroMemory(VectorRanking[a], sizeof(VectorRanking[a]));\par
+\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[a][1] = -1;\par
+\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[a][2] = -1;\par
+\tab\tab\tab\tab\tab\tab\tab\tab for (b = a; b < 500; b++)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab memcmp(VectorRanking[b], VectorRanking[b+1], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[b][1] = MatrizForra[b+1][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[b][2] = MatrizForra[b+1][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab for (i = a; i <= DEF_MAXCLIENTS; i++)//a partir de "a" para ahorrar tiempo\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab for (j = a;j < m_iTotalClients; j++)\{//informo a todos.. \par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab SendNotifyMsg(NULL, i, VectoresYMatrices, MatrizForra[j][1], MatrizForra[j][2], j, VectorRanking[j], NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\}\tab\tab\}\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+en ClientKilledHandler\par
+int i, a, b, aux1, aux2;\par
+char Name[12];\par
+C\'f3digo:\par
+if ((memcmp(m_pClientList[iAttackerH]->m_cMapName, "fightzone1", 10) == 0) && (bGladiatorEvent == TRUE))\par
+\tab\tab\{\tab m_pClientList[iAttackerH]->m_iDeathmachKills++;\par
+\tab\tab\tab m_pClientList[iClientH]->m_iDeathmachDeaths++;\par
+\tab\tab\tab for (a = 0; a < 500; a++)//empieso el ciclo comparo nombres y ya esta\par
+\tab\tab\tab\tab\{\tab if ((m_pClientList[a] != NULL) && (m_pClientList[a]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\{\tab if (memcmp(VectorRanking[a], m_pClientList[iAttackerH]->m_cCharName, 12) == 0)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab MatrizForra[a][1] = m_pClientList[iAttackerH]->m_iDeathmachKills;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab for (b = 0; b < DEF_MAXCLIENTS; b++)\{ // los primeros 50 puestos\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab if ((m_pClientList[b] != NULL) && (m_pClientList[b]->m_bIsInitComplete == TRUE))\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, b, VectoresYMatricesB, MatrizForra[a][1], MatrizForra[a][2], a, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab if (memcmp(VectorRanking[a], m_pClientList[iClientH]->m_cCharName, 12) == 0)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab MatrizForra[a][2] = m_pClientList[iClientH]->m_iDeathmachDeaths;\tab\tab\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab for (b = 0; b < DEF_MAXCLIENTS; b++)\{ // los primeros 50 puestos\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab if ((m_pClientList[b] != NULL) && (m_pClientList[b]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, b, VectoresYMatricesB, MatrizForra[a][1], MatrizForra[a][2], a, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab if (iDice(1, 5)== 3)//aca si sale 3 en el ramdom reordena la matris.\par
+\tab\tab\tab\{\tab for (a = 0; a < 500; a++)\{\par
+\tab\tab\tab\tab\tab for (i = 0; i < 500; i++)\par
+\tab\tab\tab\tab\tab\tab\{\tab if (((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] > MatrizForra[i+1][2])) ||\par
+\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] < MatrizForra[i+1][2])) ||\par
+\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] == MatrizForra[i+1][1]) && (MatrizForra[i][2] > MatrizForra[i+1][2])))\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab aux1 = MatrizForra[i][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab aux2 = MatrizForra[i][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab memcpy(Name, VectorRanking[i], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][1] = MatrizForra[i+1][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][2] = MatrizForra[i+1][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab memcpy(VectorRanking[i], VectorRanking[i+1], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i+1][1] = aux1;\par
+\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i+1][2] = aux2;\par
+\tab\tab\tab\tab\tab\tab\tab\tab memcpy(VectorRanking[i+1], Name, 12);\tab\tab\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab for (a = 0; a < 20; a++)// a todos\par
+\tab\tab\tab\tab\tab\{\tab for (b = 0; b < DEF_MAXCLIENTS; b++)\{ // los primeros 50 puestos\par
+\tab\tab\tab\tab\tab\tab\tab if ((m_pClientList[b] != NULL) && (m_pClientList[b]->m_bIsInitComplete == TRUE))\par
+\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, b, VectoresYMatrices, MatrizForra[a][1], MatrizForra[a][2], a, VectorRanking[a], NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\}\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+mensajes de SendNotifyMsg\par
+C\'f3digo:\par
+case VectoresYMatrices:\par
+\tab\tab ip  = (int *)cp;\par
+\tab\tab *ip = sV1;//kills\par
+\tab\tab cp += 5;\par
+\tab\tab ip  = (int *)cp;\par
+\tab\tab *ip = sV2;//deaths\par
+\tab\tab cp += 5;\tab\tab\par
+\tab\tab ip  = (int *)cp;\par
+\tab\tab *ip = sV3;//puesto\par
+\tab\tab cp += 5;\par
+\tab\tab memcpy(cp, pString,12);//name\par
+\tab\tab cp += 12;\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 33);\par
+\tab\tab break;\par
+\tab\par
+case VectoresYMatricesB:\par
+\tab\tab ip  = (int *)cp;\par
+\tab\tab *ip = sV1;//deaths\par
+\tab\tab cp += 4;\par
+\tab\tab ip  = (int *)cp;\par
+\tab\tab *ip = sV2;//puesto\par
+\tab\tab cp += 4;\par
+\tab\tab ip  = (int *)cp;\par
+\tab\tab *ip = sV3;//puesto\par
+\tab\tab cp += 4;\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 18);\par
+\tab\tab break;\par
+bueno eso son todos los llamadores a las partes del evento... si encuentro algo mas les aviso. !\par
+abrasos\par
+\par
+\par
+---\par
+\par
+(REVISAR)\par
+DeathMach Client part\par
+game.h \par
+C\'f3digo:\par
+BOOL bGladiatorEvent;\par
+int Matrizqueresive[2000][2];\par
+char Vectorqueresibe[2000][12];\par
+en DrawDialogBox_IconPannel agregamos :\par
+\par
+char G_cTxt_1[25]\par
+C\'f3digo:\par
+ZeroMemory(G_cTxt_1, sizeof(G_cTxt_1));\par
+\tab\tab if ((m_bCtrlPressed) && (m_bShiftPressed))\par
+\tab\tab\tab\{\tab AuxY = 0;\par
+\tab\tab\tab\tab if((strcmp(m_cMapName, "fightzone1") == 0) /*&& (bGladiatorEvent == TRUE)*/)\par
+\tab\tab\tab\tab\tab\{\tab wsprintf( G_cTxt_1, "Name");   PutAlignedString( 400, 550, 50, G_cTxt_1, 255,255,255);\par
+\tab\tab\tab\tab\tab\tab wsprintf( G_cTxt_1, "Kills");  PutAlignedString( 500, 550, 50, G_cTxt_1, 50,255,50);\par
+\tab\tab\tab\tab\tab\tab wsprintf( G_cTxt_1, "Deaths"); PutAlignedString( 550, 600, 50, G_cTxt_1, 10,10,10);\par
+\tab\tab\tab\tab\tab\tab AuxY = 0;\par
+\tab\tab\tab\tab\tab\tab for (i = 0; i <= 15; i++)\par
+\tab\tab\tab\tab\tab\tab\{\tab if(strcmp(Vectorqueresibe[i], "") != 0)\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab wsprintf(G_cTxt_1, "(%d)%s", i, Vectorqueresibe[i]); PutAlignedString( 400, 550, 65 + AuxY, G_cTxt_1, 255,255,255 );\par
+\tab\tab\tab\tab\tab\tab\tab\tab wsprintf(G_cTxt_1, "%d", Matrizqueresive[i][1]);     PutAlignedString( 500, 550, 65 + AuxY, G_cTxt_1, 50,255,50 );\par
+\tab\tab\tab\tab\tab\tab\tab\tab wsprintf(G_cTxt_1, "%d", Matrizqueresive[i][2]);     PutAlignedString( 550, 600, 65 + AuxY, G_cTxt_1, 10,10,10 );\par
+\tab\tab\tab\tab\tab\tab\tab\tab AuxY += 15;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+en InitGameSettings\par
+C\'f3digo:\par
+bGladiatorEvent = FALSE;\par
+en void CGame::NotifyMsgHandler(char * pData)\par
+C\'f3digo:\par
+case DEF_NOTIFY_GLADIATOREVENTON:\par
+        SetTopMsg("Death Mach Arena Game Activado! Teleport en CityHall", 10);\par
+        break;\par
+\tab case DEF_NOTIFY_GLADIATOREVENTOFF:\par
+        SetTopMsg("Death Mach Arena Game Desactivado! Recall Automatico!", 10);\par
+        break;\par
+\par
+\tab case DEF_NOTIFY_DEATHMACHCONFIRMSTATUS:\par
+\tab\tab bGladiatorEvent = TRUE;\par
+\tab\tab break;\par
+\par
+\tab case DEF_NOTIFY_DEATHMACHCONFIRMSTATUSCLOSE:\par
+\tab\tab bGladiatorEvent = FALSE;\par
+\tab\tab for (i = 0; i <= 2000; i++)\par
+\tab\tab\{\tab ZeroMemory(Vectorqueresibe[i], sizeof(Vectorqueresibe[i]));\par
+\tab\tab\tab Matrizqueresive[i][1] = -1;\par
+\tab\tab\tab Matrizqueresive[i][2] = -1;\par
+\tab\tab\}\par
+\tab\tab break;\par
+\par
+case VectoresYMatrices://resivo todo del ranking\par
+\tab\tab cp = (char *)(pData\tab + DEF_INDEX2_MSGTYPE + 2);\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab sV1 = *ip;\par
+\tab\tab cp += 5;\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab sV2 = *ip;\par
+\tab\tab cp += 5;\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab sV3 = *ip;\par
+\tab\tab cp += 5;\par
+\tab\tab ct = (char *)cp;\par
+\tab\tab memcpy(Name, ct, 12);\par
+\tab\tab cp += 12;\par
+\par
+\tab\tab Matrizqueresive[sV3][1] = sV1;\par
+\tab\tab Matrizqueresive[sV3][2] = sV2;\par
+\tab\tab memcpy(Vectorqueresibe[sV3], Name, 12);\par
+\tab\tab break;\par
+\tab\tab\par
+\tab case VectoresYMatricesB://actualiso ranking\par
+\tab\tab cp = (char *)(pData\tab + DEF_INDEX2_MSGTYPE + 2);\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab sV1 = *ip;\par
+\tab\tab cp += 4;\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab sV2 = *ip;\par
+\tab\tab cp += 4;\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab sV3 = *ip;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab Matrizqueresive[sV3][1] = sV1;\par
+\tab\tab Matrizqueresive[sV3][2] = sV2;\par
+\tab\tab break;\par
+en bSendCommand agregamos :\par
+C\'f3digo:\par
+case MSGID_REQUEST_DEATHMACHRESTART:\par
+\tab\tab dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+\tab\tab *dwp = dwMsgID;\par
+\tab\tab wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+\tab\tab *wp = NULL;\par
+\par
+\tab\tab iRet = m_pGSock->iSendMsg(cMsg, 6, cKey);\par
+\tab\tab break;\par
+en NetMes.h\par
+C\'f3digo:\par
+ #define DEF_NOTIFY_GLADIATOREVENTON                 0x0F30\par
+ #define DEF_NOTIFY_GLADIATOREVENTOFF\tab\tab\tab\tab  0x0F32\par
+ #define DEF_NOTIFY_DEATHMACHCONFIRMSTATUS           0x0F40\par
+ #define DEF_NOTIFY_DEATHMACHCONFIRMSTATUSCLOSE      0x0F41\par
+ #define DEF_COMMONTYPE_RTPDEATHMACHMAP              0x0F33 \par
+ #define VectoresYMatrices                           0x0F62\par
+ #define VectoresYMatricesB                          0x0F63\par
+ #define MSGID_REQUEST_DEATHMACHRESTART              0x28010EEA\par
+en DlgBoxClick_SysMenu reemplasamos la parte del restar que esta abajo de todo por esto :\par
+acuerdensen que son 2 llabes .. la tercera cierra el void. esa no la toquen -.-\par
+C\'f3digo:\par
+\tab // Restart\par
+\tab if ((m_iHP <= 0) && (strcmp(m_cMapName, "fightzone1") == 0) && (m_cDMRestartCount == -1) && (bGladiatorEvent == TRUE))\{\par
+\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\{\par
+\tab\tab\tab m_cDMRestartCount = 6;\par
+\tab\tab\tab m_dwRestartCountTime = timeGetTime();\par
+\tab\tab\tab DisableDialogBox(19);\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\tab\}\par
+\tab\}else if ((m_iHP <= 0) && (m_cRestartCount == -1))\{\par
+\tab\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\par
+\tab\tab\{\tab m_cRestartCount = 6;\par
+\tab\tab\tab m_dwRestartCountTime = timeGetTime();\par
+\tab\tab\tab DisableDialogBox(19);\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+en DrawDialogBox_SysMenu asemos lo mismo sin tocar la ultima llave xD .\par
+C\'f3digo:\par
+// Restart\par
+\tab if ((m_iHP <= 0) && (strcmp(m_cMapName, "fightzone1") == 0) && (bGladiatorEvent == TRUE) && (m_cDMRestartCount == -1))\par
+\tab\tab\{\tab\par
+\tab\tab\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab PutString(sX + 115, sY + 225, "[RESTART HERE NOW]", RGB(40,200,40));\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab else\{\par
+\tab\tab\tab\tab PutString(sX + 115, sY + 225, "[RESTART HERE NOW]", RGB(200,200,200));\par
+\tab\tab\tab\tab\}\par
+\tab\tab\}else\{\par
+\tab\tab\tab\tab if ((m_iHP <= 0) && (m_cRestartCount == -1))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY +225, 37);\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab else\{ DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY +225, 36);\}\}\par
+\tab\tab else\{PutString(sX + 125, sY + 220, "", RGB(40,255,40));\par
+\tab\tab\}\par
+\tab\}\par
+en UpdateScreen_OnGame abajo de \par
+C\'f3digo:\par
+if (m_cRestartCount == 0)\par
+\tab\{\tab m_cRestartCount = -1;\par
+\tab\tab bSendCommand(MSGID_REQUEST_RESTART, NULL, NULL, NULL, NULL, NULL, NULL);\par
+\tab\tab return;\par
+\tab\}\par
+agregamos\par
+C\'f3digo:\par
+if (m_cDMRestartCount == 0)\par
+\tab\{\tab m_cDMRestartCount = -1;\par
+\tab\tab bSendCommand(MSGID_REQUEST_DEATHMACHRESTART, NULL, NULL, NULL, NULL, NULL, NULL);\par
+\tab\tab return;\par
+\tab\}\par
+buscamos :\par
+C\'f3digo:\par
+// Restart Process\par
+\tab if (m_cRestartCount > 0)\par
+\tab\{\tab if ((dwTime - m_dwRestartCountTime) > 1000)\par
+\tab\tab\{\tab m_cRestartCount--;\par
+\tab\tab\tab m_dwRestartCountTime = dwTime;\par
+\tab\tab\tab wsprintf(G_cTxt, UPDATE_SCREEN_ONGAME14, m_cRestartCount); // "Restarting game...%d"\par
+\tab\tab\tab AddEventList(G_cTxt, 10);\par
+\tab\}\tab\}\par
+abajo agregamos :\par
+C\'f3digo:\par
+if (m_cDMRestartCount > 0)\par
+\tab\{\tab if ((dwTime - m_dwDMRestartCountTime) > 1000)\par
+\tab\tab\{\tab m_cDMRestartCount--;\par
+\tab\tab\tab m_dwDMRestartCountTime = dwTime;\par
+\tab\tab\tab wsprintf(G_cTxt, UPDATE_SCREEN_ONGAME15, m_cDMRestartCount); // "Restarting on fightzone1...%d"\par
+\tab\tab\tab AddEventList(G_cTxt, 10);\par
+\tab\}\tab\}\par
+game.h\par
+C\'f3digo:\par
+DWORD m_dwDMRestartCountTime;\par
+char m_cDMRestartCount;\par
+en NotifyMsgHandler\par
+C\'f3digo:\par
+char * ct;\par
+en lang.h\par
+C\'f3digo:\par
+#define\tab UPDATE_SCREEN_ONGAME15\tab "Going Back in %d seg...DEATH MACH!"\par
+en InitGameSettings agregamos :\par
+C\'f3digo:\par
+for (i = 0; i <= 2000; i++)\par
+\tab\{\tab ZeroMemory(Vectorqueresibe[0], sizeof(Vectorqueresibe[0]));\par
+\tab\tab ZeroMemory(Vectorqueresibe[i+1], sizeof(Vectorqueresibe[i+1]));\par
+\tab\tab Matrizqueresive[i][1] = -1;\par
+\tab\tab Matrizqueresive[i][2] = -1;\par
+\tab\}\par
+REPOSTEO PARA ORDENAR.. PROBLEMAS ETC POSTEEN.\par
+---\par
+\par
+\par
+ DeathMach By SabbaT[GM]-100%-\par
+Bueno.. despues de mucho pensar como hacerlo desde cero..\par
+\par
+finalmente salio.\par
+\par
+el code es facil. en cada parte esta explicada que hace cada cosa.\par
+\par
+HGSERVER\par
+\par
+actualiso los post. disculpen.\par
+\par
+primero agreguen esto\par
+http://www.mundohelbreath.com/showth...1720#post11720\par
+\par
+despuen agregan esto\par
+http://www.mundohelbreath.com/showth...1731#post11731\par
+\par
+sigan con esto.\par
+\par
+game.h\par
+C\'f3digo:\par
+void STARTERENDERDEATHMACH(int iClientH);\par
+NetMes.h\par
+C\'f3digo:\par
+ #define DEF_NOTIFY_GLADIATOREVENTON                 0x0F30\par
+ #define DEF_NOTIFY_GLADIATOREVENTOFF\tab\tab\tab\tab  0x0F32\par
+ #define DEF_NOTIFY_DEATHMACHCONFIRMSTATUS           0x0F40\par
+ #define DEF_NOTIFY_DEATHMACHCONFIRMSTATUSCLOSE      0x0F41\par
+\par
+ #define VectoresYMatrices                           0x0F62\par
+ #define VectoresYMatricesB                          0x0F63\par
+ #define DEF_COMMONTYPE_RTPDEATHMACHMAP              0x0F33\par
+en SendNotifyMsg.. abajo de " switch (wMsgType) \{ "\par
+C\'f3digo:\par
+        case DEF_NOTIFY_GLADIATOREVENTON:\par
+\tab case DEF_NOTIFY_GLADIATOREVENTOFF:\par
+        case DEF_NOTIFY_DEATHMACHCONFIRMSTATUS:\tab\par
+\tab case DEF_NOTIFY_DEATHMACHCONFIRMSTATUSCLOSE:\par
+        iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6);\par
+\tab\tab break;\par
+en ClientCommonHandler.. abajo de " switch (wCommand) \{ "\par
+C\'f3digo:\par
+                case DEF_COMMONTYPE_RTPDEATHMACHMAP:\par
+\tab\tab TPME(iClientH);\par
+\tab\tab break;\par
+aca pongo un limite de nivel\par
+game.cpp agregar:\par
+C\'f3digo:\par
+void CGame::TPME(int iClientH)\par
+\{\par
+\tab if ((m_pClientList[iClientH]->m_iLevel < 100) && (bGladiatorEvent == FALSE))\par
+\tab\tab\{SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Level 350 REQ... Game OFF(1 or 12 am).. Denied!!");\par
+\tab\tab\}else\{\par
+\tab\tab\tab if ((m_pClientList[iClientH]->m_iLevel < 100) && (bGladiatorEvent == TRUE))\par
+\tab\tab\tab\{SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Level 350 REQ... Access Denied!!");\par
+\tab\tab\}else\{\par
+\tab\tab\tab if ((m_pClientList[iClientH]->m_iLevel >= 100) && (bGladiatorEvent == FALSE))\par
+\tab\tab\tab\{SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, "Game OFF(1 or 12 am) Access Denied!!");\par
+\tab\tab\}else\{\par
+\tab\tab\tab if ((m_pClientList[iClientH]->m_iLevel >= 100) && (bGladiatorEvent == TRUE))\par
+\tab\tab\tab\{\par
+\tab\tab\tab RequestTeleportHandler(iClientH, "2", "fightzone1", -1, -1);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+\tab\}\par
+\}\par
+game.h\par
+C\'f3digo:\par
+void TPME(int iClientH);\par
+en NeMes.h buscamos:\par
+C\'f3digo:\par
+#define MSGID_REQUEST_RESTART\tab\tab\tab\tab\tab\tab 0x28010EEE\par
+abajo agregamos:\par
+C\'f3digo:\par
+#define MSGID_REQUEST_DEATHMACHRESTART              0x28010EEA\par
+en MsgProcess.. buscamos : " case DEF_MSGFROM_CLIENT: " y abajo de " switch (*dwpMsgID) \{" agregamos :\par
+\par
+C\'f3digo:\par
+case MSGID_REQUEST_DEATHMACHRESTART:\par
+\tab\tab\tab\tab DeathMachRestartHandler(iClientH);\par
+\tab\tab\tab\tab break;\par
+en game.cpp agregamos:\par
+C\'f3digo:\par
+void CGame::DeathMachRestartHandler(int iClientH)\par
+\{ char  cTmpMap[32];\par
+\tab if (m_pClientList[iClientH] == NULL) return;\par
+\tab if (m_pClientList[iClientH]->m_bIsKilled == TRUE)\par
+\tab\{\par
+\tab\tab strcpy(cTmpMap,m_pClientList[iClientH]->m_cMapName);\par
+\tab\tab ZeroMemory(m_pClientList[iClientH]->m_cMapName, sizeof(m_pClientList[iClientH]->m_cMapName));\par
+\tab\tab if (strcmp(cTmpMap, "fightzone1") == 0) \{\par
+\tab\tab\tab strcpy(m_pClientList[iClientH]->m_cMapName, "fightzone1");\par
+\tab\tab\}\par
+\tab\tab m_pClientList[iClientH]->m_bIsKilled = FALSE;\par
+\tab\tab m_pClientList[iClientH]->m_iHP = iGetMaxHP(iClientH);\par
+\tab\tab ZeroMemory(cTmpMap, sizeof(cTmpMap));\par
+\tab\tab strcpy(cTmpMap, m_pClientList[iClientH]->m_cMapName);\par
+\tab\tab RequestTeleportHandler(iClientH, "2", cTmpMap, -1, -1);\par
+\tab\}\par
+\}\par
+en game.h\par
+C\'f3digo:\par
+void DeathMachRestartHandler(int iClientH);\par
+despues agregamos en game.h\par
+C\'f3digo:\par
+BOOL bGladiatorEvent;\par
+creo que eso es todo para el hg ...\par
+\par
+posiblemente les tire errores como :\par
+\par
+'a' : undeclared identifier ..\par
+\par
+en todas las cabeseras de las funciones que les aparescan este error agreguen:\par
+\par
+C\'f3digo:\par
+int a, b, c, d, Z;\par
+en CClient de Client.cpp\par
+C\'f3digo:\par
+\tab m_iDeathmachKills = 0;\par
+\tab m_iDeathmachDeaths = 0;\par
+en client.h\par
+C\'f3digo:\par
+\tab int m_iDeathmachKills;\par
+\tab int m_iDeathmachDeaths;\par
+en _bDecodePlayerDatafileContents .... buscamos esto :\par
+C\'f3digo:\par
+if (memcmp(token, "character-loc-map", 17) == 0)\tab\tab  cReadModeA = 1;\par
+arriba de eso esta esto :\par
+C\'f3digo:\par
+         \}\par
+    \}\par
+else \{\par
+arriba de " \} " que esta arriba de todo agregamos :\par
+C\'f3digo:\par
+case 82:\par
+\tab\tab\tab\tab if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+\tab\tab\tab\tab\tab wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+\tab\tab\tab\tab\tab PutLogList(cTxt);\par
+\tab\tab\tab\tab\tab delete pContents;\par
+\tab\tab\tab\tab\tab delete pStrTok;\par
+\tab\tab\tab\tab\tab return FALSE;\par
+\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_iDeathmachKills = atoi(token);\par
+\tab\tab\tab\tab cReadModeA = 0;\par
+\tab\tab\tab\tab break;\par
+case 83:\par
+\tab\tab\tab\tab if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+\tab\tab\tab\tab\tab wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+\tab\tab\tab\tab\tab PutLogList(cTxt);\par
+\tab\tab\tab\tab\tab delete pContents;\par
+\tab\tab\tab\tab\tab delete pStrTok;\par
+\tab\tab\tab\tab\tab return FALSE;\par
+\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab m_pClientList[iClientH]->m_iDeathmachDeaths = atoi(token);\par
+\tab\tab\tab\tab cReadModeA = 0;\par
+\tab\tab\tab\tab break;\par
+abajo de todo de essa funcion esta esto :\par
+C\'f3digo:\par
+if (memcmp(token, "[EOF]", 5) == 0) goto DPDC_STOP_DECODING;\par
+arriba de ese renglon agregamos esto:\par
+C\'f3digo:\par
+if (memcmp(token, "death-mach-kills", 17) == 0) cReadModeA = 82;\par
+if (memcmp(token, "death-mach-deaths", 16) == 0) cReadModeA = 83;\par
+en _iComposePlayerDataFileContents.. buscamos algo asi...\par
+C\'f3digo:\par
+strcat(pData,"\\n\\n");\par
+strcat(pData, "appr1 = ");\par
+itoa( m_pClientList[iClientH]->m_sAppr1, cTxt, 10);\par
+strcat(pData, cTxt);\par
+arriba de eso ponemos:\par
+C\'f3digo:\par
+        wsprintf(cTxt, "death-mach-kills = %d", m_pClientList[iClientH]->m_iDeathmachKills);\par
+\tab strcat(pData, cTxt);\par
+\tab strcat(pData,"\\n");\par
+\tab\par
+\tab wsprintf(cTxt, "death-mach-deaths = %d", m_pClientList[iClientH]->m_iDeathmachDeaths);\par
+\tab strcat(pData, cTxt);\par
+\tab strcat(pData,"\\n");\par
+ahora en bInit\par
+C\'f3digo:\par
+for (i = 0; i <= 2000; i++)\par
+\tab\{\tab ZeroMemory(VectorRanking[i], sizeof(VectorRanking[i]));\par
+\tab\tab MatrizForra[i][1] = -1;\par
+\tab\tab MatrizForra[i][2] = -1;\par
+\tab\}\par
+en game.h\par
+C\'f3digo:\par
+char VectorRanking[2000][12];\par
+int MatrizForra[2000][2];\par
+bueno listo.. se termino la parte del hg u.u\par
+\par
+cualqier error que les tire... postean y me dicen y les digo que tienen mal...\par
+\par
+estoy seguro que algo se me debe haber escapado el code es muy largo pero bueno que se yo u.u [/SIZE]\par
+\par
+fotos.\par
+\par
+\par
+en esta no den bola a la superposicion es un lobo q sale en todas las fotos...\par
+\par
+apretando shift y control el cuadro del ranking se ve \par
+\par
+\par
+\par
+\par
+resumen :\par
+\par
+activamos el command\par
+\par
+la funcion ase lo suyo y listo.\par
+\par
+en el client tenes las funciones basicas.\par
+\par
+nos muestra la matriz y el vector in game.\par
+\par
+tenemos el boton de restart en el mapa fightzone1\par
+\par
+es todo automatico solo ay que activarlo y ya esta listo..\par
+\par
+QUE LO DISFRUTEN Y CUALQUIER ERROR POSTEAN Y LES DIGO QUE TIENEN MAL.\par
+\par
+By SabbaT[GM] 100% CODER!\par
+\par
+-----\par
+\par
+DE UNA RESPUESTA: \par
+Re: DeathMach By SabbaT[GM]-100%-\par
+en DlgBoxClick_SysMenu buscamos :\par
+C\'f3digo:\par
+C\'f3digo:\par
+if ((m_iHP <= 0) && (m_cRestartCount == -1))\tab\par
+\tab\{\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\par
+\tab\tab\{\tab m_cRestartCount = 5;\par
+\tab\tab\tab m_dwRestartCountTime = timeGetTime();\par
+\tab\tab\tab DisableDialogBox(19);\par
+\tab\tab\tab wsprintf(G_cTxt, DLGBOX_CLICK_SYSMENU1, m_cRestartCount); // "Restarting game....%d"\par
+\tab\tab\tab AddEventList(G_cTxt, 10);\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+aca es asi xD\par
+\par
+\par
+///////////////////////////////\par
+C\'f3digo:\par
+C\'f3digo:\par
+if ((m_iHP <= 0) && (strcmp(m_cMapName, "fightzone1") == 0) && (m_cDMRestartCount == -1) && (bGladiatorEvent == TRUE))\{\par
+\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\{\par
+\tab\tab\tab m_cDMRestartCount = 6;\par
+\tab\tab\tab m_dwRestartCountTime = timeGetTime();\par
+\tab\tab\tab DisableDialogBox(19);\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\tab\tab\}\par
+\tab\}else if ((m_iHP <= 0) && (m_cRestartCount == -1))\{\par
+\tab\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\par
+\tab\tab\{\tab m_cRestartCount = 6;\par
+\tab\tab\tab m_dwRestartCountTime = timeGetTime();\par
+\tab\tab\tab DisableDialogBox(19);\par
+\tab\tab\tab PlaySound('E', 14, 5);\par
+\tab\}\tab\}\par
+aca es asi xD\par
+\par
+en DrawDialogBox_SysMenu buscamos abajo de todo y asememos lo mismo pero lo reemplasamos por esto:\par
+C\'f3digo:\par
+C\'f3digo:\par
+if ((m_iHP <= 0) && (strcmp(m_cMapName, "fightzone1") == 0) && (bGladiatorEvent == TRUE) && (m_cDMRestartCount == -1))\par
+\tab\tab\{\tab\par
+\tab\tab\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab PutString(sX + 115, sY + 225, "[RESTART HERE NOW]", RGB(40,200,40));\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab else\{\par
+\tab\tab\tab\tab PutString(sX + 115, sY + 225, "[RESTART HERE NOW]", RGB(200,200,200));\par
+\tab\tab\tab\tab\}\par
+\tab\tab\}else\{\par
+\tab\tab\tab\tab if ((m_iHP <= 0) && (m_cRestartCount == -1))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY >= sY + 225) && (msY <= sY + 225 + DEF_BTNSZY))\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY +225, 37);\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab else\{ DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY +225, 36);\}\}\par
+\tab\tab else\{PutString(sX + 125, sY + 220, "", RGB(40,255,40));\par
+\tab\tab\}\par
+\tab\}\par
+disculpen xD\par
+Responder    Citar      Buen post        \par
+Hace 4 Semanas #21\par
+SabbaT[GM]  \par
+Moderator\par
+\par
+\par
+\par
+Premios:\par
+\par
+Logros:\par
+\par
+Fecha de Ingreso\par
+20 may, 11\par
+Usuario n\'famero\par
+518\par
+Edad\par
+20\par
+Mensajes\par
+299\par
+Tema\par
+44\par
+Gracias\par
+59\par
+Agradeci\'f3\par
+5\par
+Reputaci\'f3n\par
+7470\par
+Infracciones\par
+0\par
+      \par
+\par
+Premios otorgados\par
+   \par
+Cantidad de premios: 2\par
+\par
+ Re: DeathMach By SabbaT[GM]-100%-\par
+en void CGame::DrawDialogBox_IconPannel(short msX, short msY)\par
+\par
+agreguen arriba de todos dnd declaran variables :\par
+\par
+int AuxY, i;\par
+\par
+en void CGame::NotifyMsgHandler(char * pData)\par
+\par
+char * ct;\par
+\par
+en EnemyKillRewardHandler reemplasen esto :\par
+C\'f3digo:\par
+ if ((memcmp(m_pClientList[iAttackerH]->m_cMapName, "fightzone1", 10) == 0) && (bGladiatorEvent == TRUE))\par
+\tab\tab\{\tab m_pClientList[iAttackerH]->m_iDeathmachKills++;//aumento las kills del flaco q mata...y le actualiso con este mensaje\par
+\tab\tab\tab m_pClientList[iClientH]->m_iDeathmachDeaths++;//aumento las deaths del flaco q mato...y le actualiso con este mensaje\par
+\tab\tab\tab for (a = 0; a <= DEF_MAXCLIENTS; a++)//empieso el ciclo comparo nombres y ya esta\par
+\tab\tab\tab\tab\{\tab if (m_pClientList[a] != NULL)\par
+\tab\tab\tab\tab\tab\tab\{\tab if (memcmp(VectorRanking[a], m_pClientList[iAttackerH]->m_cCharName, 12) == 0)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab MatrizForra[a][1] = m_pClientList[iAttackerH]->m_iDeathmachKills;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab b = a;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab for (c = 0; c < DEF_MAXCLIENTS; c++)//aca mando a todos.\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab if (m_pClientList[c] != NULL)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, c, VectoresYMatricesB, MatrizForra[b][1], MatrizForra[b][2], b, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab if (memcmp(VectorRanking[a], m_pClientList[iClientH]->m_cCharName, 12) == 0)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab MatrizForra[a][2] = m_pClientList[iClientH]->m_iDeathmachDeaths;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab d = a;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab for (c = 0; c < DEF_MAXCLIENTS; c++)//aca mando a todos.\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab if (m_pClientList[c] != NULL)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, c, VectoresYMatricesB, MatrizForra[d][1], MatrizForra[d][2], d, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\}\par
+por esto :\par
+C\'f3digo:\par
+if ((memcmp(m_pClientList[iAttackerH]->m_cMapName, "fightzone1", 10) == 0) && (bGladiatorEvent == TRUE))\par
+\tab\tab\{\tab m_pClientList[iAttackerH]->m_iDeathmachKills++;//aumento las kills del flaco q mata...y le actualiso \par
+\tab\tab\tab m_pClientList[iClientH]->m_iDeathmachDeaths++;//aumento las deaths del flaco q murio...y le actualiso \par
+\tab\tab\tab for (a = 0; a <= DEF_MAXCLIENTS; a++)//empieso el ciclo comparo nombres y ya esta\par
+\tab\tab\tab\tab\{\tab if (m_pClientList[a] != NULL)\par
+\tab\tab\tab\tab\tab\tab\{\tab if (memcmp(VectorRanking[a], m_pClientList[iAttackerH]->m_cCharName, 12) == 0)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab MatrizForra[a][1] = m_pClientList[iAttackerH]->m_iDeathmachKills;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab /*b = a;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab for (c = 0; c < DEF_MAXCLIENTS; c++)//aca mando a todos.\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab if (m_pClientList[c] != NULL)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, c, VectoresYMatricesB, MatrizForra[b][1], MatrizForra[b][2], b, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\}*/\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab if (memcmp(VectorRanking[a], m_pClientList[iClientH]->m_cCharName, 12) == 0)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\{\tab MatrizForra[a][2] = m_pClientList[iClientH]->m_iDeathmachDeaths;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab /*d = a;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab for (c = 0; c < DEF_MAXCLIENTS; c++)//aca mando a todos.\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\{\tab if (m_pClientList[c] != NULL)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab SendNotifyMsg(NULL, c, VectoresYMatricesB, MatrizForra[d][1], MatrizForra[d][2], d, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\}*/\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab for (a = 1; a < DEF_MAXCLIENTS; a++)\{//ordeno de mayor a menor xD y 2000 mil pasadas XD\par
+\tab\tab\tab\tab\tab\tab for (i = 1; i < 1999; i++)//si tenemos el vector y la matris lelna.. 2000 pasadas para q el q mas tiene llegue al primer puesto xD\par
+\tab\tab\tab\tab\tab\tab\tab\{\tab if (((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] > MatrizForra[i+1][2])) ||\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] < MatrizForra[i+1][1]) && (MatrizForra[i][2] < MatrizForra[i+1][2])) ||\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab ((MatrizForra[i][1] == MatrizForra[i+1][1]) && (MatrizForra[i][2] > MatrizForra[i+1][2])))\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab aux1 = MatrizForra[i][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab aux2 = MatrizForra[i][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(Name, VectorRanking[i], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][1] = MatrizForra[i+1][1];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i][2] = MatrizForra[i+1][2];\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(VectorRanking[i], VectorRanking[i+1], 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i+1][1] = aux1;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab MatrizForra[i+1][2] = aux2;\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab memcpy(VectorRanking[i+1], Name, 12);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab for (c = 0; c < DEF_MAXCLIENTS; c++)//aca mando a todos.\par
+\tab\tab\tab\tab\{\tab if (m_pClientList[c] != NULL)\par
+\tab\tab\tab\tab\tab SendNotifyMsg(NULL, c, VectoresYMatricesB, MatrizForra[c][1], MatrizForra[c][2], c, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\par
+\tab\tab\}\par
+agreguen arriva de todo:\par
+C\'f3digo:\par
+int  a, i, c, aux1, aux2;\par
+char Name[12];\par
+con esto sumamos los puntos... actualisamos la matris y reordenamos la matriz ....\par
+\par
+para 50c xD\par
+\par
+martinlopezkpo@hotmail.com\par
+\par
+--\par
+\par
+RESP 50CENT\par
+\par
+\par
+Re: DeathMach By SabbaT[GM]-100%-\par
+ah ahora me acorde el problema que te surge:\par
+\par
+C\'f3digo:\par
+char VectorRanking[2000][12];\par
+int MatrizForra[2000][2];\par
+de que tama\'f1o declaras la matriz?\par
+\par
+C\'f3digo:\par
+for (j = 0;j <= DEF_MAXCLIENTS; j++)///despues de juntar los pj mando la info a todos ....\par
+\{\par
+\tab if ((m_pClientList[j] != NULL) && (m_pClientList[j]->m_bIsInitComplete == TRUE))\par
+\tab\{\par
+\tab\tab SendNotifyMsg(NULL, j, VectoresYMatrices, MatrizForra[j][1], MatrizForra[j][2], j, VectorRanking[j], NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\}\par
+\}\par
+lo podrias cambiar por: \par
+C\'f3digo:\par
+for (j = 0;j <= 10; j++)///despues de juntar los pj mando la info a todos ....\par
+\{\par
+\tab if ((m_pClientList[j] != NULL) && (m_pClientList[j]->m_bIsInitComplete == TRUE))\par
+\tab\{\par
+\tab\tab SendNotifyMsg(NULL, j, VectoresYMatrices, MatrizForra[j][1], MatrizForra[j][2], j, VectorRanking[j], NULL,NULL,NULL,NULL,NULL,NULL,NULL);\par
+\tab\}\par
+\}\par
+asi, mandas los 10 primeros lugares y fue, al pedo mandar todos, ni te caben en la pantalla\par
+\par
+\par
+MSN: lol_chileno@hotmail.com\par
+\par
+Responder    Citar      Buen post        \par
+Hace 4 Semanas #35\par
+50Cent  \par
+Administrator\par
+\par
+\par
+\par
+Logros:\par
+\par
+ \par
+Fecha de Ingreso\par
+18 feb, 11\par
+Usuario n\'famero\par
+338\par
+Edad\par
+19\par
+Mensajes\par
+801\par
+Tema\par
+76\par
+Gracias\par
+124\par
+Agradeci\'f3\par
+71\par
+Reputaci\'f3n\par
+4948\par
+Infracciones\par
+0\par
+      \par
+\par
+Premios otorgados\par
+     \par
+Cantidad de premios: 3\par
+\par
+\par
+ Re: DeathMach By SabbaT[GM]-100%-\par
+C\'f3digo:\par
+void CGame::DeathMachRestartHandler(int iClientH)\par
+\{ char  cTmpMap[32];\par
+\tab if (m_pClientList[iClientH] == NULL) return;\par
+\tab if (m_pClientList[iClientH]->m_bIsKilled == TRUE)\par
+\tab\{\par
+\tab\tab strcpy(cTmpMap,m_pClientList[iClientH]->m_cMapName);\par
+\tab\tab ZeroMemory(m_pClientList[iClientH]->m_cMapName, sizeof(m_pClientList[iClientH]->m_cMapName));\par
+\tab\tab if (strcmp(cTmpMap, "fightzone1") == 0) \{\par
+\tab\tab\tab strcpy(m_pClientList[iClientH]->m_cMapName, "fightzone1");\par
+\tab\tab\}\par
+\tab\tab m_pClientList[iClientH]->m_bIsKilled = FALSE;\par
+\tab\tab m_pClientList[iClientH]->m_iHP = iGetMaxHP(iClientH);\par
+\tab\tab ZeroMemory(cTmpMap, sizeof(cTmpMap));\par
+\tab\tab strcpy(cTmpMap, m_pClientList[iClientH]->m_cMapName);\par
+\tab\tab RequestTeleportHandler(iClientH, "2", cTmpMap, -1, -1);\par
+\tab\}\par
+\}\par
+fijate agregando mas chequeos, alguien te manda el paquete correcto y puede revivir desde cualquier parte \par
+\par
+podria evitarlo con algo como:\par
+C\'f3digo:\par
+if (strcmp(cTmpMap, "fightzone1") == 0) \{\par
+\tab\tab\tab strcpy(m_pClientList[iClientH]->m_cMapName, "fightzone1");\par
+\tab\tab\}\par
+lo cambias por:\par
+C\'f3digo:\par
+if (strcmp(cTmpMap, "fightzone1") == 0) \{\par
+\tab\tab\tab strcpy(m_pClientList[iClientH]->m_cMapName, "fightzone1");\par
+\tab\tab\} else return;\par
+y agregando un chequeo aver si esta activo el evento.\par
+pd: espero que no te tomes a mal todo lo que tiro , es solo que hace bastante que alguien no tira codes.\par
+\par
+}
+ 

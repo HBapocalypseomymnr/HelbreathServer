@@ -1,0 +1,266 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 CODIGO /showdmg :) By EvilHit\par
+En los SOURCES DE SU HG.. EN : Game.cpp\par
+\par
+buscar /who y agregar abajo\par
+\par
+C\'f3digo:\par
+if (memcmp(cp, "/showdmg", 8) == 0) \{\par
+  PlayerOrder_ShowDamage(iClientH);\par
+  return;\par
+ \}\par
+\par
+al final de todo en GAME.CPP agregar\par
+\par
+C\'f3digo:\par
+void CGame::PlayerOrder_ShowDamage(int iClientH)\par
+\{/*ShowDamage - Coded by EvilHit*/\par
+\par
+char cDamageMod[256];\par
+if (m_pClientList[iClientH]->iDmgShowon == 1)\{\par
+ m_pClientList[iClientH]->iDmgShowon = 0;\par
+ ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+ wsprintf(cDamageMod ,"Show Damage is now disabled");\par
+\par
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+\par
+ \par
+   \}else\par
+\{\par
+ m_pClientList[iClientH]->iDmgShowon = 1;\par
+ ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+ wsprintf(cDamageMod ,"Show Damage is now enabled");\par
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+  \par
+\}\par
+\}\par
+\par
+en las funciones\par
+C\'f3digo:\par
+CGame::Effect_Damage_Spot(\par
+CGame::Effect_Damage_Spot_Type2(\par
+CGame::Effect_Damage_Spot_DamageMove(\par
+agregar\par
+\par
+C\'f3digo:\par
+char cDamageMod[256];\par
+\par
+\par
+buscar\par
+\par
+C\'f3digo:\par
+m_pClientList[sTargetH]->m_iHP -= iDamage;\par
+\par
+\par
+y reemplazar por esto\par
+\par
+C\'f3digo:\par
+m_pClientList[sTargetH]->m_iHP -= iDamage;\par
+\par
+ if (m_pClientList[sAttackerH] != NULL)\{\par
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1)\{\par
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pClientList[sTargetH]->m_cCharName);\par
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+  \}\par
+ \}\par
+ if (m_pClientList[sTargetH]->m_iHP <= 0) \{\par
+  ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iDamage);\par
+ \}\par
+\par
+buscar\par
+\par
+C\'f3digo:\par
+m_pNpcList[sTargetH]->m_iHP -= iDamage;\par
+\par
+\par
+y reemplazar por esto\par
+\par
+C\'f3digo:\par
+m_pNpcList[sTargetH]->m_iHP -= iDamage;\par
+ if (m_pClientList[sAttackerH] != NULL)\{\par
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1)\{\par
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pNpcList[sTargetH]->m_cNpcName);\par
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+  \}\par
+ \}\par
+ if (m_pNpcList[sTargetH]->m_iHP <= 0) \{\par
+  NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);\par
+ \}\par
+\par
+en la funcion CGame::iCalculateAttackEffect(\par
+\par
+agregan\par
+\par
+C\'f3digo:\par
+char cDamageMod[256];\par
+\par
+\par
+buscar\par
+\par
+C\'f3digo:\par
+m_pClientList[sTargetH]->m_iHP -= iAP_SM;\par
+\par
+\par
+y reemplazar por esto\par
+\par
+C\'f3digo:\par
+m_pClientList[sTargetH]->m_iHP -= iAP_SM;\par
+if (m_pClientList[sAttackerH] != NULL)\{\par
+//EvilHit pwns\par
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1)\{\par
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iAP_SM,m_pClientList[sTargetH]->m_cCharName);\par
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+  \}\par
+ \}\par
+\par
+buscar\par
+\par
+C\'f3digo:\par
+m_pNpcList[sTargetH]->m_iHP -= iDamage;\par
+y reemplazar por esto\par
+\par
+C\'f3digo:\par
+m_pNpcList[sTargetH]->m_iHP -= iDamage;\par
+   if (m_pClientList[sAttackerH] != NULL)\{\par
+   if (m_pClientList[sAttackerH]->iDmgShowon == 1)\{\par
+    ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+   wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pNpcList[sTargetH]->m_cNpcName);\par
+   SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+   \}\par
+  \}\par
+   break;\par
+  \}\par
+\par
+  if (m_pNpcList[sTargetH]->m_iHP <= 0) \{\par
+   NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);\par
+   bKilled = TRUE;\par
+   iKilledDice = m_pNpcList[sTargetH]->m_iHitDice;\par
+  \}\par
+\par
+En GAME.H agregar\par
+\par
+C\'f3digo:\par
+void PlayerOrder_ShowDamage(int iClientH);\par
+\par
+\par
+En CLIENT.H agregar\par
+\par
+C\'f3digo:\par
+int iDmgShowon;\par
+\par
+En CLIENT.CPP agregar\par
+C\'f3digo:\par
+iDmgShowon = 0;\par
+\par
+\par
+Code by EvilHit\par
+\par
+--\par
+\par
+[CODE] /showdmg (Mejorado).\par
+ESTAS PARTES DEL CODE SON PARA MEJORAR ESTE CODE YA POSTEADO QUE ES EL /showdmg PERO SIN EL "REMAINING DMG".\par
+\par
+EL POST CON EL /showdmg normal lo pueden encontrar aca:\par
+http://www.mundohelbreath.com/showth...%29-By-EvilHit\par
+\par
+Y despues pueden mejorarlo con esta parte que tengo aqu\'ed.\par
+\par
+En HGServer Source... Game.cpp buscamos:\par
+\par
+C\'f3digo:\par
+void CGame::PlayerOrder_ShowDamage(int iClientH)\par
+y reemplazamos la funci\'f3n:\par
+\par
+C\'f3digo:\par
+void CGame::PlayerOrder_ShowDamage(int iClientH)\par
+\{/*ShowDamage - Coded by EvilHit*/\par
+\par
+char cDamageMod[256];\par
+if (m_pClientList[iClientH]->iDmgShowon == 1)\{\par
+ m_pClientList[iClientH]->iDmgShowon = 0;\par
+ ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+ wsprintf(cDamageMod ,"Show Damage is now disabled");\par
+\par
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+\par
+ \par
+   \}else\par
+\{\par
+ m_pClientList[iClientH]->iDmgShowon = 1;\par
+ ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+ wsprintf(cDamageMod ,"Show Damage is now enabled");\par
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+  \par
+\}\par
+\}\par
+Y reemplazamos por:\par
+\par
+C\'f3digo:\par
+void CGame::PlayerOrder_ShowDamage(int iClientH)\par
+\{/*ShowDamage - Coded by EvilHit*/\par
+\par
+char cDamageMod[256];\par
+if (m_pClientList[iClientH]->iDmgShowon == 1)\{\par
+m_pClientList[iClientH]->iDmgShowon = 0;\par
+ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+wsprintf(cDamageMod ,"Show Damage is now disabled");\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+\par
+\par
+\}else\par
+\{\par
+m_pClientList[iClientH]->iDmgShowon = 1;\par
+ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+wsprintf(cDamageMod ,"Show Damage is now enabled");\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+\par
+\}\par
+\}\par
+Buscamos en Game.cpp:\par
+\par
+C\'f3digo:\par
+m_pClientList[sTargetH]->m_iHP -= iDamage;\par
+\par
+ if (m_pClientList[sAttackerH] != NULL)\{\par
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1)\{\par
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pClientList[sTargetH]->m_cCharName);\par
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+  \}\par
+ \}\par
+ if (m_pClientList[sTargetH]->m_iHP <= 0) \{\par
+  ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iDamage);\par
+ \}\par
+Y lo reemplazamos por esto otro:\par
+\par
+C\'f3digo:\par
+\tab\tab m_pClientList[sTargetH]->m_iHP -= iDamage;\par
+\par
+if (m_pClientList[sAttackerH] != NULL)\{\par
+if (m_pClientList[sAttackerH]->iDmgShowon == 1)\{\par
+ZeroMemory(cDamageMod, sizeof(cDamageMod));\par
+wsprintf(cDamageMod ,"You did [%d] Damage to Character [%s] Remaining Life [%d]", iDamage,m_pClientList[sTargetH]->m_cCharName,m_pClientList[sTargetH]->m_iHP);\par
+SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);\par
+\}\par
+\}\par
+if (m_pClientList[sTargetH]->m_iHP <= 0) \{\par
+ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iDamage);\par
+\}\par
+\par
+Y con esto abremos terminado la mejora del code jajajajaja \par
+\par
+\par
+\par
+--\par
+\par
+Ahora ya est\'e1 bien explicado, perd\'f3n a todos jajajaja...\par
+\par
+RECALCO QUE HAY QUE TENER PRIMERO IMPLEMENTADO EL CODE "/showdmg" de este post: \par
+http://www.mundohelbreath.com/showth...%29-By-EvilHit\par
+\par
+Y despu\'e9s cambiar las cosas que trae mi post para tenerlo mejorado!.\par
+}
+ 

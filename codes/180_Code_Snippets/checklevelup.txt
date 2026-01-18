@@ -1,0 +1,76 @@
+/*****************************************************************
+**---------------------------FUNCTION---------------------------**
+**             void Game::CheckLevelUp(int iClientH)            **
+**-------------------------DESCRIPTION--------------------------**
+** Level-Up                                                     **
+**  - Level +1                                                  **
+**  - +3 Level Up Points                                        **
+**  - Level 5 and under receive +100 Bonus Gold                 **
+**  - Level 20 and under receive +300 Bonus Gold                **
+**  - Reset Next Level EXP                                      **
+**  - Civilian Level Limit                                      **
+**      Player mode switches to Combatant                       **
+**      when the limit is reached                               **
+** Max Level                                                    **
+**  - Majestic Points +1                                        **
+**  - EXP Reset to the previous Level (Rollover is carried)     **
+**------------------------CREATION DATE-------------------------**
+**                January 30, 2007; 3:06 PM; Dax                **
+*****************************************************************/
+void CGame::CheckLevelUp(int iClientH)
+{
+	class CItem * pItem = NULL;
+	int iLUGold = NULL;
+
+	if (m_pClientList[iClientH] == NULL) return;
+	// If the player is a GM the function will return
+	if (m_pClientList[iClientH]->m_iAdminUserLevel > 0) return;
+	// If the player has not gained a level the function will return
+	if (m_pClientList[iClientH]->m_iExp < m_pClientList[iClientH]->m_iNextLevelExp) return;
+	// Level Up Loop 
+	while (m_pClientList[iClientH]->m_iExp >= m_pClientList[iClientH]->m_iNextLevelExp)
+	{
+		// Max Level
+		if (m_pClientList[iClientH]->m_iLevel >= DEF_PLAYERMAXLEVEL) 
+		{
+			// Reset EXP to the previous Level (Returns any additional EXP)
+			m_pClientList[iClientH]->m_iExp -= (m_pClientList[iClientH]->m_iNextLevelExp - m_iLevelExpTable[m_iPlayerMaxLevel]);
+			// +1 Majestic Points
+			if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft < DEF_MAXGIZONPOINT )
+				m_pClientList[iClientH]->m_iGizonItemUpgradeLeft++;
+			// Notify Player -> Update Client Majestic Points
+			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, 1, NULL, NULL);
+		}
+		// Level Up
+		else
+		{
+			// +1 Level
+			m_pClientList[iClientH]->m_iLevel++;
+			// Level 5 and under receive +100 Bonus Gold
+			if (m_pClientList[iClientH]->m_iLevel <= 5) iLUGold += 100;
+			// Level 20 and under receive +300 Bonus Gold
+			else if (m_pClientList[iClientH]->m_iLevel <= 20) iLUGold += 300;
+			// +3 Level Up Points
+			m_pClientList[iClientH]->m_iLU_Pool += 3;
+			// Reset Next Level EXP
+			m_pClientList[iClientH]->m_iNextLevelExp = m_iLevelExpTable[m_pClientList[iClientH]->m_iLevel + 1];
+			// Notify Player -> Update Client Level
+			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_LEVELUP, NULL, NULL, NULL, NULL);
+			// Reset Item Effects (Update stats for higher level)
+			CalcTotalItemEffect(iClientH, -1, FALSE);
+			// Civilian Level Limit
+			if ((m_pClientList[iClientH]->m_iLevel >= DEF_CIVILIANLIMIT) && (m_pClientList[iClientH]->m_bIsHunter == TRUE ) ) 
+				SetNoHunterMode(iClientH,TRUE) ;
+		}
+	}
+	// Notify Player -> Updated Client EXP
+	SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_EXP, NULL, NULL, NULL, NULL);
+	// Give Level Up Gold Bonus
+	if(iLUGold != NULL) 
+	{
+		pItem = new class CItem;
+		if (_bInitItemAttr(pItem, "Gold") == FALSE) { delete pItem; return; }
+		else { pItem->m_dwCount = (DWORD)iLUGold; bAddItem(iClientH, pItem, NULL); }
+	}
+	return;
+}

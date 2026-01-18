@@ -1,0 +1,24 @@
+[CODE] Server Name in CityHallMenu
+Ëxclusivamente para MundoHelbreath.
+
+Lo que hace este code es que en el cityhall menu aparezca el nombre de tu servidor o lo que quieras poner de forma editable, muy simple :)!
+
+Nos vamos a los sources del cliente:
+Dentro de ellos buscamos la siguiente funcion:
+
+DrawDialogBox_CityHallMenu
+Justo despues de:
+
+Case 0:
+Agregamos:
+
+//mundohelbreath.com
+[CODE] PutString_SprFont2(sX+35,sY+60,"MundoHelbreath",25 5,255,0); [CODE]
+//mundohelbreath.com
+Donde sale "MundoHelbreath" pueden poner lo que ustedes quieran.
+Donde sale 255,255,0, pueden poner el color a eleccion....
+Para eso vallan a 
+http://es.wikipedia.org/wiki/Colores_HTML
+y miren los numeros al color respectivo que quieran agregar.
+
+Muchos podrian hacer este code asi que no dejo creditos xD, pero sin haber visto esto antes fue "mi idea" hacerlo y poner el nuevo tipo de Font.

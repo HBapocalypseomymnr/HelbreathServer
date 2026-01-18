@@ -1,0 +1,1720 @@
+Go to End Game.cpp (HG)
+Add This:
+
+Code: Select all
+/*********************************************************************************************
+**********************************************************************************************
+**                                                                                          **
+**         Agregado la lectura de comandos desde un nuevo settings - ZeroEoyPnk             **
+**                                                                                          **
+**********************************************************************************************
+*********************************************************************************************/
+BOOL CGame::bReadSkillsSettingsConfigFile(char * cFn) 
+{ 
+   FILE * pFile; 
+   HANDLE hFile; 
+   DWORD  dwFileSize; 
+   char * cp, * token, cReadMode, cGSMode[16] = ""; 
+   char seps[] = "= \t\n"; 
+   class CStrTok * pStrTok; 
+
+   cReadMode = 0; 
+
+   hFile = CreateFile(cFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL); 
+   dwFileSize = GetFileSize(hFile, NULL); 
+   if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile); 
+
+   pFile = fopen(cFn, "rt"); 
+   if (pFile == NULL) { 
+      return FALSE; 
+   } 
+   else { 
+      PutLogList("(!) Reading settings file..."); 
+      cp = new char[dwFileSize+2]; 
+      ZeroMemory(cp, dwFileSize+2); 
+      fread(cp, dwFileSize, 1, pFile); 
+
+      pStrTok = new class CStrTok(cp, seps); 
+      token = pStrTok->pGet(); 
+      while( token != NULL )   { 
+        if (cReadMode != 0) {
+           switch (cReadMode) {
+           case 1: // Mining
+              m_sSkill0 = atoi(token);
+              if (m_sSkill0 == 0) m_sSkill0 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 2: // Str
+              m_sStr0 = atoi(token);
+              if (m_sStr0 == 0) m_sStr0 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 3: // Dex
+              m_sDex0 = atoi(token);
+              if (m_sDex0 == 0) m_sDex0 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 4: // Vit
+              m_sVit0 = atoi(token);
+              if (m_sVit0 == 0) m_sVit0 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 5: // Int
+              m_sInt0 = atoi(token);
+              if (m_sInt0 == 0) m_sInt0 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 6: // Mag
+              m_sMag0 = atoi(token);
+              if (m_sMag0 == 0) m_sMag0 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 7: // Char
+              m_sChar0 = atoi(token);
+              if (m_sChar0 == 0) m_sChar0 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 8: // Fishing
+              m_sSkill1 = atoi(token);
+              if (m_sSkill1 == 0) m_sSkill1 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 9: // Str
+              m_sStr1 = atoi(token);
+              if (m_sStr1 == 0) m_sStr1 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 10: // Dex
+              m_sDex1 = atoi(token);
+              if (m_sDex1 == 0) m_sDex1 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 11: // Vit
+              m_sVit1 = atoi(token);
+              if (m_sVit1 == 0) m_sVit1 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 12: // Int
+              m_sInt1 = atoi(token);
+              if (m_sInt1 == 0) m_sInt1 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 13: // Mag
+              m_sMag1 = atoi(token);
+              if (m_sMag1 == 0) m_sMag1 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 14: // Char
+              m_sChar1 = atoi(token);
+              if (m_sChar1 == 0) m_sChar1 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 15: // Farming
+              m_sSkill2 = atoi(token);
+              if (m_sSkill2 == 0) m_sSkill2 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 16: // Str
+              m_sStr2 = atoi(token);
+              if (m_sStr2 == 0) m_sStr2 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 17: // Dex
+              m_sDex2 = atoi(token);
+              if (m_sDex2 == 0) m_sDex2 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 18: // Vit
+              m_sVit2 = atoi(token);
+              if (m_sVit2 == 0) m_sVit2 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 19: // Int
+              m_sInt2 = atoi(token);
+              if (m_sInt2 == 0) m_sInt2 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 20: // Mag
+              m_sMag2 = atoi(token);
+              if (m_sMag2 == 0) m_sMag2 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 21: // Char
+              m_sChar2 = atoi(token);
+              if (m_sChar2 == 0) m_sChar2 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 22: // Magic-Resistance
+              m_sSkill3 = atoi(token);
+              if (m_sSkill3 == 0) m_sSkill3 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 23: // Str
+              m_sStr3 = atoi(token);
+              if (m_sStr3 == 0) m_sStr3 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 24: // Dex
+              m_sDex3 = atoi(token);
+              if (m_sDex3 == 0) m_sDex3 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 25: // Vit
+              m_sVit3 = atoi(token);
+              if (m_sVit3 == 0) m_sVit3 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 26: // Int
+              m_sInt3 = atoi(token);
+              if (m_sInt3 == 0) m_sInt3 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 27: // Mag
+              m_sMag3 = atoi(token);
+              if (m_sMag3 == 0) m_sMag3 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 28: // Char
+              m_sChar3 = atoi(token);
+              if (m_sChar3 == 0) m_sChar3 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 29: // Magic
+              m_sSkill4 = atoi(token);
+              if (m_sSkill4 == 0) m_sSkill4 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 30: // Str
+              m_sStr4 = atoi(token);
+              if (m_sStr4 == 0) m_sStr4 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 31: // Dex
+              m_sDex4 = atoi(token);
+              if (m_sDex4 == 0) m_sDex4 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 32: // Vit
+              m_sVit4 = atoi(token);
+              if (m_sVit4 == 0) m_sVit4 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 33: // Int
+              m_sInt4 = atoi(token);
+              if (m_sInt4 == 0) m_sInt4 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 34: // Mag
+              m_sMag4 = atoi(token);
+              if (m_sMag4 == 0) m_sMag4 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 35: // Char
+              m_sChar4 = atoi(token);
+              if (m_sChar4 == 0) m_sChar4 = 0; 
+              cReadMode = 0; 
+              break;
+              
+           case 36: // Hand-Attack
+              m_sSkill5 = atoi(token);
+              if (m_sSkill5 == 0) m_sSkill5 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 37: // Str
+              m_sStr5 = atoi(token);
+              if (m_sStr5 == 0) m_sStr5 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 38: // Dex
+              m_sDex5 = atoi(token);
+              if (m_sDex5 == 0) m_sDex5 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 39: // Vit
+              m_sVit5 = atoi(token);
+              if (m_sVit5 == 0) m_sVit5 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 40: // Int
+              m_sInt5 = atoi(token);
+              if (m_sInt5 == 0) m_sInt5 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 41: // Mag
+              m_sMag5 = atoi(token);
+              if (m_sMag5 == 0) m_sMag5 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 42: // Char
+              m_sChar5 = atoi(token);
+              if (m_sChar5 == 0) m_sChar5 = 0; 
+              cReadMode = 0; 
+              break;
+              
+           case 43: // Archery
+              m_sSkill6 = atoi(token);
+              if (m_sSkill6 == 0) m_sSkill6 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 44: // Str
+              m_sStr6 = atoi(token);
+              if (m_sStr6 == 0) m_sStr6 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 45: // Dex
+              m_sDex6 = atoi(token);
+              if (m_sDex6 == 0) m_sDex6 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 46: // Vit
+              m_sVit6 = atoi(token);
+              if (m_sVit6 == 0) m_sVit6 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 47: // Int
+              m_sInt6 = atoi(token);
+              if (m_sInt6 == 0) m_sInt6 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 48: // Mag
+              m_sMag6 = atoi(token);
+              if (m_sMag6 == 0) m_sMag6 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 49: // Char
+              m_sChar6 = atoi(token);
+              if (m_sChar6 == 0) m_sChar6 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 50: // Short-Sword
+              m_sSkill7 = atoi(token);
+              if (m_sSkill7 == 0) m_sSkill7 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 51: // Str
+              m_sStr7 = atoi(token);
+              if (m_sStr7 == 0) m_sStr7 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 52: // Dex
+              m_sDex7 = atoi(token);
+              if (m_sDex7 == 0) m_sDex7 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 53: // Vit
+              m_sVit7 = atoi(token);
+              if (m_sVit7 == 0) m_sVit7 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 54: // Int
+              m_sInt7 = atoi(token);
+              if (m_sInt7 == 0) m_sInt7 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 55: // Mag
+              m_sMag7 = atoi(token);
+              if (m_sMag7 == 0) m_sMag7 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 56: // Char
+              m_sChar7 = atoi(token);
+              if (m_sChar7 == 0) m_sChar7 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 57: // Long-Sword
+              m_sSkill8 = atoi(token);
+              if (m_sSkill8 == 0) m_sSkill8 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 58: // Str
+              m_sStr8 = atoi(token);
+              if (m_sStr8 == 0) m_sStr8 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 59: // Dex
+              m_sDex8 = atoi(token);
+              if (m_sDex8 == 0) m_sDex8 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 60: // Vit
+              m_sVit8 = atoi(token);
+              if (m_sVit8 == 0) m_sVit8 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 61: // Int
+              m_sInt8 = atoi(token);
+              if (m_sInt8 == 0) m_sInt8 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 62: // Mag
+              m_sMag8 = atoi(token);
+              if (m_sMag8 == 0) m_sMag8 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 63: // Char
+              m_sChar8 = atoi(token);
+              if (m_sChar8 == 0) m_sChar8 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 64: // Fencing
+              m_sSkill9 = atoi(token);
+              if (m_sSkill9 == 0) m_sSkill9 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 65: // Str
+              m_sStr9 = atoi(token);
+              if (m_sStr9 == 0) m_sStr9 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 66: // Dex
+              m_sDex9 = atoi(token);
+              if (m_sDex9 == 0) m_sDex9 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 67: // Vit
+              m_sVit9 = atoi(token);
+              if (m_sVit9 == 0) m_sVit9 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 68: // Int
+              m_sInt9 = atoi(token);
+              if (m_sInt9 == 0) m_sInt9 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 69: // Mag
+              m_sMag9 = atoi(token);
+              if (m_sMag9 == 0) m_sMag9 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 70: // Char
+              m_sChar9 = atoi(token);
+              if (m_sChar9 == 0) m_sChar9 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 71: // Axe-Attack
+              m_sSkill10 = atoi(token);
+              if (m_sSkill0 == 0) m_sSkill10 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 72: // Str
+              m_sStr10 = atoi(token);
+              if (m_sStr10 == 0) m_sStr10 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 73: // Dex
+              m_sDex10 = atoi(token);
+              if (m_sDex10 == 0) m_sDex10 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 74: // Vit
+              m_sVit10 = atoi(token);
+              if (m_sVit10 == 0) m_sVit10 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 75: // Int
+              m_sInt10 = atoi(token);
+              if (m_sInt10 == 0) m_sInt10 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 76: // Mag
+              m_sMag10 = atoi(token);
+              if (m_sMag10 == 0) m_sMag10 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 77: // Char
+              m_sChar10 = atoi(token);
+              if (m_sChar10 == 0) m_sChar10 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 78: // Shield
+              m_sSkill11 = atoi(token);
+              if (m_sSkill11 == 0) m_sSkill11 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 79: // Str
+              m_sStr11 = atoi(token);
+              if (m_sStr11 == 0) m_sStr11 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 80: // Dex
+              m_sDex11 = atoi(token);
+              if (m_sDex11 == 0) m_sDex11 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 81: // Vit
+              m_sVit11 = atoi(token);
+              if (m_sVit11 == 0) m_sVit11 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 82: // Int
+              m_sInt11 = atoi(token);
+              if (m_sInt11 == 0) m_sInt11 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 83: // Mag
+              m_sMag11 = atoi(token);
+              if (m_sMag11 == 0) m_sMag11 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 84: // Char
+              m_sChar11 = atoi(token);
+              if (m_sChar11 == 0) m_sChar11 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 85: // Alchemy
+              m_sSkill12 = atoi(token);
+              if (m_sSkill12 == 0) m_sSkill12 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 86: // Str
+              m_sStr12 = atoi(token);
+              if (m_sStr12 == 0) m_sStr12 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 87: // Dex
+              m_sDex12 = atoi(token);
+              if (m_sDex12 == 0) m_sDex12 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 88: // Vit
+              m_sVit12 = atoi(token);
+              if (m_sVit12 == 0) m_sVit12 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 89: // Int
+              m_sInt12 = atoi(token);
+              if (m_sInt12 == 0) m_sInt12 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 90: // Mag
+              m_sMag12 = atoi(token);
+              if (m_sMag12 == 0) m_sMag12 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 91: // Char
+              m_sChar12 = atoi(token);
+              if (m_sChar12 == 0) m_sChar12 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 92: // Manufacturing 
+              m_sSkill13 = atoi(token);
+              if (m_sSkill13 == 0) m_sSkill13 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 93: // Str
+              m_sStr13 = atoi(token);
+              if (m_sStr13 == 0) m_sStr13 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 94: // Dex
+              m_sDex13 = atoi(token);
+              if (m_sDex13 == 0) m_sDex13 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 95: // Vit
+              m_sVit13 = atoi(token);
+              if (m_sVit13 == 0) m_sVit13 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 96: // Int
+              m_sInt13 = atoi(token);
+              if (m_sInt13 == 0) m_sInt13 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 97: // Mag
+              m_sMag13 = atoi(token);
+              if (m_sMag13 == 0) m_sMag13 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 98: // Char
+              m_sChar13 = atoi(token);
+              if (m_sChar13 == 0) m_sChar13 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 99: // Hammer
+              m_sSkill14 = atoi(token);
+              if (m_sSkill14 == 0) m_sSkill14 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 100: // Str
+              m_sStr14 = atoi(token);
+              if (m_sStr14 == 0) m_sStr14 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 101: // Dex
+              m_sDex14 = atoi(token);
+              if (m_sDex14 == 0) m_sDex14 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 102: // Vit
+              m_sVit14 = atoi(token);
+              if (m_sVit14 == 0) m_sVit14 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 103: // Int
+              m_sInt14 = atoi(token);
+              if (m_sInt14 == 0) m_sInt14 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 104: // Mag
+              m_sMag14 = atoi(token);
+              if (m_sMag14 == 0) m_sMag14 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 105: // Char
+              m_sChar14 = atoi(token);
+              if (m_sChar14 == 0) m_sChar14 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 106: // Pretend-Corpse
+              m_sSkill19 = atoi(token);
+              if (m_sSkill19 == 0) m_sSkill19 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 107: // Str
+              m_sStr19 = atoi(token);
+              if (m_sStr19 == 0) m_sStr19 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 108: // Dex
+              m_sDex19 = atoi(token);
+              if (m_sDex19 == 0) m_sDex19 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 109: // Vit
+              m_sVit19 = atoi(token);
+              if (m_sVit19 == 0) m_sVit19 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 110: // Int
+              m_sInt19 = atoi(token);
+              if (m_sInt19 == 0) m_sInt19 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 111: // Mag
+              m_sMag19 = atoi(token);
+              if (m_sMag19 == 0) m_sMag19 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 112: // Char
+              m_sChar19 = atoi(token);
+              if (m_sChar19 == 0) m_sChar19 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 113: // Staff-Attack
+              m_sSkill21 = atoi(token);
+              if (m_sSkill21 == 0) m_sSkill21 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 114: // Str
+              m_sStr21 = atoi(token);
+              if (m_sStr21 == 0) m_sStr21 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 115: // Dex
+              m_sDex21 = atoi(token);
+              if (m_sDex21 == 0) m_sDex21 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 116: // Vit
+              m_sVit21 = atoi(token);
+              if (m_sVit21 == 0) m_sVit21 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 117: // Int
+              m_sInt21 = atoi(token);
+              if (m_sInt21 == 0) m_sInt21 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 118: // Mag
+              m_sMag21 = atoi(token);
+              if (m_sMag21 == 0) m_sMag21 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 119: // Char
+              m_sChar21 = atoi(token);
+              if (m_sChar21 == 0) m_sChar21 = 0; 
+              cReadMode = 0; 
+              break;
+              
+           case 120: // Staff-Attack
+              m_sSkill23 = atoi(token);
+              if (m_sSkill23 == 0) m_sSkill23 = 0; 
+              cReadMode = 0; 
+              break;
+           
+           case 121: // Str
+              m_sStr23 = atoi(token);
+              if (m_sStr23 == 0) m_sStr23 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 122: // Dex
+              m_sDex23 = atoi(token);
+              if (m_sDex23 == 0) m_sDex23 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 123: // Vit
+              m_sVit23 = atoi(token);
+              if (m_sVit23 == 0) m_sVit23 = 0; 
+              cReadMode = 0; 
+              break;
+   
+           case 124: // Int
+              m_sInt23 = atoi(token);
+              if (m_sInt23 == 0) m_sInt23 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 125: // Mag
+              m_sMag23 = atoi(token);
+              if (m_sMag23 == 0) m_sMag23 = 0; 
+              cReadMode = 0; 
+              break;
+
+           case 126: // Char
+              m_sChar23 = atoi(token);
+              if (m_sChar23 == 0) m_sChar23 = 0; 
+              cReadMode = 0; 
+              break;
+
+           }
+        } 
+        else { 
+         if (memcmp(token, "Skill_Num0", 10) == 0)   cReadMode = 1;
+         if (memcmp(token, "Min_Str0", 8) == 0)   cReadMode = 2;
+         if (memcmp(token, "Min_Dex0", 8) == 0)   cReadMode = 3;
+         if (memcmp(token, "Min_Vit0", 8) == 0)   cReadMode = 4;
+         if (memcmp(token, "Min_Int0", 8) == 0)   cReadMode = 5;
+         if (memcmp(token, "Min_Mag0", 8) == 0)   cReadMode = 6;
+         if (memcmp(token, "Min_Char0", 9) == 0)   cReadMode = 7;
+         if (memcmp(token, "Skill_Num1", 10) == 0)   cReadMode = 8;
+         if (memcmp(token, "Min_Str1", 8) == 0)   cReadMode = 9;
+         if (memcmp(token, "Min_Dex1", 8) == 0)   cReadMode = 10;
+         if (memcmp(token, "Min_Vit1", 8) == 0)   cReadMode = 11;
+         if (memcmp(token, "Min_Int1", 8) == 0)   cReadMode = 12;
+         if (memcmp(token, "Min_Mag1", 8) == 0)   cReadMode = 13;
+         if (memcmp(token, "Min_Char1", 9) == 0)   cReadMode = 14;
+         if (memcmp(token, "Skill_Num2", 10) == 0)   cReadMode = 15;
+         if (memcmp(token, "Min_Str2", 8) == 0)   cReadMode = 16;
+         if (memcmp(token, "Min_Dex2", 8) == 0)   cReadMode = 17;
+         if (memcmp(token, "Min_Vit2", 8) == 0)   cReadMode = 18;
+         if (memcmp(token, "Min_Int2", 8) == 0)   cReadMode = 19;
+         if (memcmp(token, "Min_Mag2", 8) == 0)   cReadMode = 20;
+         if (memcmp(token, "Min_Char2", 9) == 0)   cReadMode = 21;
+         if (memcmp(token, "Skill_Num3", 10) == 0)   cReadMode = 22;
+         if (memcmp(token, "Min_Str3", 8) == 0)   cReadMode = 23;
+         if (memcmp(token, "Min_Dex3", 8) == 0)   cReadMode = 24;
+         if (memcmp(token, "Min_Vit3", 8) == 0)   cReadMode = 25;
+         if (memcmp(token, "Min_Int3", 8) == 0)   cReadMode = 26;
+         if (memcmp(token, "Min_Mag3", 8) == 0)   cReadMode = 27;
+         if (memcmp(token, "Min_Char3", 9) == 0)   cReadMode = 28;
+         if (memcmp(token, "Skill_Num4", 10) == 0)   cReadMode = 29;
+         if (memcmp(token, "Min_Str4", 8) == 0)   cReadMode = 30;
+         if (memcmp(token, "Min_Dex4", 8) == 0)   cReadMode = 31;
+         if (memcmp(token, "Min_Vit4", 8) == 0)   cReadMode = 32;
+         if (memcmp(token, "Min_Int4", 8) == 0)   cReadMode = 33;
+         if (memcmp(token, "Min_Mag4", 8) == 0)   cReadMode = 34;
+         if (memcmp(token, "Min_Char4", 9) == 0)   cReadMode = 35;
+         if (memcmp(token, "Skill_Num5", 10) == 0)   cReadMode = 36;
+         if (memcmp(token, "Min_Str5", 8) == 0)   cReadMode = 37;
+         if (memcmp(token, "Min_Dex5", 8) == 0)   cReadMode = 38;
+         if (memcmp(token, "Min_Vit5", 8) == 0)   cReadMode = 39;
+         if (memcmp(token, "Min_Int5", 8) == 0)   cReadMode = 40;
+         if (memcmp(token, "Min_Mag5", 8) == 0)   cReadMode = 41;
+         if (memcmp(token, "Min_Char5", 9) == 0)   cReadMode = 42;
+         if (memcmp(token, "Skill_Num6", 10) == 0)   cReadMode = 43;
+         if (memcmp(token, "Min_Str6", 8) == 0)   cReadMode = 44;
+         if (memcmp(token, "Min_Dex6", 8) == 0)   cReadMode = 45;
+         if (memcmp(token, "Min_Vit6", 8) == 0)   cReadMode = 46;
+         if (memcmp(token, "Min_Int6", 8) == 0)   cReadMode = 47;
+         if (memcmp(token, "Min_Mag6", 8) == 0)   cReadMode = 48;
+         if (memcmp(token, "Min_Char6", 9) == 0)   cReadMode = 49;
+         if (memcmp(token, "Skill_Num7", 10) == 0)   cReadMode = 50;
+         if (memcmp(token, "Min_Str7", 8) == 0)   cReadMode = 51;
+         if (memcmp(token, "Min_Dex7", 8) == 0)   cReadMode = 52;
+         if (memcmp(token, "Min_Vit7", 8) == 0)   cReadMode = 53;
+         if (memcmp(token, "Min_Int7", 8) == 0)   cReadMode = 54;
+         if (memcmp(token, "Min_Mag7", 8) == 0)   cReadMode = 55;
+         if (memcmp(token, "Min_Char7", 9) == 0)   cReadMode = 56;
+         if (memcmp(token, "Skill_Num8", 10) == 0)   cReadMode = 57;
+         if (memcmp(token, "Min_Str8", 8) == 0)   cReadMode = 58;
+         if (memcmp(token, "Min_Dex8", 8) == 0)   cReadMode = 59;
+         if (memcmp(token, "Min_Vit8", 8) == 0)   cReadMode = 60;
+         if (memcmp(token, "Min_Int8", 8) == 0)   cReadMode = 61;
+         if (memcmp(token, "Min_Mag8", 8) == 0)   cReadMode = 62;
+         if (memcmp(token, "Min_Char8", 9) == 0)   cReadMode = 63;
+         if (memcmp(token, "Skill_Num9", 10) == 0)   cReadMode = 64;
+         if (memcmp(token, "Min_Str9", 8) == 0)   cReadMode = 65;
+         if (memcmp(token, "Min_Dex9", 8) == 0)   cReadMode = 66;
+         if (memcmp(token, "Min_Vit9", 8) == 0)   cReadMode = 67;
+         if (memcmp(token, "Min_Int9", 8) == 0)   cReadMode = 68;
+         if (memcmp(token, "Min_Mag9", 8) == 0)   cReadMode = 69;
+         if (memcmp(token, "Min_Char9", 9) == 0)   cReadMode = 70;
+         if (memcmp(token, "Skill_Num10", 11) == 0)   cReadMode = 71;
+         if (memcmp(token, "Min_Str10", 9) == 0)   cReadMode = 72;
+         if (memcmp(token, "Min_Dex10", 9) == 0)   cReadMode = 73;
+         if (memcmp(token, "Min_Vit10", 9) == 0)   cReadMode = 74;
+         if (memcmp(token, "Min_Int10", 9) == 0)   cReadMode = 75;
+         if (memcmp(token, "Min_Mag10", 9) == 0)   cReadMode = 76;
+         if (memcmp(token, "Min_Char10", 10) == 0)   cReadMode = 77;
+         if (memcmp(token, "Skill_Num11", 11) == 0)   cReadMode = 78;
+         if (memcmp(token, "Min_Str11", 9) == 0)   cReadMode = 79;
+         if (memcmp(token, "Min_Dex11", 9) == 0)   cReadMode = 80;
+         if (memcmp(token, "Min_Vit11", 9) == 0)   cReadMode = 81;
+         if (memcmp(token, "Min_Int11", 9) == 0)   cReadMode = 82;
+         if (memcmp(token, "Min_Mag11", 9) == 0)   cReadMode = 83;
+         if (memcmp(token, "Min_Char11", 10) == 0)   cReadMode = 84;
+         if (memcmp(token, "Skill_Num12", 11) == 0)   cReadMode = 85;
+         if (memcmp(token, "Min_Str12", 9) == 0)   cReadMode = 86;
+         if (memcmp(token, "Min_Dex12", 9) == 0)   cReadMode = 87;
+         if (memcmp(token, "Min_Vit12", 9) == 0)   cReadMode = 88;
+         if (memcmp(token, "Min_Int12", 9) == 0)   cReadMode = 89;
+         if (memcmp(token, "Min_Mag12", 9) == 0)   cReadMode = 90;
+         if (memcmp(token, "Min_Char12", 10) == 0)   cReadMode = 91;
+         if (memcmp(token, "Skill_Num13", 11) == 0)   cReadMode = 92;
+         if (memcmp(token, "Min_Str13", 9) == 0)   cReadMode = 93;
+         if (memcmp(token, "Min_Dex13", 9) == 0)   cReadMode = 94;
+         if (memcmp(token, "Min_Vit13", 9) == 0)   cReadMode = 95;
+         if (memcmp(token, "Min_Int13", 9) == 0)   cReadMode = 96;
+         if (memcmp(token, "Min_Mag13", 9) == 0)   cReadMode = 97;
+         if (memcmp(token, "Min_Char13", 10) == 0)   cReadMode = 98;
+         if (memcmp(token, "Skill_Num14", 11) == 0)   cReadMode = 99;
+         if (memcmp(token, "Min_Str14", 9) == 0)   cReadMode = 100;
+         if (memcmp(token, "Min_Dex14", 9) == 0)   cReadMode = 101;
+         if (memcmp(token, "Min_Vit14", 9) == 0)   cReadMode = 102;
+         if (memcmp(token, "Min_Int14", 9) == 0)   cReadMode = 103;
+         if (memcmp(token, "Min_Mag14", 9) == 0)   cReadMode = 104;
+         if (memcmp(token, "Min_Char14", 10) == 0)   cReadMode = 105;
+         if (memcmp(token, "Skill_Num15", 11) == 0)   cReadMode = 106;
+         if (memcmp(token, "Min_Str15", 9) == 0)   cReadMode = 107;
+         if (memcmp(token, "Min_Dex15", 9) == 0)   cReadMode = 108;
+         if (memcmp(token, "Min_Vit15", 9) == 0)   cReadMode = 109;
+         if (memcmp(token, "Min_Int15", 9) == 0)   cReadMode = 110;
+         if (memcmp(token, "Min_Mag15", 9) == 0)   cReadMode = 111;
+         if (memcmp(token, "Min_Char15", 10) == 0)   cReadMode = 112;
+         if (memcmp(token, "Skill_Num16", 11) == 0)   cReadMode = 113;
+         if (memcmp(token, "Min_Str16", 9) == 0)   cReadMode = 114;
+         if (memcmp(token, "Min_Dex16", 9) == 0)   cReadMode = 115;
+         if (memcmp(token, "Min_Vit16", 9) == 0)   cReadMode = 116;
+         if (memcmp(token, "Min_Int16", 9) == 0)   cReadMode = 117;
+         if (memcmp(token, "Min_Mag16", 9) == 0)   cReadMode = 118;
+         if (memcmp(token, "Min_Char16", 10) == 0)   cReadMode = 119;
+         if (memcmp(token, "Skill_Num17", 11) == 0)   cReadMode = 120;
+         if (memcmp(token, "Min_Str17", 9) == 0)   cReadMode = 121;
+         if (memcmp(token, "Min_Dex17", 9) == 0)   cReadMode = 122;
+         if (memcmp(token, "Min_Vit17", 9) == 0)   cReadMode = 123;
+         if (memcmp(token, "Min_Int17", 9) == 0)   cReadMode = 124;
+         if (memcmp(token, "Min_Mag17", 9) == 0)   cReadMode = 125;
+         if (memcmp(token, "Min_Char17", 10) == 0)   cReadMode = 126;
+        } 
+        token = pStrTok->pGet(); 
+     } 
+      delete pStrTok; 
+      delete cp; 
+   } 
+   if (pFile != NULL) fclose(pFile); 
+
+   return TRUE; 
+} 
+
+
+Add This next:
+
+Code: Select all
+void CGame::Skills(int iClientH)
+{
+   if (m_pClientList[iClientH] == NULL) return;
+   
+   //mining
+   if (m_pClientList[iClientH]->m_cSkillMastery[0]< m_sSkill0) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr0) {  
+         m_pClientList[iClientH]->m_cSkillMastery[0] = m_sSkill0;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex0) {  
+         m_pClientList[iClientH]->m_cSkillMastery[0] = m_sSkill0;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit0) {  
+         m_pClientList[iClientH]->m_cSkillMastery[0] = m_sSkill0;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt0) {  
+         m_pClientList[iClientH]->m_cSkillMastery[0] = m_sSkill0;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag0) {  
+         m_pClientList[iClientH]->m_cSkillMastery[0] = m_sSkill0;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar0) {  
+         m_pClientList[iClientH]->m_cSkillMastery[0] = m_sSkill0;
+      }
+      if ((m_sStr0 == 0) && (m_sDex0 == 0) && (m_sVit0 == 0) && (m_sInt0 == 0) && (m_sMag0 == 0) && (m_sChar0 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[0] = m_sSkill0;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 0, m_pClientList[iClientH]->m_cSkillMastery[0], NULL, NULL);
+   }
+   
+   //fishing
+   if (m_pClientList[iClientH]->m_cSkillMastery[1]< 20) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr1) {  
+         m_pClientList[iClientH]->m_cSkillMastery[1] = m_sSkill1;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex1) {  
+         m_pClientList[iClientH]->m_cSkillMastery[1] = m_sSkill1;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit1) {  
+         m_pClientList[iClientH]->m_cSkillMastery[1] = m_sSkill1;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt1) {  
+         m_pClientList[iClientH]->m_cSkillMastery[1] = m_sSkill1;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag1) {  
+         m_pClientList[iClientH]->m_cSkillMastery[1] = m_sSkill1;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar1) {  
+         m_pClientList[iClientH]->m_cSkillMastery[1] = m_sSkill1;
+      }
+      if ((m_sStr1 == 0) && (m_sDex1 == 0) && (m_sVit1 == 0) && (m_sInt1 == 0) && (m_sMag1 == 0) && (m_sChar1 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[1] = m_sSkill1;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 1, m_pClientList[iClientH]->m_cSkillMastery[1], NULL, NULL);
+   }
+
+   //farming
+   if (m_pClientList[iClientH]->m_cSkillMastery[2]< 20) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr2) {  
+         m_pClientList[iClientH]->m_cSkillMastery[2] = m_sSkill2;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex2) {  
+         m_pClientList[iClientH]->m_cSkillMastery[2] = m_sSkill2;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit2) {  
+         m_pClientList[iClientH]->m_cSkillMastery[2] = m_sSkill2;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt2) {  
+         m_pClientList[iClientH]->m_cSkillMastery[2] = m_sSkill2;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag2) {  
+         m_pClientList[iClientH]->m_cSkillMastery[2] = m_sSkill2;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar2) {  
+         m_pClientList[iClientH]->m_cSkillMastery[2] = m_sSkill2;
+      }
+      if ((m_sStr2 == 0) && (m_sDex2 == 0) && (m_sVit2 == 0) && (m_sInt2 == 0) && (m_sMag2 == 0) && (m_sChar2 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[2] = m_sSkill2;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 2, m_pClientList[iClientH]->m_cSkillMastery[2], NULL, NULL);
+   }
+
+   //magic resistance
+   if (m_pClientList[iClientH]->m_cSkillMastery[3]< 20) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr3) {  
+         m_pClientList[iClientH]->m_cSkillMastery[3] = m_sSkill3;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex3) {  
+         m_pClientList[iClientH]->m_cSkillMastery[3] = m_sSkill3;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit3) {  
+         m_pClientList[iClientH]->m_cSkillMastery[3] = m_sSkill3;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt3) {  
+         m_pClientList[iClientH]->m_cSkillMastery[3] = m_sSkill3;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag3) {  
+         m_pClientList[iClientH]->m_cSkillMastery[3] = m_sSkill3;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar3) {  
+         m_pClientList[iClientH]->m_cSkillMastery[3] = m_sSkill3;
+      }
+      if ((m_sStr3 == 0) && (m_sDex3 == 0) && (m_sVit3 == 0) && (m_sInt3 == 0) && (m_sMag3 == 0) && (m_sChar3 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[3] = m_sSkill3;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 3, m_pClientList[iClientH]->m_cSkillMastery[3], NULL, NULL);
+   }
+
+   //Magic
+   if (m_pClientList[iClientH]->m_cSkillMastery[4]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr4) {  
+         m_pClientList[iClientH]->m_cSkillMastery[4] = m_sSkill4;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex4) {  
+         m_pClientList[iClientH]->m_cSkillMastery[4] = m_sSkill4;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit4) {  
+         m_pClientList[iClientH]->m_cSkillMastery[4] = m_sSkill4;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt4) {  
+         m_pClientList[iClientH]->m_cSkillMastery[4] = m_sSkill4;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag4) {  
+         m_pClientList[iClientH]->m_cSkillMastery[4] = m_sSkill4;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar4) {  
+         m_pClientList[iClientH]->m_cSkillMastery[4] = m_sSkill4;
+      }
+      if ((m_sStr4 == 0) && (m_sDex4 == 0) && (m_sVit4 == 0) && (m_sInt4 == 0) && (m_sMag4 == 0) && (m_sChar4 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[4] = m_sSkill4;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 4, m_pClientList[iClientH]->m_cSkillMastery[4], NULL, NULL);
+   }
+
+   //hand attack
+   if (m_pClientList[iClientH]->m_cSkillMastery[5]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr5) {  
+         m_pClientList[iClientH]->m_cSkillMastery[5] = m_sSkill5;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex5) {  
+         m_pClientList[iClientH]->m_cSkillMastery[5] = m_sSkill5;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit5) {  
+         m_pClientList[iClientH]->m_cSkillMastery[5] = m_sSkill5;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt5) {  
+         m_pClientList[iClientH]->m_cSkillMastery[5] = m_sSkill5;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag5) {  
+         m_pClientList[iClientH]->m_cSkillMastery[5] = m_sSkill5;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar5) {  
+         m_pClientList[iClientH]->m_cSkillMastery[5] = m_sSkill5;
+      }
+      if ((m_sStr5 == 0) && (m_sDex5 == 0) && (m_sVit5 == 0) && (m_sInt5 == 0) && (m_sMag5 == 0) && (m_sChar5 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[5] = m_sSkill5;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 5, m_pClientList[iClientH]->m_cSkillMastery[5], NULL, NULL);
+   }
+
+   //archery
+   if (m_pClientList[iClientH]->m_cSkillMastery[6]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr6) {  
+         m_pClientList[iClientH]->m_cSkillMastery[6] = m_sSkill6;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex6) {  
+         m_pClientList[iClientH]->m_cSkillMastery[6] = m_sSkill6;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit6) {  
+         m_pClientList[iClientH]->m_cSkillMastery[6] = m_sSkill6;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt6) {  
+         m_pClientList[iClientH]->m_cSkillMastery[6] = m_sSkill6;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag6) {  
+         m_pClientList[iClientH]->m_cSkillMastery[6] = m_sSkill6;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar6) {  
+         m_pClientList[iClientH]->m_cSkillMastery[6] = m_sSkill6;
+      }
+      if ((m_sStr6 == 0) && (m_sDex6 == 0) && (m_sVit6 == 0) && (m_sInt6 == 0) && (m_sMag6 == 0) && (m_sChar6 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[6] = m_sSkill6;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 6, m_pClientList[iClientH]->m_cSkillMastery[6], NULL, NULL);
+   }
+      
+   //ShortSword
+   if (m_pClientList[iClientH]->m_cSkillMastery[7]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr7) {  
+         m_pClientList[iClientH]->m_cSkillMastery[7] = m_sSkill7;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex7) {  
+         m_pClientList[iClientH]->m_cSkillMastery[7] = m_sSkill7;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit7) {  
+         m_pClientList[iClientH]->m_cSkillMastery[7] = m_sSkill7;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt7) {  
+         m_pClientList[iClientH]->m_cSkillMastery[7] = m_sSkill7;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag7) {  
+         m_pClientList[iClientH]->m_cSkillMastery[7] = m_sSkill7;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar7) {  
+         m_pClientList[iClientH]->m_cSkillMastery[7] = m_sSkill7;
+      }
+      if ((m_sStr7 == 0) && (m_sDex7 == 0) && (m_sVit7 == 0) && (m_sInt7 == 0) && (m_sMag7 == 0) && (m_sChar7 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[7] = m_sSkill7;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 7, m_pClientList[iClientH]->m_cSkillMastery[7], NULL, NULL);
+   }
+
+   //LongSword
+   if (m_pClientList[iClientH]->m_cSkillMastery[8]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr8) {  
+         m_pClientList[iClientH]->m_cSkillMastery[8] = m_sSkill8;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex8) {  
+         m_pClientList[iClientH]->m_cSkillMastery[8] = m_sSkill8;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit8) {  
+         m_pClientList[iClientH]->m_cSkillMastery[8] = m_sSkill8;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt8) {  
+         m_pClientList[iClientH]->m_cSkillMastery[8] = m_sSkill8;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag8) {  
+         m_pClientList[iClientH]->m_cSkillMastery[8] = m_sSkill8;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar8) {  
+         m_pClientList[iClientH]->m_cSkillMastery[8] = m_sSkill8;
+      }
+      if ((m_sStr8 == 0) && (m_sDex8 == 0) && (m_sVit8 == 0) && (m_sInt8 == 0) && (m_sMag8 == 0) && (m_sChar8 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[8] = m_sSkill8;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 8, m_pClientList[iClientH]->m_cSkillMastery[8], NULL, NULL);
+   }
+
+   //Fencing
+   if (m_pClientList[iClientH]->m_cSkillMastery[9]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr9) {  
+         m_pClientList[iClientH]->m_cSkillMastery[9] = m_sSkill9;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex9) {  
+         m_pClientList[iClientH]->m_cSkillMastery[9] = m_sSkill9;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit9) {  
+         m_pClientList[iClientH]->m_cSkillMastery[9] = m_sSkill9;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt9) {  
+         m_pClientList[iClientH]->m_cSkillMastery[9] = m_sSkill9;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag9) {  
+         m_pClientList[iClientH]->m_cSkillMastery[9] = m_sSkill9;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar9) {  
+         m_pClientList[iClientH]->m_cSkillMastery[9] = m_sSkill9;
+      }
+      if ((m_sStr9 == 0) && (m_sDex9 == 0) && (m_sVit9 == 0) && (m_sInt9 == 0) && (m_sMag9 == 0) && (m_sChar9 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[9] = m_sSkill9;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 9, m_pClientList[iClientH]->m_cSkillMastery[9], NULL, NULL);
+   }
+
+   //Axes
+   if (m_pClientList[iClientH]->m_cSkillMastery[10]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr10) {  
+         m_pClientList[iClientH]->m_cSkillMastery[10] = m_sSkill10;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex10) {  
+         m_pClientList[iClientH]->m_cSkillMastery[10] = m_sSkill10;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit10) {  
+         m_pClientList[iClientH]->m_cSkillMastery[10] = m_sSkill10;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt10) {  
+         m_pClientList[iClientH]->m_cSkillMastery[10] = m_sSkill10;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag10) {  
+         m_pClientList[iClientH]->m_cSkillMastery[10] = m_sSkill10;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar10) {  
+         m_pClientList[iClientH]->m_cSkillMastery[10] = m_sSkill10;
+      }
+      if ((m_sStr10 == 0) && (m_sDex10 == 0) && (m_sVit10 == 0) && (m_sInt10 == 0) && (m_sMag10 == 0) && (m_sChar10 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[10] = m_sSkill10;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 10, m_pClientList[iClientH]->m_cSkillMastery[10], NULL, NULL);
+   }
+
+   //shield
+   if (m_pClientList[iClientH]->m_cSkillMastery[11]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr11) {  
+         m_pClientList[iClientH]->m_cSkillMastery[11] = m_sSkill11;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex11) {  
+         m_pClientList[iClientH]->m_cSkillMastery[11] = m_sSkill11;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit11) {  
+         m_pClientList[iClientH]->m_cSkillMastery[11] = m_sSkill11;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt11) {  
+         m_pClientList[iClientH]->m_cSkillMastery[11] = m_sSkill11;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag11) {  
+         m_pClientList[iClientH]->m_cSkillMastery[11] = m_sSkill11;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar11) {  
+         m_pClientList[iClientH]->m_cSkillMastery[11] = m_sSkill11;
+      }
+      if ((m_sStr11 == 0) && (m_sDex11 == 0) && (m_sVit11 == 0) && (m_sInt11 == 0) && (m_sMag11 == 0) && (m_sChar11 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[11] = m_sSkill11;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 11, m_pClientList[iClientH]->m_cSkillMastery[11], NULL, NULL);
+   }
+
+   //alchemy
+   if (m_pClientList[iClientH]->m_cSkillMastery[12]< 20) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr12) {  
+         m_pClientList[iClientH]->m_cSkillMastery[12] = m_sSkill12;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex12) {  
+         m_pClientList[iClientH]->m_cSkillMastery[12] = m_sSkill12;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit2) {  
+         m_pClientList[iClientH]->m_cSkillMastery[12] = m_sSkill12;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt12) {  
+         m_pClientList[iClientH]->m_cSkillMastery[12] = m_sSkill12;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag12) {  
+         m_pClientList[iClientH]->m_cSkillMastery[12] = m_sSkill12;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar12) {  
+         m_pClientList[iClientH]->m_cSkillMastery[12] = m_sSkill12;
+      }
+      if ((m_sStr12 == 0) && (m_sDex12 == 0) && (m_sVit2 == 0) && (m_sInt12 == 0) && (m_sMag12 == 0) && (m_sChar12 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[12] = m_sSkill12;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 12, m_pClientList[iClientH]->m_cSkillMastery[12], NULL, NULL);
+   }
+
+   //manufacturing
+   if (m_pClientList[iClientH]->m_cSkillMastery[13]< 20) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr13) {  
+         m_pClientList[iClientH]->m_cSkillMastery[13] = m_sSkill13;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex13) {  
+         m_pClientList[iClientH]->m_cSkillMastery[13] = m_sSkill13;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit13) {  
+         m_pClientList[iClientH]->m_cSkillMastery[13] = m_sSkill13;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt13) {  
+         m_pClientList[iClientH]->m_cSkillMastery[13] = m_sSkill13;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag13) {  
+         m_pClientList[iClientH]->m_cSkillMastery[13] = m_sSkill13;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar13) {  
+         m_pClientList[iClientH]->m_cSkillMastery[13] = m_sSkill13;
+      }
+      if ((m_sStr13 == 0) && (m_sDex13 == 0) && (m_sVit13 == 0) && (m_sInt13 == 0) && (m_sMag13 == 0) && (m_sChar13 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[13] = m_sSkill13;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 13, m_pClientList[iClientH]->m_cSkillMastery[13], NULL, NULL);
+   }
+
+   //Hammer
+   if (m_pClientList[iClientH]->m_cSkillMastery[14]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr14) {  
+         m_pClientList[iClientH]->m_cSkillMastery[14] = m_sSkill14;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex14) {  
+         m_pClientList[iClientH]->m_cSkillMastery[14] = m_sSkill14;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit14) {  
+         m_pClientList[iClientH]->m_cSkillMastery[14] = m_sSkill14;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt14) {  
+         m_pClientList[iClientH]->m_cSkillMastery[14] = m_sSkill14;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag14) {  
+         m_pClientList[iClientH]->m_cSkillMastery[14] = m_sSkill14;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar14) {  
+         m_pClientList[iClientH]->m_cSkillMastery[14] = m_sSkill14;
+      }
+      if ((m_sStr14 == 0) && (m_sDex14 == 0) && (m_sVit14 == 0) && (m_sInt14 == 0) && (m_sMag14 == 0) && (m_sChar14 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[14] = m_sSkill14;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 14, m_pClientList[iClientH]->m_cSkillMastery[14], NULL, NULL);
+   }
+
+   //pretend corpse
+   if (m_pClientList[iClientH]->m_cSkillMastery[19]< 20) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr19) {  
+         m_pClientList[iClientH]->m_cSkillMastery[19] = m_sSkill19;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex19) {  
+         m_pClientList[iClientH]->m_cSkillMastery[19] = m_sSkill19;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit19) {  
+         m_pClientList[iClientH]->m_cSkillMastery[19] = m_sSkill19;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt19) {  
+         m_pClientList[iClientH]->m_cSkillMastery[19] = m_sSkill19;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag19) {  
+         m_pClientList[iClientH]->m_cSkillMastery[19] = m_sSkill19;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar19) {  
+         m_pClientList[iClientH]->m_cSkillMastery[19] = m_sSkill19;
+      }
+      if ((m_sStr19 == 0) && (m_sDex19 == 0) && (m_sVit19 == 0) && (m_sInt19 == 0) && (m_sMag19 == 0) && (m_sChar19 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[19] = m_sSkill19;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 19, m_pClientList[iClientH]->m_cSkillMastery[19], NULL, NULL);
+   }
+
+   //Staff Attack
+   if (m_pClientList[iClientH]->m_cSkillMastery[21]< 100) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr21) {  
+         m_pClientList[iClientH]->m_cSkillMastery[21] = m_sSkill21;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex21) {  
+         m_pClientList[iClientH]->m_cSkillMastery[21] = m_sSkill21;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit21) {  
+         m_pClientList[iClientH]->m_cSkillMastery[21] = m_sSkill21;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt21) {  
+         m_pClientList[iClientH]->m_cSkillMastery[21] = m_sSkill21;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag21) {  
+         m_pClientList[iClientH]->m_cSkillMastery[21] = m_sSkill21;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar21) {  
+         m_pClientList[iClientH]->m_cSkillMastery[21] = m_sSkill21;
+      }
+      if ((m_sStr21 == 0) && (m_sDex21 == 0) && (m_sVit21 == 0) && (m_sInt21 == 0) && (m_sMag21 == 0) && (m_sChar21 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[21] = m_sSkill21;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 21, m_pClientList[iClientH]->m_cSkillMastery[21], NULL, NULL);
+   }
+
+   //poison resistance
+   if (m_pClientList[iClientH]->m_cSkillMastery[23]< 20) {
+      if (m_pClientList[iClientH]->m_iStr > m_sStr23) {  
+         m_pClientList[iClientH]->m_cSkillMastery[23] = m_sSkill23;
+      }
+      if (m_pClientList[iClientH]->m_iDex > m_sDex23) {  
+         m_pClientList[iClientH]->m_cSkillMastery[23] = m_sSkill23;
+      }
+      if (m_pClientList[iClientH]->m_iVit > m_sVit23) {  
+         m_pClientList[iClientH]->m_cSkillMastery[23] = m_sSkill23;
+      }
+      if (m_pClientList[iClientH]->m_iInt > m_sInt23) {  
+         m_pClientList[iClientH]->m_cSkillMastery[23] = m_sSkill23;
+      }
+      if (m_pClientList[iClientH]->m_iMag > m_sMag23) {  
+         m_pClientList[iClientH]->m_cSkillMastery[23] = m_sSkill23;
+      }
+      if (m_pClientList[iClientH]->m_iCharisma > m_sChar23) {  
+         m_pClientList[iClientH]->m_cSkillMastery[23] = m_sSkill23;
+      }
+      if ((m_sStr23 == 0) && (m_sDex23 == 0) && (m_sVit23 == 0) && (m_sInt23 == 0) && (m_sMag23 == 0) && (m_sChar23 == 0)){
+         m_pClientList[iClientH]->m_cSkillMastery[23] = m_sSkill23;
+      }
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, 23, m_pClientList[iClientH]->m_cSkillMastery[23], NULL, NULL);
+   }
+}
+
+
+Now Go to Game.h (HG)
+And Add This;
+
+Code: Select all
+//SkillSettings 
+   BOOL bReadSkillsSettingsConfigFile(char * cFn);
+   //mining
+   short m_sSkill0;
+   short m_sStr0;
+   short m_sDex0;
+   short m_sVit0;
+   short m_sInt0;
+   short m_sMag0;
+   short m_sChar0;
+   //fishing
+   short m_sSkill1;
+   short m_sStr1;
+   short m_sDex1;
+   short m_sVit1;
+   short m_sInt1;
+   short m_sMag1;
+   short m_sChar1;
+   //farming
+   short m_sSkill2;
+   short m_sStr2;
+   short m_sDex2;
+   short m_sVit2;
+   short m_sInt2;
+   short m_sMag2;
+   short m_sChar2;
+   //magic resistance
+   short m_sSkill3;
+   short m_sStr3;
+   short m_sDex3;
+   short m_sVit3;
+   short m_sInt3;
+   short m_sMag3;
+   short m_sChar3;
+   //Magic
+   short m_sSkill4;
+   short m_sStr4;
+   short m_sDex4;
+   short m_sVit4;
+   short m_sInt4;
+   short m_sMag4;
+   short m_sChar4;
+   //hand attack
+   short m_sSkill5;
+   short m_sStr5;
+   short m_sDex5;
+   short m_sVit5;
+   short m_sInt5;
+   short m_sMag5;
+   short m_sChar5;
+   //archery
+   short m_sSkill6;
+   short m_sStr6;
+   short m_sDex6;
+   short m_sVit6;
+   short m_sInt6;
+   short m_sMag6;
+   short m_sChar6;
+   //ShortSword
+   short m_sSkill7;
+   short m_sStr7;
+   short m_sDex7;
+   short m_sVit7;
+   short m_sInt7;
+   short m_sMag7;
+   short m_sChar7;
+   //LongSword
+   short m_sSkill8;
+   short m_sStr8;
+   short m_sDex8;
+   short m_sVit8;
+   short m_sInt8;
+   short m_sMag8;
+   short m_sChar8;
+   //Fencing
+   short m_sSkill9;
+   short m_sStr9;
+   short m_sDex9;
+   short m_sVit9;
+   short m_sInt9;
+   short m_sMag9;
+   short m_sChar9;
+   //Axes
+   short m_sSkill10;
+   short m_sStr10;
+   short m_sDex10;
+   short m_sVit10;
+   short m_sInt10;
+   short m_sMag10;
+   short m_sChar10;
+   //shield
+   short m_sSkill11;
+   short m_sStr11;
+   short m_sDex11;
+   short m_sVit11;
+   short m_sInt11;
+   short m_sMag11;
+   short m_sChar11;
+   //alchemy
+   short m_sSkill12;
+   short m_sStr12;
+   short m_sDex12;
+   short m_sVit12;
+   short m_sInt12;
+   short m_sMag12;
+   short m_sChar12;
+   //manufacturing
+   short m_sSkill13;
+   short m_sStr13;
+   short m_sDex13;
+   short m_sVit13;
+   short m_sInt13;
+   short m_sMag13;
+   short m_sChar13;
+   //Hammer
+   short m_sSkill14;
+   short m_sStr14;
+   short m_sDex14;
+   short m_sVit14;
+   short m_sInt14;
+   short m_sMag14;
+   short m_sChar14;
+   //pretend corpse
+   short m_sSkill19;
+   short m_sStr19;
+   short m_sDex19;
+   short m_sVit19;
+   short m_sInt19;
+   short m_sMag19;
+   short m_sChar19;
+   //Staff Attack
+   short m_sSkill21;
+   short m_sStr21;
+   short m_sDex21;
+   short m_sVit21;
+   short m_sInt21;
+   short m_sMag21;
+   short m_sChar21;
+   //poison resistance
+   short m_sSkill23;
+   short m_sStr23;
+   short m_sDex23;
+   short m_sVit23;
+   short m_sInt23;
+   short m_sMag23;
+   short m_sChar23;
+
+   void Skills(int iClientH);
+
+
+Make a txt and past this, rename the file to SkillsSettings.cfg
+
+Code: Select all
+/*Skill Settings by ZeroEoyPnk*/
+//Mining
+Skill_Num0  = 100
+Min_Str0  = 10
+Min_Dex0  = 10
+Min_Vit0  = 10
+Min_Int0  = 10
+Min_Mag0  = 10
+Min_Char0  = 10
+//Fishing
+Skill_Num1  = 100
+Min_Str1  = 10
+Min_Dex1  = 10
+Min_Vit1  = 10
+Min_Int1  = 10
+Min_Mag1  = 10
+Min_Char1  = 10
+//Farming
+Skill_Num2  = 100
+Min_Str2  = 10
+Min_Dex2  = 10
+Min_Vit2  = 10
+Min_Int2  = 10
+Min_Mag2  = 10
+Min_Char2  = 10
+//Magic-Resistance
+Skill_Num3  = 100
+Min_Str3  = 10
+Min_Dex3  = 10
+Min_Vit3  = 10
+Min_Int3  = 10
+Min_Mag3  = 10
+Min_Char3  = 10
+//Magic
+Skill_Num4  = 100
+Min_Str4  = 10
+Min_Dex4  = 10
+Min_Vit4  = 10
+Min_Int4  = 10
+Min_Mag4  = 10
+Min_Char4  = 10
+//Hand-Attack
+Skill_Num5  = 100
+Min_Str5  = 10
+Min_Dex5  = 10
+Min_Vit5  = 10
+Min_Int5  = 10
+Min_Mag5  = 10
+Min_Char5  = 10
+//Archery
+Skill_Num6  = 100
+Min_Str6  = 10
+Min_Dex6  = 10
+Min_Vit6  = 10
+Min_Int6  = 10
+Min_Mag6  = 10
+Min_Char6  = 10
+//Short-Sword
+Skill_Num7  = 100
+Min_Str7  = 10
+Min_Dex7  = 10
+Min_Vit7  = 10
+Min_Int7  = 10
+Min_Mag7  = 10
+Min_Char7  = 10
+//Long-Sword
+Skill_Num8  = 100
+Min_Str8  = 10
+Min_Dex8  = 10
+Min_Vit8  = 10
+Min_Int8  = 10
+Min_Mag8  = 10
+Min_Char8  = 10
+//Fencing
+Skill_Num9  = 100
+Min_Str9  = 10
+Min_Dex9  = 10
+Min_Vit9  = 10
+Min_Int9  = 10
+Min_Mag9  = 10
+Min_Char9  = 10
+//Axe-Attack
+Skill_Num10  = 100
+Min_Str10  = 10
+Min_Dex10  = 10
+Min_Vit10  = 10
+Min_Int10  = 10
+Min_Mag10  = 10
+Min_Char10  = 10
+//Shield
+Skill_Num11  = 100
+Min_Str11  = 10
+Min_Dex11  = 10
+Min_Vit11  = 10
+Min_Int11  = 10
+Min_Mag11  = 10
+Min_Char11  = 10
+//Alchemy
+Skill_Num12  = 100
+Min_Str12  = 10
+Min_Dex12  = 10
+Min_Vit12  = 10
+Min_Int12  = 10
+Min_Mag12  = 10
+Min_Char12  = 10
+//Manufacturing
+Skill_Num13  = 100
+Min_Str13  = 10
+Min_Dex13  = 10
+Min_Vit13  = 10
+Min_Int13  = 10
+Min_Mag13  = 10
+Min_Char13  = 10
+//Hammer
+Skill_Num14  = 100
+Min_Str14  = 10
+Min_Dex14  = 10
+Min_Vit14  = 10
+Min_Int14  = 10
+Min_Mag14  = 10
+Min_Char14  = 10
+//Pretend-Corpse
+Skill_Num15  = 100
+Min_Str15  = 10
+Min_Dex15  = 10
+Min_Vit15  = 10
+Min_Int15  = 10
+Min_Mag15  = 10
+Min_Char15  = 10
+//Staff-Attack
+Skill_Num16  = 100
+Min_Str16  = 10
+Min_Dex16  = 10
+Min_Vit16  = 10
+Min_Int16  = 10
+Min_Mag16  = 10
+Min_Char16  = 10
+//Poison-Resistance
+Skill_Num17  = 100
+Min_Str17  = 10
+Min_Dex17  = 10
+Min_Vit17  = 10
+Min_Int17  = 10
+Min_Mag17  = 10
+Min_Char17  = 10
+
+
+So now u can have your own custom skill system, U can modify your skill as u want

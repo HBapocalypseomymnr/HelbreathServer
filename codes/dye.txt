@@ -1,0 +1,83 @@
+ game.cpp
+
+CODE
+case DEF_ITEMEFFECTTYPE_ARMORDYE:
+if ((sDestItemID >= 0) && (sDestItemID < DEF_MAXITEMS)) {
+ if (m_pClientList[iClientH]->m_pItemList[sDestItemID] != NULL) {
+  if (m_pClientList[iClientH]->m_pItemList[sDestItemID]->m_cCategory == 6) {
+   m_pClientList[iClientH]->m_pItemList[sDestItemID]->m_cItemColor = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
+   SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMCOLORCHANGE, sDestItemID, m_pClientList[iClientH]->m_pItemList[sDestItemID]->m_cItemColor, NULL, NULL);
+   return TRUE;
+  }
+  else {
+   SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMCOLORCHANGE, sDestItemID, -1, NULL, NULL);
+   return FALSE;
+  }
+ }
+}
+break;
+
+
+CODE
+case DEF_ITEMEFFECTTYPE_WEAPONDYE:
+if ((sDestItemID >= 0) && (sDestItemID < DEF_MAXITEMS)) {
+ if (m_pClientList[ iClientH ]->m_pItemList[sDestItemID] != NULL) {
+  if (m_pClientList[ iClientH ]->m_pItemList[sDestItemID]->m_cCategory == 1) {
+   m_pClientList[ iClientH ]->m_pItemList[sDestItemID]->m_cItemColor = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
+   SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMCOLORCHANGE, sDestItemID, m_pClientList[iClientH]->m_pItemList[sDestItemID]->m_cItemColor, NULL, NULL);
+   return TRUE;
+  }
+  else {
+   SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMCOLORCHANGE, sDestItemID, -1, NULL, NULL);
+   return FALSE;
+  }
+ }
+}
+
+
+item.h
+
+CODE
+#define DEF_ITEMEFFECTTYPE_ARMORDYE   32
+#define DEF_ITEMEFFECTTYPE_WEAPONDYE  35
+
+
+client.cpp
+
+CODE
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  255,  127,  0), &m_wWR[12], &m_wWG[12], &m_wWB[12]); // Orange
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  205,  205,  0), &m_wWR[13], &m_wWG[13], &m_wWB[13]); // Yellow
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  178,  34,  34), &m_wWR[4], &m_wWG[4], &m_wWB[4]); // Crimson-Red
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  0, 100,  0), &m_wWR[11], &m_wWG[11], &m_wWB[11]); // Green
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 130,  90,  10), &m_wWR[3], &m_wWG[3], &m_wWB[3]); // Critical
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  16,  78, 139), &m_wWR[10], &m_wWG[10], &m_wWB[10]); // Heavy-blue
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 238, 233, 233), &m_wWR[15], &m_wWG[15], &m_wWB[15]); // White
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 123, 104, 238), &m_wWR[9], &m_wWG[9], &m_wWB[9]); // Violet
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  139,  58,  58), &m_wWR[14], &m_wWG[14], &m_wWB[14]); // Heavy-Red
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 135, 104,  30), &m_wR[6], &m_wG[6], &m_wB[6]); // Black
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 255, 106,  106), &m_wWR[8], &m_wWG[8], &m_wWB[8]); // Peach
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 139, 69,  19), &m_wWR[2], &m_wWG[2], &m_wWB[2]); // Bronze
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 108, 166,  205), &m_wWR[7], &m_wWG[7], &m_wWB[7]); // Aqua
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 10, 60,  70), &m_wWR[5], &m_wWG[5], &m_wWB[5]); // TealGreen
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 176, 48, 96), &m_wWR[1], &m_wWG[1], &m_wWB[1]); // Pink
+
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 200/2,  200/2,  200/2),  &m_wR[0], &m_wG[0], &m_wB[0]);
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(176, 48, 96),  &m_wR[1], &m_wG[1], &m_wB[1]); // (Pink)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(   139,     69,     19),  &m_wR[2], &m_wG[2], &m_wB[2]); // (Bronze)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(   145,    104,     30),  &m_wR[3], &m_wG[3], &m_wB[3]); // (Gold)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB( 178,   34,      34),  &m_wR[4], &m_wG[4], &m_wB[4]); // (Crimson-Red)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    10,     60,     70),  &m_wR[5], &m_wG[5], &m_wB[5]); // (TealGreen)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(28, 28, 28),  &m_wR[6], &m_wG[6], &m_wB[6]); // (Black)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    108,    166,     205),  &m_wR[7], &m_wG[7], &m_wB[7]); // (Aqua)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(255, 106, 106),  &m_wR[8], &m_wG[8], &m_wB[8]); // (Peach)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    123,     104,     238),  &m_wR[9], &m_wG[9], &m_wB[9]); // (Violet)
+
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(     16,     78,     139),  &m_wR[10], &m_wG[10], &m_wB[10]); // (Blue)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0, 100, 0),  &m_wR[11], &m_wG[11], &m_wB[11]); // (Green)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(255, 127, 0),  &m_wR[12], &m_wG[12], &m_wB[12]); // (Orange)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    205,     205,      0),  &m_wR[13], &m_wG[13], &m_wB[13]); // (Yellow)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(    139,     58,     58),  &m_wR[14], &m_wG[14], &m_wB[14]); // (Red)
+m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(  238,   233,   233),  &m_wR[15], &m_wG[15], &m_wB[15]); // (White)
+
+
+edited: its simple RGB, if u dont know how, u can use photoshop to test out the colors and get the RGB numbers and paste them onto the numbers. 

@@ -1,0 +1,214 @@
+game.ccp
+
+if (memcmp(cp, "/showdmg", 8) == 0) {
+  PlayerOrder_ShowDamage(iClientH);
+  return;
+ }
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+void CGame::PlayerOrder_ShowDamage(int iClientH)
+{/*ShowDamage - Coded by EvilHit*/
+
+char cDamageMod[256];
+if (m_pClientList[iClientH]->iDmgShowon == 1){
+ m_pClientList[iClientH]->iDmgShowon = 0;
+ ZeroMemory(cDamageMod, sizeof(cDamageMod));
+ wsprintf(cDamageMod ,"Show Damage is now disabled");
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+
+ 
+   }else
+{
+ m_pClientList[iClientH]->iDmgShowon = 1;
+ ZeroMemory(cDamageMod, sizeof(cDamageMod));
+ wsprintf(cDamageMod ,"Show Damage is now enabled");
+ SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+   
+}
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~Effect_Damage_Spot
+add
+char cDamageMod[256];
+
+then found
+m_pClientList[sTargetH]->m_iHP -= iDamage;
+
+replace with
+m_pClientList[sTargetH]->m_iHP -= iDamage;
+
+ if (m_pClientList[sAttackerH] != NULL){
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1){
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pClientList[sTargetH]->m_cCharName);
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+  }
+ }
+ if (m_pClientList[sTargetH]->m_iHP <= 0) {
+  ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iDamage);
+ }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~Effect_Damage_Spot
+found
+m_pNpcList[sTargetH]->m_iHP -= iDamage;
+
+replace with
+m_pNpcList[sTargetH]->m_iHP -= iDamage;
+ if (m_pClientList[sAttackerH] != NULL){
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1){
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pNpcList[sTargetH]->m_cNpcName);
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+  }
+ }
+ if (m_pNpcList[sTargetH]->m_iHP <= 0) {
+  NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);
+ }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~Effect_Damage_Spot_Type2
+add
+char cDamageMod[256];
+
+then found
+m_pClientList[sTargetH]->m_iHP -= iDamage;
+
+replace with
+m_pClientList[sTargetH]->m_iHP -= iDamage;
+ if (m_pClientList[sAttackerH] != NULL){
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1){
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pClientList[sTargetH]->m_cCharName);
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+  }
+ }
+ if (m_pClientList[sTargetH]->m_iHP <= 0) {
+  ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iDamage);
+ }
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~Effect_Damage_Spot_Type2
+found
+m_pNpcList[sTargetH]->m_iHP -= iDamage;
+
+replace with
+m_pNpcList[sTargetH]->m_iHP -= iDamage;
+ if (m_pClientList[sAttackerH] != NULL){
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1){
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pNpcList[sTargetH]->m_cNpcName);
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+  }
+ }
+ if (m_pNpcList[sTargetH]->m_iHP < 0) {
+  NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);
+ }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~Effect_Damage_Spot_DamageMove
+add
+char cDamageMod[256];
+
+found
+m_pClientList[sTargetH]->m_iHP -= iDamage;
+
+replace with
+m_pClientList[sTargetH]->m_iHP -= iDamage;
+ if (m_pClientList[sAttackerH] != NULL){
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1){
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pClientList[sTargetH]->m_cCharName);
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+  }
+ }
+ if (m_pClientList[sTargetH]->m_iHP <= 0) {
+  // 플레이어가 사망했다.
+  ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iDamage);
+ }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~Effect_Damage_Spot_DamageMove
+found
+m_pNpcList[sTargetH]->m_iHP -= iDamage;
+
+replace with
+m_pNpcList[sTargetH]->m_iHP -= iDamage;
+ if (m_pClientList[sAttackerH] != NULL){
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1){
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pNpcList[sTargetH]->m_cNpcName);
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+  }
+ }
+ if (m_pNpcList[sTargetH]->m_iHP < 0) {
+  // NPC가 사망했다.
+  NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);
+ }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~iCalculateAttackEffect
+add
+char cDamageMod[256];
+found
+m_pClientList[sTargetH]->m_iHP -= iAP_SM;
+
+replace with
+m_pClientList[sTargetH]->m_iHP -= iAP_SM;
+if (m_pClientList[sAttackerH] != NULL){
+//EvilHit pwns
+ if (m_pClientList[sAttackerH]->iDmgShowon == 1){
+  ZeroMemory(cDamageMod, sizeof(cDamageMod));
+  wsprintf(cDamageMod ,"You did %d Damage to %s", iAP_SM,m_pClientList[sTargetH]->m_cCharName);
+  SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+  }
+ }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~iCalculateAttackEffect
+found
+
+m_pNpcList[sTargetH]->m_iHP -= iDamage;
+
+replace with
+m_pNpcList[sTargetH]->m_iHP -= iDamage;
+   if (m_pClientList[sAttackerH] != NULL){
+   if (m_pClientList[sAttackerH]->iDmgShowon == 1){
+    ZeroMemory(cDamageMod, sizeof(cDamageMod));
+   wsprintf(cDamageMod ,"You did %d Damage to %s", iDamage,m_pNpcList[sTargetH]->m_cNpcName);
+   SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cDamageMod);
+   }
+  }
+   break;
+  }
+
+  if (m_pNpcList[sTargetH]->m_iHP <= 0) {
+   NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);
+   bKilled = TRUE;
+   iKilledDice = m_pNpcList[sTargetH]->m_iHitDice;
+  }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~ game.h
+
+add void PlayerOrder_ShowDamage(int iClientH);
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~client.H
+
+int iDmgShowon;
+
+:o 

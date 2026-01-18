@@ -1,0 +1,101 @@
+As i promised i would be releasing alot of my original codes from this past ok this one is a little neat, its not an admin command and can be optional for some servers.. it was never used in anyserver ive coded for but i made it because i feel like there is a purpose for any code... So i hope someone finds it very usefull...
+
+
+Use:
+Player types /playerinfo Acidx
+Server: Acidx is level 75 and a member of The Unadvised Guild
+WARNING: this has no Admin level set to use it..
+it was intended to be a normal player command for fun...
+
+
+/*==== in Game.cpp====*/
+
+CODE  
+
+/*=========CheckPlayer Level & Guild====/playerinfo===*/
+void CGame::PlayerCommand_CheckLevel(int iClientH, char* pData, DWORD dwMsgSize)
+{/*An Acidx Production - Check Player Level and Guild Last updated July 04, 2005 - Acidx*/
+class  CStrTok * pStrTok;
+short m_iRating;
+char   * token, cName[11], cTargetName[11], cLevelMessage[256], cTemp[256], seps[] = "= \t\n", cBuff[256];
+register int i;
+if ((dwMsgSize) <= 0) return;
+ZeroMemory(cTargetName, sizeof(cTargetName));
+ZeroMemory(cBuff, sizeof(cBuff));
+memcpy(cBuff, pData, dwMsgSize);
+
+pStrTok = new class CStrTok(cBuff, seps);
+token = pStrTok->pGet();
+
+token = pStrTok->pGet();
+
+if (token != NULL) {
+ ZeroMemory(cName, sizeof(cName));
+ strcpy(cName, token);
+} 
+else {
+ ZeroMemory(cName, sizeof(cName));
+ strcpy(cName, "null");
+}
+
+token = pStrTok->pGet();
+
+if (token != NULL) {
+ m_iRating = atoi(token);
+} 
+
+if (token == NULL) { 
+ token = "null"; 
+}
+
+ if (cName != NULL) {
+ token = cName;
+
+  if (strlen(token) > 10) 
+     memcpy(cTargetName, token, 10);
+  else memcpy(cTargetName, token, strlen(token));
+
+  for (i = 1; i < DEF_MAXCLIENTS; i++) 
+     if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cTargetName, 10) == 0)) {
+if (m_pClientList[i]->m_cGuildName == "NONE"){
+    wsprintf(cLevelMessage, "The Player %s is Level %i and is Not a member of any guild", m_pClientList[i]->m_cCharName, m_pClientList[i]->m_iLevel);
+}
+else {
+    wsprintf(cLevelMessage, "The Player %s is Level %i and is a member of %s.", m_pClientList[i]->m_cCharName, m_pClientList[i]->m_iLevel, m_pClientList[i]->m_cGuildName);
+}
+    ShowClientMsg(iClientH, cLevelMessage);
+
+   }
+ }
+}
+ 
+
+
+
+/*========In Game.H======*/
+
+CODE  
+
+/*====Add us some Defines here teehee <3 Acidx*/
+void PlayerCommand_CheckLevel(int iClientH,char* pData, DWORD dwMsgSize); 
+
+
+
+
+
+/*in ChatMsgHandler(); add this*/
+
+CODE  
+
+   if (memcmp(cp, "/playerinfo ", 12) == 0) {
+ PlayerCommand_CheckLevel(iClientH, cp, dwMsgSize -21);
+ return;
+}
+ 
+
+
+
+
+Enjoy.. and post any additions/changes you made and share with our great community <3
+
+-Acidx 

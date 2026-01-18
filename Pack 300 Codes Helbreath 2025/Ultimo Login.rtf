@@ -1,0 +1,165 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Ultimo Login (By 50Cent)\par
+Este code muestra un mensaje al entrar el juego informando cuando fue su ultimo login\par
+HG SRC:\par
+Game.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+m_iTotalClients++;\par
+        if (m_iTotalClients > m_iMaxClients) \{ \par
+            m_iMaxClients = m_iTotalClients;\par
+        \}\par
+justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - Last Login\par
+        m_pClientList[i]->bShowLastLogin = TRUE;\par
+Alfinal del metodo:\par
+C\'f3digo:\par
+void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey)\par
+agregar:\par
+C\'f3digo:\par
+//50Cent - Last Login\par
+    if(m_pClientList[iClientH]->bShowLastLogin == TRUE)\par
+    \{\par
+        wsprintf(G_cTxt, "Your last visit in HBArmageddon: %d:%d:%d - %d/%d/%d", m_pClientList[iClientH]->m_iLastHora, m_pClientList[iClientH]->m_iLastMin, m_pClientList[iClientH]->m_iLastSeg, m_pClientList[iClientH]->m_iLastDia, m_pClientList[iClientH]->m_iLastMes,m_pClientList[iClientH]->m_iLastAno);\par
+        ShowClientMsg(iClientH, G_cTxt);\par
+        m_pClientList[iClientH]->bShowLastLogin = FALSE;\par
+    \}\par
+Buscar:\par
+C\'f3digo:\par
+case 80: // v2.15 \'c3 \'c3\'b6\'c3 \'c2\'b8\'c2\'be\'c3\'86\'c3\'80\'c3\'8c\'c3\'85\'c3\'9b\'c2\'be\'c3\'b7\'c2\'b1\'c3\emdash\'c2\'b7\'c2\'b9\'c3\'80\'c3\'8c\'c2\'b5\'c3\'a5\par
+                if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                    wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong m_iGizonItemUpgradeLeft - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                    PutLogList(cTxt);\par
+                    delete pContents;\par
+                    delete pStrTok;\par
+                    return FALSE;\par
+                \}\par
+\par
+                m_pClientList[iClientH]->m_iGizonItemUpgradeLeft = atoi(token);\par
+                cReadModeA = 0;\par
+                break;\par
+justo abajo agregar:\par
+C\'f3digo:\par
+case 87://50Cent - Last Login\par
+                switch (cReadModeB)\par
+                \{\par
+                    case 1://Hora\par
+                        if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                            wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong m_iLastHora - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                            PutLogList(cTxt);\par
+                            delete pContents;\par
+                            delete pStrTok;\par
+                            return FALSE;\par
+                        \}\par
+                        m_pClientList[iClientH]->m_iLastHora = atoi(token);\par
+                        cReadModeB = 2;\par
+                        break;\par
+                    case 2://Minuto\par
+                        if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                            wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong m_iLastMin - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                            PutLogList(cTxt);\par
+                            delete pContents;\par
+                            delete pStrTok;\par
+                            return FALSE;\par
+                        \}\par
+                        m_pClientList[iClientH]->m_iLastMin = atoi(token);\par
+                        cReadModeB = 3;\par
+                        break;\par
+                    case 3://Segundo\par
+                        if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                            wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong m_iLastSeg - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                            PutLogList(cTxt);\par
+                            delete pContents;\par
+                            delete pStrTok;\par
+                            return FALSE;\par
+                        \}\par
+                        m_pClientList[iClientH]->m_iLastSeg = atoi(token);\par
+                        cReadModeB = 4;\par
+                        break;\par
+                    case 4://Dia\par
+                        if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                            wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong m_iLastDia - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                            PutLogList(cTxt);\par
+                            delete pContents;\par
+                            delete pStrTok;\par
+                            return FALSE;\par
+                        \}\par
+                        m_pClientList[iClientH]->m_iLastDia = atoi(token);\par
+                        cReadModeB = 5;\par
+                        break;\par
+                    case 5://Mes\par
+                        if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                            wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong m_iLastMes - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                            PutLogList(cTxt);\par
+                            delete pContents;\par
+                            delete pStrTok;\par
+                            return FALSE;\par
+                        \}\par
+                        m_pClientList[iClientH]->m_iLastMes = atoi(token);\par
+                        cReadModeB = 6;\par
+                        break;\par
+                    case 6://A\'f1o\par
+                        if (_bGetIsStringIsNumber(token) == FALSE) \{\par
+                            wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong m_iLastAno - Connection closed. ", m_pClientList[iClientH]->m_cCharName); \par
+                            PutLogList(cTxt);\par
+                            delete pContents;\par
+                            delete pStrTok;\par
+                            return FALSE;\par
+                        \}\par
+                        m_pClientList[iClientH]->m_iLastAno = atoi(token);\par
+                        cReadModeA = 0;\par
+                        cReadModeB = 0;\par
+                        break;\par
+                \}\par
+                break;\par
+Buscar:\par
+C\'f3digo:\par
+if (memcmp(token, "[EOF]", 5) == 0) goto DPDC_STOP_DECODING;\par
+justo arriba agregar:\par
+C\'f3digo:\par
+//50Cent - Last Login\par
+            if (memcmp(token, "last-login", 10) == 0) \{\par
+                cReadModeA = 87;\par
+                cReadModeB = 1;\par
+            \}\par
+Buscar:\par
+C\'f3digo:\par
+strcat(pData,"\\n\\n");\par
+\par
+    // \'c3\'84\'c2\'b3\'c2\'b8\'c2\'af\'c3\'85\'c3 \'c3\'80\'c3\'87 \'c2\'bf\'c3\'9c\'c3\'87\'c3\'bc\'c3\'87\'c2\'a5\'c3\'87\'c3\'b6 Appr4\'c2\'b0\'c2\'b3\'c2\'b8\'c2\'a6 \'c3\'80\'c3\'ba\'c3\'80\'c3\'a5\'c3\'87\'c3\lquote\'c2\'b4\'c3\'99. \'c3\'80\'c3\'8c\'c2\'b0\'c3 \'c3\'80\'c2\'ba \'c2\'b0\'c3\rdblquote\'c3\'80\'c3\ldblquote\'c2\'bc\'c2*\'c2\'b9\'c3\'b6\'c2\'bf\'c2\'a1\'c2\'bc\'c2*\'c2\'b4\'c3\'82 \'c2\'bb\'c3\'a7\'c2\'bf\'c3\'ab\'c3\'87\'c3 \'c3 \'c3\'b6 \'c2\'be\'c3\'8a\'c3\'80\'c2\'b8\'c2\'b8\'c3\'a7 \'c2\'b7\'c3\'8e\'c2\'b1\'c3\emdash\'c2\'bc\'c2*\'c2\'b9\'c3\'b6->\'c3\'85\'c2\'ac\'c2\'b6\'c3\'b3\'c3\'80\'c3\'8c\'c2\'be\'c3\'b0\'c3\'86\'c2\'ae\'c2\'b0\'c2\'a3\'c2\'bf\'c2\'a1 \'c2\'bb\'c3\'a7\'c2\'bf\'c3\'ab\'c2\'b5\'c3\'88\'c2\'b4\'c3\'99.\par
+    strcat(pData, "appr1 = ");\par
+    itoa( m_pClientList[iClientH]->m_sAppr1, cTxt, 10);\par
+    strcat(pData, cTxt);\par
+    strcat(pData, "\\n");\par
+    strcat(pData, "appr2 = ");\par
+justo arriba agregar:\par
+C\'f3digo:\par
+//50Cent - Last Login\par
+    GetLocalTime(&SysTime);\par
+    wsprintf(cTxt, "last-login = %d %d %d %d %d %d", SysTime.wHour, SysTime.wMinute, SysTime.wSecond, SysTime.wDay, SysTime.wMonth, SysTime.wYear);\par
+    strcat(pData, cTxt);\par
+    strcat(pData, "\\n");\par
+Client.cpp:\par
+Buscar:\par
+C\'f3digo:\par
+m_bMagicPauseTime = FALSE;\par
+justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - Last Login\par
+    m_iLastHora = m_iLastMin = m_iLastSeg = m_iLastDia = m_iLastMes = m_iLastAno = 0;\par
+    bShowLastLogin = TRUE;\par
+Client.h:\par
+Buscar:\par
+C\'f3digo:\par
+char m_cSaveCount;\par
+justo abajo agregar:\par
+C\'f3digo:\par
+//50Cent - Last Login\par
+    int m_iLastHora, m_iLastMin, m_iLastSeg, m_iLastDia, m_iLastMes, m_iLastAno;\par
+    BOOL bShowLastLogin;\par
+un code medio antiguo, podria acortarse un poco mas, pero se los dejo de tarea D:\par
+\par
+(By 50Cent)\par
+}
+ 

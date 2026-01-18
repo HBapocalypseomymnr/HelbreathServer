@@ -1,0 +1,172 @@
+//Original GetSkills By diuuude
+//Edited by SlammeR
+void CGame::PlayerOrder_GetSkills(int iClientH)
+{
+int i;
+if (m_pClientList[iClientH] == NULL) return;
+for (i = 0; i <= 23; i++) {
+      //Mining
+      if (m_pClientList[iClientH]->m_iStr >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[0] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[0] = m_pClientList[iClientH]->m_iStr*2;
+      }
+      /************************************************************************************************/
+      //Fishing
+      if (m_pClientList[iClientH]->m_iDex >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[1] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[1] = m_pClientList[iClientH]->m_iDex*2;
+      }
+      /************************************************************************************************/
+      //Farming
+      if (m_pClientList[iClientH]->m_iInt >= 50){ 
+            m_pClientList[iClientH]->m_cSkillMastery[2] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[2] = m_pClientList[iClientH]->m_iInt*2;
+      }
+      /************************************************************************************************/
+      //Magic-Resistance
+      if (m_pClientList[iClientH]->m_iLevel >= 50){ 
+            m_pClientList[iClientH]->m_cSkillMastery[3] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[3] = m_pClientList[iClientH]->m_iLevel*2;
+      }
+      /************************************************************************************************/
+      //Magic
+      if (m_pClientList[iClientH]->m_iMag >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[4] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[4] = m_pClientList[iClientH]->m_iMag*2;
+      }
+      /************************************************************************************************/
+      //Hand-Attack
+      if (m_pClientList[iClientH]->m_iStr >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[5] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[5] = m_pClientList[iClientH]->m_iStr*2;
+      }
+      /************************************************************************************************/
+      //Archery
+      if (m_pClientList[iClientH]->m_iDex >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[6] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[6] = m_pClientList[iClientH]->m_iDex*2;
+      }
+      /************************************************************************************************/
+      //Short-Sword
+      if (m_pClientList[iClientH]->m_iDex >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[7] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[7] = m_pClientList[iClientH]->m_iDex*2;
+      }
+      /************************************************************************************************/
+      //Long-Sword
+      if (m_pClientList[iClientH]->m_iDex >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[8] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[8] = m_pClientList[iClientH]->m_iDex*2;
+      }
+      /************************************************************************************************/
+      //Fencing
+      if (m_pClientList[iClientH]->m_iDex >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[9] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[9] = m_pClientList[iClientH]->m_iDex*2;
+      }
+      /************************************************************************************************/
+      //Axe-Attack
+      if (m_pClientList[iClientH]->m_iDex >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[10] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[10] = m_pClientList[iClientH]->m_iDex*2;
+      }
+      /************************************************************************************************/
+      //Shield
+      if (m_pClientList[iClientH]->m_iDex >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[11] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[11] = m_pClientList[iClientH]->m_iDex*2;
+      }
+      /************************************************************************************************/
+      //Alchemy
+      if (m_pClientList[iClientH]->m_iInt >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[12] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[12] = m_pClientList[iClientH]->m_iInt*2;
+      }
+      /************************************************************************************************/
+      //Manufacturing
+      if (m_pClientList[iClientH]->m_iStr >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[13] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[13] = m_pClientList[iClientH]->m_iStr*2;
+      }
+      /************************************************************************************************/
+      //Hammer
+      if (m_pClientList[iClientH]->m_iStr >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[14] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[14] = m_pClientList[iClientH]->m_iStr*2;
+      }
+      /************************************************************************************************/
+      //Pretend-Corpse
+      if (m_pClientList[iClientH]->m_iInt >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[19] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[19] = m_pClientList[iClientH]->m_iInt*2;
+      }
+      /************************************************************************************************/
+      //Staff-Attack
+      if (m_pClientList[iClientH]->m_iMag >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[21] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[21] = m_pClientList[iClientH]->m_iMag*2;
+      }
+      /************************************************************************************************/
+      //Poison-Resistance
+      if (m_pClientList[iClientH]->m_iVit >= 50){
+            m_pClientList[iClientH]->m_cSkillMastery[23] = 100;
+      }
+      else
+      {
+      m_pClientList[iClientH]->m_cSkillMastery[23] = m_pClientList[iClientH]->m_iVit*2;
+      }
+      /************************************************************************************************/
+      SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, i, m_pClientList[iClientH]->m_cSkillMastery[i], NULL, NULL);
+  }
+}

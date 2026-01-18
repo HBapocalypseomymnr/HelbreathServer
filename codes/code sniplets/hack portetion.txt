@@ -1,0 +1,8 @@
+log server port look in client then change default is
+<bh:00><bh:20><bh:0b><bh:00> wich is 2848.
+
+client version difent
+look for <bh:24><bh:10><bh:33><bh:00> and as default its .51 change the 33 to chnage it 
+look for <bh:6a><bh:33><bh:68> and as default its .51 change the 33 to chnage it
+
+main version <bh:00><bh:33><bh:00> 33 .51 default

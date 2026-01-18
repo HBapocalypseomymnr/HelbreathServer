@@ -1,0 +1,34 @@
+ hg source modify two parameters.
+
+in function DeleteClient(game.cpp)
+
+to look for in two parts of the function 
+
+CODE  bSendMsgToLS(MSGID_REQUEST_NOSAVELOGOUT, iClientH, bCountLogout);
+
+
+and to replace by this
+
+
+CODE  
+bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, iClientH, bCountLogout) 
+
+
+
+PD: in both cases 
+	if ((m_pMapList[m_pClientList[i]->m_cMapIndex]->m_bIsFightZone == FALSE) &&
+					((dwTime - m_pClientList[i]->m_dwAutoSaveTime) > (DWORD)DEF_AUTOSAVETIME)) {
+					bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, i);
+					m_pClientList[i]->m_dwAutoSaveTime = dwTime;
+				}
+
+
+
+
+
+
+
+
+
+	if (bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, iClientH) LocalSavePlayerData(iClientH);
+		

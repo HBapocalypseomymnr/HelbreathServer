@@ -1,0 +1,544 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 Here is the code i made to have the stats change working.\par
+\par
+It works like the original 3.51 but the server doesn't send the messages the correct way, so you'll have to wait a little before your LU points are given... or edit your server to send the propper messages.\par
+\par
+Open Game.h\par
+\par
+Add this :\par
+CODE\par
+// MJ Stats Change Related functions - Diuuude\par
+void DrawDialogBox_ChangeStatsMajestic(short msX, short msY);  // Change stats using majestic - Diuuude\par
+void DlgBoxClick_ChangeStatsMajestic(short msX, short msY);  \tab // Change stats using majestic - Diuuude\par
+\par
+// MJ Stats Change Related vars - Diuuude\par
+char cStateChange1;\par
+char cStateChange2;\par
+char cStateChange3;\par
+\par
+\par
+Open NetMessages.h\par
+\par
+Add This :\par
+CODE\par
+// MJ Stats Change - Diuuude\par
+#define DEF_NOTIFY_STATECHANGE_SUCCESS  0x0BB5\par
+#define DEF_NOTIFY_STATECHANGE_FAILED  \tab 0x0BB6\par
+#define MSGID_STATECHANGEPOINT      0x11A01001\par
+#define DEF_STR            0x01\par
+#define DEF_DEX            0x02\par
+#define DEF_INT            \tab 0x03\par
+#define DEF_VIT            \tab 0x04\par
+#define DEF_MAG            0x05\par
+#define DEF_CHR            0x06\par
+\par
+\par
+Open Lan_eng.h\par
+\par
+Add this :\par
+CODE\par
+// MJ Stats Change - Diuuude\par
+#define DEF_NOTIFY_MSG_STATECHANGE_SUCCESS  "Stats has been changed"\par
+#define DEF_NOTIFY_MSG_STATECHANGE_FAILED  \tab "Stats has NOT been changed"\par
+#define\tab DRAW_DIALOGBOX_LEVELUP_SETTING14  \tab "You can change 3 stats point"\par
+#define\tab DRAW_DIALOGBOX_LEVELUP_SETTING15  \tab "for each Majestic Point."\par
+#define\tab DRAW_DIALOGBOX_LEVELUP_SETTING16  \tab "* Majestic Points Left"\par
+#define\tab DRAW_DIALOGBOX_LEVELUP_SETTING17  \tab "Your stats has been changed using Majestic Points."\par
+\par
+\par
+Open Game.cpp\par
+\par
+Look For :\par
+CODE\par
+m_stDialogBoxInfo[39].sX = 0;\par
+m_stDialogBoxInfo[39].sY = 0;\par
+m_stDialogBoxInfo[39].sSizeX = 291; \par
+m_stDialogBoxInfo[39].sSizeY = 413;\par
+\par
+\par
+After, add:\par
+CODE\par
+// MJ Stats Change DialogBox - Diuuude\par
+m_stDialogBoxInfo[42].sX = 0;\par
+m_stDialogBoxInfo[42].sY = 0;\par
+m_stDialogBoxInfo[42].sSizeX = 258;\par
+m_stDialogBoxInfo[42].sSizeY = 339;\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Look For function DrawDialogBoxs\par
+\par
+After, add:\par
+CODE\par
+ case 42:\par
+ \tab DrawDialogBox_ChangeStatsMajestic(msX, msY); \par
+ \tab break;\par
+ \}\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Look For function_bCheckDlgBoxClick\par
+\par
+After, add:\par
+CODE\par
+ \tab case 42:\par
+   DlgBoxClick_ChangeStatsMajestic(msX, msY);\par
+   break;\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Look For function bSendCommand\par
+\par
+After, add:\par
+CODE\par
+case MSGID_STATECHANGEPOINT:\par
+ // Diuuude\par
+ dwp = (DWORD *)(cMsg + DEF_INDEX4_MSGID);\par
+ *dwp = dwMsgID;\par
+ wp  = (WORD *)(cMsg + DEF_INDEX2_MSGTYPE);\par
+ *wp = NULL;\par
+ \par
+ cp = (char *)(cMsg + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+ *cp = cStateChange1;\par
+ cp++;\par
+\par
+ *cp = cStateChange2;\par
+ cp++;\par
+\par
+ *cp = cStateChange3;\par
+ cp++;\par
+\par
+ iRet = m_pGSock->iSendMsg(cMsg, 12);\par
+ break;\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Look For function InitGameSettings\par
+\par
+After, add:\par
+CODE\par
+cStateChange1 = 0;\par
+cStateChange2 = 0;\par
+cStateChange3 = 0;\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Look For function NotifyMsgHandler\par
+\par
+After, add:\par
+CODE\par
+// MJ Stats Change - Diuuude\par
+case DEF_NOTIFY_STATECHANGE_SUCCESS:\par
+ m_iLU_Point += 3;\par
+ AddEventList( DEF_NOTIFY_MSG_STATECHANGE_SUCCESS, 10 );\par
+ break;\par
+case DEF_NOTIFY_STATECHANGE_FAILED:\par
+ AddEventList( DEF_NOTIFY_MSG_STATECHANGE_FAILED, 10 );\par
+ break;\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Look For function EnableDialogBox\par
+\par
+After, add:\par
+CODE\par
+case 42:\par
+ if (m_bIsDialogEnabled[42] == FALSE) \{\par
+ \tab m_stDialogBoxInfo[42].sX = m_stDialogBoxInfo[12].sX+10;\par
+ \tab m_stDialogBoxInfo[42].sY = m_stDialogBoxInfo[12].sY+10;\par
+ \tab m_stDialogBoxInfo[42].cMode\tab = 0;\par
+ \tab m_stDialogBoxInfo[42].sView = 0;\par
+ \tab m_bSkillUsingStatus = FALSE;\par
+ \}\par
+ break;\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Look For function DisableDialogBox\par
+\par
+After, add:\par
+CODE\par
+case 42:\par
+ cStateChange1 = 0;\par
+ cStateChange2 = 0;\par
+ cStateChange3 = 0;\par
+ break;\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Add this new function:\par
+CODE\par
+// 3.51 Level Up Dialog - Changes stats Using Majestic points - Diuuude\par
+void CGame::DrawDialogBox_ChangeStatsMajestic(short msX, short msY)\par
+\{\par
+short sX, sY, szX;\par
+DWORD dwTime = m_dwCurTime;\par
+char cTxt[120];\par
+int iStats;\par
+sX = m_stDialogBoxInfo[42].sX;\par
+sY = m_stDialogBoxInfo[42].sY;\par
+szX = m_stDialogBoxInfo[42].sSizeX;\par
+\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 0);\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 2);\par
+DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME4, sX+16, sY+100, 4);\par
+\par
+PutAlignedString(sX, sX + szX, sY + 50, DRAW_DIALOGBOX_LEVELUP_SETTING14);\par
+PutAlignedString(sX, sX + szX, sY + 65, DRAW_DIALOGBOX_LEVELUP_SETTING15);\par
+\par
+// Majestic Points Left - Display in green if > 0\par
+PutString(sX + 20,  sY + 85, DRAW_DIALOGBOX_LEVELUP_SETTING16, RGB(0,0,0));\par
+wsprintf(cTxt, "%d", m_iGizonItemUpgradeLeft);\par
+if (m_iGizonItemUpgradeLeft > 0)\{\par
+ PutString(sX + 73,  sY + 102, cTxt, RGB(0,255,0));\par
+\}\par
+else\{\par
+ PutString(sX + 73,  sY + 102, cTxt, RGB(0,0,0));\par
+\}\par
+// Display only MouseOver Button for - (+ is disabled)\par
+// Strength\par
+PutString(sX + 24, sY + 125, DRAW_DIALOGBOX_LEVELUP_SETTING4, RGB(5,5,5));\par
+wsprintf(cTxt, "%d", m_iStr);\par
+PutString(sX + 109, sY + 125, cTxt, RGB(25,35,25));\par
+iStats = m_iStr + m_cLU_Str;\par
+wsprintf(cTxt, "%d", iStats);\par
+if (iStats < m_iStr)\{\par
+ PutString(sX + 162, sY + 125, cTxt, RGB(255,0,0));\par
+\}\par
+else\{\par
+ PutString(sX + 162, sY + 125, cTxt, RGB(25,35,25));\par
+\}\par
+if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 127) && (msY <= sY + 133))\par
+ m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 127, 6, dwTime);\par
+\par
+// Vitality\par
+PutString(sX + 24, sY + 144, DRAW_DIALOGBOX_LEVELUP_SETTING5, RGB(5,5,5));\par
+wsprintf(cTxt, "%d", m_iVit);\par
+PutString(sX + 109, sY + 144, cTxt, RGB(25,35,25));\par
+iStats = m_iVit + m_cLU_Vit;\par
+wsprintf(cTxt, "%d", iStats);\par
+if (iStats < m_iVit)\{\par
+ PutString(sX + 162, sY + 144, cTxt, RGB(255,0,0));\par
+\}\par
+else\{\par
+ PutString(sX + 162, sY + 144, cTxt, RGB(25,35,25));\par
+\}\par
+if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 146) && (msY <= sY + 152))\par
+ m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 146, 6, dwTime);\par
+\par
+// Dexterity\par
+PutString(sX + 24, sY + 163, DRAW_DIALOGBOX_LEVELUP_SETTING6, RGB(5,5,5));\par
+wsprintf(cTxt, "%d", m_iDex);\par
+PutString(sX + 109, sY + 163, cTxt, RGB(25,35,25));\par
+iStats = m_iDex + m_cLU_Dex;\par
+wsprintf(cTxt, "%d", iStats);\par
+if (iStats < m_iDex)\{\par
+ PutString(sX + 162, sY + 163, cTxt, RGB(255,0,0));\par
+\}\par
+else\{\par
+ PutString(sX + 162, sY + 163, cTxt, RGB(25,35,25));\par
+\}\par
+if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 165) && (msY <= sY + 171))\par
+ m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 165, 6, dwTime);\par
+\par
+// Intelligence\par
+PutString(sX + 24, sY + 182, DRAW_DIALOGBOX_LEVELUP_SETTING7, RGB(5,5,5));\par
+wsprintf(cTxt, "%d", m_iInt);\par
+PutString(sX + 109, sY + 182, cTxt, RGB(25,35,25));\par
+iStats = m_iInt + m_cLU_Int;\par
+wsprintf(cTxt, "%d", iStats);\par
+if (iStats < m_iInt)\{\par
+ PutString(sX + 162, sY + 182, cTxt, RGB(255,0,0));\par
+\}\par
+else\{\par
+ PutString(sX + 162, sY + 182, cTxt, RGB(25,35,25));\par
+\}\par
+if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 184) && (msY <= sY + 190))\par
+ m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 184, 6, dwTime);\par
+\par
+// Magic\par
+PutString(sX + 24, sY + 201, DRAW_DIALOGBOX_LEVELUP_SETTING8, RGB(5,5,5));\par
+wsprintf(cTxt, "%d", m_iMag);\par
+PutString(sX + 109, sY + 201, cTxt, RGB(25,35,25));\par
+iStats = m_iMag + m_cLU_Mag;\par
+wsprintf(cTxt, "%d", iStats);\par
+if (iStats < m_iMag)\{\par
+ PutString(sX + 162, sY + 201, cTxt, RGB(255,0,0));\par
+\}\par
+else\{\par
+ PutString(sX + 162, sY + 201, cTxt, RGB(25,35,25));\par
+\}\par
+if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 203) && (msY <= sY + 209))\par
+ m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 203, 6, dwTime);\par
+\par
+// Charisma\par
+PutString(sX + 24, sY + 220, DRAW_DIALOGBOX_LEVELUP_SETTING9, RGB(5,5,5));\par
+wsprintf(cTxt, "%d", m_iCharisma);\par
+PutString(sX + 109, sY + 220, cTxt, RGB(25,35,25));\par
+iStats = m_iCharisma + m_cLU_Char;\par
+wsprintf(cTxt, "%d", iStats);\par
+if (iStats < m_iCharisma)\{\par
+ PutString(sX + 162, sY + 220, cTxt, RGB(255,0,0));\par
+\}\par
+else\{\par
+ PutString(sX + 162, sY + 220, cTxt, RGB(25,35,25));\par
+\}\par
+if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 222) && (msY <= sY + 228))\par
+ m_pSprite[DEF_SPRID_INTERFACE_ND_GAME4]->PutSpriteFast(sX + 210, sY + 222, 6, dwTime);\par
+\par
+if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY)) \par
+  DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 16);\par
+else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_LBTNPOSX, sY + DEF_BTNPOSY, 17);\par
+\par
+if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY)) \par
+  DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 1);\par
+else DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_BUTTON, sX + DEF_RBTNPOSX, sY + DEF_BTNPOSY, 0);\par
+\}\par
+\par
+\par
+Still in Game.cpp\par
+\par
+Add this new function:\par
+CODE\par
+// 3.51 LevelUp Box - Change stats using Majestic - Diuuude\par
+void CGame::DlgBoxClick_ChangeStatsMajestic(short msX, short msY)\par
+\{\par
+short sX, sY;\par
+\par
+sX = m_stDialogBoxInfo[42].sX;\par
+sY = m_stDialogBoxInfo[42].sY;\par
+\par
+if ((cStateChange1 != 0) || (cStateChange2 != 0) || (cStateChange3 != 0))\{\par
+// Strength UP - Diuuude\par
+ if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 127) && (msY <= sY + 133) && (m_cLU_Str < 0)) \{\par
+ \tab if (cStateChange1 == DEF_STR)\{\par
+   cStateChange1 = 0;\par
+   m_cLU_Str += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == DEF_STR)\{\par
+   cStateChange2 = 0;\par
+   m_cLU_Str += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange3 == DEF_STR)\{\par
+   cStateChange3 = 0;\par
+   m_cLU_Str += 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Vitality UP - Diuuude\par
+ if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 146) && (msY <= sY + 152) && (m_cLU_Vit < 0)) \{\par
+ \tab if (cStateChange1 == DEF_VIT)\{\par
+   cStateChange1 = 0;\par
+   m_cLU_Vit += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == DEF_VIT)\{\par
+   cStateChange2 = 0;\par
+   m_cLU_Vit += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange3 == DEF_VIT)\{\par
+   cStateChange3 = 0;\par
+   m_cLU_Vit += 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Dexterity UP - Diuuude\par
+ if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 165) && (msY <= sY + 171) && (m_cLU_Dex < 0)) \{\par
+ \tab if (cStateChange1 == DEF_DEX)\{\par
+   cStateChange1 = 0;\par
+   m_cLU_Dex += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == DEF_DEX)\{\par
+   cStateChange2 = 0;\par
+   m_cLU_Dex += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange3 == DEF_DEX)\{\par
+   cStateChange3 = 0;\par
+   m_cLU_Dex += 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Intelligence UP - Diuuude\par
+ if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 184) && (msY <= sY + 190) && (m_cLU_Int < 0)) \{\par
+ \tab if (cStateChange1 == DEF_INT)\{\par
+   cStateChange1 = 0;\par
+   m_cLU_Int += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == DEF_INT)\{\par
+   cStateChange2 = 0;\par
+   m_cLU_Int += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange3 == DEF_INT)\{\par
+   cStateChange3 = 0;\par
+   m_cLU_Int += 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Magic UP - Diuuude\par
+ if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 203) && (msY <= sY + 209) && (m_cLU_Mag < 0)) \{\par
+ \tab if (cStateChange1 == DEF_MAG)\{\par
+   cStateChange1 = 0;\par
+   m_cLU_Mag += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == DEF_MAG)\{\par
+   cStateChange2 = 0;\par
+   m_cLU_Mag += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange3 == DEF_MAG)\{\par
+   cStateChange3 = 0;\par
+   m_cLU_Mag += 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Charisma UP - Diuuude\par
+ if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 222) && (msY <= sY + 228) && (m_cLU_Char < 0)) \{\par
+ \tab if (cStateChange1 == DEF_CHR)\{\par
+   cStateChange1 = 0;\par
+   m_cLU_Char += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == DEF_CHR)\{\par
+   cStateChange2 = 0;\par
+   m_cLU_Char += 1;\par
+ \tab\}\par
+ \tab else if (cStateChange3 == DEF_CHR)\{\par
+   cStateChange3 = 0;\par
+   m_cLU_Char += 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\}\par
+\par
+if ((cStateChange1 == 0) || (cStateChange2 == 0) || (cStateChange3 == 0) && (m_iGizonItemUpgradeLeft > 0))\{\par
+ // Strength DOWN - Diuuude\par
+ if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 127) && (msY <= sY + 133) && (m_iStr > 10)) \{\par
+ \tab if (cStateChange1 == 0)\{\par
+   cStateChange1 = DEF_STR;\par
+   m_cLU_Str -= 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == 0)\{\par
+   cStateChange2 = DEF_STR;\par
+   m_cLU_Str -= 1;\par
+ \tab\}\par
+ \tab else\{\par
+   cStateChange3 = DEF_STR;\par
+   m_cLU_Str -= 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Vitality DOWN - Diuuude\par
+ if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 146) && (msY <= sY + 152) && (m_iVit > 10)) \{\par
+ \tab if (cStateChange1 == 0)\{\par
+   cStateChange1 = DEF_VIT;\par
+   m_cLU_Vit -= 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == 0)\{\par
+   cStateChange2 = DEF_VIT;\par
+   m_cLU_Vit -= 1;\par
+ \tab\}\par
+ \tab else\{\par
+   cStateChange3 = DEF_VIT;\par
+   m_cLU_Vit -= 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Dexterity DOWN - Diuuude\par
+ if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 165) && (msY <= sY + 171) && (m_iDex > 10)) \{\par
+ \tab if (cStateChange1 == 0)\{\par
+   cStateChange1 = DEF_DEX;\par
+   m_cLU_Dex -= 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == 0)\{\par
+   cStateChange2 = DEF_DEX;\par
+   m_cLU_Dex -= 1;\par
+ \tab\}\par
+ \tab else\{\par
+   cStateChange3 = DEF_DEX;\par
+   m_cLU_Dex -= 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Intelligence DOWN - Diuuude\par
+ if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 184) && (msY <= sY + 190) && (m_iInt > 10)) \{\par
+ \tab if (cStateChange1 == 0)\{\par
+   cStateChange1 = DEF_INT;\par
+   m_cLU_Int -= 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == 0)\{\par
+   cStateChange2 = DEF_INT;\par
+   m_cLU_Int -= 1;\par
+ \tab\}\par
+ \tab else\{\par
+   cStateChange3 = DEF_INT;\par
+   m_cLU_Int -= 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Magic DOWN - Diuuude\par
+ if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 203) && (msY <= sY + 209) && (m_iMag > 10)) \{\par
+ \tab if (cStateChange1 == 0)\{\par
+   cStateChange1 = DEF_MAG;\par
+   m_cLU_Mag -= 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == 0)\{\par
+   cStateChange2 = DEF_MAG;\par
+   m_cLU_Mag -= 1;\par
+ \tab\}\par
+ \tab else\{\par
+   cStateChange3 = DEF_MAG;\par
+   m_cLU_Mag -= 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\par
+ // Charisma DOWN - Diuuude\par
+ if ((msX >= sX + 210) && (msX <= sX + 220) && (msY >= sY + 222) && (msY <= sY + 228) && (m_iCharisma > 10)) \{\par
+ \tab if (cStateChange1 == 0)\{\par
+   cStateChange1 = DEF_CHR;\par
+   m_cLU_Char -= 1;\par
+ \tab\}\par
+ \tab else if (cStateChange2 == 0)\{\par
+   cStateChange2 = DEF_CHR;\par
+   m_cLU_Char -= 1;\par
+ \tab\}\par
+ \tab else\{\par
+   cStateChange3 = DEF_CHR;\par
+   m_cLU_Char -= 1;\par
+ \tab\}\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\}\par
+else \{\par
+ if ((msX >= sX + DEF_RBTNPOSX) && (msX <= sX + DEF_RBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY)) \{\par
+ \tab // Send command to HG - Diuuude\par
+ \tab bSendCommand(MSGID_STATECHANGEPOINT, NULL, NULL, NULL, NULL, NULL, NULL);\par
+ \tab DisableDialogBox(42);\par
+ \tab PlaySound('E', 14, 5);\par
+ \}\par
+\}\par
+if ((msX >= sX + DEF_LBTNPOSX) && (msX <= sX + DEF_LBTNPOSX + DEF_BTNSZX) && (msY > sY + DEF_BTNPOSY) && (msY < sY + DEF_BTNPOSY + DEF_BTNSZY)) \{\par
+ DisableDialogBox(42);\par
+ PlaySound('E', 14, 5);\par
+\}\par
+\}\par
+\par
+\par
+This post has been edited by diuuude on Apr 6 2006, 10:49 PM\par
+}
+ 

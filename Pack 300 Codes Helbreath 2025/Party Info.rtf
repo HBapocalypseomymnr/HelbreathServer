@@ -1,0 +1,580 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20 RAR: Element.rar\par
+\par
+ Party Info By Vamp\par
+Como les va, quiero dejarles este code que con ayuda de 50cent lo "pude" terminar.\par
+Es el mismisimo code del Party Info del Hb World.\par
+Sin mas que decir se los dejo , espero no me olvide nada.\par
+\par
+\par
+Client.dsw\par
+\par
+en UpdateScreen_OnLoading\par
+\par
+C\'f3digo:\par
+\tab\tab\tab m_hPakFile = CreateFile("sprites\\\\Elements.pak", GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);\par
+\tab\tab\tab if( m_hPakFile != INVALID_HANDLE_VALUE ) \{\par
+\tab\tab\tab\tab\par
+\tab\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY] =\tab\tab\tab new class CSprite(m_hPakFile, &m_DDraw, "Elements", 6, FALSE);\par
+\tab\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY2] =\tab\tab\tab new class CSprite(m_hPakFile, &m_DDraw, "Elements", 3, FALSE);\par
+\tab\tab\tab\tab CloseHandle(m_hPakFile);\par
+\tab\tab\tab\}//party info\par
+\par
+\par
+en InitGameSettings\par
+agregar\par
+C\'f3digo:\par
+m_bShowParty=TRUE ;\par
+luego en InitGameSettings tambien; debajo de donde termina for (i = 0; i < DEF_TEXTDLGMAXLINES; i++) \{\par
+\par
+C\'f3digo:\par
+\tab for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) \{\par
+\tab\tab m_stPartyMember[i].cStatus = 0;\par
+\tab\tab ZeroMemory(m_stPartyMember[i].cName, sizeof(m_stPartyMember[i].cName));\par
+\}//correccion * screemin;\par
+\par
+luego en InitGameSettings tambien; buscamos\par
+C\'f3digo:\par
+for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) ZeroMemory(m_stPartyMemberNameList[i].cName, sizeof(m_stPartyMemberNameList[i].cName));\par
+y lo reemplazamos por :\par
+C\'f3digo:\par
+for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\{\par
+\tab\tab ZeroMemory(m_stPartyMemberNameList[i].cName, sizeof(m_stPartyMemberNameList[i].cName));\par
+\tab\tab m_stPartyMemberNameList[i].iHP = 0;\par
+\tab\tab m_stPartyMemberNameList[i].iMP = 0;\par
+\tab\tab m_stPartyMemberNameList[i].iMaxHP = 0;\par
+\tab\tab m_stPartyMemberNameList[i].iMaxMP = 0;\par
+\tab\tab m_stPartyMemberNameList[i].bIsPoisoned = FALSE;\par
+\tab\}\par
+\par
+Ahora en OnKeyUp:\par
+agregamos :\par
+C\'f3digo:\par
+\tab case 80://'P' VAMP - party info\par
+\tab\tab if( ( m_bCtrlPressed == TRUE ) && ( m_cGameMode == DEF_GAMEMODE_ONMAINGAME ) && (!m_bInputStatus) )\par
+\tab\tab\{\tab\par
+\tab\tab\tab if (m_bShowParty)\par
+\tab\tab\tab\{\tab m_bShowParty = FALSE;\par
+\tab\tab\tab\tab AddEventList( "Party information disabled.", 10 );\}\par
+\tab\tab\tab else\par
+\tab\tab\tab\{\tab m_bShowParty = TRUE;\par
+\tab\tab\tab\tab AddEventList( "Party information enabled.", 10 );\}\par
+\tab\tab\}\par
+\tab\tab break;\par
+ahora , en NotifyMsgHandler: \par
+agregamos el siguiente case\par
+\par
+C\'f3digo:\par
+\tab case DEF_NOTIFY_PARTYMEMBERSTATUS:\par
+\tab\tab cp = (char *)(pData\tab + DEF_INDEX2_MSGTYPE + 2);\par
+\par
+\par
+\tab\par
+\par
+\tab\tab for (i = 0; i <= DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\{\par
+\par
+\tab\tab\tab\tab ip = (int *)cp;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iHP = *ip;\par
+\tab\tab\tab\tab cp += 4;\par
+\tab\tab\tab\tab ip = (int *)cp;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxHP = *ip;\par
+\tab\tab\tab\tab cp += 4;\par
+\tab\tab\tab\tab ip = (int *)cp;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMP = *ip;\par
+\tab\tab\tab\tab cp += 4;\par
+\tab\tab\tab\tab ip = (int *)cp;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxMP = *ip;\par
+\tab\tab\tab\tab cp += 4;\par
+\tab\tab\tab\tab // Poison mode - update   *\par
+                                sp = (short *)cp;//me falto esta parte,  mil disculpas a todos, gracias HBREVIVE por hacerme ver que estaba incompleto.\par
+                                switch (*sp)\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab case 1: m_stPartyMemberNameList[i].bIsPoisoned = TRUE; break;\par
+\tab\tab\tab\tab\tab default: m_stPartyMemberNameList[i].bIsPoisoned = FALSE; break;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab cp += 2;\par
+\tab\tab\tab\tab\par
+\par
+\tab\tab\}\par
+\tab\tab break;\par
+buscar en NotifyMsgHandler\par
+C\'f3digo:\par
+case DEF_NOTIFY_PARTY:\par
+modificar por este:\par
+\par
+C\'f3digo:\par
+case DEF_NOTIFY_PARTY:\par
+\tab\tab cp = (char *)(pData\tab + DEF_INDEX2_MSGTYPE + 2);\par
+\tab\tab sp  = (short *)cp;\par
+\tab\tab sV1 = *sp;\par
+\tab\tab cp += 2;\par
+\tab\tab sp  = (short *)cp;\par
+\tab\tab sV2 = *sp;\par
+\tab\tab cp += 2;\par
+\tab\tab sp  = (short *)cp;\par
+\tab\tab sV3 = *sp;\par
+\tab\tab cp += 2;\par
+\tab\tab switch (sV1) \{\par
+\tab\tab case 1: //\par
+\tab\tab\tab switch (sV2) \{\par
+\tab\tab\tab case 0:\par
+\tab\tab\tab\tab EnableDialogBox(32, NULL, NULL, NULL);\par
+\tab\tab\tab\tab m_stDialogBoxInfo[32].cMode = 9;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 1:\par
+\tab\tab\tab\tab m_iPartyStatus = 1;\par
+\tab\tab\tab\tab m_iTotalPartyMember = NULL;\par
+\tab\tab\tab\tab EnableDialogBox(32, NULL, NULL, NULL);\par
+\tab\tab\tab\tab m_stDialogBoxInfo[32].cMode = 8;\par
+\tab\tab\tab\tab for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab ZeroMemory(m_stPartyMemberNameList[i].cName, sizeof(m_stPartyMemberNameList[i].cName));\par
+\tab\tab\tab\tab\tab m_stPartyMemberNameList[i].iHP = 0;\par
+\tab\tab\tab\tab\tab m_stPartyMemberNameList[i].iMP = 0;\par
+\tab\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxHP = 0;\par
+\tab\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxMP = 0;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_JOINPARTY, NULL, 2, NULL, NULL, m_cMCName);\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case 2: //\par
+\tab\tab\tab m_iPartyStatus = 0;\par
+\tab\tab\tab m_iTotalPartyMember = NULL;\par
+\tab\tab\tab EnableDialogBox(32, NULL, NULL, NULL);\par
+\tab\tab\tab m_stDialogBoxInfo[32].cMode = 10;\par
+\tab\tab\tab for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\tab\{\par
+\tab\tab\tab\tab ZeroMemory(m_stPartyMemberNameList[i].cName, sizeof(m_stPartyMemberNameList[i].cName));\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iHP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxHP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxMP = 0;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case 4:\par
+\tab\tab\tab ZeroMemory(cTxt, sizeof(cTxt));\par
+\tab\tab\tab memcpy(cTxt, cp, 10);\par
+\tab\tab\tab cp += 10;\par
+\par
+\tab\tab\tab switch (sV2) \{\par
+\tab\tab\tab case 0: //\par
+\tab\tab\tab\tab EnableDialogBox(32, NULL, NULL, NULL);\par
+\tab\tab\tab\tab m_stDialogBoxInfo[32].cMode = 9;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 1: //\par
+\tab\tab\tab\tab if (strcmp(cTxt, m_cPlayerName) == 0) \{\par
+\tab\tab\tab\tab\tab m_iPartyStatus = 2;\par
+\tab\tab\tab\tab\tab EnableDialogBox(32, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab m_stDialogBoxInfo[32].cMode = 8;\par
+\tab\tab\tab\tab\tab bSendCommand(MSGID_COMMAND_COMMON, DEF_COMMONTYPE_REQUEST_JOINPARTY, NULL, 2, NULL, NULL, m_cMCName);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab else \{\par
+\tab\tab\tab\tab\tab wsprintf(G_cTxt, NOTIFY_MSG_HANDLER1, cTxt);\par
+\tab\tab\tab\tab\tab AddEventList(G_cTxt, 10);\par
+\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab m_iTotalPartyMember++;\par
+\tab\tab\tab\tab for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\tab\tab if (strlen(m_stPartyMemberNameList[i].cName) == 0) \{\par
+\tab\tab\tab\tab\tab ZeroMemory(m_stPartyMemberNameList[i].cName, sizeof(m_stPartyMemberNameList[i].cName));\par
+\tab\tab\tab\tab\tab memcpy(m_stPartyMemberNameList[i].cName, cTxt, 10);\par
+\tab\tab\tab\tab\tab goto NMH_LOOPBREAK1;\par
+\tab\tab\tab\tab\}\par
+NMH_LOOPBREAK1:;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 2: //\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case 5: //\par
+\tab\tab\tab m_iTotalPartyMember = NULL;\par
+\tab\tab\tab for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\tab\{\par
+\tab\tab\tab\tab ZeroMemory(m_stPartyMemberNameList[i].cName, sizeof(m_stPartyMemberNameList[i].cName));\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iHP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxHP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxMP = 0;\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\tab m_iTotalPartyMember = sV3;\par
+\tab\tab\tab for (i = 1; i <= sV3; i++) \{\par
+\tab\tab\tab\tab ZeroMemory(m_stPartyMemberNameList[i-1].cName, sizeof(m_stPartyMemberNameList[i-1].cName));\par
+\tab\tab\tab\tab memcpy(m_stPartyMemberNameList[i-1].cName, cp, 10);\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i-1].iHP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i-1].iMP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i-1].iMaxHP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i-1].iMaxMP = 0;\par
+\tab\tab\tab\tab cp += 11;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\par
+\tab\tab default:\par
+\tab\tab\tab sp  = (short *)cp;\par
+\tab\tab\tab sV4 = *sp;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case 6:\par
+\tab\tab\tab ZeroMemory(cTxt, sizeof(cTxt));\par
+\tab\tab\tab memcpy(cTxt, cp, 10);\par
+\tab\tab\tab cp += 10;\par
+\par
+\tab\tab\tab switch (sV2) \{\par
+\tab\tab\tab case 0: //\par
+\tab\tab\tab\tab EnableDialogBox(32, NULL, NULL, NULL);\par
+\tab\tab\tab\tab m_stDialogBoxInfo[32].cMode = 7;\par
+\tab\tab\tab\tab break;\par
+\par
+\tab\tab\tab case 1: //\par
+\tab\tab\tab\tab if (strcmp(cTxt, m_cPlayerName) == 0) \{\par
+\tab\tab\tab\tab\tab m_iPartyStatus = 0;\par
+\tab\tab\tab\tab\tab EnableDialogBox(32, NULL, NULL, NULL);\par
+\tab\tab\tab\tab\tab m_stDialogBoxInfo[32].cMode = 6;\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab else \{\par
+\tab\tab\tab\tab\tab wsprintf(G_cTxt, NOTIFY_MSG_HANDLER2 , cTxt);\par
+\tab\tab\tab\tab\tab AddEventList(G_cTxt, 10);\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\tab\tab if (strcmp(m_stPartyMemberNameList[i].cName, cTxt) == 0) \{\par
+\tab\tab\tab\tab\tab ZeroMemory(m_stPartyMemberNameList[i].cName, sizeof(m_stPartyMemberNameList[i].cName));\par
+\tab\tab\tab\tab\tab m_stPartyMemberNameList[i].iHP = 0;\par
+\tab\tab\tab\tab\tab m_stPartyMemberNameList[i].iMP = 0;\par
+\tab\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxHP = 0;\par
+\tab\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxMP = 0;\par
+\tab\tab\tab\tab\tab m_iTotalPartyMember--;\par
+\tab\tab\tab\tab\tab goto NMH_LOOPBREAK2;\par
+\tab\tab\tab\tab\}\par
+NMH_LOOPBREAK2:;\par
+\tab\tab\tab\tab break;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case 7: //\par
+\tab\tab\tab EnableDialogBox(32, NULL, NULL, NULL);\par
+\tab\tab\tab m_stDialogBoxInfo[32].cMode = 9;\par
+\tab\tab\tab break;\par
+\par
+\tab\tab case 8: //\par
+\tab\tab\tab m_iPartyStatus = 0;\par
+\tab\tab\tab m_iTotalPartyMember = NULL;\par
+\tab\tab\tab for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\tab\{\par
+\tab\tab\tab\tab ZeroMemory(m_stPartyMemberNameList[i].cName, sizeof(m_stPartyMemberNameList[i].cName));\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iHP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxHP = 0;\par
+\tab\tab\tab\tab m_stPartyMemberNameList[i].iMaxMP = 0;\par
+\tab\tab\tab\}\par
+\tab\tab\tab break;\par
+\tab\tab\}\par
+\tab\tab break;\par
+\par
+ahora, en UpdateScreen_OnGame\par
+\par
+antes de \par
+C\'f3digo:\par
+if ( (iUpdateRet != 0) && (m_stMCursor.cSelectedObjectType == DEF_SELECTEDOBJTYPE_ITEM) &&\par
+\tab\tab  (m_pItemList[m_stMCursor.sSelectedObjectID] != NULL) )\par
+agregar :\par
+C\'f3digo:\par
+\tab if (m_iPartyStatus > 0 && m_bShowParty == TRUE) DrawPartyStatus(dwTime);\par
+\par
+a continuacion , en Game.cpp, al final de todo agregar la siguiente funcion:\par
+\par
+C\'f3digo:\par
+void CGame::DrawPartyStatus(DWORD dwTime)\par
+\{\par
+\tab int iNth = 0, i, iHPDif, iMPDif;\par
+\tab double dTmp1, dTmp2, dTmp3;\par
+\tab char cName[20], cTemp[256];\par
+\par
+\tab for (i = 0; i <= DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab if (strlen(m_stPartyMemberNameList[i].cName) != 0) \{\par
+\tab\tab\tab wsprintf(cName, "%s", m_stPartyMemberNameList[i].cName);\par
+\tab\tab\tab PutAlignedString(450, 530, 100+(iNth*20), cName, 192,192,192);\par
+\par
+\tab\tab\tab if (m_stPartyMemberNameList[i].bIsPoisoned)\par
+\tab\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY2]->PutSpriteFast(531, 101+(iNth*20), 7, dwTime);\par
+\tab\tab\tab else\par
+\tab\tab\tab\{m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFast(530, 100+(iNth*20), 12, dwTime);\}\par
+\par
+\tab\tab\tab\par
+\par
+\par
+\par
+\tab\tab\tab if (m_stPartyMemberNameList[i].iHP < m_stPartyMemberNameList[i].iMaxHP)\par
+\tab\tab\tab\{\par
+\tab\tab\tab\tab dTmp1 = (double)m_stPartyMemberNameList[i].iHP;\par
+\tab\tab\tab\tab dTmp2 = (double)m_stPartyMemberNameList[i].iMaxHP;\par
+\tab\tab\tab\tab dTmp1 = dTmp1 / dTmp2;\par
+\tab\tab\tab\tab dTmp3 = dTmp1 * 100;\par
+\tab\tab\tab\tab iHPDif = 100 - (int)dTmp3;\par
+\par
+\tab\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFastWidth(530+(100-iHPDif)+1, 100+(iNth*20), 13, iHPDif, dwTime);\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\tab\par
+\tab\tab\tab if (m_stPartyMemberNameList[i].iMP < m_stPartyMemberNameList[i].iMaxMP)\par
+\tab\tab\tab\{\par
+\tab\tab\tab\tab dTmp1 = (double)m_stPartyMemberNameList[i].iMP;\par
+\tab\tab\tab\tab dTmp2 = (double)m_stPartyMemberNameList[i].iMaxMP;\par
+\tab\tab\tab\tab dTmp1 = dTmp1 / dTmp2;\par
+\tab\tab\tab\tab dTmp3 = dTmp1 * 100;\par
+\tab\tab\tab\tab iMPDif = 100 - (int)dTmp3;\par
+\tab\tab\tab\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFastWidth(530+(100-iMPDif)+1, (100+(iNth*20))+8, 13, iMPDif, dwTime);\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\tab iNth++;\par
+\tab\tab\}\par
+\par
+\tab /* TESTING\par
+\par
+\tab PutAlignedString(450, 530, 100, "Tester", 192,192,192);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFast(530, 100, 12, dwTime);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFastWidth(530+(102-98)+1, 100+8, 13, 98, dwTime);\par
+\par
+\tab PutAlignedString(450, 530, 120, "ASDFGHJKLA", 192,192,192);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFast(530, 120, 12, dwTime);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFastWidth(530+(102-75)+1, 120, 13, 75, dwTime);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFastWidth(530+(102-16)+1, 120+8, 13, 16, dwTime);\par
+\par
+\tab PutAlignedString(450, 530, 140, "TesterDead", 192,192,192);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFast(530, 140, 12, dwTime);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFastWidth(530+(102-102)+1, 140, 13, 102, dwTime);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFastWidth(530+(102-102)+1, 140+8, 13, 102, dwTime);\par
+\par
+\tab PutAlignedString(450, 530, 160, "Vamp[GM]", 192,192,192);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFast(530, 160, 12, dwTime);\par
+\tab m_pSprite[DEF_SPRID_INTERFACE_PARTY]->PutSpriteFastWidth(530+(102-35)+1, 160+8, 13, 35, dwTime);\par
+\par
+\tab */\tab\par
+\}\par
+ahora en game.h\par
+agregar\par
+C\'f3digo:\par
+\tab ////////////////////////////\par
+\tab void DrawPartyStatus(DWORD dwTime);\par
+\tab ////////////////////////////\par
+buscar en game.h\par
+C\'f3digo:\par
+\tab struct \{\par
+\tab\tab char cName[12];\par
+\tab\} m_stPartyMemberNameList[DEF_MAXPARTYMEMBERS+1];\par
+y cambiarlo por este :\par
+C\'f3digo:\par
+\tab struct \{\par
+\tab\tab char cName[12];\par
+\tab\tab int iHP;\par
+\tab\tab int iMaxHP;\par
+\tab\tab int iMP;\par
+\tab\tab int iMaxMP;\par
+\tab\tab BOOL bIsPoisoned;\par
+\tab\} m_stPartyMemberNameList[DEF_MAXPARTYMEMBERS+1];\par
+declarar tambien en game.h\par
+C\'f3digo:\par
+BOOL m_bShowParty;\par
+\par
+declarar en NetMessages.h:\par
+C\'f3digo:\par
+#define DEF_NOTIFY_PARTYMEMBERSTATUS\tab\tab\tab\tab\tab 0x0D35\par
+y en SpriteID.h\par
+agregar:\par
+C\'f3digo:\par
+#define DEF_SPRID_INTERFACE_PARTY\tab\tab\tab\tab 80\par
+#define DEF_SPRID_INTERFACE_PARTY2\tab\tab\tab\tab 81\par
+y si no me equivoque en nada eso seria todo lo perteneciente a Client.dsw\par
+ahora vamos a HGserver.dsw\par
+\par
+agregar en NetMessages.h\par
+C\'f3digo:\par
+#define DEF_NOTIFY_PARTYMEMBERSTATUS\tab\tab\tab\tab\tab 0x0D35\par
+en SendNotifyMsg\par
+buscamos \par
+C\'f3digo:\par
+case DEF_NOTIFY_PARTY:\par
+y lo reemplazamos por este:\par
+C\'f3digo:\par
+\tab case DEF_NOTIFY_PARTY:\par
+\tab\tab\par
+\tab\tab switch (sV1) \{\par
+\tab\tab case 4:\par
+\tab\tab case 6:\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV1;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV2;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV3;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab memcpy(cp, pString, 10);\par
+\tab\tab\tab cp += 10;\par
+\tab\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 12 + 10);\par
+\tab\tab\tab SendNotifyMsg(NULL, iToH, DEF_NOTIFY_PARTYMEMBERSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab break;\par
+\tab\tab\par
+\tab\tab case 5:\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV1;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV2;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV3;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab memcpy(cp, pString, sV3*11);\par
+\tab\tab\tab cp += sV3*11;\par
+\tab\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 12 + sV3*11);\par
+\tab\tab\tab SendNotifyMsg(NULL, iToH, DEF_NOTIFY_PARTYMEMBERSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab break;\par
+\tab\tab\par
+\tab\tab default:\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV1;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV2;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV3;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab wp  = (WORD *)cp;\par
+\tab\tab\tab *wp = (WORD)sV4;\par
+\tab\tab\tab cp += 2;\par
+\tab\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 14);\par
+\tab\tab\tab SendNotifyMsg(NULL, iToH, DEF_NOTIFY_PARTYMEMBERSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab break;\par
+\tab\tab\}\par
+\tab\tab break;\par
+ahora buscamos el case DEF_NOTIFY_HP:\par
+\par
+y lo reemplazamos por el siguiente\par
+\par
+C\'f3digo:\par
+case DEF_NOTIFY_HP: // Fixed Party Info by xXx// 50cent\par
+\tab\tab dwp  = (DWORD *)cp;\par
+\tab\tab *dwp = (DWORD)m_pClientList[iToH]->m_iHP;\par
+\tab\tab cp += 4;\par
+\tab\tab dwp  = (DWORD *)cp;\par
+\tab\tab *dwp = (DWORD)m_pClientList[iToH]->m_iMP;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab for(i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\{\par
+\tab\tab\tab iH = m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iIndex[i];\par
+\tab\tab\tab if(m_pClientList[iH] != NULL)\par
+\tab\tab\tab\{\par
+\tab\tab\tab SendNotifyMsg(NULL, iH, DEF_NOTIFY_PARTYMEMBERSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 14);\par
+\tab\tab break;\par
+ahora en SendNotifyMsg tambien agregar el siguiente case:\par
+C\'f3digo:\par
+case DEF_NOTIFY_PARTYMEMBERSTATUS:// 50 cent\par
+\tab for(i = 0; i < m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iTotalMembers; i++)\par
+\tab\{\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = (DWORD)m_pClientList[m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iIndex[i]]->m_iHP;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = (DWORD)iGetMaxHP(m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iIndex[i]);\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = (DWORD)m_pClientList[m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iIndex[i]]->m_iMP;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab ip = (int *)cp;\par
+\tab\tab *ip = (DWORD)iGetMaxMP(m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iIndex[i]);\par
+\tab\tab cp += 4;\par
+               //screemin fix/update :D -  Poison mode\par
+                ip = (int *)cp;\par
+\tab\tab *ip = (DWORD)m_pClientList[m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iIndex[i]]->m_bIsPoisoned;\par
+\tab\tab cp += 2;\par
+\par
+\tab\}\par
+\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6 + (m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iTotalMembers * 18));\par
+\tab break;\par
+y reemplazar los case DEF_NOTIFY_MP y DEF_NOTIFY_SP por estos 2 respectivamente:\par
+\par
+C\'f3digo:\par
+\tab case DEF_NOTIFY_MP: // Fixed Party Info by xXx\par
+\tab\tab dwp  = (DWORD *)cp;\par
+\tab\tab *dwp = (DWORD)m_pClientList[iToH]->m_iMP;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab for(i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\{\par
+\tab\tab\tab iH = m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iIndex[i];\par
+\tab\tab\tab if(m_pClientList[iH] != NULL)\par
+\tab\tab\tab\{\par
+\tab\tab\tab SendNotifyMsg(NULL, iH, DEF_NOTIFY_PARTYMEMBERSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 10);\par
+\tab\tab break;\par
+\par
+\par
+\par
+case DEF_NOTIFY_SP: // Fixed Party Info by xXx\par
+\tab\tab dwp  = (DWORD *)cp;\par
+\tab\tab *dwp = (DWORD)m_pClientList[iToH]->m_iSP;\par
+\tab\tab cp += 4;\par
+\par
+\tab\tab for(i = 0; i < DEF_MAXPARTYMEMBERS; i++)\par
+\tab\tab\{\par
+\tab\tab\tab iH = m_stPartyInfo[m_pClientList[iToH]->m_iPartyID].iIndex[i];\par
+\tab\tab\tab if(m_pClientList[iH] != NULL)\par
+\tab\tab\tab\{\par
+\tab\tab\tab SendNotifyMsg(NULL, iH, DEF_NOTIFY_PARTYMEMBERSTATUS, NULL, NULL, NULL, NULL);\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+\tab\tab iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 10);\par
+\tab\tab break;\par
+esto va en game.cpp si se quiere despues de int CGame::iGetMaxHP(int iClientH);\par
+int CGame::iGetMaxMP(int iClientH)\par
+\{\par
+*int iRet;\par
+\par
+\par
+\par
+\par
+if (m_pClientList[iClientH] == NULL) return 0;\par
+\par
+\par
+\par
+\par
+iRet = (2*m_pClientList[iClientH]->m_iMag) + (2*m_pClientList[iClientH]->m_iLevel) + (m_pClientList[iClientH]->m_iInt/2);\par
+\par
+\par
+return iRet;\par
+\}\par
+\par
+y declararla en game.h\par
+int\tab  iGetMaxMP(int iClientH);\par
+\par
+si no me olvide de nada ahi estariamos con el HGserver.dsw tambien , solo faltaria el sprite.\par
+\par
+aca les dejo el link\par
+http://www.mediafire.com/?44vlu901is2cm1f\par
+\par
+\par
+\par
+espero que les sirva para aquellos que esten por levantar su server , para mi es una funcion muy util sobretodo para las hunts entre otras cosas.les dejo unas imagenes.\par
+}
+ 

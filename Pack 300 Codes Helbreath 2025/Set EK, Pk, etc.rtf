@@ -1,0 +1,295 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang3082{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1515;}\viewkind4\uc1\pard\f0\fs20 Set EK/PK/REP/MAJ/CRIT (By ?\'bf)\par
+HG Sources\par
+\par
+Game.cpp\par
+\par
+Busquen /who y abajo de la funcion agregar:\par
+\par
+C\'f3digo:\par
+\par
+if (memcmp(cp, "/setcrit", 6) == 0) \{\par
+AdminOrder_SetCrit(iClientH, cp, dwMsgSize - 21);;\par
+return;\}\par
+\par
+if (memcmp(cp, "/setek", 6) == 0)\{\par
+AdminOrder_SetEK(iClientH, cp, dwMsgSize - 21);;\par
+return;\}\par
+\par
+if (memcmp(cp, "/setmaj", 7) == 0) \{\par
+AdminOrder_SetMAJ(iClientH, cp, dwMsgSize - 21);;\par
+return;\}\par
+\par
+if (memcmp(cp, "/setrep", 7) == 0) \{\par
+AdminOrder_SetRep(iClientH, cp, dwMsgSize - 21);\par
+;return;\}\par
+\par
+if (memcmp(cp, "/setpk", 6) == 0) \{AdminOrder_SetPK(iClientH, cp, dwMsgSize - 21);;return;\}\par
+Al final del game.cpp Agregar:\par
+\par
+\par
+C\'f3digo:\par
+void CGame::AdminOrder_SetCrit (int iClientH, char *pData, DWORD dwMsgSize)\par
+\{\par
+char seps[] = "= \\t\\n";\par
+char *token, cBuff[256];\par
+class CStrTok *pStrTok;\par
+char *pk;\par
+char cNick[20];\par
+char cPK[5];\par
+char notice[100];\par
+int oldpk;\par
+int i;\par
+if (m_pClientList[iClientH] == NULL)\par
+return;\par
+if ((dwMsgSize) <= 0)\par
+return;\par
+if (m_pClientList[iClientH]->m_iAdminUserLevel == 0)\par
+\{\par
+SendNotifyMsg (NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL,\par
+NULL, NULL);\par
+return;\par
+\}\par
+ZeroMemory (cBuff, sizeof (cBuff));\par
+memcpy (cBuff, pData, dwMsgSize);\par
+pStrTok = new class CStrTok (cBuff, seps);\par
+token = pStrTok->pGet ();\par
+token = pStrTok->pGet ();\par
+if (token == NULL)\par
+\{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy (cNick, token);\par
+pk = pStrTok->pGet ();\par
+if (pk == NULL)\par
+\{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy (cPK, pk);\par
+for (i = 0; i < DEF_MAXCLIENTS; i++)\par
+\{\par
+if ((m_pClientList[i] != NULL)\par
+&& (memcmp (m_pClientList[i]->m_cCharName, cNick, strlen (cNick)) == 0))\par
+\{\par
+oldpk = m_pClientList[i]->m_iSuperAttackLeft;\par
+m_pClientList[i]->m_iSuperAttackLeft = atoi (cPK);\par
+SendNotifyMsg (NULL, i, DEF_NOTIFY_SUPERATTACKLEFT, m_pClientList[i]->m_iSuperAttackLeft, NULL, NULL, NULL);\par
+wsprintf (notice, "Crit Count has been changed for player %s from %d to %d.", m_pClientList[iClientH]->m_cCharName, oldpk, atoi (cPK));\par
+\}\par
+\}\par
+delete pStrTok;\par
+\}\par
+void CGame::AdminOrder_SetEK(int iClientH, char * pData, DWORD dwMsgSize)\par
+\{\par
+char seps[] = "= \\t\\n";\par
+char * token, cBuff[256];\par
+class CStrTok * pStrTok;\par
+char * ek;\par
+char cNick[20];\par
+char cEK[5];\par
+char notice[100];\par
+int oldek;\par
+int i;\par
+\par
+\par
+if (m_pClientList[iClientH] == NULL) return;\par
+if ((dwMsgSize) <= 0) return;\par
+if (m_pClientList[iClientH]->m_iAdminUserLevel <= 3) \{\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);\par
+return;\par
+\}\par
+ZeroMemory(cBuff, sizeof(cBuff));\par
+memcpy(cBuff, pData, dwMsgSize);\par
+pStrTok = new class CStrTok(cBuff, seps);\par
+token = pStrTok->pGet();\par
+token = pStrTok->pGet();\par
+if (token == NULL) \{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy(cNick, token);\par
+ek = pStrTok->pGet();\par
+if (ek == NULL) \{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy(cEK, ek);\par
+for (i = 0; i < DEF_MAXCLIENTS; i++) \{\par
+if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cNick, strlen(cNick)) == 0)) \{\par
+oldek = m_pClientList[i]->m_iEnemyKillCount;\par
+m_pClientList[i]->m_iEnemyKillCount = atoi(cEK);\par
+SendNotifyMsg(NULL, i, DEF_NOTIFY_ENEMYKILLS, m_pClientList[i]->m_iEnemyKillCount, NULL, NULL, NULL); \par
+ZeroMemory(notice, sizeof(notice)); \par
+wsprintf(notice,"Your EK Counts has been changed %d to %d.",oldek,atoi(cEK));\par
+ShowClientMsg(iClientH, notice); \par
+\}\par
+\par
+\par
+\}\par
+delete pStrTok;\par
+\}\par
+\par
+\par
+\par
+\par
+void CGame::AdminOrder_SetMAJ (int iClientH, char *pData, DWORD dwMsgSize)\par
+\{\par
+char seps[] = "= \\t\\n";\par
+char *token, cBuff[256];\par
+class CStrTok *pStrTok;\par
+char *pk;\par
+char cNick[20];\par
+char cPK[5];\par
+char notice[100];\par
+int oldpk;\par
+int i;\par
+if (m_pClientList[iClientH] == NULL)\par
+return;\par
+if ((dwMsgSize) <= 0)\par
+return;\par
+if (m_pClientList[iClientH]->m_iAdminUserLevel == 0)\par
+\{\par
+SendNotifyMsg (NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL,\par
+NULL, NULL);\par
+return;\par
+\}\par
+ZeroMemory (cBuff, sizeof (cBuff));\par
+memcpy (cBuff, pData, dwMsgSize);\par
+pStrTok = new class CStrTok (cBuff, seps);\par
+token = pStrTok->pGet ();\par
+token = pStrTok->pGet ();\par
+if (token == NULL)\par
+\{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy (cNick, token);\par
+pk = pStrTok->pGet ();\par
+if (pk == NULL)\par
+\{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy (cPK, pk);\par
+for (i = 0; i < DEF_MAXCLIENTS; i++)\par
+\{\par
+if ((m_pClientList[i] != NULL) && (memcmp (m_pClientList[i]->m_cCharName, cNick, strlen (cNick)) == 0))\par
+\{\par
+oldpk = m_pClientList[i]->m_iGizonItemUpgradeLeft;\par
+m_pClientList[i]->m_iGizonItemUpgradeLeft = atoi (cPK);\par
+SendNotifyMsg (NULL, i, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[i]->m_iGizonItemUpgradeLeft, NULL, NULL, NULL);\par
+wsprintf (notice, "Majestic Count has been changed for player %s from %d to %d.", m_pClientList[iClientH]->m_cCharName, oldpk, atoi (cPK));\par
+\}\par
+\}\par
+delete pStrTok;\par
+\}\par
+void CGame::AdminOrder_SetPK (int iClientH, char *pData, DWORD dwMsgSize)\par
+\{\par
+char seps[] = "= \\t\\n";\par
+char *token, cBuff[256];\par
+class CStrTok *pStrTok;\par
+char *pk;\par
+char cNick[20];\par
+char cPK[5];\par
+char notice[100];\par
+int oldpk;\par
+int i;\par
+if (m_pClientList[iClientH] == NULL)\par
+return;\par
+if ((dwMsgSize) <= 0)\par
+return;\par
+if (m_pClientList[iClientH]->m_iAdminUserLevel == 0)\par
+\{\par
+SendNotifyMsg (NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL,\par
+NULL, NULL);\par
+return;\par
+\}\par
+ZeroMemory (cBuff, sizeof (cBuff));\par
+memcpy (cBuff, pData, dwMsgSize);\par
+pStrTok = new class CStrTok (cBuff, seps);\par
+token = pStrTok->pGet ();\par
+token = pStrTok->pGet ();\par
+if (token == NULL)\par
+\{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy (cNick, token);\par
+pk = pStrTok->pGet ();\par
+if (pk == NULL)\par
+\{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy (cPK, pk);\par
+for (i = 0; i < DEF_MAXCLIENTS; i++)\par
+\{\par
+if ((m_pClientList[i] != NULL) && (memcmp (m_pClientList[i]->m_cCharName, cNick, strlen (cNick)) == 0))\par
+\{\par
+oldpk = m_pClientList[i]->m_iPKCount;\par
+m_pClientList[i]->m_iPKCount = atoi (cPK);\par
+SendNotifyMsg (NULL, i, DEF_NOTIFY_PKPENALTY, m_pClientList[i]->m_iPKCount, NULL, NULL, NULL);\par
+wsprintf (notice, "EK Count has been changed for player %s from %d to %d.", m_pClientList[iClientH]->m_cCharName, oldpk, atoi (cPK));\par
+\}\par
+\}\par
+delete pStrTok;\par
+\}\par
+void CGame::AdminOrder_SetRep(int iClientH, char *pData, DWORD dwMsgSize)\par
+\{\par
+char seps[] = "= \\t\\n";\par
+char * token, cBuff[256];\par
+class CStrTok * pStrTok;\par
+char * rep;\par
+char cNick[20];\par
+char cRep[5];\par
+char notice[100];\par
+int oldrep;\par
+int i;\par
+if (m_pClientList[iClientH] == NULL) return;\par
+if ((dwMsgSize) <= 0) return;\par
+if (m_pClientList[iClientH]->m_iAdminUserLevel == 0)\par
+\{\par
+SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, NULL, NULL, NULL, NULL);\par
+return;\par
+\}\par
+ZeroMemory(cBuff, sizeof(cBuff));\par
+memcpy(cBuff, pData, dwMsgSize);\par
+pStrTok = new class CStrTok(cBuff, seps);\par
+token = pStrTok->pGet();\par
+token = pStrTok->pGet();\par
+if (token == NULL) \{\par
+delete pStrTok;\par
+return;\par
+\} \par
+strcpy(cNick, token);\par
+rep = pStrTok->pGet();\par
+if (rep == NULL) \{\par
+delete pStrTok;\par
+return;\par
+\}\par
+strcpy(cRep, rep);\par
+for (i = 0; i < DEF_MAXCLIENTS; i++) \{\par
+if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cNick, strlen(cNick)) == 0)) \{\par
+oldrep = m_pClientList[i]->m_iRating;\par
+m_pClientList[i]->m_iRating=atoi(cRep);\par
+wsprintf(notice,"Your Reputation Points change %d to %d.",oldrep,atoi(cRep));\par
+ShowRepNotice(iClientH,notice);\par
+\}\par
+\}\par
+delete pStrTok;\par
+\}\par
+En Game.h Agregar:\par
+C\'f3digo:\par
+void AdminOrder_SetCrit (int iClientH, char *pData, DWORD dwMsgSize);\par
+void AdminOrder_SetEK (int iClientH, char *pData, DWORD dwMsgSize);\par
+void AdminOrder_SetMAJ (int iClientH, char *pData, DWORD dwMsgSize);\par
+void AdminOrder_SetRep (int iClientH, char *pData, DWORD dwMsgSize);\par
+void AdminOrder_SetPK (int iClientH, char *pData, DWORD dwMsgSize);\par
+PD: Despues de editar 500 veces y pasarme 2:35 horas pude subirlo wii \u9829?\par
+\par
+\par
+// Post original de ComunidadMH.com: http://www.comunidadmh.com/showthread.php?49-Set-EK-PK-REP-MAJ-CRIT-(By-\'bf)#ixzz2EQOYhtOE\par
+}
+ 

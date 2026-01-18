@@ -1,0 +1,43 @@
+Fixes:
+Fixed The StormBringer Bug.
+Fixed ArmorBreak Spell Bug.
+Fixed The Party Bug.
+Fixed The HeldenianResultCalculation Bug.
+Fixed The ForceRecall Bug.
+Fixed The Completion/warehouse Bug.
+Fixed The Day/Night Bug.
+Fixed The AdminCommand /time.
+Fixed The Annoying Alert Msg When LogIn on Game.
+Fixed The Inventory Jumble Bug.
+Fixed The Shop/Bs/Wh/Wt Bug.
+Fixed The Directional Bow Effect.
+Fixed Hammer Stripping.
+Fixes Majestic Points.
+Fixes Majestic Stats Change.
+Fixed Majestic Upgrade.
+Fixed Farming Bug.
+Fixed HeroCape Upgrade.
+Fixed The Router Problem When Map Change HGServer.
+
+Addons:
+Added AutoClearMap.
+Added EkAnnouncer.
+Added The Apocalypse Thunder Complement.
+Added HeroItemChecker
+Added Anti-Hack /rollback.
+Added The Comand /summonguild.
+Added The Command /getskills.
+Added The Command /dkset.
+Added The Command /adminattack.
+
+Changes:
+Changed The Way Of Npc Config.
+
+Removed:
+Magic Scan
+ArmorDye
+
+Coming:
+Heldenian 1 and 2
+Apocalypse
+Fully Working...

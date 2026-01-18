@@ -1,0 +1,50 @@
+Bueno hola, esto es algo muy sencillo pero que a muchos les vendrá bien
+
+muchas veces creamos un wand ms99 y nos gasta más mana que un ms60
+
+por qué es esto? Porque en la mayor?*a de los client el máximo de MS es 80, pero esto se modifica facilmente:
+
+1) Buscamos en el Game.cpp del HG:
+
+Code:
+	m_pClientList[iClientH]->m_iManaSaveRatio    += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue4;
+				if (m_pClientList[iClientH]->m_iManaSaveRatio > 80) m_pClientList[iClientH]->m_iManaSaveRatio = 80;
+				break;cambiamos los 80 por el número que querramos
+
+2) devuelta en el Game.cpp buscamos:
+
+Code:
+				m_pClientList[iClientH]->m_iManaSaveRatio += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
+				// ¸¶³ª Àý°¨·üÀº ÃÖ´ë 80%
+				if (m_pClientList[iClientH]->m_iManaSaveRatio > 80) m_pClientList[iClientH]->m_iManaSaveRatio = 80;
+				break;y volvemos a cambiar el 80 por el mismo número que pusimos antes
+
+3) (AVISO: NOSE SI HACEN FALTA ESOS DOS PASOS ANTERIORES, CUALQUIER COSA QUE ALGUIEN QUE SEPA MÁS LO ACLARE) Buscamos en el Game.cpp del client:
+
+Code:
+	if (iManaSave > 80) iManaSave = 80;
+	iManaCost = m_pMagicCfgList[iMagicNo]->m_sValue1;
+	if (m_bIsSafeAttackMode) iManaCost += (iManaCost/2) - (iManaCost / 10);
+	if (iManaSave > 0)Cambiamos los 80 por el MAX MS que querramos
+
+y si quieren cambiarle el MS particularmente a un wand, pueden hacerlo ah?* justo arriba de ese último code que les aparece esto:
+
+Code:
+		{	if(      strcmp( m_pItemList[i]->m_cName, "MagicWand(MS10)" ) == 0)		iManaSave += 10;
+			else if( strcmp( m_pItemList[i]->m_cName, "MagicWand(MS20)" ) == 0)		iManaSave += 20;
+			else if( strcmp( m_pItemList[i]->m_cName, "MagicWand(MS30-LLF)" ) == 0) iManaSave += 30;
+			else if( strcmp( m_pItemList[i]->m_cName, "WizMagicWand(MS10)" ) == 0)	iManaSave += 10;
+			else if( strcmp( m_pItemList[i]->m_cName, "WizMagicWand(MS20)" ) == 0)	iManaSave += 20;
+			else if( strcmp( m_pItemList[i]->m_cName, "MagicNecklace(MS10)" ) == 0) iManaSave += 10;
+			else if( strcmp( m_pItemList[i]->m_cName, "DarkMageMagicStaff" ) == 0)	iManaSave += 25;
+			else if( strcmp( m_pItemList[i]->m_cName, "DarkMageMagicStaffW" ) == 0) iManaSave += 25;
+			else if( strcmp( m_pItemList[i]->m_cName, "DarkMageMagicWand" ) == 0)	iManaSave += 28;
+			else if( strcmp( m_pItemList[i]->m_cName, "NecklaceOfLiche") ==0)   	iManaSave += 15;
+			// Snoopy: v351 wands
+			else if( strcmp( m_pItemList[i]->m_cName, "DarkMageTempleWand" ) == 0)	iManaSave += 28;
+			else if( strcmp( m_pItemList[i]->m_cName, "BerserkWand(MS.20)" ) == 0)  iManaSave += 20;
+			else if( strcmp( m_pItemList[i]->m_cName, "BerserkWand(MS.10)" ) == 0)  iManaSave += 10;
+			else if( strcmp( m_pItemList[i]->m_cName, "KlonessWand(MS.20)" ) == 0)	iManaSave += 20;
+			else if( strcmp( m_pItemList[i]->m_cName, "KlonessWand(MS.10)" ) == 0)	iManaSave += 10;
+			else if( strcmp( m_pItemList[i]->m_cName, "ResurWand(MS.20)" ) == 0)	iManaSave += 20;
+			else if( strcmp( m_pItemList[i]->m_cName, "ResurWand(MS.10)" ) == 0)	iManaSave += 10;by jenzo =P

@@ -1,0 +1,16 @@
+CLIENTE
+
+abrimos el wmain.cpp
+
+y buscamos:
+
+
+	wc.hIcon
+
+y toda la linea la reemplazamos por:
+
+
+
+
+	wc.hIcon         = NULL;
+

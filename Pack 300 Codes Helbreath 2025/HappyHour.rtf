@@ -1,0 +1,346 @@
+[DEDICATORIO] Happy Hour para kerb
+No se los creditos, Me los quedo . Mentira 
+
+Vamos al Game.cpp del HG Server y agregamos : 
+
+
+
+C�digo:
+//Happy para vos xD
+void CGame::HappyHuor()
+{
+SYSTEMTIME SysTime;
+GetLocalTime(&SysTime);
+DWORD dwTime = timeGetTime();
+
+switch (SysTime.wDayOfWeek)
+{
+case 1:
+dwHappyHourTime = dwTime;
+m_bHappyHour = TRUE;
+break;
+case 2:
+dwHappyHourTime = dwTime;
+m_bHappyHour = TRUE;
+break;
+case 3:
+dwHappyHourTime = dwTime;
+m_bHappyHour = TRUE;
+break;
+case 4:
+dwHappyHourTime = dwTime;
+m_bHappyHour = TRUE; 
+// Happy Hour by MrKrhiz para MundoHelbreath & Helbreath&Mas
+break;
+case 5:
+dwHappyHourTime = dwTime;
+m_bHappyHour = TRUE;
+break;
+case 6:
+dwHappyHourTime = dwTime;
+m_bHappyHour = TRUE;
+break;
+case 0:
+dwHappyHourTime = dwTime;
+m_bHappyHour = TRUE;
+break;
+}
+StarHappyHour();
+}
+
+void CGame::StarHappyHour()
+{
+int i;
+
+for (i = 0; i < DEF_MAXCLIENTS; i++) {
+if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
+SendNotifyMsg(NULL, i, DEF_NOTIFY_HAPPYHOURSTAR, NULL, NULL, NULL, NULL);
+}
+}
+}
+
+void CGame::EndHappyHour()
+{
+int i;
+
+for (i = 0; i < DEF_MAXCLIENTS; i++) {
+if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
+SendNotifyMsg(NULL, i, DEF_NOTIFY_HAPPYHOUREND, NULL, NULL, NULL, NULL);
+}
+}
+m_bHappyHour = FALSE;
+}
+
+Buscamos:
+
+
+
+C�digo:
+bRet = _bDecodePlayerDatafileContents(iClientH, cp, dwSize - 19);
+
+Despues del return } agregar:
+
+
+
+C�digo:
+if (m_bHappyHour == TRUE)
+{
+StarHappyHour();
+}
+Despues buscar:
+
+
+
+C�digo:
+if ( (m_pNpcList[iNpcH]->m_bIsSummoned != TRUE) && (cAttackerType == DEF_OWNERTYPE_PLAYER) &&
+
+modificamos esto:
+
+
+
+C�digo:
+iExp = (m_pNpcList[iNpcH]->m_iExp/3);
+
+por esto:
+
+
+
+C�digo:
+//Happy Hour para vos 
+if (m_bHappyHour == TRUE){
+iExp = (m_pNpcList[iNpcH]->m_iExp);
+}
+else { iExp = (m_pNpcList[iNpcH]->m_iExp/3);}
+
+Buscamos ; 
+
+C�digo:
+dV2 = (double)pNpc->m_iExp;
+
+Modificamos todos los cases por estos
+
+
+
+C�digo:
+case 1:
+dV2 = (double)pNpc->m_iExp;
+dV3 = 25.0f/100.0f;
+dV1 = dV2 * dV3;
+if (m_bHappyHour == TRUE)
+{
+pNpc->m_iExp += (int)dV1*2;
+} // >>>Happy Hour MrKrhiz <<<
+else {pNpc->m_iExp += (int)dV1;}
+break;
+case 2:
+dV2 = (double)pNpc->m_iExp;
+dV3 = 30.0f/100.0f;
+dV1 = dV2 * dV3;
+if (m_bHappyHour == TRUE)
+{
+pNpc->m_iExp += (int)dV1*2;
+}
+else {pNpc->m_iExp += (int)dV1;}
+break;
+case 3: // Absorbing Physical Damage
+if (pNpc->m_iAbsDamage > 0) {
+pNpc->m_cSpecialAbility = NULL;
+cSA = NULL;
+}
+else {
+iTemp = 20 + iDice(1, 60);
+pNpc->m_iAbsDamage -= iTemp;
+if (pNpc->m_iAbsDamage < -90) pNpc->m_iAbsDamage = -90;
+}
+dV2 = (double)pNpc->m_iExp;
+dV3 = (double)abs(pNpc->m_iAbsDamage)/100.0f;
+dV1 = dV2 * dV3;
+if (m_bHappyHour == TRUE)
+{
+pNpc->m_iExp += (int)dV1*2;
+}
+else {pNpc->m_iExp += (int)dV1;}
+break;
+
+case 4: // Absorbing Magical Damage
+if (pNpc->m_iAbsDamage < 0) {
+// ±âº»ÀûÀ¸·Î ¹°¸® ´ë¹ÌÁö Àý°¨ ´É·ÂÀÌ ÀÖ´Â °æ¿ì ¸¶¹ý ´ë¹ÌÁö Àý°¨Àº Àû¿ëµÇÁö ¾Ê´Â´Ù.
+pNpc->m_cSpecialAbility = NULL;
+cSA = NULL;
+}
+else {
+iTemp = 20 + iDice(1, 60);
+pNpc->m_iAbsDamage += iTemp;
+if (pNpc->m_iAbsDamage > 90) pNpc->m_iAbsDamage = 90;
+}
+dV2 = (double)pNpc->m_iExp;
+dV3 = (double)(pNpc->m_iAbsDamage)/100.0f;
+dV1 = dV2 * dV3;
+if (m_bHappyHour == TRUE)
+{
+pNpc->m_iExp += (int)dV1*2;
+}
+else {pNpc->m_iExp += (int)dV1;}
+break;
+
+case 5:
+dV2 = (double)pNpc->m_iExp;
+dV3 = 15.0f/100.0f;
+dV1 = dV2 * dV3;
+if (m_bHappyHour == TRUE)
+{
+pNpc->m_iExp += (int)dV1*2;
+}
+else {pNpc->m_iExp += (int)dV1;}
+break;
+
+case 6:
+case 7:
+dV2 = (double)pNpc->m_iExp;
+dV3 = 20.0f/100.0f;
+dV1 = dV2 * dV3;
+if (m_bHappyHour == TRUE)
+{
+pNpc->m_iExp += (int)dV1*2;
+}
+else {pNpc->m_iExp += (int)dV1;}
+break;
+
+case 8:
+dV2 = (double)pNpc->m_iExp;
+dV3 = 25.0f/100.0f;
+dV1 = dV2 * dV3;
+if (m_bHappyHour == TRUE)
+{
+pNpc->m_iExp += (int)dV1*2;
+}
+else {pNpc->m_iExp += (int)dV1;}
+break;
+
+buscamos:
+
+C�digo:
+m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
+
+& Lo modificamos por esto: 
+
+
+
+C�digo:
+//Happy Hour para vos
+if (m_bHappyHour == TRUE)
+{
+m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust*2;
+}
+else {m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;}
+
+Aparece varias veces checkeen
+
+Seguimos.. Buscamos : 
+
+
+
+C�digo:
+if ((dwTime - m_dwGameTime3) > 3000) {
+
+Vamos arriba yy agregamos 
+
+
+C�digo:
+if (m_bHappyHour == TRUE)
+{
+if((dwTime - dwHappyHourTime) == 3600000)
+{
+EndHappyHour();
+}
+}
+buscamos:
+
+
+
+C�digo:
+case DEF_NOTIFY_AGRICULTURENOAREA:
+
+Despues del Break ; Agregamos : 
+
+
+
+C�digo:
+case DEF_NOTIFY_HAPPYHOURSTAR:
+case DEF_NOTIFY_HAPPYHOUREND:
+iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 6);
+break;
+Vamos Netmesagges.h agregamos : 
+
+
+C�digo:
+#define DEF_NOTIFY_HAPPYHOURSTAR 0x100
+#define DEF_NOTIFY_HAPPYHOUREND 0x101
+
+En el Game.h Agregamos
+
+
+
+C�digo:
+//HappyHour para vos
+BOOL m_bHappyHour;
+DWORD dwHappyHourTime;
+
+void EndHappyHour();
+void StarHappyHour();
+void HappyHuor();
+CLIENT. BUSCAMOS. :
+
+
+
+C�digo:
+case DEF_NOTIFY_0BE8:
+
+Y despues del break; agregamos : 
+
+
+
+C�digo:
+//HappyHour para vos
+case DEF_NOTIFY_HAPPYHOURSTAR:
+SetTopMsg("Happy Hour has been started info by MrKrhiz...", 10);
+m_bHappyHour = TRUE;
+break;
+
+case DEF_NOTIFY_HAPPYHOUREND:
+SetTopMsg("HappyHour finished info by MrKrhiz", 10);
+m_bHappyHour = FALSE;
+break;
+buscar:
+
+C�digo:
+wsprintf( G_cTxt, "frames : %d", m_sFPS );
+
+Dspues de la llavesita agregamos
+
+
+
+C�digo:
+//HappyHour para vos 
+if (m_bHappyHour == TRUE)
+{
+wsprintf( G_cTxt, "HappyHour actived.");
+PutString( 10, 88, G_cTxt, RGB(255,128,255) );
+}
+Vamos Game.h agregamos : 
+
+
+
+C�digo:
+BOOL m_bHappyHour;
+Y en el NetMessaage.h agregamos
+
+
+
+C�digo:
+#define DEF_NOTIFY_HAPPYHOURSTAR                     0x100
+#define DEF_NOTIFY_HAPPYHOUREND                      0x101
+
+Bueno con eso terminamos un poco largito no? , bueno este code lo tengo hace muchisimo tiempo en mi primer proyecto Arg lo vio en mi pc por team, el sabe que yo lo tenia .. La verdad tengo una carpeta llena de codes, No se de donde lo saque pero esta modificado por mi, Disfruntenlo fue dedicado a kerb que lo necesitaba aqui esta .. 
+
+Chau 

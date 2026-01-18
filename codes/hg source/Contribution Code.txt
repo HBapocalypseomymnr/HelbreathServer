@@ -1,0 +1,39 @@
+So heres my contribution code.
+it will make all players Contribuion how u want
+
+so first search in game.cpp 
+
+CODE  
+case 61:
+   if (_bGetIsStringIsNumber(token) == FALSE) {
+    wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); 
+    PutLogList(cTxt);
+    delete pContents;
+    delete pStrTok;
+    return FALSE;
+   }
+cReadModeA = 0;
+   break; 
+
+
+
+then replace it with 
+
+CODE  
+case 61:
+   if (_bGetIsStringIsNumber(token) == FALSE) {
+    wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName); 
+    PutLogList(cTxt);
+    delete pContents;
+    delete pStrTok;
+    return FALSE;
+   }
+
+   m_pClientList[iClientH]->m_iContribution = atoi(token);
+   // Contribution Code By Treax
+   if(m_pClientList[iClientH]->m_iContribution <= 1) {m_pClientList[iClientH]->m_iContribution = 2000;
+   }
+   cReadModeA = 0;
+   break; 
+
+

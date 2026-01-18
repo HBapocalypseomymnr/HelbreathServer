@@ -1,0 +1,142 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\lang11274\f0\fs20\par
+Apeticion de Gigia este es el armor break que mas recomiendo usar para un server fast.\par
+100% works\par
+100% Strip.\par
+No se de quiene son los Creditos ya que el code lo saque de los Sources del HB Underlord.\par
+\par
+Buscar lo siguiente :\par
+\par
+C\'f3digo:\par
+case DEF_MAGICTYPE_DAMAGE_AREA_ARMOR_BREAK:\par
+y lo remplazan por :\par
+\par
+C\'f3digo:\par
+case DEF_MAGICTYPE_DAMAGE_AREA_ARMOR_BREAK:\par
+    for (iy = dY - m_pMagicConfigList[sType]->m_sValue3; iy <= dY + m_pMagicConfigList[sType]->m_sValue3; iy++)\par
+     for (ix = dX - m_pMagicConfigList[sType]->m_sValue2; ix <= dX + m_pMagicConfigList[sType]->m_sValue2; ix++) \{\par
+      m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);\par
+      if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) \{\par
+       Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);\par
+       ArmorLifeDecrement(iClientH,sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue10);\par
+      \}\par
+\par
+      m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);\par
+      if ( (cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&\par
+       (m_pClientList[sOwnerH]->m_iHP > 0) ) \{\par
+        if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) \{\par
+         Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);\par
+         ArmorLifeDecrement(iClientH,sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue10);\par
+        \}\par
+       \}\par
+     \}\par
+     break;\par
+\par
+\par
+Buscar la siguiente Funcion:\par
+\par
+\par
+C\'f3digo:\par
+void CGame::ArmorLifeDecrement(int iAttackerH, int iTargetH, char cOwnerType, int iValue)\par
+\par
+y luego remplazar por:\par
+\par
+C\'f3digo:\par
+void CGame::ArmorLifeDecrement(int iAttackerH, int iTargetH, char cOwnerType, int iValue)\par
+\{\par
+\tab int iTemp;\par
+\par
+\tab if (m_pClientList[iAttackerH] == NULL) return;\par
+\tab switch (cOwnerType) \{\par
+\tab case DEF_OWNERTYPE_PLAYER:\par
+\tab  if (m_pClientList[iTargetH] == NULL) return;\par
+\tab  break;\par
+\par
+\tab case DEF_OWNERTYPE_NPC: return;\par
+\tab default: return;\par
+\tab\}\par
+\par
+\tab if (m_pClientList[iAttackerH]->m_cSide == m_pClientList[iTargetH]->m_cSide) return;\par
+\par
+\tab iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];\par
+\tab if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) \{\par
+\tab  if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\par
+\tab  if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) \{\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);  \par
+\tab  \}\par
+\tab\}\par
+\par
+\tab iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];\par
+\tab if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) \{\par
+\par
+\par
+\tab  if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\par
+\tab  if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) \{\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);  \par
+\tab  \}\par
+\tab\}\par
+\par
+\tab iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS];\par
+\tab if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) \{\par
+\par
+\tab  if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\par
+\tab  if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) \{\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);  \par
+\tab  \}\par
+\tab\}\par
+\par
+\tab iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];\par
+\tab if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) \{\par
+\par
+\tab  if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\par
+\tab  if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) \{\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);  \par
+\tab  \}\par
+\tab\}\par
+\par
+\tab iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD];\par
+\tab if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != NULL)) \{\par
+\par
+\tab  if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\par
+\tab  if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) \{\par
+\tab   m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;\par
+\tab   SendNotifyMsg(NULL, iTargetH, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, NULL, NULL);\par
+\tab   ReleaseItemHandler(iTargetH, iTemp, TRUE);  \par
+\tab  \}\par
+\tab\}\par
+\}\par
+\par
+finalmente van a su carpeta y buscan la magia Armor Break y la remplazan por :\par
+\par
+C\'f3digo:\par
+magic = 66  Armor-Break  28 0 0 90 1 1 7 6 17 7 6 17 15 0  0 200 1  1 1\par
+}
+ 
