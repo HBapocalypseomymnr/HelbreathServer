@@ -1,6 +1,6 @@
 [FILE-DATE]
 
-file-saved-date: 2026 1 18 21 47
+file-saved-date: 2026 1 19 0 21
 
 [NAME-ACCOUNT]
 
@@ -47,7 +47,7 @@ underwear-status = 1
 hunger-status    = 100
 timeleft-shutup  = 0
 timeleft-rating  = 0
-timeleft-force-recall  = 1200
+timeleft-force-recall  = 60
 timeleft-firm-staminar = 0
 admin-user-level = 0
 penalty-block-date = 0 0 0

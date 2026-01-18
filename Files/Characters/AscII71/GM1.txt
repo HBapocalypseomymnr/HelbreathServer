@@ -1,6 +1,6 @@
 [FILE-DATE]
 
-file-saved-date: 2026 1 18 22 31
+file-saved-date: 2026 1 19 0 20
 
 [NAME-ACCOUNT]
 
@@ -14,8 +14,8 @@ character-location   = NONE
 character-guild-name = NONE
 character-guild-GUID = -1
 character-guild-rank = -1
-character-loc-map = gshop_1
-character-loc-x   = 55
+character-loc-map = cityhall_1
+character-loc-x   = 50
 character-loc-y   = 41
 
 character-HP       = 1452
@@ -47,7 +47,7 @@ underwear-status = 4
 hunger-status    = 100
 timeleft-shutup  = 0
 timeleft-rating  = 0
-timeleft-force-recall  = 1200
+timeleft-force-recall  = 60
 timeleft-firm-staminar = 0
 admin-user-level = 4
 penalty-block-date = 0 0 0
@@ -60,7 +60,7 @@ character-contribution = 0
 character-war-contribution = 0
 character-quest-completed = 0
 special-event-id = 0
-super-attack-left = 7
+super-attack-left = 37
 reserved-fightzone-id = 0 0 0
 special-ability-time = 0
 locked-map-name = NONE
@@ -74,14 +74,14 @@ gizon-item-upgade-left = 0
 
 
 appr1 = 1316
-appr2 = 0
+appr2 = -4096
 appr3 = 0
 appr4 = 0
 appr-color = 0
 
 [ITEMLIST]
 
-character-item = Gold                 2111661 2 29951 12395 118 0 0 0 0 0 0
+character-item = Gold                 2111783 2 29951 12395 118 0 0 0 0 0 0
 character-item = Tomahoc              1 2 900 67 118 7 0 0 0 500 3449344
 
 
@@ -92,7 +92,7 @@ character-item = Tomahoc              1 2 900 67 118 7 0 0 0 500 3449344
 //------------------012345678901234567890123456789012345678901234567890
 magic-mastery     = 1110000000111110000011011111101111111110111111110011011011001011111000011110010011100000001100010000
 skill-mastery     = 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-skill-SSN     = 0 0 0 0 42 0 0 0 0 0 78 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+skill-SSN     = 0 0 0 0 45 0 0 0 0 0 78 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 [ITEM-EQUIP-STATUS]
 
 item-equip-status = 00000000000000000000000000000000000000000000000000
