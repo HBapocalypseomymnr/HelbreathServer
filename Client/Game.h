@@ -663,6 +663,9 @@ public:
 	void PutString_SprNum(int iX, int iY, char * pStr, short sR, short sG, short sB);
 	void DrawShadowDialog(short sX, short sY, int dialognum);
 	void DrawShadowDialog2(short sX, short sY, int dialognum);
+	void DrawShadowMenu(short x, short y, short x2, short y2);
+	void DrawDialogShadowPixels(int mode, int count, short x, short y);
+	void DrawShadowMenu_DialogBorders(short sX, short sY, short szX, short szY);
 	void PutCenterString_SpriteFont(int iX1, int iX2, int iY, const char *pStr, short sR, short sG, short sB);
 	void LogRecvMsgHandler(char * pData);
 	void LogResponseHandler(char * pData);

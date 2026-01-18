@@ -7971,6 +7971,37 @@ void CGame::DrawShadowDialog2(short sX, short sY, int dialognum)
 	m_DDraw.DrawDialogShadowBox(sX, sY, limitX, limitY);
 }
 
+void CGame::DrawShadowMenu(short x, short y, short x2, short y2)
+{
+	m_DDraw.DrawShadowBox(x, y, x2, y2);
+	m_DDraw.DrawShadowBox(x, y, x2, y2);
+}
+
+void CGame::DrawDialogShadowPixels(int mode, int count, short x, short y)
+{
+	switch (mode) {
+	case 1:
+		for (int d = 0; d < count; d++) {
+			m_DDraw.PutPixel(x + d, y, 73, 58, 42);
+		}
+		break;
+	case 2:
+		for (int d = 0; d < count; d++) {
+			m_DDraw.PutPixel(x, y + d, 73, 58, 42);
+		}
+		break;
+	}
+}
+
+void CGame::DrawShadowMenu_DialogBorders(short sX, short sY, short szX, short szY)
+{
+	DrawDialogShadowPixels(1, szX, sX, sY);
+	DrawDialogShadowPixels(1, szX, sX, sY + szY);
+	DrawDialogShadowPixels(1, szX, sX, sY + 23);
+	DrawDialogShadowPixels(2, szY, sX, sY);
+	DrawDialogShadowPixels(2, szY + 1, sX + szX, sY);
+}
+
 void CGame::PutCenterString_SpriteFont(int iX1, int iX2, int iY, const char *pStr, short sR, short sG, short sB)
 {
 	int iXpos, iR, iG, iB;
@@ -32596,22 +32627,28 @@ void CGame::DrawDialogBox_Bank(short msX, short msY, short msZ, char cLB)
 	double d1, d2, d3;
 	char cItemColor, cStr1[64], cStr2[64], cStr3[64];
 	bool bFlag = false;
+	DWORD dwTime = m_dwCurTime;
 
 	sX = m_stDialogBoxInfo[14].sX;
 	sY = m_stDialogBoxInfo[14].sY;
 	szX = m_stDialogBoxInfo[14].sSizeX - 5;
+	short sizeX = m_stDialogBoxInfo[14].sSizeX;
 
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 21);
+	// New shadow dialog style (V13)
+	DrawShadowDialog2(sX, sY, 14);
+	PutCenterString_SpriteFont(sX, sX + sizeX, sY + 3, "WareHouse", 255, 255, 255);
+
 	ZeroMemory( cStr1, sizeof(cStr1) );
 	ZeroMemory( cStr2, sizeof(cStr2) );
 	ZeroMemory( cStr3, sizeof(cStr3) );
-	iLoc = 45;
+	iLoc = 47;
+
+	m_pSprite[DEF_SPRID_INTERFACE_SPRFONTS]->PutSpriteFast(sX + 30, sY + 295, 19, dwTime);
 
 	switch (m_stDialogBoxInfo[14].cMode) {
 	case -1:
-		PutString(sX + 30 + 15, sY + 70, DRAW_DIALOGBOX_BANK1, RGB(0,0,0));//"
-		PutString(sX + 30 + 15, sY + 85, DRAW_DIALOGBOX_BANK2, RGB(0,0,0));//"
+		PutString(sX + 30 + 15, sY + 70, DRAW_DIALOGBOX_BANK1, RGB(255,255,255));//"
+		PutString(sX + 30 + 15, sY + 85, DRAW_DIALOGBOX_BANK2, RGB(255,255,255));//"
 		break;
 
 	case 0:
@@ -33610,13 +33647,15 @@ void CGame::DrawDialogBox_CityHallMenu(short msX, short msY)
 {
  short sX, sY, szX;
  char cTxt[120];
+ DWORD dwTime = m_dwCurTime;
 
 	sX = m_stDialogBoxInfo[13].sX;
 	sY = m_stDialogBoxInfo[13].sY;
 	szX = m_stDialogBoxInfo[13].sSizeX;
 
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 18);//CityHall Menu Text
+	// New shadow dialog style (V13)
+	DrawShadowDialog2(sX, sY, 13);
+	PutCenterString_SpriteFont(sX, sX + szX, sY + 3, "CityHall Menu", 255, 255, 255);
 
 	switch (m_stDialogBoxInfo[13].cMode) {
 	case 0:
@@ -33624,28 +33663,28 @@ void CGame::DrawDialogBox_CityHallMenu(short msX, short msY)
 		if (m_bCitizen == false)
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 70) && (msY < sY + 95))
 				 PutAlignedString(sX, sX + szX, sY + 70, DRAW_DIALOGBOX_CITYHALL_MENU1, 255,255,255);	//"
-			else PutAlignedString(sX, sX + szX, sY + 70, DRAW_DIALOGBOX_CITYHALL_MENU1, 4,0,50);		//"
-		}else    PutAlignedString(sX, sX + szX, sY + 70, DRAW_DIALOGBOX_CITYHALL_MENU1, 65,65,65);			//"
+			else PutAlignedString(sX, sX + szX, sY + 70, DRAW_DIALOGBOX_CITYHALL_MENU1, 255,200,0);		//"
+		}else    PutAlignedString(sX, sX + szX, sY + 70, DRAW_DIALOGBOX_CITYHALL_MENU1, 255,255,255);			//"
 
 		if (m_iRewardGold > 0)
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 120))
 				 PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU4, 255,255,255);	//"
-			else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU4, 4,0,50);		//"
-		}else    PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU4, 65,65,65);			//"
+			else PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU4, 255,200,0);		//"
+		}else    PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU4, 255,255,255);			//"
 
 		// 3.51 Cityhall Menu - Request Hero's Items - Diuuude
 		if ((m_iEnemyKillCount >= 100) && (m_iContribution >= 10))
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))
 				 PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 255,255,255);
-			else PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 4,0,50);
-		}else    PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 65,65,65);
+			else PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 255,200,0);
+		}else    PutAlignedString(sX, sX + szX, sY + 120, DRAW_DIALOGBOX_CITYHALL_MENU8, 255,255,255);
 
 		// Cancel quest
 		if (m_stQuest.sQuestType != 0)
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 145) && (msY < sY + 170))
 				 PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU11, 255,255,255);//"
-			else PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU11, 4,0,50);//"
-		}else    PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU11, 65,65,65);//"
+			else PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU11, 255,200,0);//"
+		}else    PutAlignedString(sX, sX + szX, sY + 145, DRAW_DIALOGBOX_CITYHALL_MENU11, 255,255,255);//"
 
 		// change playmode
 		if ( (m_bIsCrusadeMode==false) && m_bCitizen && (m_iPKCount==0))
@@ -33653,29 +33692,29 @@ void CGame::DrawDialogBox_CityHallMenu(short msX, short msY)
 			{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 170) && (msY < sY + 195))
 					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 255,255,255);
 				else
-					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 4,0,50);
+					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 255,200,0);
 			}else if(m_iLevel < 100)
 			{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 170) && (msY < sY + 195))
 					 PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 255,255,255);
 				else
-					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 4,0,50);
+					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 255,200,0);
 			}else // Disable...
-					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 65,65,65);
-		}else       PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 65,65,65);
+					PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 255,255,255);
+		}else       PutAlignedString(sX, sX + szX, sY + 170, DRAW_DIALOGBOX_CITYHALL_MENU56, 255,255,255);
 
 		// Teleport menu
 		if ( (m_bIsCrusadeMode==false) && m_bCitizen && (m_iPKCount==0))
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 195) && (msY < sY + 220))
 				 PutAlignedString(sX, sX + szX, sY + 195, DRAW_DIALOGBOX_CITYHALL_MENU69, 255,255,255);//"Teleporting to dungeon level 2."
-			else PutAlignedString(sX, sX + szX, sY + 195, DRAW_DIALOGBOX_CITYHALL_MENU69, 4,0,50);
-		}else    PutAlignedString(sX, sX + szX, sY + 195, DRAW_DIALOGBOX_CITYHALL_MENU69, 65,65,65);
+			else PutAlignedString(sX, sX + szX, sY + 195, DRAW_DIALOGBOX_CITYHALL_MENU69, 255,200,0);
+		}else    PutAlignedString(sX, sX + szX, sY + 195, DRAW_DIALOGBOX_CITYHALL_MENU69, 255,255,255);
 
 		//Change crusade role
 		if ( m_bIsCrusadeMode && m_bCitizen )
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 220) && (msY < sY + 220))
 				 PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 255,255,255);//"Change the crusade assignment."
-			else PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 4,0,50);//"
-		}else    PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 65,65,65);//"
+			else PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 255,200,0);//"
+		}else    PutAlignedString(sX, sX + szX, sY + 220, DRAW_DIALOGBOX_CITYHALL_MENU14, 255,255,255);//"
 
 		PutAlignedString(sX, sX + szX, sY + 270, DRAW_DIALOGBOX_CITYHALL_MENU17);//"Select an Item you want."
 
@@ -34147,55 +34186,59 @@ void CGame::DrawDialogBox_Fishing(short msX, short msY)
 
 void CGame::DrawDialogBox_GuildMenu(short msX, short msY)
 {
- short sX, sY, szX;
+ short sX, sY;
  int iAdjX, iAdjY ;
 
 	sX = m_stDialogBoxInfo[7].sX;
 	sY = m_stDialogBoxInfo[7].sY;
-	szX = m_stDialogBoxInfo[7].sSizeX;
+	int szX = m_stDialogBoxInfo[7].sSizeX;
+	int szY = m_stDialogBoxInfo[7].sSizeY;
 
 	iAdjX = - 13 ;
 	iAdjY =  30 ;
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 19);
+
+	// New shadow dialog style (V13)
+	DrawShadowMenu(sX, sY, sX + szX, sY + szY);
+	DrawShadowMenu_DialogBorders(sX, sY, szX, szY);
+	PutString_SprFont2(sX + 80, sY + 3, "Items for sale", 240, 240, 240);
 
 	switch (m_stDialogBoxInfo[7].cMode) {
 	case 0:
 		if ( (m_iGuildRank == -1) && (m_iCharisma >= 20) && (m_iLevel >= 20) ) {
 			if ((msX > sX + iAdjX +80) && (msX < sX + iAdjX +210) && (msY > sY + iAdjY + 63) && (msY < sY + iAdjY + 78))
 				 PutAlignedString(sX, sX + szX, sY + iAdjY + 65, DRAW_DIALOGBOX_GUILDMENU1, 255,255,255);//"
-			else PutAlignedString(sX, sX + szX, sY + iAdjY + 65, DRAW_DIALOGBOX_GUILDMENU1, 4,0,50);//"
+			else PutAlignedString(sX, sX + szX, sY + iAdjY + 65, DRAW_DIALOGBOX_GUILDMENU1, 255,200,0);//"
 		}
-		else PutAlignedString(sX, sX + szX, sY + iAdjY + 65, DRAW_DIALOGBOX_GUILDMENU1, 65,65,65);//"
+		else PutAlignedString(sX, sX + szX, sY + iAdjY + 65, DRAW_DIALOGBOX_GUILDMENU1, 255,255,255);//"
 
 		if (m_iGuildRank == 0) {
 			if ((msX > sX + iAdjX +72) && (msX < sX + iAdjX +222) && (msY > sY + iAdjY + 82) && (msY < sY + iAdjY + 99))
 				 PutAlignedString(sX, sX + szX, sY + iAdjY + 85, DRAW_DIALOGBOX_GUILDMENU4, 255,255,255);//"
-			else PutAlignedString(sX, sX + szX, sY + iAdjY + 85, DRAW_DIALOGBOX_GUILDMENU4, 4,0,50);//"
+			else PutAlignedString(sX, sX + szX, sY + iAdjY + 85, DRAW_DIALOGBOX_GUILDMENU4, 255,200,0);//"
 		}
-		else PutAlignedString(sX, sX + szX, sY + iAdjY + 85, DRAW_DIALOGBOX_GUILDMENU4, 65,65,65);//"
+		else PutAlignedString(sX, sX + szX, sY + iAdjY + 85, DRAW_DIALOGBOX_GUILDMENU4, 255,255,255);//"
 
 		if ((msX > sX + iAdjX +61) && (msX < sX + iAdjX +226) && (msY > sY + iAdjY + 103) && (msY < sY + iAdjY + 120))
 			 PutAlignedString(sX, sX + szX, sY + iAdjY + 105, DRAW_DIALOGBOX_GUILDMENU7, 255,255,255);//"
-		else PutAlignedString(sX, sX + szX, sY + iAdjY + 105, DRAW_DIALOGBOX_GUILDMENU7, 4,0,50);//"
+		else PutAlignedString(sX, sX + szX, sY + iAdjY + 105, DRAW_DIALOGBOX_GUILDMENU7, 255,200,0);//"
 
 		if ((msX > sX + iAdjX +60) && (msX < sX + iAdjX +227) && (msY > sY + iAdjY + 123) && (msY < sY + iAdjY + 139))
 			 PutAlignedString(sX, sX + szX, sY + iAdjY + 125, DRAW_DIALOGBOX_GUILDMENU9, 255,255,255);//"
-		else PutAlignedString(sX, sX + szX, sY + iAdjY + 125, DRAW_DIALOGBOX_GUILDMENU9, 4,0,50);//"
+		else PutAlignedString(sX, sX + szX, sY + iAdjY + 125, DRAW_DIALOGBOX_GUILDMENU9, 255,200,0);//"
 
 		if (m_iGuildRank == 0 && m_iFightzoneNumber == 0) {
 			if ((msX > sX + iAdjX +72) && (msX < sX + iAdjX +228) && (msY > sY + iAdjY + 143) && (msY < sY + iAdjY + 169))
 				 PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU11, 255,255,255);//"
-			else PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU11, 4,0,50);//"
+			else PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU11, 255,200,0);//"
 
 		} else if (m_iGuildRank == 0 && m_iFightzoneNumber > 0) {
 			if ((msX > sX + iAdjX +72) && (msX < sX + iAdjX +216) && (msY > sY + iAdjY + 143) && (msY < sY + iAdjY + 169))
 				 PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU13, 255,255,255);//"
-			else PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU13, 4,0,50);//"
+			else PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU13, 255,200,0);//"
 
 		} else if (m_iFightzoneNumber < 0) {
-			PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU13, 65,65,65);//"
-		} else PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU11, 65,65,65);//"
+			PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU13, 255,255,255);//"
+		} else PutAlignedString(sX, sX + szX, sY + iAdjY + 145, DRAW_DIALOGBOX_GUILDMENU11, 255,255,255);//"
 
 		PutAlignedString(sX, sX + szX, sY + iAdjY + 205, DRAW_DIALOGBOX_GUILDMENU17);//"
 		break;
@@ -34725,9 +34768,11 @@ void CGame::DrawDialogBox_MagicShop(short msX, short msY, short msZ)
 
 	sX = m_stDialogBoxInfo[16].sX;
 	sY = m_stDialogBoxInfo[16].sY;
+	short sizeX = m_stDialogBoxInfo[16].sSizeX;
 
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME4, sX, sY, 1);
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 14);
+	// New shadow dialog style (V13)
+	DrawShadowDialog2(sX, sY, 16);
+	PutCenterString_SpriteFont(sX, sX + sizeX, sY + 3, "Magic Shop", 255, 255, 255);
 
 	if( iGetTopDialogBoxIndex() == 16 && msZ != 0 )
 	{
@@ -34738,9 +34783,9 @@ void CGame::DrawDialogBox_MagicShop(short msX, short msY, short msZ)
 	if( m_stDialogBoxInfo[16].sView < 0 ) m_stDialogBoxInfo[16].sView = 9;
 	if( m_stDialogBoxInfo[16].sView > 9 ) m_stDialogBoxInfo[16].sView = 0;
 
-	PutString(sX -20 + 60 -17, sY - 35 + 90, DRAW_DIALOGBOX_MAGICSHOP11, RGB(45,25,25));//"Spell Name"
-	PutString(sX -20 + 232 -20, sY - 35 + 90, DRAW_DIALOGBOX_MAGICSHOP12, RGB(45,25,25));//"Req.Int"
-	PutString(sX -20 + 270, sY - 35 + 90, DRAW_DIALOGBOX_MAGICSHOP13, RGB(45,25,25));//"Cost"
+	PutString(sX -20 + 60 -17, sY - 35 + 90, DRAW_DIALOGBOX_MAGICSHOP11, RGB(255,255,255));//"Spell Name"
+	PutString(sX -20 + 232 -20 + 10 + 5 + 50, sY - 35 + 90, DRAW_DIALOGBOX_MAGICSHOP12, RGB(255,255,255));//"Req.Int"
+	PutString(sX -20 + 270 + 50 - 5, sY - 35 + 90, DRAW_DIALOGBOX_MAGICSHOP13, RGB(255,255,255));//"Cost"
 
 	iCPivot = m_stDialogBoxInfo[16].sView*10;
 
@@ -34753,39 +34798,39 @@ void CGame::DrawDialogBox_MagicShop(short msX, short msY, short msZ)
 			if (m_cMagicMastery[iCPivot + i] != 0) {
 				if( m_Misc.bCheckIMEString( cTxt ) == false )
 				{
-					PutString(sX + 24, sY + 73 + iYloc, cTxt, RGB(41,16,41));
-					PutString(sX + 25, sY + 73 + iYloc, cTxt, RGB(41,16,41));
+					PutString(sX + 24, sY + 73 + iYloc, cTxt, RGB(255,255,255)); // Blanco
+					PutString(sX + 25, sY + 73 + iYloc, cTxt, RGB(255,255,255)); // Blanco
 				}
-				else PutString_SprFont(sX + 24, sY + 70 + iYloc, cTxt, 5, 5, 5);
+				else PutString_SprFont2(sX + 24, sY + 70 + iYloc, cTxt, 0, 255, 0); // Verde
 				wsprintf(cMana, "%3d", m_pMagicCfgList[iCPivot + i]->m_sValue2);
-				PutString_SprFont(sX + 200, sY + 70 + iYloc, cMana, 5, 5, 5);
+				PutString_SprFont2(sX + 200 + 50, sY + 70 + iYloc, cMana, 255, 255, 255); // Blanco
 				wsprintf(cMana, "%3d", m_pMagicCfgList[iCPivot + i]->m_sValue3);
-				PutString_SprFont(sX + 241, sY + 70 + iYloc, cMana, 5, 5, 5);
+				PutString_SprFont2(sX + 241 + 50, sY + 70 + iYloc, cMana, 255, 255, 255); // Blanco
 			}
 			else
-			if ((msX >= sX + 24) && (msX <= sX + 24 + 135) && (msY >= sY + 70 + iYloc) && (msY <= sY + 70 + 14 + iYloc)) {
+			if ((msX >= sX + 24) && (msX <= sX + 24 + 135 + 100) && (msY >= sY + 70 + iYloc) && (msY <= sY + 70 + 14 + iYloc)) {
 				if( m_Misc.bCheckIMEString( cTxt ) == false )
 				{
 					PutString(sX + 24, sY + 73 + iYloc, cTxt, RGB(255,255,255));
 					PutString(sX + 25, sY + 73 + iYloc, cTxt, RGB(255,255,255));
 				}
-				else PutString_SprFont(sX -20 + 44, sY + 70 + iYloc, cTxt, 250, 250, 250);
+				else PutString_SprFont2(sX -20 + 44, sY + 70 + iYloc, cTxt, 250, 250, 250);
 				wsprintf(cMana, "%3d", m_pMagicCfgList[iCPivot + i]->m_sValue2);
-				PutString_SprFont(sX -20 + 220, sY + 70 + iYloc, cMana, 250, 250, 250);
+				PutString_SprFont2(sX -20 + 220 + 50, sY + 70 + iYloc, cMana, 250, 250, 250);
 				wsprintf(cMana, "%3d", m_pMagicCfgList[iCPivot + i]->m_sValue3);
-				PutString_SprFont(sX -20 + 261, sY + 70 + iYloc, cMana, 250, 250, 250);
+				PutString_SprFont2(sX -20 + 261 + 50, sY + 70 + iYloc, cMana, 250, 250, 250);
 			}
 			else {
 				if( m_Misc.bCheckIMEString( cTxt ) == false )
 				{
-					PutString(sX + 24, sY + 73 + iYloc, cTxt, RGB(8,0,66));
-					PutString(sX + 25, sY + 73 + iYloc, cTxt, RGB(8,0,66));
+					PutString(sX + 24, sY + 73 + iYloc, cTxt, RGB(255,200,0));
+					PutString(sX + 25, sY + 73 + iYloc, cTxt, RGB(255,200,0));
 				}
-				else PutString_SprFont(sX -20 + 44, sY + 70 + iYloc, cTxt, 1, 1, 8);
+				else PutString_SprFont2(sX -20 + 44, sY + 70 + iYloc, cTxt, 255, 200, 0);
 				wsprintf(cMana, "%3d", m_pMagicCfgList[iCPivot + i]->m_sValue2);
-				PutString_SprFont(sX -20 + 220, sY + 70 + iYloc, cMana, 1, 1, 8);
+				PutString_SprFont2(sX -20 + 220 + 50, sY + 70 + iYloc, cMana, 255, 200, 0);
 				wsprintf(cMana, "%3d", m_pMagicCfgList[iCPivot + i]->m_sValue3);
-				PutString_SprFont(sX -20 + 261, sY + 70 + iYloc, cMana, 1, 1, 8);
+				PutString_SprFont2(sX -20 + 261 + 50, sY + 70 + iYloc, cMana, 255, 200, 0);
 			}
 			iYloc += 18;
 		}
@@ -34806,7 +34851,7 @@ void CGame::DrawDialogBox_MagicShop(short msX, short msY, short msZ)
 	case 9: m_pSprite[DEF_SPRID_INTERFACE_SPRFONTS]->PutSpriteFast(sX -20 + 236 +31, sY + 250, 29, dwTime); break;
 	}
 
-	PutAlignedString(sX, sX+m_stDialogBoxInfo[16].sSizeX, sY + 275, DRAW_DIALOGBOX_MAGICSHOP14, 45,25,25);
+	PutAlignedString(sX, sX+m_stDialogBoxInfo[16].sSizeX, sY + 275, DRAW_DIALOGBOX_MAGICSHOP14, 255,255,255);
 }
 
 void CGame::DrawDialogBox_ShutDownMsg(short msX, short msY)
@@ -35496,8 +35541,9 @@ void CGame::DrawDialogBox_SellList(short msX, short msY)
 	sY = m_stDialogBoxInfo[31].sY;
 	szX = m_stDialogBoxInfo[31].sSizeX;
 
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 11);
+	// New shadow dialog style (V13)
+	DrawShadowDialog2(sX, sY, 31);
+	PutCenterString_SpriteFont(sX, sX + szX, sY + 3, "Items for sale", 255, 255, 255);
 
 	iItem = 0;
 	for (i = 0; i < DEF_MAXSELLLIST; i++)
@@ -35514,7 +35560,7 @@ void CGame::DrawDialogBox_SellList(short msX, short msY)
 				if(m_bIsSpecial)
 					PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 0,255,50);
 				else
-					PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 45,25,25);
+					PutAlignedString(sX, sX+szX, sY + 55 + i*15, cTemp, 255,255,255);
 			}
 		}
 		else
@@ -35546,7 +35592,7 @@ void CGame::DrawDialogBox_SellList(short msX, short msY)
 				{	if(m_bIsSpecial)
 						PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 0,255,50);
 					else
-						PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 45,25,25);
+						PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 255,255,255);
 				}else
 				{	ZeroMemory( G_cTxt, sizeof(G_cTxt) );
 					if( (strlen(cStr1)+strlen(cStr2)+strlen(cStr3)) < 36 )
@@ -35557,14 +35603,14 @@ void CGame::DrawDialogBox_SellList(short msX, short msY)
 						if(m_bIsSpecial)
 							PutAlignedString(sX, sX+szX, sY + 55 + i*15, G_cTxt, 0,255,50);
 						else
-							PutAlignedString(sX, sX+szX, sY + 55 + i*15, G_cTxt, 45,25,25);
+							PutAlignedString(sX, sX+szX, sY + 55 + i*15, G_cTxt, 255,255,255);
 
 					}
 					else
 					{	if(m_bIsSpecial)
 							PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 0,255,50);
 						else
-							PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 45,25,25);
+							PutAlignedString(sX, sX+szX, sY + 55 + i*15, cStr1, 255,255,255);
 					}
 				}
 			}
@@ -35749,9 +35795,13 @@ void CGame::DrawDialogBox_Shop(short msX, short msY, short msZ, char cLB)
 
 	sX = m_stDialogBoxInfo[11].sX;
 	sY = m_stDialogBoxInfo[11].sY;
+	int sizeX = m_stDialogBoxInfo[11].sSizeX;
+	int sizeY = m_stDialogBoxInfo[11].sSizeY;
 
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_TEXT, sX, sY, 11);
+	// New shadow menu style (V13)
+	DrawShadowMenu(sX, sY, sX + sizeX, sY + sizeY);
+	DrawShadowMenu_DialogBorders(sX, sY, sizeX, sizeY);
+	PutCenterString_SpriteFont(sX, sX + sizeX, sY + 3, "Items for sale", 240, 240, 240);
 
 	switch (m_stDialogBoxInfo[11].cMode) {
 	case 0:
@@ -42884,25 +42934,28 @@ void CGame::DrawDialogBox_CMDHallMenu(short msX, short msY)
 	sX = m_stDialogBoxInfo[51].sX;
 	sY = m_stDialogBoxInfo[51].sY;
 	szX = m_stDialogBoxInfo[51].sSizeX;
-	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 2);
+	
+	// New shadow dialog style (V13)
+	DrawShadowDialog2(sX, sY, 51);
+	PutCenterString_SpriteFont(sX, sX + szX, sY + 3, "Heldian Staff Officer", 255, 255, 255);
 
 	switch (m_stDialogBoxInfo[51].cMode) {
 	case 0: // initial diag
 		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 70) && (msY < sY + 95))
 			 PutAlignedString(sX, sX + szX, sY + 70, "Teleport to Battle Field", 255,255,255);
-		else PutAlignedString(sX, sX + szX, sY + 70, "Teleport to Battle Field", 4,0,50);
+		else PutAlignedString(sX, sX + szX, sY + 70, "Teleport to Battle Field", 255,200,0);
 
 		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 120))
 			 PutAlignedString(sX, sX + szX, sY + 95, "Hire a soldier", 255,255,255);
-		else PutAlignedString(sX, sX + szX, sY + 95, "Hire a soldier", 4,0,50);
+		else PutAlignedString(sX, sX + szX, sY + 95, "Hire a soldier", 255,200,0);
 
 		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))
 			 PutAlignedString(sX, sX + szX, sY + 120, "Taking Flags", 255,255,255);
-		else PutAlignedString(sX, sX + szX, sY + 120, "Taking Flags", 4,0,50);
+		else PutAlignedString(sX, sX + szX, sY + 120, "Taking Flags", 255,200,0);
 		// Angels
 		if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 145) && (msY < sY + 170))
 			 PutAlignedString(sX, sX + szX, sY + 145, "Receive a Tutelary Angel", 255,255,255);
-		else PutAlignedString(sX, sX + szX, sY + 145, "Receive a Tutelary Angel", 4,0,50);
+		else PutAlignedString(sX, sX + szX, sY + 145, "Receive a Tutelary Angel", 255,200,0);
 		break;
 
 	case 1: // TP diag
@@ -42911,7 +42964,7 @@ void CGame::DrawDialogBox_CMDHallMenu(short msX, short msY)
 			//PutAlignedString(sX, sX + szX, sY + 80, DRAW_DIALOGBOX_CITYHALL_MENU70, 55,25,25); // "5000Gold is required"
 			//PutAlignedString(sX, sX + szX, sY + 95, DRAW_DIALOGBOX_CITYHALL_MENU71, 55,25,25); //
 			//PutAlignedString(sX, sX + szX, sY + 110, DRAW_DIALOGBOX_CITYHALL_MENU72, 55,25,25);//
-			PutString2(sX + 35, sY + 250, DRAW_DIALOGBOX_CITYHALL_MENU72_1, 55,25,25);//"Civilians cannot go some area."
+			PutString2(sX + 35, sY + 250, DRAW_DIALOGBOX_CITYHALL_MENU72_1, 255,255,255);//"Civilians cannot go some area."
 			for( int i=0 ; i<m_iTeleportMapCount ; i++ )
 			{	ZeroMemory( cTxt, sizeof(cTxt) );
 				GetOfficialMapName( m_stTeleportList[i].mapname, cTxt );
@@ -42921,11 +42974,11 @@ void CGame::DrawDialogBox_CMDHallMenu(short msX, short msY)
 				else PutAlignedString(sX, sX + szX, sY + 130 + i*15, G_cTxt,  250,  250,  0);
 			}
 		}else if( m_iTeleportMapCount == -1 )
-		{	PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU73, 55,25,25);//"Now it's searching for possible area"
-			PutAlignedString(sX, sX + szX, sY + 150, DRAW_DIALOGBOX_CITYHALL_MENU74, 55,25,25);//"to teleport."
-			PutAlignedString(sX, sX + szX, sY + 175, DRAW_DIALOGBOX_CITYHALL_MENU75, 55,25,25);//"Please wait for a moment."
+		{	PutAlignedString(sX, sX + szX, sY + 125, DRAW_DIALOGBOX_CITYHALL_MENU73, 255,255,255);//"Now it's searching for possible area"
+			PutAlignedString(sX, sX + szX, sY + 150, DRAW_DIALOGBOX_CITYHALL_MENU74, 255,255,255);//"to teleport."
+			PutAlignedString(sX, sX + szX, sY + 175, DRAW_DIALOGBOX_CITYHALL_MENU75, 255,255,255);//"Please wait for a moment."
 		}else
-		{	PutAlignedString(sX, sX + szX, sY + 175, DRAW_DIALOGBOX_CITYHALL_MENU76, 55,25,25);//"There is no area that you can teleport."
+		{	PutAlignedString(sX, sX + szX, sY + 175, DRAW_DIALOGBOX_CITYHALL_MENU76, 255,255,255);//"There is no area that you can teleport."
 		}
 		break;
 
@@ -42934,26 +42987,26 @@ void CGame::DrawDialogBox_CMDHallMenu(short msX, short msY)
 		if ((m_iConstructionPoint >= 2000) && (m_bIsCrusadeMode == false))
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 70) && (msY < sY + 95))
 				 PutAlignedString(sX, sX + szX, sY + 70, "Sorceress             2000 Point", 255,255,255);
-			else PutAlignedString(sX, sX + szX, sY + 70, "Sorceress             2000 Point", 4,0,50);
-		}else PutAlignedString(sX, sX + szX, sY + 70, "Sorceress             2000 Point", 65,65,65);
+			else PutAlignedString(sX, sX + szX, sY + 70, "Sorceress             2000 Point", 255,200,0);
+		}else PutAlignedString(sX, sX + szX, sY + 70, "Sorceress             2000 Point", 255,255,255);
 
 		if ((m_iConstructionPoint >= 3000) && (m_bIsCrusadeMode == false))
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 95) && (msY < sY + 120))
 			 PutAlignedString(sX, sX + szX, sY + 95, "Ancient Temple Knight 3000 Point", 255,255,255);
-			else PutAlignedString(sX, sX + szX, sY + 95, "Ancient Temple Knight 3000 Point", 4,0,50);
-		}else PutAlignedString(sX, sX + szX, sY + 95, "Ancient Temple Knight 3000 Point", 65,65,65);
+			else PutAlignedString(sX, sX + szX, sY + 95, "Ancient Temple Knight 3000 Point", 255,200,0);
+		}else PutAlignedString(sX, sX + szX, sY + 95, "Ancient Temple Knight 3000 Point", 255,255,255);
 
 		if ((m_iConstructionPoint >= 1500) && (m_bIsCrusadeMode == false))
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 120) && (msY < sY + 145))
 				PutAlignedString(sX, sX + szX, sY + 120, "Elf Master            1500 Point", 255,255,255);
-			else PutAlignedString(sX, sX + szX, sY + 120, "Elf Master            1500 Point", 4,0,50);
-		}else PutAlignedString(sX, sX + szX, sY + 120, "Elf Master            1500 Point", 65,65,65);
+			else PutAlignedString(sX, sX + szX, sY + 120, "Elf Master            1500 Point", 255,200,0);
+		}else PutAlignedString(sX, sX + szX, sY + 120, "Elf Master            1500 Point", 255,255,255);
 
 		if ((m_iConstructionPoint >= 3000) && (m_bIsCrusadeMode == false))
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 145) && (msY < sY + 171))
 				PutAlignedString(sX, sX + szX, sY + 145, "Dark Shadow Knight    3000 Point", 255,255,255);
-			else PutAlignedString(sX, sX + szX, sY + 145, "Dark Shadow Knight    3000 Point", 4,0,50);
-		}else PutAlignedString(sX, sX + szX, sY + 145, "Dark Shadow Knight    3000 Point", 65,65,65);
+			else PutAlignedString(sX, sX + szX, sY + 145, "Dark Shadow Knight    3000 Point", 255,200,0);
+		}else PutAlignedString(sX, sX + szX, sY + 145, "Dark Shadow Knight    3000 Point", 255,255,255);
 
 		if ((m_iConstructionPoint >= 4000) && (m_bIsCrusadeMode == false))
 		{	if ((msX > sX + 35) && (msX < sX + 220) && (msY > sY + 170) && (msY < sY + 195))
