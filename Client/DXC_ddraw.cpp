@@ -108,7 +108,10 @@ bool DXC_ddraw::bInit(HWND hWnd)
 	// Posicionar ventana en el monitor primario
 	int iPrimaryX, iPrimaryY;
 	GetPrimaryMonitorInfo(&iPrimaryX, &iPrimaryY, &m_iDesktopWidth, &m_iDesktopHeight);
-	SetWindowPos(hWnd, HWND_TOPMOST, iPrimaryX, iPrimaryY, m_iDesktopWidth, m_iDesktopHeight, SWP_SHOWWINDOW);
+	if (m_bFullMode)
+		SetWindowPos(hWnd, HWND_TOPMOST, iPrimaryX, iPrimaryY, m_iDesktopWidth, m_iDesktopHeight, SWP_SHOWWINDOW);
+	else
+		SetWindowPos(hWnd, HWND_NOTOPMOST, iPrimaryX, iPrimaryY, m_iDesktopWidth, m_iDesktopHeight, SWP_SHOWWINDOW);
 
 	ddVal = DirectDrawCreateEx(NULL, (VOID**)&m_lpDD4, IID_IDirectDraw7, 0);
     if (ddVal != DD_OK) return false;
@@ -301,8 +304,8 @@ void DXC_ddraw::ChangeDisplayMode(HWND hWnd)
 		if (ddVal != DD_OK) return;
 		ChangeBPP(CHANGE16BPP);
 		
-		// Posicionar ventana en el Monitor PRIMARIO
-		SetWindowPos(hWnd, HWND_TOPMOST, iPrimaryX, iPrimaryY, m_iDesktopWidth, m_iDesktopHeight, SWP_SHOWWINDOW);
+		// Posicionar ventana en el Monitor PRIMARIO (no topmost en windowed)
+		SetWindowPos(hWnd, HWND_NOTOPMOST, iPrimaryX, iPrimaryY, m_iDesktopWidth, m_iDesktopHeight, SWP_SHOWWINDOW);
 
 		memset( (VOID *)&ddsd, 0, sizeof(ddsd) );
 		ddsd.dwSize = sizeof( ddsd );

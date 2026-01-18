@@ -215,18 +215,30 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 BOOL InitApplication( HINSTANCE hInstance)
-{WNDCLASS  wc;
+{
+	WNDCLASSEX wc;
+	ZeroMemory(&wc, sizeof(wc));
+	wc.cbSize = sizeof(wc);
 	wc.style = (CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS);
-	wc.lpfnWndProc   = (WNDPROC)WndProc;             
-	wc.cbClsExtra    = 0;                            
-	wc.cbWndExtra    = sizeof (int);
-	wc.hInstance     = hInstance;
-	wc.hIcon         = 0;
-	wc.hCursor       = LoadCursor(0, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
-	wc.lpszMenuName  = 0;
-	wc.lpszClassName = szAppClass;        
-	return (RegisterClass(&wc));
+	wc.lpfnWndProc = (WNDPROC)WndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = sizeof(int);
+	wc.hInstance = hInstance;
+
+	HICON hIconBig = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON,
+		GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR);
+	HICON hIconSmall = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON,
+		GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
+	if (hIconBig == NULL) hIconBig = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+
+	wc.hIcon = hIconBig;
+	wc.hIconSm = hIconSmall;
+	wc.hCursor = LoadCursor(0, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wc.lpszMenuName = 0;
+	wc.lpszClassName = szAppClass;
+
+	return (RegisterClassEx(&wc));
 }
 
 // Estructura y funciones para detectar el monitor primario
@@ -266,6 +278,15 @@ bool InitInstance( HINSTANCE hInstance, int nCmdShow )
 	G_hWnd = CreateWindowEx(0, szAppClass, "Helbreath", WS_POPUP | WS_VISIBLE,
 		pmInfo.x, pmInfo.y, pmInfo.width, pmInfo.height, 0, 0, hInstance, 0);
     if (!G_hWnd) return false;
+
+	// Ensure the taskbar shows our icon (big + small)
+	HICON hIconBig = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON,
+		GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR);
+	HICON hIconSmall = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON,
+		GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
+	if (hIconBig) SendMessage(G_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIconBig);
+	if (hIconSmall) SendMessage(G_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall);
+
     G_hInstance	= hInstance;
 	ShowWindow(G_hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(G_hWnd);
