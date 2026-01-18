@@ -1,6 +1,6 @@
 [FILE-DATE]
 
-file-saved-date: 2026 1 18 16 29
+file-saved-date: 2026 1 18 18 19
 
 [NAME-ACCOUNT]
 
@@ -14,13 +14,13 @@ character-location   = NONE
 character-guild-name = NONE
 character-guild-GUID = -1
 character-guild-rank = -1
-character-loc-map = default
-character-loc-x   = 95
-character-loc-y   = 79
+character-loc-map = elvfarm
+character-loc-x   = 176
+character-loc-y   = 207
 
 character-HP       = 1452
-character-MP       = 1252
-character-SP       = 1152
+character-MP       = 344
+character-SP       = 999
 character-LEVEL    = 376
 character-RATING   = 0
 character-STR      = 200
@@ -60,7 +60,7 @@ character-contribution = 0
 character-war-contribution = 0
 character-quest-completed = 0
 special-event-id = 0
-super-attack-left = 1
+super-attack-left = 6
 reserved-fightzone-id = 0 0 0
 special-ability-time = 0
 locked-map-name = NONE
@@ -74,14 +74,14 @@ gizon-item-upgade-left = 0
 
 
 appr1 = 1316
-appr2 = 352
+appr2 = 0
 appr3 = 0
 appr4 = 0
-appr-color = 1879048192
+appr-color = 0
 
 [ITEMLIST]
 
-character-item = Gold                 2555545 2 29951 12395 118 0 0 0 0 0 0
+character-item = Gold                 2556856 2 29951 12395 118 0 0 0 0 0 0
 character-item = Tomahoc              1 2 900 67 118 7 0 0 0 500 3449344
 
 
@@ -90,12 +90,12 @@ character-item = Tomahoc              1 2 900 67 118 7 0 0 0 500 3449344
 [MAGIC-SKILL-MASTERY]
 
 //------------------012345678901234567890123456789012345678901234567890
-magic-mastery     = 1110000000111110000011011111101111111110111111110011011111001111111000111110110011110000001100011000
+magic-mastery     = 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 skill-mastery     = 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-skill-SSN     = 0 0 0 0 9 0 0 0 0 0 63 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+skill-SSN     = 0 0 0 0 37 0 0 0 0 0 78 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 [ITEM-EQUIP-STATUS]
 
-item-equip-status = 01000000000000000000000000000000000000000000000000
+item-equip-status = 00000000000000000000000000000000000000000000000000
 item-position-x = 163 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 
 item-position-y = -3 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 
 

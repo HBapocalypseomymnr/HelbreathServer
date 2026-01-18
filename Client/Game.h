@@ -1054,7 +1054,7 @@ public:
 	char m_cBackupChatMsg[64];
 	char m_cGender, m_cSkinCol, m_cHairStyle, m_cHairCol, m_cUnderCol;
 	char m_ccStr, m_ccVit, m_ccDex, m_ccInt, m_ccMag, m_ccChr;
-	char m_cLU_Str, m_cLU_Vit, m_cLU_Dex, m_cLU_Int, m_cLU_Mag, m_cLU_Char;
+	int m_cLU_Str, m_cLU_Vit, m_cLU_Dex, m_cLU_Int, m_cLU_Mag, m_cLU_Char;
 
 	char m_cMagicMastery[DEF_MAXMAGICTYPE];
 	unsigned char m_cSkillMastery[DEF_MAXSKILLTYPE]; // v1.4

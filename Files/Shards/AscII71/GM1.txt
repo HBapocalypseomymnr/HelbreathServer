@@ -1,1 +1,2 @@
+shard-2-5 = Critical 0 Damage 1 0
 shard-9-2 = Endurance 1 str 8 2

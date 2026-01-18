@@ -5515,22 +5515,22 @@ void CGame::InitPlayerData(int iClientH, char *pData, DWORD dwSize) {
 
   m_pClientList[iClientH]->read_mobs_data();
   m_pClientList[iClientH]->read_shards_data();
-  	m_pClientList[iClientH]->read_fragments_data();
+  m_pClientList[iClientH]->read_fragments_data();
 
-	// FIX: Send Shards to client
-	for (int i = 0; i < 13; i++) {
-		for (int x = 0; x < 17; x++) {
-			if (m_pClientList[iClientH]->m_pShards[i][x] != 0 && 
-				m_pClientList[iClientH]->m_pShards[i][x]->iCount > 0) {
-			   SendNotifyMsg(0, iClientH, 0x0A71 /*msg_shard*/, 
-							m_pClientList[iClientH]->m_pShards[i][x]->dwType,
-							m_pClientList[iClientH]->m_pShards[i][x]->dwValue,
-							m_pClientList[iClientH]->m_pShards[i][x]->iCount,
-							m_pClientList[iClientH]->m_pShards[i][x]->cName, 0, 0, 0, 0, 0, 0,
-							m_pClientList[iClientH]->m_pShards[i][x]->cDesc);
-			}
-		}
-	}
+  // FIX: Send Shards to client
+  for (int i = 0; i < 13; i++) {
+    for (int x = 0; x < 17; x++) {
+      if (m_pClientList[iClientH]->m_pShards[i][x] != 0 &&
+          m_pClientList[iClientH]->m_pShards[i][x]->iCount > 0) {
+        SendNotifyMsg(0, iClientH, 0x0A71 /*msg_shard*/,
+                      m_pClientList[iClientH]->m_pShards[i][x]->dwType,
+                      m_pClientList[iClientH]->m_pShards[i][x]->dwValue,
+                      m_pClientList[iClientH]->m_pShards[i][x]->iCount,
+                      m_pClientList[iClientH]->m_pShards[i][x]->cName, 0, 0, 0,
+                      0, 0, 0, m_pClientList[iClientH]->m_pShards[i][x]->cDesc);
+      }
+    }
+  }
 }
 
 void CGame::GameProcess() {
@@ -29694,8 +29694,7 @@ void CGame::LevelUpSettingsHandler(int iClientH, char *pData, DWORD dwMsgSize) {
   char *cp;
   int iTotalSetting = 0;
 
-  short *sp;
-  short cStr, cVit, cDex, cInt, cMag, cChar;
+  int *ip, cStr, cVit, cDex, cInt, cMag, cChar;
 
   if (m_pClientList[iClientH] == 0)
     return;
@@ -29708,30 +29707,24 @@ void CGame::LevelUpSettingsHandler(int iClientH, char *pData, DWORD dwMsgSize) {
   }
 
   cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
-
-  sp = (short *)cp;
-  cStr = *sp;
-  cp += 2;
-
-  sp = (short *)cp;
-  cVit = *sp;
-  cp += 2;
-
-  sp = (short *)cp;
-  cDex = *sp;
-  cp += 2;
-
-  sp = (short *)cp;
-  cInt = *sp;
-  cp += 2;
-
-  sp = (short *)cp;
-  cMag = *sp;
-  cp += 2;
-
-  sp = (short *)cp;
-  cChar = *sp;
-  cp += 2;
+  ip = (int *)cp;
+  cStr = *ip;
+  cp += 4;
+  ip = (int *)cp;
+  cVit = *ip;
+  cp += 4;
+  ip = (int *)cp;
+  cDex = *ip;
+  cp += 4;
+  ip = (int *)cp;
+  cInt = *ip;
+  cp += 4;
+  ip = (int *)cp;
+  cMag = *ip;
+  cp += 4;
+  ip = (int *)cp;
+  cChar = *ip;
+  cp += 4;
 
   //	if(m_pClientList[iClientH]->m_iLU_Pool < 3) {
   //		m_pClientList[iClientH]->m_iLU_Pool = 3;
@@ -31708,10 +31701,10 @@ void CGame::MobGenerator() {
     // m_pMapList[i]->m_iTotalActiveObject) ) {
 
     if (m_pMapList[i] != 0) {
-      // if (m_bIsCrusadeMode )
-      //	 iResultNum = (m_pMapList[i]->m_iMaximumObject - 30) / 3;
-      // else iResultNum = (m_pMapList[i]->m_iMaximumObject - 30);
-      iResultNum = (m_pMapList[i]->m_iMaximumObject - 30);
+      if (m_bIsCrusadeMode == TRUE)
+        iResultNum = (m_pMapList[i]->m_iMaximumObject - 30) / 3;
+      else
+        iResultNum = (m_pMapList[i]->m_iMaximumObject - 30);
     }
 
     if ((m_pMapList[i] != 0) && (m_pMapList[i]->m_bRandomMobGenerator) &&

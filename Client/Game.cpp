@@ -1556,32 +1556,25 @@ bool CGame::bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int i
 		*wp = 0;
 
 		cp = (char *)(cMsg + DEF_INDEX2_MSGTYPE + 2);
-
-		sp = (short*)cp;
-		*sp = (short)m_cLU_Str;
-		cp += 2;
-
-		sp = (short*)cp;
-		*sp = (short)m_cLU_Vit;
-		cp += 2;
-
-		sp = (short*)cp;
-		*sp = (short)m_cLU_Dex;
-		cp += 2;
-
-		sp = (short*)cp;
-		*sp = (short)m_cLU_Int;
-		cp += 2;
-
-		sp = (short*)cp;
-		*sp = (short)m_cLU_Mag;
-		cp += 2;
-
-		sp = (short*)cp;
-		*sp = (short)m_cLU_Char;
-		cp += 2;
-
-		iRet = m_pGSock->iSendMsg(cMsg, 6 + 12);
+		ip = (int *)cp;
+		*ip = m_cLU_Str;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Vit;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Dex;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Int;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Mag;
+		cp += 4;
+		ip = (int *)cp;
+		*ip = m_cLU_Char;
+		cp += 4;
+		iRet = m_pGSock->iSendMsg(cMsg, 30);
 		break;
 
 	case MSGID_COMMAND_CHATMSG:
@@ -19251,13 +19244,13 @@ void CGame::DlgBoxClick_LevelUpSettings(short msX, short msY)
 	// Strength UP - Diuuude
 	if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 127) && (msY <= sY + 133) && (m_iStr <= iMaxStats) && (m_iLU_Point > 0))
 	{	if (m_bCtrlPressed == true)
-		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false) && ((m_iStr + m_cLU_Str) <= (iMaxStats - 5)))
 			{	m_iLU_Point -= 5;
 				m_cLU_Str += 5;
 			}
 			PlaySound('E', 14, 5);
 		}else
-		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false) && ((m_iStr + m_cLU_Str) <= (iMaxStats - 1)))
 			{	m_iLU_Point--;
 				m_cLU_Str++;
 			}
@@ -19267,13 +19260,13 @@ void CGame::DlgBoxClick_LevelUpSettings(short msX, short msY)
 	// Vitality UP - Diuuude
 	if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 146) && (msY <= sY + 152) && (m_iVit <= iMaxStats) && (m_iLU_Point > 0))
 	{	if (m_bCtrlPressed == true)
-		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false) && ((m_iVit + m_cLU_Vit) <= (iMaxStats - 5)))
 			{	m_iLU_Point -= 5;
 				m_cLU_Vit += 5;
 			}
 			PlaySound('E', 14, 5);
 		}else
-		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false) && ((m_iVit + m_cLU_Vit) <= (iMaxStats - 1)))
 			{	m_iLU_Point--;
 				m_cLU_Vit++;
 			}
@@ -19283,13 +19276,13 @@ void CGame::DlgBoxClick_LevelUpSettings(short msX, short msY)
 	// Dexterity UP - Diuuude
 	if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 165) && (msY <= sY + 171) && (m_iDex <= iMaxStats) && (m_iLU_Point > 0))
 	{	if (m_bCtrlPressed == true)
-		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false) && ((m_iDex + m_cLU_Dex) <= (iMaxStats - 5)))
 			{	m_iLU_Point -= 5;
 				m_cLU_Dex += 5;
 			}
 			PlaySound('E', 14, 5);
 		}else
-		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false) && ((m_iDex + m_cLU_Dex) <= (iMaxStats - 1)))
 			{	m_iLU_Point--;
 				m_cLU_Dex++;
 			}
@@ -19299,13 +19292,13 @@ void CGame::DlgBoxClick_LevelUpSettings(short msX, short msY)
 	// Intelligence UP - Diuuude
 	if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 184) && (msY <= sY + 190) && (m_iInt <= iMaxStats) && (m_iLU_Point > 0))
 	{	if (m_bCtrlPressed == true)
-		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false) && ((m_iInt + m_cLU_Int) <= (iMaxStats - 5)))
 			{	m_iLU_Point -= 5;
 				m_cLU_Int += 5;
 			}
 			PlaySound('E', 14, 5);
 		}else
-		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false) && ((m_iInt + m_cLU_Int) <= (iMaxStats - 1)))
 			{	m_iLU_Point--;
 				m_cLU_Int++;
 			}
@@ -19315,13 +19308,13 @@ void CGame::DlgBoxClick_LevelUpSettings(short msX, short msY)
 	// Magic UP - Diuuude
 	if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 203) && (msY <= sY + 209) && (m_iMag <= iMaxStats) && (m_iLU_Point > 0))
 	{	if (m_bCtrlPressed == true)
-		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false) && ((m_iMag + m_cLU_Mag) <= (iMaxStats - 5)))
 			{	m_iLU_Point -= 5;
 				m_cLU_Mag += 5;
 			}
 			PlaySound('E', 14, 5);
 		}else
-		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false) && ((m_iMag + m_cLU_Mag) <= (iMaxStats - 1)))
 			{	m_iLU_Point--;
 				m_cLU_Mag++;
 			}
@@ -19331,13 +19324,13 @@ void CGame::DlgBoxClick_LevelUpSettings(short msX, short msY)
 	// Charisma UP - Diuuude
 	if ((msX >= sX + 195) && (msX <= sX + 205) && (msY >= sY + 222) && (msY <= sY + 228) && (m_iCharisma <= iMaxStats) && (m_iLU_Point > 0))
 	{	if (m_bCtrlPressed == true)
-		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point >= 5)&&(m_bIsDialogEnabled[42] == false) && ((m_iCharisma + m_cLU_Char) <= (iMaxStats - 5)))
 			{	m_iLU_Point -= 5;
 				m_cLU_Char += 5;
 			}
 			PlaySound('E', 14, 5);
 		}else
-		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false))
+		{	if ((m_iLU_Point > 0)&&(m_bIsDialogEnabled[42] == false) && ((m_iCharisma + m_cLU_Char) <= (iMaxStats - 1)))
 			{	m_iLU_Point--;
 				m_cLU_Char++;
 			}
