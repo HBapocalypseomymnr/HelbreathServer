@@ -29318,7 +29318,16 @@ void CGame::DrawObjectName(short sX, short sY, char * pName, int iStatus)
 		{	if( bAresden ) strcpy( cTxt, DEF_MSG_AREPK );// "Aresden Criminal"
 			else strcpy( cTxt, DEF_MSG_ELVPK );  // "Elvine Criminal"
 	}	}
-	PutString2(sX, sY+14 +iAddY, cTxt, sR, sG, sB);
+		PutString2(sX, sY+14 +iAddY, cTxt, sR, sG, sB);
+
+	//50Cent - GM Effect sin shield
+	if(((memcmp(pName, "GM1", 3) == 0) && (strlen(pName) == strlen("GM1"))) ||
+	   ((memcmp(pName, "GM2", 3) == 0) && (strlen(pName) == strlen("GM2"))) ||
+	   ((memcmp(pName, "GM3", 3) == 0) && (strlen(pName) == strlen("GM2"))) ||
+	   ((memcmp(pName, "CrazyAdmin", 10) == 0) && (strlen(pName) == strlen("CrazyAdmin"))))
+	{
+		m_pEffectSpr[45]->PutTransSprite(sX - 13, sY - 34, 0, m_dwCurTime);
+	}
 
 #ifdef _DEBUG
 	wsprintf(cTxt2,"Status: 0x%.8X ",iStatus);
@@ -43871,7 +43880,7 @@ void CGame::DrawDialogBox_EnchantingBag(int msX, int msY)
 		ZeroMemory(cMsg, sizeof(cMsg));
 		for (int x = 0; x < 13; x++)
 		{
-			if (!CheckValidShard(m_stShards[x][0].dwType)) continue;
+			if (!CheckValidShard(x)) continue;
 			for (i = 0; i < 17; i++)
 			{
 				wsprintf(cMsg, "%d", m_stShards[x][i].iCount);
@@ -44028,9 +44037,15 @@ bool CGame::CheckValidShard(DWORD dwType)
 {
 	switch (dwType)
 	{
+	case SHARD_CRITICAL:
+	case SHARD_CRITICAL2:
 	case SHARD_POISONING:
+	case SHARD_RIGHTEOUS:
+	case SHARD_AGILE:
 	case SHARD_LIGHT:
+	case SHARD_SHARP:
 	case SHARD_STRONG:
+	case SHARD_ANCIENT:
 	case SHARD_CASTPROB:
 	case SHARD_MANACONV:
 		return true;
@@ -44210,7 +44225,7 @@ void CGame::DlgBoxClick_EnchantingBag(int msX, int msY)
 		ZeroMemory(cMsg, sizeof(cMsg));
 		for (int x = 0; x < 13; x++)
 		{
-			if (!CheckValidShard(m_stShards[x][0].dwType)) continue;
+			if (!CheckValidShard(x)) continue;
 			for (int i = 0; i < 17; i++)
 			{
 				if (m_stShards[x][i].iCount > 0)
@@ -44272,7 +44287,7 @@ void CGame::DlgBoxClick_EnchantingBag(int msX, int msY)
 		ZeroMemory(cMsg, sizeof(cMsg));
 		for (int x = 0; x < 13; x++)
 		{
-			if (!CheckValidShard(m_stShards[x][0].dwType)) continue;
+			if (!CheckValidShard(x)) continue;
 			for (int i = 0; i < 17; i++)
 			{
 				if (m_stShards[x][i].iCount > 0)

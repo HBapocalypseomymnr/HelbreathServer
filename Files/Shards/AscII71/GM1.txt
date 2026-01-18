@@ -1,0 +1,1 @@
+shard-9-2 = Endurance 1 str 8 2

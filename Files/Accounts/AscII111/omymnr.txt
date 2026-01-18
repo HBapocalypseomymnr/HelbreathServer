@@ -10,3 +10,4 @@ account-change-password = 2026 1 18
 [CHARACTERS]
 
 account-character = Ohmyweed
+account-character = GM1

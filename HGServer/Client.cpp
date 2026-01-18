@@ -551,9 +551,11 @@ void CClient::save_shards_data()
 	char cFileName[112] = {};
 	char cDir[112] = {};
 	strcat(cFileName, "Shards");
+	CreateDirectory(cFileName, NULL); // Fix: Ensure base folder exists
 	strcat(cFileName, "\\");
 	wsprintf(cDir, "AscII%d", (unsigned char)m_cCharName[0]);
 	strcat(cFileName, cDir);
+	CreateDirectory(cFileName, NULL); // Fix: Ensure char folder exists
 	strcat(cFileName, "\\");
 	strcat(cFileName, m_cCharName);
 	strcat(cFileName, ".txt");
