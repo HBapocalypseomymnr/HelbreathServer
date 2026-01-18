@@ -876,8 +876,10 @@ void CGame::UpdateScreen()
 
 	case DEF_GAMEMODE_ONMAINGAME:
 		// FPS Limit: 144 (approx 7ms delay)
-		if ((G_dwGlobalTime - m_dwCurTime) > 6) UpdateScreen_OnGame();
-		break;
+		if ((G_dwGlobalTime - m_dwCurTime) > 6)
+      if ((G_dwGlobalTime - m_dwCurTime) > 6)
+          UpdateScreen_OnGame();
+      break;
 
 	case DEF_GAMEMODE_ONWAITINGINITDATA:
 		UpdateScreen_OnWaitInitData();
