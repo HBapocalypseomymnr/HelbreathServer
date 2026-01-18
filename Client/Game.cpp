@@ -875,7 +875,8 @@ void CGame::UpdateScreen()
 		break;
 
 	case DEF_GAMEMODE_ONMAINGAME:
-		UpdateScreen_OnGame();
+		// FPS Limit: 144 (approx 7ms delay)
+		if ((G_dwGlobalTime - m_dwCurTime) > 6) UpdateScreen_OnGame();
 		break;
 
 	case DEF_GAMEMODE_ONWAITINGINITDATA:
@@ -30898,11 +30899,11 @@ void CGame::UpdateScreen_OnGame()
 	else m_pSprite[DEF_SPRID_MOUSECURSOR]->PutSpriteFast(msX, msY, m_stMCursor.sCursorFrame, dwTime);
 
 	if( iUpdateRet == 0 ) m_sFrameCount++;
-	else m_sFrameCount+=256;
+	else m_sFrameCount++;
 
 	if( dwTime - m_dwFPStime > 1000 )
 	{	m_dwFPStime = dwTime;
-		m_sFPS = m_sFrameCount>>7;
+		m_sFPS = m_sFrameCount;
 		if( m_sFPS < 10 ) m_sFPS += 6;
 		m_sFrameCount = 0;
 	}

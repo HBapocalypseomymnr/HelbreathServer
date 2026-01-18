@@ -1,2 +1,2 @@
-shard-9-2 = Endurance 2 str 8 2
+shard-9-2 = Endurance 1 str 8 2
 shard-9-5 = Endurance 1 str 8 5

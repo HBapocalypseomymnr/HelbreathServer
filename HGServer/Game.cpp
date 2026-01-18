@@ -2084,6 +2084,27 @@ void CGame::RequestInitDataHandler(int iClientH, char *pData, char cKey) {
   wp = (WORD *)(pBuffer + DEF_INDEX2_MSGTYPE);
   *wp = DEF_MSGTYPE_CONFIRM;
 
+  // Fix for bag jumble - sort items to remove gaps
+  int bFlag;
+  bFlag = FALSE;
+  while (bFlag == FALSE) {
+    bFlag = TRUE;
+    for (i = 0; i < DEF_MAXITEMS - 1; i++) {
+      if ((m_pClientList[iClientH]->m_pItemList[i] == 0) &&
+          (m_pClientList[iClientH]->m_pItemList[i + 1] != 0)) {
+        m_pClientList[iClientH]->m_pItemList[i] =
+            m_pClientList[iClientH]->m_pItemList[i + 1];
+        m_pClientList[iClientH]->m_pItemList[i + 1] = 0;
+
+        m_pClientList[iClientH]->m_ItemPosList[i].x =
+            m_pClientList[iClientH]->m_ItemPosList[i + 1].x;
+        m_pClientList[iClientH]->m_ItemPosList[i].y =
+            m_pClientList[iClientH]->m_ItemPosList[i + 1].y;
+        bFlag = FALSE;
+      }
+    }
+  }
+
   iTotalItemA = 0;
   for (i = 0; i < DEF_MAXITEMS; i++)
     if (m_pClientList[iClientH]->m_pItemList[i] != 0)

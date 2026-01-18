@@ -930,8 +930,8 @@ public:
 	bool m_bForceAttack;
 	bool m_bParalyze;
 
-	short m_sFrameCount;
-	short m_sFPS;
+	int m_sFrameCount;
+	int m_sFPS;
 	DWORD m_dwFPStime;
 	bool  m_bShowFPS;
 

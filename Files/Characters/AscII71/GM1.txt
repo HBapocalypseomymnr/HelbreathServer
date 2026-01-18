@@ -1,6 +1,6 @@
 [FILE-DATE]
 
-file-saved-date: 2026 1 18 14 24
+file-saved-date: 2026 1 18 15 7
 
 [NAME-ACCOUNT]
 
@@ -14,12 +14,12 @@ character-location   = NONE
 character-guild-name = NONE
 character-guild-GUID = -1
 character-guild-rank = -1
-character-loc-map = elvfarm
-character-loc-x   = 169
-character-loc-y   = 182
+character-loc-map = gshop_2f
+character-loc-x   = 51
+character-loc-y   = 41
 
 character-HP       = 1452
-character-MP       = 321
+character-MP       = 1252
 character-SP       = 1152
 character-LEVEL    = 376
 character-RATING   = 0
@@ -60,7 +60,7 @@ character-contribution = 0
 character-war-contribution = 0
 character-quest-completed = 0
 special-event-id = 0
-super-attack-left = 37
+super-attack-left = 8
 reserved-fightzone-id = 0 0 0
 special-ability-time = 0
 locked-map-name = NONE
