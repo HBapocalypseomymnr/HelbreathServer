@@ -661,6 +661,9 @@ public:
 	void PutString_SprFont2(int iX, int iY, char * pStr, short sR, short sG, short sB);
 	void PutString_SprFont3(int iX, int iY, char * pStr, short sR, short sG, short sB, bool bTrans = false, int iType = 0);
 	void PutString_SprNum(int iX, int iY, char * pStr, short sR, short sG, short sB);
+	void DrawShadowDialog(short sX, short sY, int dialognum);
+	void DrawShadowDialog2(short sX, short sY, int dialognum);
+	void PutCenterString_SpriteFont(int iX1, int iX2, int iY, const char *pStr, short sR, short sG, short sB);
 	void LogRecvMsgHandler(char * pData);
 	void LogResponseHandler(char * pData);
 	void OnLogSocketEvent(WPARAM wParam, LPARAM lParam);
@@ -749,7 +752,7 @@ public:
 		char  cStr[32], cStr2[32], cStr3[32], cStr4[32];
 		char  cMode;
 		bool  bIsScrollSelected;
-	} m_stDialogBoxInfo[61];	 // Snoopy passé à 61 (origine 41, Alastor 60), j'ai mis +20 car plus pratique.
+	} m_stDialogBoxInfo[61];	 // Snoopy passï¿½ ï¿½ 61 (origine 41, Alastor 60), j'ai mis +20 car plus pratique.
 	char m_cDialogBoxOrder[61];
 	int m_bIsDialogEnabled[61];//was bool
 //Snoopy=>>>>>>>>>>>>>>>>>>>>>

@@ -52,6 +52,7 @@ public:
 	HRESULT iSetColorKey(IDirectDrawSurface7 * pdds4, WORD wColorKey);
 	void PutPixel(short sX, short sY, WORD wR, WORD wG, WORD wB);
 	void DrawShadowBox(short sX, short sY, short dX, short dY, int iType = 0);
+	void DrawDialogShadowBox(short sX, short sY, short dX, short dY, int iType = 0);
 	void ClearBackB4();
 	IDirectDrawSurface7 * pCreateOffScreenSurface(WORD iSzX, WORD iSzY);
 	HRESULT iSetColorKey(IDirectDrawSurface7 * pdds4, COLORREF rgb);

@@ -969,3 +969,82 @@ void DXC_ddraw::DrawItemShadowBox(short sX, short sY, short dX, short dY, int iT
 		}
 	}
 }
+
+void DXC_ddraw::DrawDialogShadowBox(short sX, short sY, short dX, short dY, int iType)
+{
+	WORD* pDst, wValue;
+	int ix, iy;
+
+	if (dX >= res_x) dX = res_x - 1;
+	if (dX < 0) return;
+	if (sX < 0) sX = 0;
+	if (sX >= res_x) return;
+	if (dY >= res_y) dY = res_y - 1;
+	if (dY < 0) return;
+	if (sY < 0) sY = 0;
+	if (sY >= res_y) return;
+
+	int countx = dX - sX;
+	int county = dY - sY;
+
+	// Draw borders
+	for (int a = 0; a <= countx; a++)
+	{
+		PutPixel(sX + a, sY, 152, 123, 54);      // Top line
+		PutPixel(sX + a, sY + 1, 152, 123, 54);  // Second top line
+		PutPixel(sX + a, dY, 152, 123, 54);      // Bottom line
+		PutPixel(sX + a, dY - 1, 152, 123, 54);  // Second bottom line
+	}
+
+	for (int b = 0; b <= county; b++)
+	{
+		PutPixel(sX, sY + b, 152, 123, 54);      // Left line
+		PutPixel(sX + 1, sY + b, 152, 123, 54);  // Second left line
+		PutPixel(dX, sY + b, 152, 123, 54);      // Right line
+		PutPixel(dX - 1, sY + b, 152, 123, 54);  // Second right line
+	}
+
+	pDst = (WORD*)m_pBackB4Addr + sX + ((sY)*m_sBackB4Pitch);
+
+	if (iType == 0) {
+		switch (m_cPixelFormat) {
+		case 1:
+			for (iy = 0; iy <= (dY - sY); iy++) {
+				for (ix = 0; ix <= (dX - sX); ix++)
+					pDst[ix] = (pDst[ix] & 0xf7de) >> 1;
+				pDst += m_sBackB4Pitch;
+			}
+			break;
+
+		case 2:
+			for (iy = 0; iy <= (dY - sY); iy++) {
+				for (ix = 0; ix <= (dX - sX); ix++)
+					pDst[ix] = (pDst[ix] & 0x7bde) >> 1;
+				pDst += m_sBackB4Pitch;
+			}
+			break;
+		}
+	}
+	else
+	{
+		switch (iType) {
+		case 1:
+			if (m_cPixelFormat == 1)
+				wValue = 0x38e7;
+			else wValue = 0x1ce7;
+			break;
+
+		case 2:
+			if (m_cPixelFormat == 1)
+				wValue = 0x1863;
+			else wValue = 0xc63;
+			break;
+		}
+
+		for (iy = 0; iy <= (dY - sY); iy++) {
+			for (ix = 0; ix <= (dX - sX); ix++)
+				pDst[ix] = wValue;
+			pDst += m_sBackB4Pitch;
+		}
+	}
+}
